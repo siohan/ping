@@ -1,6 +1,7 @@
 <?php
 if( !isset($gCms) ) exit;
-
+//on vérifie les droits de cet utilisateur
+//if(){}
   // CreateFormStart sets up a proper form tag that will cause the submit to
   // return control to this module for processing.
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));

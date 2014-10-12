@@ -4,19 +4,20 @@ if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 $db =& $this->GetDb();
 global $themeObject;
-debug_display($params,'Parameters');
+//debug_display($params,'Parameters');
 $mois_courant = date('n');//Mois au format 1, 2, 3 etc....
 $mois_francais = array('Janvier', 'Février','Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Août', 'Septembre', 'Octobre','Novembre','Décembre');
 $now = trim($db->DBTimeStamp(time()), "'");
 $mois_reel = $mois_courant - 1;
 $mois_sm = $mois_francais["$mois_reel"];
 $annee_courante = date('Y');
+//echo "l'année courante est : ".$annee_courante;
 
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_situation_mensuelle_tab')); 
 $saisonslist[$this->lang('allseasons')] ='';
 $monthslist[$this->Lang('allmonths')] = '';
-$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8");
+//$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8");
 $yearslist = array("2014"=>"2014");
 $tourlist[$this->Lang('alltours')] = '';
 //$allequipes =  ( isset( $params['allequipes'] )?$params['allequipes']:'no');
@@ -31,7 +32,7 @@ while ($dbresult && $row = $dbresult->FetchRow())
   {
     //$tourlist[$row['numjourn']] = $row['numjourn'];
     $playerslist[$row['player']] = $row['licence'];
-//$monthslist[$row['mois']] = $row['mois'];
+$monthslist[$row['mois']] = $row['mois'];
     //$equipelist[$row['equipe']] = $row['equipe'];
     //$typeCompet[$row['codechamp']] = $row['codechamp'];
   }
@@ -42,25 +43,10 @@ if( isset($params['submitfilter']) )
       	{
 	$this->SetPreference('moisChoisi', $params['monthslist']);
       	}
-/*	if( isset( $params['saisonslist']) )
-      	{
-	$this->SetPreference('saisonChoisie', $params['saisonslist']);
-      	}
-*/
 	if( isset( $params['playerslist']) )
       	{
 	$this->SetPreference('playerChoisi', $params['playerslist']);
       	}
-/*    if( isset( $params['equipelist']))
-	{
-	$this->SetPreference( 'equipeChoisie', $params['equipelist']);
-	}
-	
-    if( isset( $params['typeCompet']) )
-	{ 
-	$this->SetPreference ( 'competChoisie', $params['typeCompet']);
-	}
-	*/
 }
 $curmonth = $this->GetPreference('moisChoisi');
 $curtour = $this->GetPreference( 'tourChoisi' );
@@ -105,7 +91,7 @@ $mois = (!empty($mois_pref)) ? $mois_pref : $mois_courant;
 //echo "le mois retenu est : ".$mois;
 
 $result= array ();
-$query= "SELECT j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_sit_mens AS sm ON j.licence = sm.licence WHERE j.actif = '1' ";//" AND (sm.annee = ? OR sm.annee IS NULL) ";
+$query= "SELECT j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_sit_mens AS sm ON j.licence = sm.licence WHERE j.actif = '1' ";
 //echo $query;
 
 if( isset($params['submitfilter'] )){
@@ -116,67 +102,31 @@ if( isset($params['submitfilter'] )){
 		$parms['mois'] = $curmonth;
 	}
 	
-
-
-/*
-if ($curtour !='')
-{
-	$query .=" AND pts.numjourn = ? ";
-	$parms['numjourn'] = $curtour;
+	if ($curplayer !='')
+	{
+		$query .=" AND j.licence = ?";
+		$parms['licence'] = $curplayer;
 		
-}
-else {
-	$query.=" AND pts.numjourn >= 0 ";
-	$parms ='';
-}
-*/
-if ($curplayer !='')
-{
-	$query .=" AND j.licence = ?";
-	$parms['licence'] = $curplayer;
-		
-}
-else {
-	$query.=" AND j.licence >= 0 ";
-	$parms ='';
-}
+	}
+	else 
+	{
+		$query.=" AND j.licence >= 0 ";
+		$parms ='';
+	}
 
-/*
-if($curseason !='')
-{
-	$query.=" AND pts.saison = ?";
-	$parms['saison'] = $curseason;
-}
-else {
-	$query.=" AND pts.saison = ?";
-	$parms['saison'] = $this->GetPreference('saison_en_cours');
-}
-if ($curCompet !='')
-{
-	$query.=" AND pts.codechamp = ?";
-	$parms['codechamp'] = $curCompet;
-}
-
-$dbresult= $db->Execute($query,$parms);
-}
-
-else {
-	$query .=" ORDER BY pts.numjourn DESC";
-	$dbresult= $db->Execute($query);
-}
-*/
-}
+}//fin du submit filter
 $query.="  AND (sm.annee = ? OR sm.annee IS NULL) ";
 $parms['annee'] = $annee_courante;
 
 $query.=" ORDER BY joueur ASC";
 $dbresult= $db->Execute($query,$parms);
-echo $query;
+//echo $query;
 if (!$dbresult)
 {
 
-		echo "pb req !";
-		echo $db->ErrorMsg();
+		//echo "pb req !";
+		$designation = $db->ErrorMsg();
+		echo "$designation";
 
 }
 
@@ -201,14 +151,6 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->progmois= $row['progmois'];
 	//$onerow->equipe= $this->createLink($id, 'viewsteamresult', $returnid, $row['equipe'],array('equipe'=>$row['equipe']),$row) ;
 	$onerow->joueur= $row['joueur'];
-	
-	
-	/*	
-	$onerow->commune= $row['commune'];
-	$onerow->email= $row['email'];
-	$onerow->tranche= $row['tranche'];
-	$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
-	*/
 	$onerow->id= $this->CreateLink($id, 'edit_joueurs', $returnid, $row['id'],array('record_id'=>$row['id']), $row);
 	$onerow->editlink= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('record_id'=>$row['id']));
 	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, 'Situation mensuelle', array('licence'=>$row['licence']));
@@ -225,15 +167,15 @@ $smarty->assign('retrieveallsitmens',
 		$this->CreateLink($id,'retrieve_all_sit_mens', $returnid, 'Récupérer toutes les situations mensuelles'));
 $smarty->assign('missing_sit_mens', 
 		$this->CreateLink($id, 'missing_sit_mens', $returnid, 'Les situations manquantes'));
-		$smarty->assign('form2start',
-				$this->CreateFormStart($id,'mass_action',$returnid));
-		$smarty->assign('form2end',
-				$this->CreateFormEnd());
-				$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation");
-		$smarty->assign('actiondemasse',
-				$this->CreateInputDropdown($id,'actiondemasse',$articles));
-		$smarty->assign('submit_massaction',
-				$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
+$smarty->assign('form2start',
+		$this->CreateFormStart($id,'mass_action',$returnid));
+$smarty->assign('form2end',
+		$this->CreateFormEnd());
+$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation");
+$smarty->assign('actiondemasse',
+		$this->CreateInputDropdown($id,'actiondemasse',$articles));
+$smarty->assign('submit_massaction',
+		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
 				  
 
 echo $this->ProcessTemplate('allsitmens.tpl');

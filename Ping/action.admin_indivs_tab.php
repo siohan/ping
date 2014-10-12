@@ -132,7 +132,7 @@ else {
 	$dbresult= $db->Execute($query,$parms);
 }
 */
-echo $query;
+//echo $query;
 if (!$dbresult)
 {
 
@@ -154,13 +154,6 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->advnompre= $row['advnompre'];
 //	$onerow->adversaire= $row['adversaire'];
 	$onerow->pointres= $row['pointres'];
-	
-	/*	
-	$onerow->commune= $row['commune'];
-	$onerow->email= $row['email'];
-	$onerow->tranche= $row['tranche'];
-	$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
-	*/
 	//$onerow->equipe= $this->CreateLink($id, 'create_new_user', $returnid, $row['equipe'], $row);
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_user_confirm'));
@@ -172,18 +165,21 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 $smarty->assign('itemsfound', $this->Lang('sheetsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
+/*
 $smarty->assign('createlink', 
 		$this->CreateLink($id, 'add_indivs', $returnid,
 				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addnewsheet'), '', '', 'systemicon')).
 		$this->CreateLink($id, 'add_indivs', $returnid, 
 				  $this->Lang('addnewsheet'), 
 				  array()));
+
 $smarty->assign('retrieve_all_parties', 
 		$this->CreateLink($id, 'retrieve_all_parties', $returnid,
 				$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('import'), '', '', 'systemicon')).
 						$this->CreateLink($id, 'retrieve_all_parties', $returnid, 
 								  $this->Lang('import'), 
 								  array()));
+*/
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

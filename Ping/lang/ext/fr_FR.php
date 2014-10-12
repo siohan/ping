@@ -50,6 +50,7 @@ $lang['display_on_frontend'] = 'Afficher sur le site';
 $lang['unable'] = 'Désactiver';
 $lang['enable'] = 'activer';
 $lang['long_import'] = "Cette opération peut durer plusieurs minutes !";
+$lang['retrieveallpartiesspid'] = 'Récupérer toutes les parties Spid';
 //pour les erreurs de formulaires
 $lang['no_family_name'] = 'Vous devez saisir votre nom de famille';
 $lang['no_adresse'] = 'Vous devez saisir votre adresse';
@@ -133,12 +134,20 @@ $lang['changelog'] = '<ul>
 <li>Première release du module.</li>
 </ul>';
 $lang['help'] = '<h3>Que fait ce module ?</h3>
-<p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (comptage des points par exemple).</p>
+<p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (Voir feuille de route plus bas).</p>
 <h3>Comment l\'utiliser ?</h3>
-<p>Well, you could actually install it by placing the module in a page or template using the
-smarty tag &amp;#123;Skeleton}</p>
-<p>You would be wiser, however, to use the module as a starting point, and editing the code to do
-whatever it is you are wanting to do.</p>
+<h2>Première utilisation</h2>
+<ol><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
+<li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
+Un lien pour les équipes du championnat de France par équipes, l\'autre pour les autres compétitions et indiquez éventuellement le type de compétitions auxquelles elles participent.</li>
+<li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom. Désactivez les joueurs ne faisant pas l\'objet d\'une situation mensuelle</li>
+</ol>
+<h3>FFTT</h3>
+<h3>Spid</h3>
+<h3>Situation mensuelle</h3>
+
+<h3>Feuille de route</h3>
+<p></p>
 <h3>Support</h3>
 <p>This module does not include commercial support. However, there are a number of resources available to help you with it:</p>
 <ul>

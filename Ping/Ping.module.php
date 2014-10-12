@@ -69,7 +69,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-    return array('NMS'=>'2.9', 'FrontEndUsers'=>'1.24');
+    //return array('NMS'=>'2.9', 'FrontEndUsers'=>'1.24');
   }
 
   

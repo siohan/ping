@@ -55,8 +55,12 @@ $smarty->assign('createlink',
 		$this->CreateLink($id, 'create_new_user3', $returnid, 
 				  $this->Lang('addnewsheet'), 
 				  array()));
-$smarty->assign('retrieve_all',
-		$this->CreateLink($id,'retrieve_all_parties_spid', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('import'), '', '', 'systemicon'), $this->Lang('long_import')));				
+$smarty->assign('retrieve_all', 
+		$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid,
+				$themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('long_import'), '', '', 'systemicon')).
+				$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid, 
+								  $this->Lang('retrieveallpartiesspid'), 
+								  array()));			
 //faire apparaitre les points totaux et somme victoire en bas ? Ce serait pas mal
 /**/
 echo $this->ProcessTemplate('globaluserresults.tpl');

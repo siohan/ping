@@ -120,7 +120,7 @@ public static function retrieve_sit_mens($licence)
 	
 		//il faut instancier le service
 		$service = new Service();
-		$result = $service->getJoueur("$licence2");
+		$result = $service->getJoueur("$licence");
 		//var_dump($result);
 		
 			if(!is_array($result))
@@ -175,6 +175,9 @@ public static function retrieve_sit_mens($licence)
 						$designation = "Situation ok pour ".$nom." ".$prenom;
 						$action = 'mass_action';
 						ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+						//on met la table recup à jour pour le joueur
+						$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
+						$dbresult = $db->Execute($query, array($now, $mois_sit_mens, $licence));
 					}
 				
 				

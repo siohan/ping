@@ -20,12 +20,12 @@ $pouleslist[$this->Lang('allpoules')] = '';
 
 $query1 = "SELECT * FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ?";
 $dbresult = $db->Execute($query1,array($saison));
-echo $query1;
+//echo $query1;
 while ($dbresult && $row = $dbresult->FetchRow())
   {
     $pouleslist[$row['libdivision']] = $row['idpoule'];
     //$equipelist[$row['equipe']] = $row['equipe'];
-    $typeCompetition[$row['name']] = $row['type_compet'];
+    //$typeCompetition[$row['name']] = $row['type_compet'];
   }
 
 if( isset($params['submitfilter']) )
@@ -70,9 +70,9 @@ if( isset($params['submitfilter'] )){
 
 
 }
-	$dbresult= $db->Execute($query2,$parms);
-echo $query2;
-if($travaux=='true'){echo $query2;}
+$dbresult= $db->Execute($query2,$parms);
+//echo $query2;
+
 $rowarray= array ();
 if ($dbresult && $dbresult->RecordCount() > 0)
   {

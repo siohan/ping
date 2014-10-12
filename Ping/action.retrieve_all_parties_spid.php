@@ -128,11 +128,11 @@ else
 					}
 				
 				//on peut désormais calculer les points 
-				echo "la victoire est : ".$victoire."<br />";
+				//echo "la victoire est : ".$victoire."<br />";
 				$points1 = CalculPointsIndivs($type_ecart, $victoire);
-				echo "le coeff est : ".$coeff."<br />";
-				echo "le type ecart est : ".$type_ecart."<br />";
-				echo "les points 1 sont : ".$points1."<br />";
+				//echo "le coeff est : ".$coeff."<br />";
+				//echo "le type ecart est : ".$type_ecart."<br />";
+				//echo "les points 1 sont : ".$points1."<br />";
 				$pointres = $points1*$coeff;	
 				$forfait = $tab[forfait];
 				

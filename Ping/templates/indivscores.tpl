@@ -81,4 +81,4 @@ $(document).ready(function(){
 {/if}
 
 <div class="pageoptions"><p class="pageoptions">{$retour}</p></div><hr />
-<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>
+<div class="pageoptions"><p class="pageoptions">{*$createlink*}</p></div>

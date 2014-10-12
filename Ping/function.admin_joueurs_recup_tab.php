@@ -66,12 +66,14 @@ $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('retrieve_users', 
 		$this->CreateLink($id, 'retrieve_users', $returnid,'Récupération de tous les joueurs'));
+/*
 $smarty->assign('createlink', 
 		$this->CreateLink($id, 'create_new_user3', $returnid,
 				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addnewsheet'), '', '', 'systemicon')).
 		$this->CreateLink($id, 'create_new_user3', $returnid, 
 				  $this->Lang('addnewsheet'), 
 				  array()));
+*/
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

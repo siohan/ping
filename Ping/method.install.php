@@ -248,6 +248,22 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_recup",
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
+//table type_competitions
+$dict = NewDataDictionary( $db );
+$flds = "
+	id I(11) AUTO KEY,
+	name C(255),
+	code_compet C(3),
+	coefficient N(3.2)";
+			
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",
+				   $flds, 
+				   $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+
+//$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
+
 // create a sequence
 $db->CreateSequence(cms_db_prefix()."module_ping_seq");
 
@@ -319,6 +335,22 @@ $this->CreateEvent('OnUserDeleted');
 //$this->CreateEvent('NewsCategoryAdded');
 //$this->CreateEvent('NewsCategoryEdited');
 //$this->CreateEvent('NewsCategoryDeleted');
+
+
+//on insère les éléments par défaut
+$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?)";
+$res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25'));
+$res = $db->Execute($insert_sql, array('Critérium fédéral Jeunes', 'J', '1.00'));
+$res = $db->Execute($insert_sql, array('Chpt France par équipes masculin', '1', '1.00'));
+$res = $db->Execute($insert_sql, array('Chpt France par équipes féminin', '1', '1.00'));
+$res = $db->Execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75'));
+$res = $db->Execute($insert_sql, array('Championnat de France Vétérans', 'V', '1.00'));
+$res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25'));
+$res = $db->Execute($insert_sql, array('Championnat Jeunes', '+', '0.75'));
+$res = $db->Execute($insert_sql, array('Championnat jenues poussins benjamins', 'ECP', '1.25'));
+$res = $db->Execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50'));
+$res = $db->Execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50'));
+$res = $db->Execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75'));
 
 // put mention into the admin log
 $this->Audit( 0, 
