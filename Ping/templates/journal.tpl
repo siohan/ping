@@ -71,7 +71,7 @@ $(document).ready(function(){
 {/if}
 <div style="width: 100%;">
 <div class="pageoptions" style="float: left;">
-	<p class="pageoptions">{$addlink}</p>
+	<p class="pageoptions">{*$addlink*}</p>
 </div>
 {if $itemcount > 0}
   <div class="pageoptions" style="float: right; text-align: right;">

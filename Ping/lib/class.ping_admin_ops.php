@@ -99,6 +99,33 @@ public static function do_not_display($record_id)
 
   }
 
+public static function coeff($record_id, $coeff)
+  {
+	//debug_display($params, 'Parameters');
+	global $gCms;
+    	$db = cmsms()->GetDb();
+    	$ping = cms_utils::get_module('Ping');
+	require_once(dirname(__FILE__).'/function.calculs.php');
+
+    //On récupère les infos de l'enregistrement
+    $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
+    $dbresult = $db->Execute($query, array($record_id));
+
+	$row= $dbresult->FetchRow();
+	$victoire = $row['victoire'];
+	$type_ecart = $row['type_ecart'];
+	$points1 = CalculPointsIndivs($type_ecart,$victoire);
+	//$coeff = '1.00';
+	$pointres = $points1*$coeff;
+
+
+
+    $query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET coeff = ?, pointres = ? WHERE id = ?";
+    $dbresult = $db->Execute($query, array($coeff, $pointres, $record_id));
+
+
+  }
+
 
 
 public static function retrieve_sit_mens($licence)
@@ -191,8 +218,9 @@ public static function retrieve_sit_mens($licence)
 	
 }
 
-public static function retrieve_parties_spid($licence)
+public static function retrieve_parties_spid( $licence )
   {
+	global $gCms;
 	$db = cmsms()->GetDb();
 	$ping = cms_utils::get_module('Ping');
 	require_once(dirname(__FILE__).'/function.calculs.php');
@@ -274,7 +302,7 @@ public static function retrieve_parties_spid($licence)
 					//On a la date et le type d'épreuve
 					//on peut donc en déduire le tour via le calendrier
 					//et le coefficient pour calculer les points via la table type_competitons
-
+					/*
 					//1 - on récupére le tour s'il existe
 					//on va fdonc chercher dans la table calendrier
 					$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE name_compet =? AND date_compet = ?";
@@ -288,7 +316,7 @@ public static function retrieve_parties_spid($licence)
 						{
 							$numjourn = 0;
 						}
-
+					*/
 					//2 - on récupère le coefficient de la compétition
 					$coeff = coeff($epreuve);
 
@@ -306,11 +334,11 @@ public static function retrieve_parties_spid($licence)
 						}
 					
 					//on peut désormais calculer les points 
-					echo "la victoire est : ".$victoire."<br />";
+					//echo "la victoire est : ".$victoire."<br />";
 					$points1 = CalculPointsIndivs($type_ecart, $victoire);
-					echo "le coeff est : ".$coeff."<br />";
-					echo "le type ecart est : ".$type_ecart."<br />";
-					echo "les points 1 sont : ".$points1."<br />";
+					//echo "le coeff est : ".$coeff."<br />";
+					//echo "le type ecart est : ".$type_ecart."<br />";
+					//echo "les points 1 sont : ".$points1."<br />";
 					$pointres = $points1*$coeff;
 					$forfait = $tab[forfait];
 

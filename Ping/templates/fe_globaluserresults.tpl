@@ -18,7 +18,7 @@
 		<th>Joueur</th>
 		<th>Vic</th>
 		<th>Sur</th>
-		<th>Total</th>
+		<th>Points</th>
   </tr>
  </thead>
  <tbody>
@@ -28,6 +28,11 @@
     <td>{$entry->victoires}</td>
     <td>{$entry->sur}</td>
 	<td>{$entry->total}</td>
+	</tr>
+	<tr>
+		<td>{$entry->victoire}</td>
+		<td>{$entry->date}</td>
+		<td>{$entry->epreuve}</td>
   </tr>
 {/foreach}
  </tbody>

@@ -29,6 +29,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
       {
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
+	$onerow->id= $row['id'];
 	$onerow->joueur= $row['joueur'];//$this->CreateLink($id, 'view_user_results', $returnid, $row['joueur'],array('joueur'=>$row['joueur']),$row) ;
 	$onerow->date_event= $row['date_event'];
 	$onerow->epreuve= $row['epreuve'];
@@ -39,6 +40,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->coeff= $row['coeff'];
 	$onerow->pointres= $row['pointres'];
 	$onerow->forfait= $row['forfait'];
+	$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
 	$onerow->editlink= $this->CreateLink($id, 'edit_player_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_user_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
@@ -60,7 +62,18 @@ $smarty->assign('retrieve_all',
 				$themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('long_import'), '', '', 'systemicon')).
 				$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid, 
 								  $this->Lang('retrieveallpartiesspid'), 
-								  array()));			
+								  array()));
+$smarty->assign('form2start',
+		$this->CreateFormStart($id,'mass_action',$returnid));
+$smarty->assign('form2end',
+		$this->CreateFormEnd());
+$articles = array("Mettre le Coeff à 0,5"=>"coeff05","Mettre le Coeff à 0,75"=>"coeff075","Mettre le Coeff à 1"=>"coeff1","Mettre le Coeff à 1,25"=>"coeff125","Mettre le Coeff à 1,5"=>"coeff15", "Récupérer situation mensuelle"=>"situation");
+$smarty->assign('actiondemasse',
+		$this->CreateInputDropdown($id,'actiondemasse',$articles));
+$smarty->assign('submit_massaction',
+		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
+
+			
 //faire apparaitre les points totaux et somme victoire en bas ? Ce serait pas mal
 /**/
 echo $this->ProcessTemplate('globaluserresults.tpl');

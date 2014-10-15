@@ -92,13 +92,46 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	$this->SetMessage("$message");
 	$this->RedirectToAdminTab("recuperation");
 	break;
-	case "change_coeff" :
+	case "coeff05" :
 	foreach( $params['sel'] as $record_id)
 	{
-		//action à définir
+		ping_admin_ops::coeff( $record_id, $coeff= '0.50' );
 	}
-	$this->RedirectToAdminTab('joueurs');
+	$this->RedirectToAdminTab('results');
 	break;
+	case "coeff075" :
+	foreach( $params['sel'] as $record_id)
+	{
+		ping_admin_ops::coeff( $record_id, $coeff= '0.75' );
+	}
+	$this->RedirectToAdminTab('results');
+	break;
+	
+	case "coeff1" :
+	foreach( $params['sel'] as $record_id)
+	{
+		ping_admin_ops::coeff( $record_id, $coeff='1.00' );
+	}
+	$this->RedirectToAdminTab('results');
+	break;
+	
+	case "coeff125" :
+	foreach( $params['sel'] as $record_id)
+	{
+		ping_admin_ops::coeff( $record_id, $coeff='1.25');
+	}
+	$this->RedirectToAdminTab('results');
+	break;
+	
+	case "coeff15" :
+	foreach( $params['sel'] as $record_id)
+	{
+		ping_admin_ops::coeff( $record_id, $coeff= '1.50' );
+	}
+	$this->RedirectToAdminTab('results');
+	break;
+
+	
 	case "masculin" :
 	foreach( $params['sel'] as $licence )
 	  {

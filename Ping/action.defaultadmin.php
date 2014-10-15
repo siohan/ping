@@ -31,7 +31,10 @@ if (FALSE == empty($params['active_tab']))
 	echo $this->SetTabHeader('recuperation', 'Recupération', ('Récupération' == $tab)?true:false);
 	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('Situation mensuelle' == $tab)?true:false);
 	echo $this->SetTabHeader('journal', 'Journal', ('Journal' == $tab)?true:false);
-	echo $this->SetTabHeader('configuration', 'Configuration' , ('configuration' == $tab)?true:false);
+	
+	if($this->CheckPermission('Ping Set Prefs')){
+		echo $this->SetTabHeader('configuration', 'Configuration' , ('configuration' == $tab)?true:false);
+	}
 
 echo $this->EndTabHeaders();
 
@@ -39,6 +42,10 @@ echo $this->StartTabContent();
 	
 	echo $this->StartTab('joueurs', $params);
     	include(dirname(__FILE__).'/action.admin_joueurs_tab.php');
+   	echo $this->EndTab();
+
+	echo $this->StartTab('equipes' , $params);
+    	include(dirname(__FILE__).'/action.admin_teams_tab.php');
    	echo $this->EndTab();
 
         echo $this->StartTab('Individuelles', $params);//FFTT
@@ -51,12 +58,7 @@ echo $this->StartTabContent();
 
        echo $this->StartTab('compets' , $params);
     	include(dirname(__FILE__).'/function.admin_competitions_tab.php');
-   	echo $this->EndTab();
-
-
- 	echo $this->StartTab('equipes' , $params);
-    	include(dirname(__FILE__).'/action.admin_teams_tab.php');
-   	echo $this->EndTab();
+   	echo $this->EndTab(); 	
 
 	echo $this->StartTab('poules' , $params);
     	include(dirname(__FILE__).'/action.admin_poules_tab.php');
@@ -74,11 +76,11 @@ echo $this->StartTabContent();
 	echo $this->StartTab('journal', $params);
     	include(dirname(__FILE__).'/action.admin_data_tab.php');
    	echo $this->EndTab();
-
+if($this->CheckPermission('Ping Set Prefs')){
 	echo $this->StartTab('configuration' , $params);
 	include(dirname(__FILE__).'/function.admin_options_tab.php');
 	echo $this->EndTab();
-	
+}
 echo $this->EndTabContent();
 //on a refermé les onglets
 

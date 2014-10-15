@@ -22,13 +22,28 @@ class ping_admin_coeff
 {
   protected function __construct() {}
 
-  public static function changeCoeff($now,$status, $designation,$action)
+  public static function coeff1($record_id)
   {
+	debug_display($params, 'Parameters');
     $db = cmsms()->GetDb();
+    	$ping = cms_utils::get_module('Ping');
+	require_once(dirname(__FILE__).'/function.calculs.php');
 	
-    //Now remove the article
-    $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status,designation, action) VALUES ('', ?, ?, ?, ?)";
-    $db->Execute($query, array($now, $status, $designation,$action));
+    //On récupère les infos de l'enregistrement
+    $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
+    $dbresult = $db->Execute($query, array($record_id));
+
+	$row = $dbresult->FetchRow();
+	$victoire = $row['victoire'];
+	$type_ecart = $row['type_ecart'];
+	$points1 = CalculPointsIndivs($type_ecart,$victoire);
+	$coeff = '1.00';
+	$pointres = $points1*$coeff;
+	
+	
+
+    $query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET coeff = ?, pointres = ? WHERE id = ?";
+    $dbresult = $db->Execute($query, array($coeff, $pointres, $record_id));
     
     
   }
