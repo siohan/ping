@@ -39,8 +39,8 @@ $(document).ready(function(){
   {$formend}
 </fieldset>
 {/if}
-{**}
-<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>
+{*
+<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>*}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 
@@ -81,4 +81,4 @@ $(document).ready(function(){
   </div>
 {$form2end}
 {/if}
-<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>
+<div class="pageoptions"><p class="pageoptions">{*$createlink*}</p></div>

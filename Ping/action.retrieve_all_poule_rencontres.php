@@ -11,23 +11,22 @@ $designation = '';
 $query = "SELECT * FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ?";
 $dbresult = $db->Execute($query, array($saison));
 
-if ($dbresult && $dbresult->RecordCount() > 0)
-  {
-	$service = new Service();
- 	//on instancie un compteur 
+	if ($dbresult && $dbresult->RecordCount() > 0)
+  	{
+		$service = new Service();
+ 		//on instancie un compteur 
 	
-	for($i=0;$i<=$lignes;$i++)
-    	//while ($dbresult && $row = $dbresult->GetRows())
-      	{
-		$row = $dbresult->FetchRow();
-		
-		
+		for($i=0;$i<=$lignes;$i++)
+    			//while ($dbresult && $row = $dbresult->GetRows())
+      		{
+			$row = $dbresult->FetchRow();
+		}
 	}
-}
-else {
-	$this->SetMessage('Pas d\'équipes trouvées');
-	$this->RedirectToAdminTab('equipes');
-}//fin du if dbresult
+	else 
+	{
+		$this->SetMessage('Pas d\'équipes trouvées');
+		$this->RedirectToAdminTab('equipes');
+	}//fin du if dbresult
 
 
 $iddiv = $params['iddiv'];
@@ -44,8 +43,7 @@ $i=0;
 foreach($result as $cle =>$tab)
 {
 	
-	$cle_appel = 'AP';
-	//echo "$cle_appel <br />";
+
 	$libelle = $tab[libelle];
 	$equa = $tab[equa];
 	$equb = $tab[equb];
@@ -90,7 +88,7 @@ foreach($result as $cle =>$tab)
 $comptage = $i;
 $status = 'Poules';
 $designation = "Récupération de ".$comptage." rencontres de la poule ".$idpoule;
-$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datemaj, status, designation, action) VALUES ('', ?, ?, ?, ?)";
+$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 $action = "retrieve_poules_rencontres";
 $dbresult = $db->Execute($query, array($now,$status, $designation,$action));
 if(!$dbresult)

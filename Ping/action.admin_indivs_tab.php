@@ -9,21 +9,19 @@ require_once(dirname(__file__).'/include/prefs.php');
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_indivs_tab')); 
 //$saisonslist[$this->lang('allseasons')] ='';
-$tourlist[$this->Lang('alltours')] = '';
+$datelist[$this->Lang('alldates')] = '';
 //$allequipes =  ( isset( $params['allequipes'] )?$params['allequipes']:'no');
 
 $equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT * , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence ORDER BY j.nom ASC, pts.numjourn ASC";//"";
+$query = "SELECT *,pts.codechamp , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence ORDER BY j.nom ASC, pts.numjourn ASC";//"";
 $dbresult = $db->Execute($query, array($saison_courante));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
-    $tourlist[$row['numjourn']] = $row['numjourn'];
+    $datelist[$row['date_event']] = $row['date_event'];
     $playerslist[$row['player']] = $row['licence'];
-//$saisonslist[$row['saison']] = $row['saison'];
-    //$equipelist[$row['equipe']] = $row['equipe'];
     $typeCompet[$row['codechamp']] = $row['codechamp'];
   }
 
@@ -31,52 +29,30 @@ if( isset($params['submitfilter']) )
   {
     	if( isset( $params['tourlist']) )
       	{
-	$this->SetPreference('tourChoisi', $params['tourlist']);
+	$this->SetPreference('dateChoisi', $params['datelist']);
       	}
-/*
-	if( isset( $params['saisonslist']) )
-      	{
-	$this->SetPreference('saisonChoisie', $params['saisonslist']);
-      	}
-*/
 	if( isset( $params['playerslist']) )
       	{
 	$this->SetPreference('playerChoisi', $params['playerslist']);
       	}
-    /*if( isset( $params['equipelist']))
-	{
-	$this->SetPreference( 'equipeChoisie', $params['equipelist']);
-	}
-	*/
     if( isset( $params['typeCompet']) )
 	{ 
 	$this->SetPreference ( 'competChoisie', $params['typeCompet']);
 	}
 }
-$curtour = $this->GetPreference( 'tourChoisi' );
+$curdate = $this->GetPreference( 'dateChoisi' );
 //$curseason = $this->GetPreference('saisonChoisie');
 $curplayer = $this->GetPreference( 'playerChoisi');
 $curequipe = $this->GetPreference( 'equipeChoisie' );
 $curCompet = $this->GetPreference( 'competChoisie');
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
-$smarty->assign('input_tour',
-		$this->CreateInputDropdown($id,'tourlist',$tourlist,-1,$curtour));
-/*
-$smarty->assign('input_saison',
-				$this->CreateInputDropdown($id,'saisonslist',$saisonslist,-1,$curseason));
-*/
-/*		$smarty->assign('prompt_equipe',
-				$this->Lang('equipe'));
-
-$smarty->assign('input_equipe',
-		$this->CreateInputDropdown($id,'equipelist',$equipelist,-1,$curequipe));
-*/		
-		$smarty->assign('input_compet',
-				$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
-				
-		$smarty->assign('input_player',
-				$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
+$smarty->assign('input_date',
+		$this->CreateInputDropdown($id,'datelist',$datelist,-1,$curdate));
+$smarty->assign('input_compet',
+		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
+$smarty->assign('input_player',
+		$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
 		
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
@@ -92,46 +68,34 @@ $smarty->assign('points', 'Points');
 $result= array ();
 $query = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, pts.id, pts.vd, pts.numjourn,pts.date_event, pts.advnompre,pts.pointres, pts.advclaof  FROM ".cms_db_prefix()."module_ping_parties AS pts , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence = j.licence AND pts.saison = ?";
 $parms['saison'] = $saison_courante;
-if( isset($params['submitfilter'] )){
-	if ($curtour !='')
-	{
-		$query .=" AND pts.numjourn = ? ";
-		$parms['numjourn'] = $curtour;
+
+	if( isset($params['submitfilter'] )){
 		
-	}
-	/*
-	else {
-		$query.=" AND pts.numjourn >= 0 ";
-		$parms ='';
-	}
-	*/
-	if ($curplayer !='')
-	{
-		$query .=" AND pts.licence = ?";
-		$parms['licence'] = $curplayer;
+		if ($curdate !='')
+		{
+			$query .=" AND pts.date_event = ? ";
+			$parms['date_event'] = $curdate;
 		
-	}
-	/*
-	else {
-		$query.=" AND pts.licence >= 0 ";
-		$parms ='';
-	}
-	*/
-if ($curCompet !='')
-{
-	$query.=" AND pts.codechamp = ?";
-	$parms['codechamp'] = $curCompet;
-}
+		}
+		
+		if ($curplayer !='')
+		{
+			$query .=" AND pts.licence = ?";
+			$parms['licence'] = $curplayer;
+		
+		}
+		
+		if ($curCompet !='')
+		{
+			$query.=" AND pts.codechamp = ?";
+			$parms['codechamp'] = $curCompet;
+		}
 
 
-}
+	}
+	
+$query.=" ORDER BY pts.date_event ASC";
 $dbresult= $db->Execute($query,$parms);
-/*
-else {
-	$query .=" ORDER BY pts.numjourn DESC";
-	$dbresult= $db->Execute($query,$parms);
-}
-*/
 //echo $query;
 if (!$dbresult)
 {
@@ -165,21 +129,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 $smarty->assign('itemsfound', $this->Lang('sheetsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
-/*
-$smarty->assign('createlink', 
-		$this->CreateLink($id, 'add_indivs', $returnid,
-				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addnewsheet'), '', '', 'systemicon')).
-		$this->CreateLink($id, 'add_indivs', $returnid, 
-				  $this->Lang('addnewsheet'), 
-				  array()));
 
-$smarty->assign('retrieve_all_parties', 
-		$this->CreateLink($id, 'retrieve_all_parties', $returnid,
-				$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('import'), '', '', 'systemicon')).
-						$this->CreateLink($id, 'retrieve_all_parties', $returnid, 
-								  $this->Lang('import'), 
-								  array()));
-*/
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

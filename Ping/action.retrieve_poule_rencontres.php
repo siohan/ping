@@ -128,24 +128,26 @@ foreach($result as $cle =>$tab)
 	
 	
 	//on remplit le calendrier ?
-	if($this->GetPreference('populate_calendar')=='Oui'){
-		{
+	if($this->GetPreference('populate_calendar')=='Oui')
+	{
+		
 			//On fait l'inclusion ds la bdd
 			// on vérifie d'abord que l'enregistrement n'est pas déjà en bdd
-			$query = "SELECT iddiv, idpoule, numjourn, date_compet FROM ".cms_db_prefix()."module_ping_calendrier WHERE iddiv = ? AND idpoule = ? AND numjourn = ? AND date_compet = ?";
-			$dbresult = $db->Execute($query, array($iddiv, $idpoule,$tour, $date_event));
+			$query = "SELECT numjourn, date_debut, date_fin, type_compet FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND type_compet = ?";
+			$dbresult = $db->Execute($query, array($tour, $date_event, $date_event,$type_compet));
 
 				if ($dbresult->RecordCount()==0)
-					{
-						$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_compet,iddiv, idpoule, numjourn) VALUES ( '', ?, ?, ?, ?)";
-						$dbresult = $db->Execute($query, array($date_event, $iddiv, $idpoule,$tour));
+				{
+						$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,type_compet, numjourn) VALUES ( '', ?, ?, ?, ?)";
+						$dbresult = $db->Execute($query, array($date_event,$date_event,$type_compet,$tour));
 						
-						if($dbresult){
+						if($dbresult)
+						{
 							$designation.= $db->ErrorMsg();
 						}
-					}
+				}
 
-		}
+		
 	}
 }//fin du foreach
 }//fin du if is_array($result)

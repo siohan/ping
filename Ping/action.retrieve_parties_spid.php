@@ -88,14 +88,13 @@ else
 		$ecart_reel = $points - $newclass;
 		//on calcule l'écart selon la grille de points de la FFTT
 		$type_ecart = CalculEcart($ecart_reel);
-		
 		$epreuve = $tab[epreuve];
 		
 		// de quelle compétition s'agit-il ? 
 		//On a la date et le type d'épreuve
 		//on peut donc en déduire le tour via le calendrier
 		//et le coefficient pour calculer les points via la table type_competitons
-		
+		/*
 		//1 - on récupére le tour s'il existe
 		//on va fdonc chercher dans la table calendrier
 		$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE name_compet =? AND date_compet = ?";
@@ -109,7 +108,7 @@ else
 			{
 				$numjourn = 0;
 			}
-		
+		*/
 		//2 - on récupère le coefficient de la compétition
 		$coeff = coeff($epreuve);
 		
@@ -126,14 +125,12 @@ else
 			}
 		
 		//on peut désormais calculer les points 
-		echo "la victoire est : ".$victoire."<br />";
+		//echo "la victoire est : ".$victoire."<br />";
 		 $points1 = CalculPointsIndivs($type_ecart, $victoire);
-		echo "le coeff est : ".$coeff."<br />";
-		echo "le type ecart est : ".$type_ecart."<br />";
-		echo "les points 1 sont : ".$points1."<br />";
+		//echo "le coeff est : ".$coeff."<br />";
+		//echo "le type ecart est : ".$type_ecart."<br />";
+		//echo "les points 1 sont : ".$points1."<br />";
 		$pointres = $points1*$coeff; 
-		
-		
 		$forfait = $tab[forfait];
 	
 	

@@ -39,6 +39,10 @@
     <p class="pagetext">Donnez un nom court (ex N1 A):</p>
     <p class="pageinput">{$friendlyname}</p>
   </div>
+<div class="pageoverflow">
+    <p class="pagetext">Compétition:</p>
+    <p class="pageinput">{$type_compet}</p>
+  </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
     <p class="pageinput">{$submit}{$cancel}{$back}</p>

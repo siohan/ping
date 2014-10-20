@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: Ping
-# Version: 0.1beta, Claude SIOHAN Agi webconseil
+# Version: 0.1beta1, Claude SIOHAN Agi webconseil
 # Method: Install
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2008 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -64,7 +64,8 @@ $flds= "id I(11) KEY AUTO,
 	friendlyname C(255),
 	liendivision C(255),
 	idpoule I(11),
-	iddiv I(11)";
+	iddiv I(11),
+	type_compet C(3)";
 
 $sqlarray= $dict->CreateTableSQL( cms_db_prefix()."module_ping_equipes",
 				  $flds,
@@ -87,9 +88,10 @@ $flds = "
 	numjourn I(11),
      classement I(4),
      victoire I(1),
-	ecart N(6,3),
-	coeff N(3,2),
-	pointres N(4,2),
+	ecart N(6.2),
+	type_ecart I(11),
+	coeff N(3.2),
+	pointres N(4.2),
      forfait I(1) ";
 			
 // create it. 
@@ -131,7 +133,7 @@ $dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
 	saison C(255),
-	datemaj D,
+	datemaj ". CMS_ADODB_DT .",
 	licence I(11),
 	sit_mens C(200),
 	fftt I(11),
@@ -155,6 +157,7 @@ $flds = "
 	club I(1),
 	tour I(2),
 	date_event D,
+	affiche L, 
 	uploaded I(1),
 	libelle C(255),
 	equa C(255),
@@ -176,8 +179,8 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
-	datecreated T,
-	datemaj T,
+	datecreated ". CMS_ADODB_DT .",
+	datemaj ". CMS_ADODB_DT .",
 	mois I(2),
 	annee I(4),
 	phase I(1),
@@ -203,7 +206,8 @@ $dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
 	type_compet C(3),
-	date_compet D,
+	date_debut D,
+	date_fin D,
 	iddiv I(11),
 	idpoule I(11),
 	numjourn I(11)";
@@ -221,8 +225,8 @@ $dict->ExecuteSQLArray($sqlarray);
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
-	datecreated T,
-	datemaj T,
+	datecreated ". CMS_ADODB_DT .",
+	datemaj ". CMS_ADODB_DT .",
 	licence I(11),
 	type_contact C(255),
 	contact C(255),
@@ -237,7 +241,7 @@ $dict->ExecuteSQLArray($sqlarray);
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
-	datecreated T,
+	datecreated ". CMS_ADODB_DT .",
 	status C(255),
 	designation C(255),
 	action C(255)";
@@ -258,6 +262,17 @@ $flds = "
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",
+				   $flds, 
+				   $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+
+$dict = NewDataDictionary( $db );
+$flds = "
+	licence I(11),
+	type_compet C(3)";
+			
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_participe",
 				   $flds, 
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
@@ -342,7 +357,7 @@ $insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id,
 $res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25'));
 $res = $db->Execute($insert_sql, array('Critérium fédéral Jeunes', 'J', '1.00'));
 $res = $db->Execute($insert_sql, array('Chpt France par équipes masculin', '1', '1.00'));
-$res = $db->Execute($insert_sql, array('Chpt France par équipes féminin', '1', '1.00'));
+$res = $db->Execute($insert_sql, array('Chpt France par équipes féminin', '2', '1.00'));
 $res = $db->Execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75'));
 $res = $db->Execute($insert_sql, array('Championnat de France Vétérans', 'V', '1.00'));
 $res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25'));
@@ -351,6 +366,7 @@ $res = $db->Execute($insert_sql, array('Championnat jenues poussins benjamins', 
 $res = $db->Execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50'));
 $res = $db->Execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50'));
 $res = $db->Execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75'));
+$res = $db->Execute($insert_sql, array('Indéterminé.', 'U', '0.00'));
 
 // put mention into the admin log
 $this->Audit( 0, 

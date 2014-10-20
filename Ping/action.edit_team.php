@@ -47,6 +47,7 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 		$libequipe = $dbresult['libequipe'];
 		$libdivision = $dbresult['libdivision'];
 		$friendlyname = $dbresult['friendlyname'];
+		$type_compet = $dbresult['type_compet'];
 		
 		
 	}
@@ -77,7 +78,22 @@ $smarty->assign('libequipe',
 $smarty->assign('libdivision',
 		$this->CreateInputText($id, 'libdivision',$libdivision,30,150));
 $smarty->assign('friendlyname',
-		$this->CreateInputText($id, 'friendlyname',$friendlyname,10,80));					
+		$this->CreateInputText($id, 'friendlyname',$friendlyname,10,80));
+		//on fait le tour des compétitions possibles excepté U pour undefined
+$query = "SELECT name, code_compet FROM ".cms_db_prefix()."module_ping_type_competitions";
+$dbresultat = $db->Execute($query);
+while ($dbresultat && $row = $dbresultat->FetchRow())
+  {
+    //$datelist[$row['date_event']] = $row['date_event'];
+    //$playerslist[$row['player']] = $row['licence'];
+//$saisonslist[$row['saison']] = $row['saison'];
+    //$equipelist[$row['equipe']] = $row['equipe'];
+    $typeCompet[$row['name']] = $row['code_compet'];
+  }
+
+
+$smarty->assign('type_compet',
+		$this->CreateInputDropdown($id, 'type_compet',$typeCompet,$type_compet,$type_compet));					
 $smarty->assign('submit',
 		$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
 $smarty->assign('cancel',

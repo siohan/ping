@@ -1,7 +1,7 @@
 <?php
 
 if( !isset($gCms) ) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 $db =& $this->GetDb();
 global $themeObject;
 //debug_display($params,'Parameters');
@@ -11,7 +11,7 @@ $now = trim($db->DBTimeStamp(time()), "'");
 $mois_reel = $mois_courant - 1;
 $mois_sm = $mois_francais["$mois_reel"];
 $annee_courante = date('Y');
-//echo "l'année courante est : ".$annee_courante;
+echo "l'année courante est : ".$annee_courante;
 
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_situation_mensuelle_tab')); 
@@ -26,9 +26,9 @@ $equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT * ,j.licence, CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_sit_mens AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence ORDER BY j.nom ASC";//"";
-$dbresult = $db->Execute($query);
-while ($dbresult && $row = $dbresult->FetchRow())
+$query = "SELECT pts.mois ,j.licence, CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_sit_mens AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence ORDER BY j.nom ASC";//"";
+$dbresultat = $db->Execute($query);
+while ($dbresultat && $row = $dbresultat->FetchRow())
   {
     //$tourlist[$row['numjourn']] = $row['numjourn'];
     $playerslist[$row['player']] = $row['licence'];
@@ -37,41 +37,37 @@ $monthslist[$row['mois']] = $row['mois'];
     //$typeCompet[$row['codechamp']] = $row['codechamp'];
   }
 
-if( isset($params['submitfilter']) )
-  {
-    	if( isset( $params['monthslist']) )
-      	{
-	$this->SetPreference('moisChoisi', $params['monthslist']);
-      	}
-	if( isset( $params['playerslist']) )
-      	{
-	$this->SetPreference('playerChoisi', $params['playerslist']);
-      	}
-}
+	if( isset($params['submitfilter']) )
+  	{
+    		if( isset( $params['monthslist']) )
+      		{
+			$this->SetPreference('moisChoisi', $params['monthslist']);
+      		}
+		if( isset( $params['playerslist']) )
+      		{
+			$this->SetPreference('playerChoisi', $params['playerslist']);
+      		}
+	}
+	
 $curmonth = $this->GetPreference('moisChoisi');
 $curtour = $this->GetPreference( 'tourChoisi' );
 $curseason = $this->GetPreference('saisonChoisie');
 $curplayer = $this->GetPreference( 'playerChoisi');
 $curequipe = $this->GetPreference( 'equipeChoisie' );
 $curCompet = $this->GetPreference( 'competChoisie');
+
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_tour',
 		$this->CreateInputDropdown($id,'tourlist',$tourlist,-1,$curtour));
 $smarty->assign('input_month',
-				$this->CreateInputDropdown($id,'monthslist',$monthslist,-1,$curmonth));
-		$smarty->assign('prompt_equipe',
-				$this->Lang('equipe'));
-/*
-$smarty->assign('input_equipe',
-		$this->CreateInputDropdown($id,'equipelist',$equipelist,-1,$curequipe));
-*/		
-		$smarty->assign('input_compet',
-				$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
-				
-		$smarty->assign('input_player',
-				$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
-		
+		$this->CreateInputDropdown($id,'monthslist',$monthslist,-1,$curmonth));
+$smarty->assign('prompt_equipe',
+		$this->Lang('equipe'));		
+$smarty->assign('input_compet',
+		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
+$smarty->assign('input_player',
+		$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
@@ -91,44 +87,45 @@ $mois = (!empty($mois_pref)) ? $mois_pref : $mois_courant;
 //echo "le mois retenu est : ".$mois;
 
 $result= array ();
-$query= "SELECT j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_sit_mens AS sm ON j.licence = sm.licence WHERE j.actif = '1' ";
-//echo $query;
-
-if( isset($params['submitfilter'] )){
-	
-	if($curmonth !=''){
-		
-		$query.=" AND (sm.mois = ? OR sm.mois IS NULL) ";
-		$parms['mois'] = $curmonth;
-	}
-	
-	if ($curplayer !='')
-	{
-		$query .=" AND j.licence = ?";
-		$parms['licence'] = $curplayer;
-		
-	}
-	else 
-	{
-		$query.=" AND j.licence >= 0 ";
-		$parms ='';
-	}
-
-}//fin du submit filter
-$query.="  AND (sm.annee = ? OR sm.annee IS NULL) ";
+$query2 = "SELECT *, j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_sit_mens AS sm ON j.licence = sm.licence WHERE j.actif = '1' AND (sm.annee = ? OR sm.annee IS NULL) ";
 $parms['annee'] = $annee_courante;
-
-$query.=" ORDER BY joueur ASC";
-$dbresult= $db->Execute($query,$parms);
 //echo $query;
-if (!$dbresult)
-{
 
-		//echo "pb req !";
+	if( isset($params['submitfilter'] ))
+	{
+	
+		if($curmonth !='')
+		{
+		
+			$query2.=" AND (sm.mois = ? OR sm.mois IS NULL) ";
+			$parms['mois'] = $curmonth;
+		}
+	
+		if ($curplayer !='')
+		{
+			$query2.=" AND j.licence = ?";
+			$parms['licence'] = $curplayer;
+		
+		}
+	
+	}//fin du submit filter
+	
+//$query2.="  AND (sm.annee = ? OR sm.annee IS NULL) ";
+//$parms['annee'] = $annee_courante;
+
+$query2.=" ORDER BY joueur ASC";
+$dbresult= $db->Execute($query2,$parms);
+echo $query2;
+
+	if (!$dbresult)
+	{
+
+		echo "FATAL SQL ERROR: ".$db->ErrorMsg()."<br/>QUERY2: ".$db->sql;
+		echo "pb req !";
 		$designation = $db->ErrorMsg();
 		echo "$designation";
 
-}
+	}
 
 
 

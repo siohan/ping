@@ -29,10 +29,8 @@ $(document).ready(function(){
   <div class="pageoverflow">
 	<p class="pagetext">Type Compétition:</p>
     <p class="pageinput">{$input_compet} </p>
-    <!--<p class="pagetext">{$prompt_tour}:</p>
-    <p class="pageinput">{$input_tour} </p>-->
-	<p class="pagetext">Saison:</p>
-    <p class="pageinput">{$input_saison} </p>
+    <p class="pagetext">Date:</p>
+    <p class="pageinput">{$input_date} </p>
 	<p class="pagetext">Joueur :</p>
     <p class="pageinput">{$input_player} </p>
     <p class="pagetext">&nbsp;</p>

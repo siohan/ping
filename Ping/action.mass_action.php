@@ -20,6 +20,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	$this->SetMessage('Joueurs désactivés');
 	$this->RedirectToAdminTab('joueurs');
 	break;
+	
 	case "situation" :
 	//les licences collectées sont supposées être actives
 	//que fait-on si elles ne le sont pas en réalité ?
@@ -82,6 +83,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	    ping_admin_ops::delete_journal( $journalid );
 	  }
 	break;
+	
 	case "spid" :
 	//$saison_courante = $this->GetPreference('saison_en_cours');
 	$message='Retrouvez toutes les infos dans le journal';
@@ -92,17 +94,19 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	$this->SetMessage("$message");
 	$this->RedirectToAdminTab("recuperation");
 	break;
+	
 	case "coeff05" :
 	foreach( $params['sel'] as $record_id)
 	{
-		ping_admin_ops::coeff( $record_id, $coeff= '0.50' );
+		ping_admin_ops::coeff_ops( $record_id, $coeff= '0.50' );
 	}
 	$this->RedirectToAdminTab('results');
 	break;
+	
 	case "coeff075" :
 	foreach( $params['sel'] as $record_id)
 	{
-		ping_admin_ops::coeff( $record_id, $coeff= '0.75' );
+		ping_admin_ops::coeff_ops( $record_id, $coeff= '0.75' );
 	}
 	$this->RedirectToAdminTab('results');
 	break;
@@ -110,7 +114,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	case "coeff1" :
 	foreach( $params['sel'] as $record_id)
 	{
-		ping_admin_ops::coeff( $record_id, $coeff='1.00' );
+		ping_admin_ops::coeff_ops( $record_id, $coeff='1.00' );
 	}
 	$this->RedirectToAdminTab('results');
 	break;
@@ -118,17 +122,25 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	case "coeff125" :
 	foreach( $params['sel'] as $record_id)
 	{
-		ping_admin_ops::coeff( $record_id, $coeff='1.25');
+		ping_admin_ops::coeff_ops( $record_id, $coeff='1.25');
 	}
 	$this->RedirectToAdminTab('results');
 	break;
 	
 	case "coeff15" :
+	$message='Retrouvez toutes les infos dans le journal';
 	foreach( $params['sel'] as $record_id)
 	{
-		ping_admin_ops::coeff( $record_id, $coeff= '1.50' );
+		ping_admin_ops::coeff_ops( $record_id, $coeff= '1.50' );
 	}
+	$this->SetMessage("$message");
 	$this->RedirectToAdminTab('results');
+	break;
+	
+	case "supp_spid" :
+	foreach( $params['sel'] as $record_id){
+		ping_admin_ops::supp_spid( $record_id );
+	}
 	break;
 
 	

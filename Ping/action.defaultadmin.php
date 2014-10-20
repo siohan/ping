@@ -44,10 +44,6 @@ echo $this->StartTabContent();
     	include(dirname(__FILE__).'/action.admin_joueurs_tab.php');
    	echo $this->EndTab();
 
-	echo $this->StartTab('equipes' , $params);
-    	include(dirname(__FILE__).'/action.admin_teams_tab.php');
-   	echo $this->EndTab();
-
         echo $this->StartTab('Individuelles', $params);//FFTT
     	include(dirname(__FILE__).'/action.admin_indivs_tab.php');
    	echo $this->EndTab();
@@ -58,7 +54,12 @@ echo $this->StartTabContent();
 
        echo $this->StartTab('compets' , $params);
     	include(dirname(__FILE__).'/function.admin_competitions_tab.php');
-   	echo $this->EndTab(); 	
+   	echo $this->EndTab();
+
+
+ 	echo $this->StartTab('equipes' , $params);//les equipes
+    	include(dirname(__FILE__).'/action.admin_teams_tab.php');
+   	echo $this->EndTab();
 
 	echo $this->StartTab('poules' , $params);
     	include(dirname(__FILE__).'/action.admin_poules_tab.php');
@@ -69,11 +70,11 @@ echo $this->StartTabContent();
     	include(dirname(__FILE__).'/function.admin_joueurs_recup_tab.php');
    	echo $this->EndTab();
 
-	echo $this->StartTab('situation' , $params);
+	echo $this->StartTab('situation' , $params);//situation mensuelle
     	include(dirname(__FILE__).'/action.admin_situation_mensuelle_tab.php');
    	echo $this->EndTab();
 
-	echo $this->StartTab('journal', $params);
+	echo $this->StartTab('journal', $params);//le journal
     	include(dirname(__FILE__).'/action.admin_data_tab.php');
    	echo $this->EndTab();
 if($this->CheckPermission('Ping Set Prefs')){

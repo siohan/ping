@@ -43,13 +43,7 @@ foreach($result as $cle =>$tab)
 		{
 			$designation.= $db->ErrorMsg();
 		}
-		else{
-			
-			$status = 'Ok';
-			$designation .= "Inclusion de ".$Nom." ".$prenom; 
-			$action = "mass_action";
-			ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
-		}
+		
 		
 		
 		//on réalise aussi une inclusion dans la table des situations mensuelles

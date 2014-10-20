@@ -45,10 +45,14 @@ require_once(dirname(__FILE__).'/function.calculs.php');
 		{
 			$friendlyname = $params['friendlyname'];
 		}
+		if (isset($params['type_compet']))
+		{
+			$type_compet = $params['type_compet'];
+		}
 		
 			//on a pas de modification du coeff, on change simplement les données sans recalculer
-			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? WHERE id = ?";
-			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$id));
+			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? , type_compet = ? WHERE id = ?";
+			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$type_compet,$id));
 			//echo $query;
 	
 		if (!$dbresult) {

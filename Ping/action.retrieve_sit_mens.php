@@ -4,21 +4,22 @@ debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $db=$gCms->GetDb();
 
-//les 
+//les préférences
 $mois_courant = date('n');
 $mois_francais = array('Janvier', 'Février','Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Août', 'Septembre', 'Octobre','Novembre','Décembre');
 $annee_courante = date('Y');
 $mois_reel = $mois_courant - 1;
 $mois_sm = $mois_francais["$mois_reel"];
 $mois_sit_mens = $mois_sm." ".$annee_courante;
-$phase =2;
+
+$designation = ''; //instanciation du message de sortie
 
 //echo "le mois de la situation mensuelle est : ".$mois_sit_mens;
 $now = trim($db->DBTimeStamp(time()), "'");
-$licence2 = $params['licence'];
+$licence = $params['licence'];
 //on vérifie que le joueur en question est bien actif
 $query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
-$dbresult = $db->Execute($query, array($licence2));
+$dbresult = $db->Execute($query, array($licence));
 //le joueur ne remplit pas les conditions de la requete, on renvoit avec un message
 if ($dbresult && $dbresult->RecordCount() == 0)
 {
@@ -70,6 +71,7 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 		$valinit = $taresultb[valinit];
 		$progmois = $result[progmois];
 		$progann = $result[progann];
+		
 		if( $licence == '')
 		{
 			// il n'y a pas de correspondance
@@ -87,69 +89,73 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 		}
 		else
 		{
-			//La licence existe bien en bdd, le mois en question est-il déjà renseigné ? Pour éviter 
-			$phase =2;
+			
 			$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
 			$dbresultat = $db->Execute($query,array($now,$now,$mois_courant, $annee_courante, $phase, $licence, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
 				//On vérifie que l'insertion se passe bien
+				
 				if(!$dbresultat)
 				{
-					$message = $db->ErrorMsg(); 
+					$message.= $db->ErrorMsg(); 
 					$this->SetMessage("$message");
 					$this->RedirectToAdminTab('joueurs');
 				//break;
 				}
-				else {
+				else 
+				{
 				
 			
-			//on insère aussi l'enegistrement dans le journal
-			$designation = "Récupération situation mensuelle de  ".$mois_sm." ".$annee_courante." de ".$nom." ".$prenom;
-			$status = 'Sit_mens';
-			/*
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datemaj, status,designation, action) VALUES ('', ?, ?, ?, ?)";
-			$action = "retrieve_sit_mens";
-			$dbresult = $db->Execute($query, array($now, $status, $designation,$action));
-			*/
-			//on écrit dans le journal
-			ping_admin_ops::ecrirejournal($now,$status,$designation, $action);
-			/*
-			if(!$dbresult)
-			{
-				echo $db->sql.'<br/>'.$db->ErrorMsg(); 
-			}
-			
-			*/
-			$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
-			$dbresult = $db->Execute($query, array($licence));
-			
-			if($dbresult->RecordCount() == 0) {
-				$fftt = 0;
-				$spid = 0;
-				$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
-				$dbresult = $db->Execute($query, array($saison, $now, $licence, $mois_sit_mens, $fftt, $spid));
-				
-				$this->SetMessage("Situation mensuelle ajoutée");
-				$this->RedirectToAdminTab('situation');
-			}
-			else 
-			{
-					$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
-					$dbresult = $db->Execute($query, array($now, $mois_sit_mens, $licence));
-
-					if(!$dbresult)
-					{
-						$message = $db->ErrorMsg();
-					}
-					else{
-
-						$message = "Situation mensuelle mise à jour";
-					}
+					//on insère aussi l'enegistrement dans le journal
+					$designation = "Récupération situation mensuelle de  ".$mois_sm." ".$annee_courante." de ".$nom." ".$prenom;
+					$status = 'Sit_mens';
+					/*
+					$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datemaj, status,designation, action) VALUES ('', ?, ?, ?, ?)";
+					$action = "retrieve_sit_mens";
+					$dbresult = $db->Execute($query, array($now, $status, $designation,$action));
+					*/
+					//on écrit dans le journal
+					ping_admin_ops::ecrirejournal($now,$status,$designation, $action);
+					/*
 					
-					$this->SetMessage("$message");
-					$this->RedirectToAdminTab('situation');
-			}
-			}//fin du if si l'insertion se passe bien
+						if(!$dbresult)
+						{
+							echo $db->sql.'<br/>'.$db->ErrorMsg(); 
+						}
+			
+					*/
+					$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
+					$dbresult = $db->Execute($query, array($licence));
+			
+						if($dbresult->RecordCount() == 0) 
+						{
+							$fftt = 0;
+							$spid = 0;
+							$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
+							$dbresult = $db->Execute($query, array($saison, $now, $licence, $mois_sit_mens, $fftt, $spid));
+				
+							$this->SetMessage("Situation mensuelle ajoutée");
+							$this->RedirectToAdminTab('situation');
+						}
+						else 
+						{
+							$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
+							$dbresult = $db->Execute($query, array($now, $mois_sit_mens, $licence));
+
+								if(!$dbresult)
+								{
+									$message = $db->ErrorMsg();
+								}
+								else
+								{
+
+									$message = "Situation mensuelle mise à jour";
+								}
+					
+								$this->SetMessage("$message");
+								$this->RedirectToAdminTab('situation');
+						}
+				}//fin du if si l'insertion se passe bien
 		}//fin du if $licence				
 	}//fin de la vérification de la sit_mens en bdd
 	}//fin du test si le joueur est actif en bdd

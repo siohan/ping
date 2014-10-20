@@ -44,7 +44,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.1beta'; }  
+  function GetVersion() { return '0.1beta2'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -58,12 +58,8 @@ class Ping extends CMSModule
   function VisibleToAdminUser()
   {
     	return 
-		$this->CheckPermission('Ping Use');/* || 
-		$this->CheckPermission('Add CalculTranche') ||  
-		$this->CheckPermission('View CalculTranche') ||
-		$this->CheckPermission('Delete CalculTranche');
-		
-      return true;*/
+		$this->CheckPermission('Ping Use');
+	
   }
   
   

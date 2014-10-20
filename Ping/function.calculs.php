@@ -1181,33 +1181,38 @@ $string .= $chaine[rand()%strlen($chaine)];
 return $string;
 }
 
-function coeff ($typeCompetition){
+function coeff ($typeCompetition)
+{
 	$db  = cmsms()->GetDb();
-/*	
-	if(substr_count($typeCompetition,'-')>0){
+	
+	if(substr_count($typeCompetition,'-')>0)
+	{
 		$type_inter = explode('-',$typeCompetition,2);
 		$type = $type_inter[0];
 	}
-	else {
+	else 
+	{
 		$type = $typeCompetition;
 	}
-*/
+
 $query ="SELECT coefficient FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
-$dbretour = $db->Execute($query, array($typeCompetition));
-if ($dbretour && $dbretour->RecordCount() > 0)
-  {
-    while ($row= $dbretour->FetchRow())
-      {
-	$coeff = $row['coefficient'];
-	return $coeff;
-	}
+$dbretour = $db->Execute($query, array($type));
+
+	if ($dbretour && $dbretour->RecordCount() > 0)
+  	{
+    		while ($row= $dbretour->FetchRow())
+      		{
+			$coeff = $row['coefficient'];
+			return $coeff;
+		}
 	
-}
-else{
-	$coeff = 0;
-	return coeff;
-	//echo "coefficient introuvable !";
-}
+	}
+	else
+	{
+		$coeff = 0;
+		return $coeff;
+		//echo "coefficient introuvable !";
+	}
 }
 
 function coeff_old ($cle){

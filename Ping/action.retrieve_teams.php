@@ -27,6 +27,7 @@ $type = $params['type'];
 	{
 		$result = $service->getEquipesByClub("$club_number");
 		$chpt = "A"; //pour autres championnat
+		$type = 'U';//pour undefined
 	}
 	else 
 	{
@@ -63,31 +64,36 @@ foreach($result as $cle =>$tab)
 	$idpoule = $tab[idpoule];
 	$iddiv = $tab[iddiv];
 	
+	$type_compet = 'U';
+	
 	
 	$query = "SELECT phase, saison, liendivision FROM ".cms_db_prefix()."module_ping_equipes WHERE liendivision = ? AND phase = ? AND saison = ?";
 	$dbresult = $db->Execute($query, array($liendivision, $phase, $saison));
-	if($dbresult  && $dbresult->RecordCount() == 0) {
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision, liendivision, idpoule, iddiv) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
-		//echo $query;
-		$compteur++;
-		$dbresultat = $db->Execute($query,array($saison, $phase, $new_equipe, $libdivision, $liendivision, $idpoule, $iddiv));
-		
-		if(!$dbresultat)
+	
+		if($dbresult  && $dbresult->RecordCount() == 0) 
 		{
-			$designation .= $db->ErrorMsg();
-			
-			
-		}
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?)";
+			//echo $query;
+			$compteur++;
+			$dbresultat = $db->Execute($query,array($saison, $phase, $new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet));
+		
+			if(!$dbresultat)
+			{
+				$designation .= $db->ErrorMsg();			
+			}
 
-	}//fin du if $dbresult
+		}//fin du if $dbresult
 	
 	
 }// fin du foreach
 
 $designation .= "Récupération de ".$compteur." équipes";
-if($compteur >0){
-	$designation.="Indiquez le type de compétition des équipes récupérées.";
-}
+
+	if($compteur >0)
+	{
+		$designation.="Indiquez le type de compétition des équipes récupérées.";
+	}
+	
 $status = 'Ok';
 $action = 'retrieve_teams';
 //ping_admin_ops::ecrirejournal($now,$status,$designation,$action);

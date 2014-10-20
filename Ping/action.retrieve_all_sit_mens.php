@@ -91,7 +91,8 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 						//on le reporte dans le journal dédié
 						$status = "Error";
 						$designation = "Licence absente pour ".$nom1." ".$prenom1." ou coupure du service";
-						$message.= $designation;echo "$designation";
+						$message.= $designation;
+						echo "$designation";
 						$action = "retrieve_all_sit_mens";
 						$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datemaj, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 						$dbresult = $db->Execute($query, array($now, $status, $designation, $action));

@@ -44,6 +44,17 @@ public static function unable_player($licence)
 
   }
 
+public static function supp_spid($record_id)
+  {
+    $db = cmsms()->GetDb();
+
+    //Now remove the entry
+    $query = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
+    $db->Execute($query, array($record_id));
+
+
+  }
+
 public static function masculin($licence)
   {
     $db = cmsms()->GetDb();
@@ -99,7 +110,7 @@ public static function do_not_display($record_id)
 
   }
 
-public static function coeff($record_id, $coeff)
+public static function coeff_ops($record_id, $coeff)
   {
 	//debug_display($params, 'Parameters');
 	global $gCms;
@@ -110,11 +121,18 @@ public static function coeff($record_id, $coeff)
     //On récupère les infos de l'enregistrement
     $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
     $dbresult = $db->Execute($query, array($record_id));
+	if(!$dbresult){
+		$designation = $db->ErrorMsg();
+		$status = 'Echec';
+		$action = 'mass_delete coeff';
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, status, designation, action) VALUES ('', ?, ?, ?)";
+		$dbresult = $db->Execute($query, array($status, $designation, $action));
+	}
 
 	$row= $dbresult->FetchRow();
 	$victoire = $row['victoire'];
-	$type_ecart = $row['type_ecart'];
-	$points1 = CalculPointsIndivs($type_ecart,$victoire);
+	$ecart = $row['type_ecart'];
+	$points1 = CalculPointsIndivs($ecart,$victoire);
 	//$coeff = '1.00';
 	$pointres = $points1*$coeff;
 
@@ -122,9 +140,20 @@ public static function coeff($record_id, $coeff)
 
     $query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET coeff = ?, pointres = ? WHERE id = ?";
     $dbresult = $db->Execute($query, array($coeff, $pointres, $record_id));
+	
+	if(!$dbresult){
+		$designation = $db->ErrorMsg();
+		$status = 'Echec';
+		$action = 'mass_delete update recup';
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, status, designation, action) VALUES ('', ?, ?, ?)";
+		$dbresult = $db->Execute($query, array($status, $designation, $action));
+	}
 
 
   }
+
+
+
 
 
 
@@ -223,40 +252,48 @@ public static function retrieve_parties_spid( $licence )
 	global $gCms;
 	$db = cmsms()->GetDb();
 	$ping = cms_utils::get_module('Ping');
+	//il manque le mois_event
 	require_once(dirname(__FILE__).'/function.calculs.php');
+	
+	
 	$saison_courante = $ping->GetPreference('saison_en_cours');
 	$now = trim($db->DBTimeStamp(time()), "'");
 	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 	$dbretour = $db->Execute($query, array($licence));
+	
+	
+	
+	
+	
 	if ($dbretour && $dbretour->RecordCount() > 0)
-	  {
-	    while ($row= $dbretour->FetchRow())
-	      {
-		$player = $row['player'];
-		$service = new Service();
-		$result = $service->getJoueurPartiesSpid("$licence");
-		//var_dump($result);
-		//le service est-il ouvert ?
-		/**/
-		//on teste le resultat retourné     
+	{
+		while ($row= $dbretour->FetchRow())
+		{
+			$player = $row['player'];
+			$service = new Service();
+			$result = $service->getJoueurPartiesSpid("$licence");
+			//var_dump($result);
+			//le service est-il ouvert ?
+			/**/
+			//on teste le resultat retourné     
 
-			if(!is_array($result)){
-
-
+			
+			if(!is_array($result))
+			{
 				$message = "Service coupé"; 
 				$status = 'Echec';
 				$designation = $message;
 				$action = "mass_action";
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 			}
-			else{
+			else
+			{
 				$i = 0;
 				$compteur = 0;
 				foreach($result as $cle =>$tab)
 				{
 				
 					$compteur++;
-
 					$dateevent = $tab[date];
 					$chgt = explode("/",$dateevent);
 					$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
@@ -274,13 +311,16 @@ public static function retrieve_parties_spid( $licence )
 					$classement = $tab[classement];
 					$cla = substr($classement, 0,1);
 
-						if($cla == 'N'){
+						if($cla == 'N')
+						{
 							$newclassement = explode('-', $classement);
 							$newclass = $newclassement[1];
 						}
-						else {
+						else 
+						{
 							$newclass = $classement;
 						}
+						
 					//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
 					$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ?";
 					$dbresult = $db->Execute($query, array($licence,$mois_event));
@@ -290,6 +330,14 @@ public static function retrieve_parties_spid( $licence )
 							//$designation.="Ecart non calculé";
 							$ecart = 0;
 						}
+						else{
+							$message = "Pas de points".$db->ErrorMsg(); 
+							$status = 'Echec';
+							$designation = $message;
+							$action = "mass_action";
+							ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+						}
+						
 
 					$row = $dbresult->FetchRow();
 					$points = $row[points];
@@ -325,7 +373,8 @@ public static function retrieve_parties_spid( $licence )
 					
 					$victoire = $tab[victoire];
 
-						if ($victoire =='V'){
+						if ($victoire =='V')
+						{
 							$victoire = 1;
 						}
 						else 
@@ -334,11 +383,7 @@ public static function retrieve_parties_spid( $licence )
 						}
 					
 					//on peut désormais calculer les points 
-					//echo "la victoire est : ".$victoire."<br />";
 					$points1 = CalculPointsIndivs($type_ecart, $victoire);
-					//echo "le coeff est : ".$coeff."<br />";
-					//echo "le type ecart est : ".$type_ecart."<br />";
-					//echo "les points 1 sont : ".$points1."<br />";
 					$pointres = $points1*$coeff;
 					$forfait = $tab[forfait];
 
@@ -347,7 +392,8 @@ public static function retrieve_parties_spid( $licence )
 					//echo $query;
 					$dbresult = $db->Execute($query, array($licence, $date_event,$nom));
 
-					if($dbresult  && $dbresult->RecordCount() == 0) {
+					if($dbresult  && $dbresult->RecordCount() == 0) 
+					{
 						$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, saison, datemaj, licence, date_event, epreuve, nom, numjourn,classement, victoire,ecart,type_ecart, coeff, pointres, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 						$i++;
 						//echo $query;
@@ -363,6 +409,14 @@ public static function retrieve_parties_spid( $licence )
 							}
 							
 						
+					}
+					else
+					{
+						$message = $db->ErrorMsg(); 
+						$status = 'Echec';
+						$designation = $message;
+						$action = "mass_action";
+						ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 					}//fin du if recordCount() ligne 244
 					
 				}//fin du foreach
@@ -376,15 +430,14 @@ public static function retrieve_parties_spid( $licence )
 			}//fin du if !is_array
 		}//fin du while
 
+	}
+	else
+	{
+		$status = 'Echec';
+		$designation .= "Pas de résultats";
+		$action = "mass_action spid";
+		ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 	}//fin du if dbretour >0
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }//fin de la fonction
 

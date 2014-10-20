@@ -91,57 +91,54 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	
 	//$onerow->equipe= $row['equipe'];
 	$onerow->libelle= $this->createLink($id, 'viewteamresult', $returnid, $row['libelle'],array('cle'=>$row['lien'])) ;
+	
 	if(isset($friendlyname) && $friendlyname !='')
 	{
 		if ($libequipe == $equa)
 		{
 			$onerow->equa= $row['friendlyname'];
 		}
-		else{
+		else
+		{
 			$onerow->equa= $row['equa'];
 		}
 		
 	}
-	else{
+	else
+	{
 		$onerow->equa= $row['equa'];
 	}
+	
 	$onerow->scorea= $row['scorea'];
 	$onerow->scoreb= $row['scoreb'];
 	$onerow->libequipe= $row['libequipe'];
+	
 	if(isset($friendlyname) && $friendlyname !='')
 	{
 		if ($libequipe == $equb)
 		{
 			$onerow->equb= $row['friendlyname'];
 		}
-		else{
+		else
+		{
 			$onerow->equb= $row['equb'];
 		}
 		
 	}
-	else{
+	else
+	{
 		$onerow->equb= $row['equb'];
 	}
-	/*	
-	$onerow->commune= $row['commune'];
-	$onerow->email= $row['email'];
-	$onerow->tranche= $row['tranche'];
-	$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
-	*/
-	//$onerow->equipe= $this->CreateLink($id, 'create_new_user', $returnid, $row['equipe'], $row);
-	if($uploaded == 0){
-		$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_details_rencontres', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('upload_result'), '', '', 'systemicon'), array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv'], 'lien'=>$row['lien']));
+	
+	if($affiche ==1)
+	{
+		$onerow->display= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('do_not_display'), '', '', 'systemicon');
 	}
 	else
 	{
-		$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_detail_rencontres', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('upload_result'), '', '', 'systemicon'), array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv']));
+		$onerow->display= $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('display_on_frontend'), '', '', 'systemicon');
 	}
-	if($affiche ==1){
-		$onerow->display= $this->CreateLink($id, 'do_not_display', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('do_not_display'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-	}
-	else{
-		$onerow->display= $this->CreateLink($id, 'display_on_frontend', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('display_on_frontend'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-	}
+	
 	//$onerow->affichage = 
 	$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
 	$onerow->deletelink= $this->CreateLink($id, 'delete_team_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
@@ -158,15 +155,15 @@ $smarty->assign('createlink',
 		$this->CreateLink($id, 'retrieve_all_poule_rencontres', $returnid, 
 				  $this->Lang('download_all_poule_results'), 
 				  array()));
-				$smarty->assign('form2start',
-						$this->CreateFormStart($id,'mass_action',$returnid));
-				$smarty->assign('form2end',
-						$this->CreateFormEnd());
-				$articles = array("Afficher sur le site"=>"display_on_frontend","Ne plus afficher sur le site"=>"do_not_display","Supprimer"=>"delete_team_result");
-				$smarty->assign('actiondemasse',
-						$this->CreateInputDropdown($id,'actiondemasse',$articles));
-				$smarty->assign('submit_massaction',
-						$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
+$smarty->assign('form2start',
+		$this->CreateFormStart($id,'mass_action',$returnid));
+$smarty->assign('form2end',
+		$this->CreateFormEnd());
+$articles = array("Afficher sur le site"=>"display_on_frontend","Ne plus afficher sur le site"=>"do_not_display","Supprimer"=>"delete_team_result");
+$smarty->assign('actiondemasse',
+		$this->CreateInputDropdown($id,'actiondemasse',$articles));
+$smarty->assign('submit_massaction',
+		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
 echo $this->ProcessTemplate('poulesRencontres.tpl');
 
 

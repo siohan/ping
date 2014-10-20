@@ -1,29 +1,31 @@
 <?php
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 
 $now = trim($db->DBTimeStamp(time()), "'");
 $mois_courant = date('n');
 $annee_courante = date('Y');
-$saison_courante = $this->GetPreference('saison_en_cours');
+$saison = $this->GetPreference('saison_en_cours');
 $licence = $params['licence'];
 $designation = '';
 $query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 $dbretour = $db->Execute($query, array($licence));
-if ($dbretour && $dbretour->RecordCount() > 0)
-  {
-    while ($row= $dbretour->FetchRow())
-      {
-	$player = $row['player'];
-	//return $player;
-	}
+
+	if ($dbretour && $dbretour->RecordCount() > 0)
+  	{
+    		while ($row= $dbretour->FetchRow())
+      		{
+			$player = $row['player'];
+			//return $player;
+		}
 	
-}
-else{
-	$this->SetMessage("Joueur introuvable");
-	$this->RedirectToAdminTab('joueurs');
-}
+	}
+	else
+	{
+		$this->SetMessage("Joueur introuvable");
+		$this->RedirectToAdminTab('joueurs');
+	}
 
 
 $service = new Service();
@@ -32,11 +34,13 @@ $service = new Service();
 $result = $service->getJoueurParties("$licence");
 
 
-if (!is_array($result)){
-	//
-	$this->SetMessage('Pb accès résultat');
-	$this->RedirectToAdminTab('recuperation');
-}
+	if (!is_array($result))
+	{
+		//
+		$this->SetMessage('Pb accès résultat');
+		$this->RedirectToAdminTab('recuperation');
+	}
+	
 //var_dump($result);  
 /**/
 $i = 0;
@@ -50,15 +54,27 @@ foreach($result as $cle =>$tab)
 	$advlic = $tab[advlic];
 	$vd = $tab[vd];
 	
-	if ($vd =='V'){
-		$vd = 1;
+		if ($vd =='V')
+		{
+			$vd = 1;
 		}
-	else 
-		{$vd = 0;}
+		else 
+		{
+			$vd = 0;
+		}
 		
 	$numjourn = $tab[numjourn];
-	if(is_array($numjourn)){$numjourn = '0';}
+	
+		if(is_array($numjourn))
+		{
+			$numjourn = '0';
+		}
+		
 	$codechamp = $tab[codechamp];
+	
+	//on essaie de déterminer le nom de cette compet ?
+	$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competition WHERE code_compet = ?";
+	
 	$dateevent = $tab[date];
 	$chgt = explode("/",$dateevent);
 	$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
@@ -73,48 +89,56 @@ foreach($result as $cle =>$tab)
 	
 /**/	$query = "SELECT licence,advlic, numjourn, codechamp, date_event, coefchamp FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND advlic = ? AND numjourn = ? AND codechamp = ? AND date_event = ? AND coefchamp = ?";
 	$dbresult = $db->Execute($query, array($licence, $advlic, $numjourn, $codechamp, $date_event, $coefchamp));
-	if($dbresult  && $dbresult->RecordCount() == 0) {
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	
+	if($dbresult  && $dbresult->RecordCount() == 0) 
+	{
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$i++;
-		//echo $query;
-		$dbresultat = $db->Execute($query,array($saison_courante,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
+		echo $query;
+		$dbresultat = $db->Execute($query,array($saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
 		
-		if(!$dbresultat)
-		{
-			$designation.=$db->ErrorMsg(); 
-		}
+			if(!$dbresultat)
+			{
+				$designation.=$db->ErrorMsg(); 
+			}
 	}
 }
 $comptage = $i;
 $status = 'Parties FFTT';
-$designation = "Récupération de ".$comptage." parties sur ".$compteur." de ".$player;
+$designation.= "Récupération de ".$comptage." parties sur ".$compteur." de ".$player;
 $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 $action = "retrieve_parties";
 $dbresult = $db->Execute($query, array($now, $status,$designation,$action));
-if(!$dbresult)
-{
-	$designation.=$db->ErrorMsg(); 
-}
+
+	if(!$dbresult)
+	{
+			$designation.=$db->ErrorMsg(); 
+	}
+	
 $query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
 $dbresult = $db->Execute($query, array($licence));
 $lignes = $dbresult->RecordCount();
-if($lignes>0){
-	$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET fftt = ? WHERE licence = ?";
-	$dbresult = $db->Execute($query, array($compteur,$licence));
-}
-else{
+
+	if($lignes>0)
+	{
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET fftt = ? WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($compteur,$licence));
+	}
+	else
+	{
 	$sit_mens = 'Janvier 2000';
 	$fftt = $compteur;
 	$spid = '0';
 	$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
-	$dbresult = $db->Execute($query, array($saison_courante, $now, $licence, $sit_mens,$fftt,$spid));
-}
+	$dbresult = $db->Execute($query, array($saison, $now, $licence, $sit_mens,$fftt,$spid));
+	}
 
 
 
-if(!$dbresult){
-	$designation.=$db->ErrorMsg(); 
-}
+	if(!$dbresult)
+	{
+		$designation.=$db->ErrorMsg(); 
+	}
 	
 	$this->SetMessage("$designation");
 	$this->RedirectToAdminTab('recuperation');

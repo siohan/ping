@@ -28,6 +28,7 @@ if($travaux=='true'){echo $query;}
 $dbresult= $db->Execute($query);
 $rowclass= 'row1';
 $rowarray= array ();
+
 if ($dbresult && $dbresult->RecordCount() > 0)
   {
     while ($row= $dbresult->FetchRow())
@@ -42,10 +43,6 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->sexe= $row['sexe'];
 	$onerow->birthday= $row['birthday'];
 	$onerow->view_contacts= $this->CreateLink($id,'view_contacts', $returnid,$themeObject->DisplayImage('icons/system/contacts.gif', $this->Lang('view_contacts'), '', '', 'systemicon'),array('licence'=>$row['licence']));
-	//$onerow->create_contacts= $this->CreateLink($id,'view_contacts', $returnid,$themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add_contact'), '', '', 'systemicon'),array('licence'=>$row['licence']));
-	//$onerow->create_contact= $this->CreateLink($id,'create_contact', $returnid,$themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('unable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
-	//$onerow->prenom= $row['prenom'];
-	//$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
 	$onerow->doedit= $this->CreateLink($id, 'add_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']));
 	if($row['actif'] =='1'){
 		$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('unable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
@@ -66,7 +63,7 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('retrieve_users', 
-		$this->CreateLink($id, 'retrieve_users', $returnid,$themeObject->DisplayImage('icons/system/download.gif', $this->Lang('retrieve_users'), '', '', 'systemicon')).
+		$this->CreateLink($id, 'retrieve_users', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_users'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_users', $returnid, 
 		  $this->Lang('retrieve_users'), 
 		  array()));

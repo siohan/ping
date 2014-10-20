@@ -23,7 +23,7 @@ $smarty->assign('display_unable_players',
 $result= array ();
 //SELECT * FROM ping_module_ping_recup_parties AS rec right JOIN ping_module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
 $query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence, rec.sit_mens, rec.fftt, rec.spid, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_recup_parties AS rec ON j.licence = rec.licence WHERE j.actif = '1' AND (rec.saison = ? OR rec.saison IS NULL) ORDER BY j.id ASC";
-if($travaux=='true'){echo $query;}
+
 $dbresult= $db->Execute($query, array($saison));
 $rowclass= 'row1';
 $rowarray= array ();
@@ -49,7 +49,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->editlink= $this->CreateLink($id, 'enable_player', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('enable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
 	}
 	//$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, 'Désactiver',array('licence'=>$row['licence']));
-	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/download.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
+	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_sit_mens', $returnid, 
 	  $this->Lang('retrieve_sit_mens'), array('licence'=>$row['licence']));
 	$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, 'Parties disputées', array('licence'=>$row['licence']));

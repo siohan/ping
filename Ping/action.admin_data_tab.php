@@ -69,20 +69,6 @@ $smarty->assign('retrieve_details_rencontres',
 		      	{
 			$this->SetPreference('statusChoisie', $params['statuslist']);
 		      	}
-		/*	if( isset( $params['playerslist']) )
-		      	{
-			$this->SetPreference('playerChoisi', $params['playerslist']);
-		      	}
-		    if( isset( $params['equipelist']))
-			{
-			$this->SetPreference( 'equipeChoisie', $params['equipelist']);
-			}
-			
-		    if( isset( $params['typeCompet']) )
-			{ 
-			$this->SetPreference ( 'competChoisie', $params['typeCompet']);
-			}
-			*/
 		}
 		$curdate = $this->GetPreference( 'dateChoisi' );
 		$curstatus = $this->GetPreference('statusChoisie');
@@ -98,16 +84,7 @@ $smarty->assign('retrieve_details_rencontres',
 						$this->CreateInputDropdown($id,'statuslist',$statuslist,-1,$curstatus));
 				$smarty->assign('prompt_equipe',
 						$this->Lang('equipe'));
-		/*
-		$smarty->assign('input_equipe',
-				$this->CreateInputDropdown($id,'equipelist',$equipelist,-1,$curequipe));
-				
-				$smarty->assign('input_compet',
-						$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
-
-				$smarty->assign('input_player',
-						$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
-		*/
+	
 		$smarty->assign('submitfilter',
 				$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 		$smarty->assign('formend',$this->CreateFormEnd());
@@ -116,62 +93,36 @@ $smarty->assign('retrieve_details_rencontres',
 $result= array ();
 $query= "SELECT * FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
 
-if( isset($params['submitfilter'] )){
+	if( isset($params['submitfilter'] ))
+	{
 
-if ($curdate !='')
-{
-	$query .=" AND datecreated = ? ";
-	$parms['datecreated'] = $curdate;
+		if ($curdate !='')
+		{
+			$query .=" AND datecreated = ? ";
+			$parms['datecreated'] = $curdate;
 		
-}
-/*
-else {
-	$query.=" AND pts.numjourn >= 0 ";
-	$parms ='';
-}
+		}
+		if($curstatus !='')
+		{
+			$query.=" AND status = ?";
+			$parms['status'] = $curstatus;
+		}
 
-if ($curplayer !='')
-{
-	$query .=" AND pts.licence = ?";
-	$parms['licence'] = $curplayer;
-		
-}
-else {
-	$query.=" AND pts.licence >= 0 ";
-	$parms ='';
-}
-*/
-if($curstatus !='')
-{
-	$query.=" AND status = ?";
-	$parms['status'] = $curstatus;
-}
-/*
-else {
-	$query.=" AND pts.saison = ?";
-	$parms['saison'] = $this->GetPreference('saison_en_cours');
-}
+		$dbresult= $db->Execute($query,$parms);
+	}
 
-if ($curCompet !='')
-{
-	$query.=" AND pts.codechamp = ?";
-	$parms['codechamp'] = $curCompet;
-}
-*/
-$dbresult= $db->Execute($query,$parms);
-}
-
-else {
-	$query .=" ORDER BY id DESC";
-	$dbresult= $db->Execute($query);
-}
-//echo $query;
-if (!$dbresult)
-{
+	else 
+	{
+		$query .=" ORDER BY id DESC";
+		$dbresult= $db->Execute($query);
+	}//fin du if dbresult
+	//echo $query;
+	if (!$dbresult)
+	{
 
 		die('FATAL SQL ERROR: '.$db->ErrorMsg().'<br/>QUERY: '.$db->sql);
 
-}
+	}
 
 
 
@@ -179,31 +130,35 @@ if (!$dbresult)
 //$dbresult= $db->Execute($query);
 $rowclass= 'row1';
 $rowarray= array ();
-if ($dbresult && $dbresult->RecordCount() > 0)
-  {
-    while ($row= $dbresult->FetchRow())
-      {
-//	$actif = $row['actif'];
-	$onerow= new StdClass();
-	$onerow->rowclass= $rowclass;
-	$onerow->id= $row['id'];
-	$onerow->datemaj= $row['datecreated'];
-	$onerow->designation= $row['designation'];
-	$onerow->action= $row['action'];
-	if($actif == 1)
-	{
-		$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
-	}
-	else {
-		$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
-	}
-	$onerow->editlink= $this->CreateLink($id, $row['action'], $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),$this->Lang('retrieve_users_confirm'));
-	$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
-	$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
-	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
-	$rowarray[]= $onerow;
-      }
-  }
+
+	if ($dbresult && $dbresult->RecordCount() > 0)
+  	{
+    		while ($row= $dbresult->FetchRow())
+      		{
+			//	$actif = $row['actif'];
+			$onerow= new StdClass();
+			$onerow->rowclass= $rowclass;
+			$onerow->id= $row['id'];
+			$onerow->datemaj= $row['datecreated'];
+			$onerow->designation= $row['designation'];
+			$onerow->action= $row['action'];
+			
+			if($actif == 1)
+			{
+				$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
+			}
+			else 
+			{
+				$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
+			}
+			
+			$onerow->editlink= $this->CreateLink($id, $row['action'], $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),$this->Lang('retrieve_users_confirm'));
+			$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
+			$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
+			($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
+			$rowarray[]= $onerow;
+      		}
+  	}
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

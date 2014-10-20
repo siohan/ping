@@ -34,7 +34,9 @@ $lang['error_insufficientparams'] = 'Parametres manquants';
 $lang['addnewsheet'] = 'Ajouter une rencontre';
 $lang['adversaire'] = 'Adversaire';
 $lang['vic_def'] = 'Victoire ou défaite';
-$lang['filtres'] = 'Appliquer le filtre';
+$lang['revenus_fonciers'] = 'Revenus fonciers nets';
+$lang['capitaux_mobiliers'] = 'Capitaux mobiliers imposables';
+$lang['filtres'] = 'Filtres';
 $lang['allequipes'] = 'Toutes les equipes';
 $lang['alltours'] = 'Tous';
 $lang['allpoules'] = 'Toutes les poules';
@@ -55,7 +57,7 @@ $lang['no_adresse'] = 'Vous devez saisir votre adresse';
 $lang['confirm_email'] = 'Confirmez votre email';
 $lang['usersfoundtext'] = 'utilisateur(s) trouv&eacute;(s)';
 $lang['resultsfoundtext'] = 'r&eacute;sultat(s) trouv&eacute;(s)';
-//$lang['sheetsfoundtext'] = 'rencontre(s) trouv&eacute;e(s)';
+$lang['sheetsfoundtext'] = 'rencontre(s) trouv&eacute;e(s)';
 $lang['user_deleted'] = 'Utilisateur supprimé';
 $lang['needpermission'] = 'Vous n\'avez pas la permission d\'accéder';
 $lang['users'] = 'utilisateurs';
@@ -137,16 +139,22 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 <h2>Première utilisation</h2>
 <ol><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
 <li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
-Un lien pour les équipes du championnat de France par équipes, l\'autre pour les autres compétitions et indiquez éventuellement le type de compétitions auxquelles elles participent.</li>
+Un lien pour les équipes du championnat de France par équipes, l\'autre pour les autres compétitions et indiquez le type de compétitions auxquelles elles participent.</li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom. Désactivez les joueurs ne faisant pas l\'objet d\'une situation mensuelle</li>
-</ol>
+<li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
 <h3>FFTT</h3>
 <h3>Spid</h3>
 <h3>Situation mensuelle</h3>
 <p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer toutes les situations mensuelles des joueurs de votre club</p>
-<p>La FFTT limite la situation mensuelle à 100 accès par jour et par IP.</p>
+<p>ATTENTION !! La FFTT limite la situation mensuelle à 100 accès par jour et par IP.</p>
+<h3>Support</h3>
 <h3>Feuille de route</h3>
 <p>Dans cette première version, il n\'est pas prévu  de permissions d\'accès particulières, l\'admin du site a tous les droits. Je pense toutefois donner une permission spécifique pour supprimer des données J\'attends vos retours à ce sujet pour éventuellement en créer.</p>
+<h3>Feuille de route(Roadmap)</h3>
+<p>Si vous êtes sages...</p>
+<ul>
+<li>Des scripts pour récupérer automatiquement vos résultats (tâches cron)</li>
+</ul>
 <h3>Support</h3>
 <p>This module does not include commercial support. However, there are a number of resources available to help you with it:</p>
 <ul>

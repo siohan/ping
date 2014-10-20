@@ -23,18 +23,19 @@
 
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
-  <tr>	
-  <th>{$id}</th>
-  <th>{$equipe}</th>
-  <th>Niveau</th>
-  <th>Nom court</th>
-  <th colspan="4">Actions</th>
-  </tr>
+	<tr>
+		<th>{$id}</th>
+		<th>{$equipe}</th>
+		<th>Niveau</th>
+		<th>Compétition</th>
+		<th>Nom court</th>
+		<th colspan="4">Actions</th>
+	</tr>
  </thead>
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
-    <td>{$entry->id}</td>
+	<td>{$entry->id}</td>
     <td>{$entry->libequipe}</td>
     <td>{$entry->libdivision}</td>
 	<td>{$entry->name}</td>
