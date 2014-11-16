@@ -23,16 +23,17 @@ $now = trim($db->DBTimeStamp(time()), "'");
 $service = new Service();
 $type = $params['type'];
 
-	if (!isset($type))
+	if (!isset($type) || $type != '')
 	{
 		$result = $service->getEquipesByClub("$club_number");
 		$chpt = "A"; //pour autres championnat
-		$type = 'U';//pour undefined
+		$type_compet = 'U';//pour undefined
 	}
-	else 
+	elseif($type=='M')
 	{
 		$result = $service->getEquipesByClub("$club_number", "$type");
 		$chpt = "S"; //pour championnat seniors
+		$type_compet = '1';
 	}
 
 //var_dump($result);
@@ -64,7 +65,7 @@ foreach($result as $cle =>$tab)
 	$idpoule = $tab[idpoule];
 	$iddiv = $tab[iddiv];
 	
-	$type_compet = 'U';
+	//$type_compet = $type;
 	
 	
 	$query = "SELECT phase, saison, liendivision FROM ".cms_db_prefix()."module_ping_equipes WHERE liendivision = ? AND phase = ? AND saison = ?";
@@ -91,7 +92,7 @@ $designation .= "Récupération de ".$compteur." équipes";
 
 	if($compteur >0)
 	{
-		$designation.="Indiquez le type de compétition des équipes récupérées.";
+		$designation.="<br />Indiquez le type de compétition des équipes récupérées.";
 	}
 	
 $status = 'Ok';

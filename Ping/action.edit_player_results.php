@@ -1,7 +1,7 @@
 <?php
 
 if( !isset($gCms) ) exit;
-
+debug_display($params, 'Parameters');
 if (!$this->CheckPermission('Ping Manage'))
   {
     echo $this->ShowErrors($this->Lang('needpermission'));
@@ -58,12 +58,12 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 }
 
    
-    $smarty->assign('formstart',
+$smarty->assign('formstart',
 		    $this->CreateFormStart( $id, 'do_edit_result', $returnid ) );
-    $smarty->assign('record_id',
-		    $this->CreateInputHidden( $id, 'record_id', $params['record_id'] ));
-
-   
+$smarty->assign('record_id',
+		$this->CreateInputHidden( $id, 'record_id', $params['record_id'] ));
+$smarty->assign('submit',
+		$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));   
 $smarty->assign('epreuve',
 				$this->CreateInputText($id,'epreuve',$epreuve,80,150));
 $smarty->assign('prompt_tour',
@@ -106,8 +106,7 @@ $smarty->assign('prompt_points',
 $smarty->assign('coeff',
 		$this->CreateInputDropdown($id, 'coeff',$itemscoeff = array("0"=>"0.00", "0,5"=>"0.50","0,75"=>"0.75", "1"=>"1.00", "1,25"=>"1.25", "1,5"=>"1.50"),$selectedindex=$coeff,victoire, $selectedvalue=$coeff,5));					
 															
-$smarty->assign('submit',
-			$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
+
 $smarty->assign('cancel',
 			$this->CreateInputSubmit($id,'cancel',
 						$this->Lang('cancel')));

@@ -65,7 +65,7 @@ $flds= "id I(11) KEY AUTO,
 	liendivision C(255),
 	idpoule I(11),
 	iddiv I(11),
-	type_compet C(3)";
+	type_compet C(3) DEFAULT 'U'";
 
 $sqlarray= $dict->CreateTableSQL( cms_db_prefix()."module_ping_equipes",
 				  $flds,
@@ -78,21 +78,21 @@ $dict = NewDataDictionary( $db );
 
 // table schema description
 $flds = "
-     id I(11) AUTO KEY,
-     saison C(255),
-     datemaj T,
-     licence I(11),
+	id I(11) AUTO KEY,
+	saison C(255),
+	datemaj ". CMS_ADODB_DT .",
+	licence I(11),
 	date_event D,
 	epreuve C(255),
-     nom C(255),
+	nom C(255),
 	numjourn I(11),
-     classement I(4),
-     victoire I(1),
+	classement I(4),
+	victoire I(1),
 	ecart N(6.2),
 	type_ecart I(11),
 	coeff N(3.2),
 	pointres N(4.2),
-     forfait I(1) ";
+	forfait I(1) ";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_parties_spid",
@@ -257,7 +257,7 @@ $dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
 	name C(255),
-	code_compet C(3),
+	code_compet C(3) UNIQUE,
 	coefficient N(3.2)";
 			
 // create it. 
@@ -360,7 +360,6 @@ $res = $db->Execute($insert_sql, array('Chpt France par équipes masculin', '1',
 $res = $db->Execute($insert_sql, array('Chpt France par équipes féminin', '2', '1.00'));
 $res = $db->Execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75'));
 $res = $db->Execute($insert_sql, array('Championnat de France Vétérans', 'V', '1.00'));
-$res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25'));
 $res = $db->Execute($insert_sql, array('Championnat Jeunes', '+', '0.75'));
 $res = $db->Execute($insert_sql, array('Championnat jenues poussins benjamins', 'ECP', '1.25'));
 $res = $db->Execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50'));

@@ -16,17 +16,6 @@ if( isset($params['cancel']) )
 
 $this->SetCurrentTab('users');
 $db =& $this->GetDb();
-//$record_id = $params['record_id'];
-if( isset( $params['message'] ) )
-  {
-    $smarty->assign('message',html_entity_decode($params['message']));
-  }
-if( isset( $params['error'] ) )
-  {
-    $smarty->assign('error',html_entity_decode($params['error']));
-  }
-
-
 
 $record_id = '';
 if( !isset( $params['record_id'] ) || $params['record_id'] == '')    
@@ -37,6 +26,7 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 	    $this->Redirect( $id, 'defaultadmin', $returnid, $params );
 	    return;
 }
+
 
     // find the user
     $query = "SELECT * FROM ".cms_db_prefix()."module_ping_points WHERE id = ?";
@@ -64,8 +54,26 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
    
     $smarty->assign('formstart',
 		    $this->CreateFormStart( $id, 'do_edit_result', $returnid ) );
-    $smarty->assign('record_id',
-		    $this->CreateInputHidden( $id, 'record_id', $params['record_id'] ));
+//on regarde s'il s'agit de répliquer un résultat
+$duplicate = '';
+
+	if(isset($params['duplicate']) && $params['duplicate'] =='1')
+	{
+		//pas de record_id mais un duplicate eh oui !
+		$smarty->assign('duplicate', 
+				$this->CreateInputHidden( $id, 'duplicate', $params['duplicate'] ));
+		$smarty->assign('submit',
+				$this->CreateInputSubmit($id, 'dupliquer', $this->Lang('duplicate'), 'class="button"'));
+	}
+	else
+	{
+		$smarty->assign('record_id',
+				 $this->CreateInputHidden( $id, 'record_id', $params['record_id'] ));
+		$smarty->assign('submit',
+				$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
+	}
+	
+
 
    
 $smarty->assign('type_compet',

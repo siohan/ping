@@ -65,6 +65,7 @@ $(document).ready(function(){
     <td>{$entry->advnompre} </td>
 	<td>{$entry->pointres} </td>
     <td>{$entry->editlink}</td>
+	<td>{$entry->duplicatelink}</td>
     <td>{$entry->deletelink}</td>
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->licence}" class="select"></td>
   </tr>

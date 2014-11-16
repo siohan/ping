@@ -42,7 +42,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->actif= $row['actif'];
 	$onerow->sexe= $row['sexe'];
 	$onerow->birthday= $row['birthday'];
-	$onerow->view_contacts= $this->CreateLink($id,'view_contacts', $returnid,$themeObject->DisplayImage('icons/system/contacts.gif', $this->Lang('view_contacts'), '', '', 'systemicon'),array('licence'=>$row['licence']));
+	$onerow->view_contacts= $this->CreateLink($id,'view_contacts', $returnid,$themeObject->DisplayImage('icons/topfiles/myaccount.gif', $this->Lang('view_contacts'), '', '', 'systemicon'),array('licence'=>$row['licence']));
 	$onerow->doedit= $this->CreateLink($id, 'add_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']));
 	if($row['actif'] =='1'){
 		$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('unable'), '', '', 'systemicon'),array('licence'=>$row['licence']));

@@ -44,7 +44,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.1beta2'; }  
+  function GetVersion() { return '0.1beta3'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -135,10 +135,12 @@ class Ping extends CMSModule
 	$this->SetParameterType('rangdep', CLEAN_INT);
 	$this->SetParameterType('progmois', CLEAN_INT);
 	$this->SetParameterType('saison', CLEAN_STRING);
-	
+	$this->SetParameterType('date_debut', CLEAN_STRING);
+	$this->SetParameterType('date_fin', CLEAN_STRING);
 	$this->SetParameterType('type', CLEAN_STRING);
 	$this->SetParameterType('idpoule', CLEAN_INT);
 	$this->SetParameterType('iddiv', CLEAN_INT);
+	$this->SetParameterType('lien', CLEAN_STRING);
 /*	*/
 	
 	//$this->CreateParameter('display','');
@@ -150,6 +152,10 @@ function InitializeAdmin()
 {
   $this->SetParameters();
 	//$this->CreateParameter('pagelimit', 100000, $this->Lang('help_pagelimit'));
+	$this->CreateParameter('tour', 1, $this->Lang('help_tour'));
+	$this->CreateParameter('type_compet', 1, $this->Lang('help_type_compet'));
+	$this->CreateParameter('date_debut', '', $this->Lang('help_date_debut') );
+	$this->CreateParameter('date_fin', '', $this->Lang('help_date_fin') );
 }
 
    /*

@@ -54,16 +54,20 @@ foreach($result as $cle =>$tab)
 	
 	$cluba = strpos($equa,$nom_equipes);
 	$clubb = strpos($equb,$nom_equipes);
-	if ($cluba !== false || $clubb !== false){
-		$club = 1;
-		$affichage = 1;
-	}
-	else{
-		$club = 0;
-		//on affiche ou pas ?
-		//On regarde ce que l'admin a décidé ds la configuration
+	
+		if ($cluba !== false || $clubb !== false)
+		{
+			$club = 1;
+			$affichage = 1;
+		}
+		else
+		{
+			$club = 0;
+			//on affiche ou pas ?
+			//On regarde ce que l'admin a décidé ds la configuration
 		
-	}
+		}
+		
 	$scorea = $tab[scorea];
 	$scoreb = $tab[scoreb];
 	//echo gettype($scorea);
@@ -74,8 +78,8 @@ foreach($result as $cle =>$tab)
 	//si le score est saisi on obtient un string pour les variables scorea et scoreb
 	//sinon il s'agit d'un array	
 	
-	if(is_array($scorea) && is_array($scoreb))
-	{
+		if(is_array($scorea) && is_array($scoreb))
+		{
 			//on regarde la valeur du populate_calendar
 			//à True, elle permet 
 			//de remplir la table calendrier automatiquement
@@ -93,9 +97,9 @@ foreach($result as $cle =>$tab)
 			
 			
 	
-	}
-	else 
-	{
+			}
+			else 
+			{
 		
 	
 			//on vérifie si l'enregistrement est déjà là

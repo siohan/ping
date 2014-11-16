@@ -33,8 +33,10 @@ switch($current_version)
    //and this is here for the next version
 	$dict = NewDataDictionary( $db );
 	$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_equipes",
-					      "type_compet C(3)");
+					      "type_compet C(3) DEFAULT 'U'");
 	$dict->ExecuteSQLArray( $sqlarray );
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_equipes SET type_compet = 'U'";
+	$db->Execute($sql);
 	
 	
 	$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_poules_rencontres",
@@ -49,9 +51,12 @@ switch($current_version)
 	$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_parties_spid",
 					      "type_ecart I(11)");
 	$dict->ExecuteSQLArray( $sqlarray );
+	$sqlarray = $dict->AlterColumnSQL(cms_db_prefix()."module_ping_parties_spid",
+					      "datemaj ". CMS_ADODB_DT. "");
+	$dict->ExecuteSQLArray( $sqlarray );
 	//qqs changements dans la table calendrier
 	$sqlarray = $dict->RenameColumnSQL(cms_db_prefix()."module_ping_calendrier",
-					      "date_compet", "date_debut");
+					      "date_compet", "date_debut", "date_debut ". CMS_ADODB_DT ."");
  	$dict->ExecuteSQLArray( $sqlarray );
 
 	$sqlarray = $dict->AlterColumnSQL(cms_db_prefix()."module_ping_calendrier",
@@ -85,6 +90,12 @@ switch($current_version)
 	$sqlarray = $dict->AlterColumnSQL(cms_db_prefix()."module_ping_recup",
 					     "datecreated ". CMS_ADODB_DT. "");
  	$dict->ExecuteSQLArray( $sqlarray );
+	
+	$sql = "ALTER TABLE ".cms_db_prefix()."module_ping_type_competition ADD UNIQUE `ind_code_compet` (`code_compet`)";
+	$db->Execute($sql);
+
+	$sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?)";
+	$db->Execute($sql, array('Indéterminé', 'U', '0.00'));
 
 	
 

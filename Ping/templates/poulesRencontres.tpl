@@ -39,8 +39,8 @@ $(document).ready(function(){
   {$formend}
 </fieldset>
 {/if}
-{*
-<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>*}
+
+<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 
@@ -53,8 +53,8 @@ $(document).ready(function(){
   <th>Equipe A</th>
   <th colspan="2">Score</th>
   <th>Equipe B</th>
-<th colspan="3">Actions</th>
-<th><input type="checkbox" id="selectall" name="selectall"/></th>
+<th colspan="2">Actions</th>
+<th><input type="checkbox" id="selectall" name="selectall"/></th>	
  
   </tr>
  </thead>
@@ -67,8 +67,8 @@ $(document).ready(function(){
     <td>{$entry->scorea}</td>
 	<td>{$entry->scoreb}</td>
 	<td>{$entry->equb}</td>
-    <td>{$entry->retrieve_poule_rencontres}</td>
-<td>{$entry->display}</td>
+   <td>{$entry->retrieve_details}</td>
+	<td>{$entry->display}</td>
     <td>{$entry->deletelink}</td>
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" class="select"></td>
   </tr>
@@ -81,4 +81,4 @@ $(document).ready(function(){
   </div>
 {$form2end}
 {/if}
-<div class="pageoptions"><p class="pageoptions">{*$createlink*}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>

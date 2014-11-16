@@ -19,7 +19,7 @@ $lang['commune'] = 'commune';
 $lang['email'] = 'email';
 $lang['allseasons'] = 'Toutes les saisons';
 $lang['allstatus'] = "Tous les statuts";
-$lang['alldate'] = "Toutes les dates";
+$lang['alldates'] = "Toutes les dates";
 $lang['tour'] = 'Tour';
 $lang['active'] = 'Actif';
 $lang['create_contact'] = 'Ajouter un contact';
@@ -34,8 +34,6 @@ $lang['error_insufficientparams'] = 'Parametres manquants';
 $lang['addnewsheet'] = 'Ajouter une rencontre';
 $lang['adversaire'] = 'Adversaire';
 $lang['vic_def'] = 'Victoire ou défaite';
-$lang['revenus_fonciers'] = 'Revenus fonciers nets';
-$lang['capitaux_mobiliers'] = 'Capitaux mobiliers imposables';
 $lang['filtres'] = 'Filtres';
 $lang['allequipes'] = 'Toutes les equipes';
 $lang['alltours'] = 'Tous';
@@ -43,6 +41,7 @@ $lang['allpoules'] = 'Toutes les poules';
 $lang['allmonths'] = 'Tous les mois';
 $lang['allcompet'] = 'Toutes les compétitions';
 $lang['add_compet'] = 'Ajouter une nouvelle compétition';
+$lang['add_type_compet'] = 'Ajouter une nouvelle compétition';
 $lang['resultsfound'] = 'résultat(s)';
 $lang['upload_result'] = 'Télécharger le résultat';
 $lang['do_not_display'] = 'Ne plus afficher sur le site';
@@ -51,6 +50,9 @@ $lang['unable'] = 'Désactiver';
 $lang['enable'] = 'activer';
 $lang['long_import'] = "Cette opération peut durer plusieurs minutes !";
 $lang['retrieveallpartiesspid'] = 'Récupérer toutes les parties Spid';
+$lang['retrieve_parties'] = 'Parties FFTT';
+$lang['retrieve_parties_spid'] = 'Parties SPID';
+$lang['duplicate'] = 'Dupliquer';
 //pour les erreurs de formulaires
 $lang['no_family_name'] = 'Vous devez saisir votre nom de famille';
 $lang['no_adresse'] = 'Vous devez saisir votre adresse';
@@ -142,35 +144,55 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 Un lien pour les équipes du championnat de France par équipes, l\'autre pour les autres compétitions et indiquez le type de compétitions auxquelles elles participent.</li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom. Désactivez les joueurs ne faisant pas l\'objet d\'une situation mensuelle</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
-<h3>FFTT</h3>
 <h3>Spid</h3>
+<p>Récupérez les résultats du spid de différentes manières. La récupération de tous les résultats en une seule fois peut s\'avérer très longue (plusieurs minutes).
 <h3>Situation mensuelle</h3>
 <p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer toutes les situations mensuelles des joueurs de votre club</p>
 <p>ATTENTION !! La FFTT limite la situation mensuelle à 100 accès par jour et par IP.</p>
-<h3>Support</h3>
+<h2>Implémentation sur les pages de votre site</h2>
+<p>Utilisez la balise suivante : {cms_module module=\'Ping\'}. Ceci affichera par défaut.</p>
+<h4>Paramètres disponibles : </h4>
+<ul>
+<li>action - Indique l\'action a afficher
+<ul>
+<li>par-equipes - Indique toutes les compétitions par équipes ex :{cms_module module=\'Ping\' action=\'par-equipes\'}</li>
+<li>individuelles - les compétitions individuelles</li>
+<li>sit_mens - pour la situation mensuelle officielle</li>
+<li>sit_mens_provisoire - pour une situation mensuelle réévaluée après chaque compétition récupérée.</li>
+</ul>
+</li>
+<li>"type_compet" - le type de compétition à afficher ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\'} (disponibles ds l\'onglet "Compétitions")</li>
+<li>"tour" - Indique le N° de journée officiel ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\' tour=\'1\'}</li></ul>
 <h3>Feuille de route</h3>
-<p>Dans cette première version, il n\'est pas prévu  de permissions d\'accès particulières, l\'admin du site a tous les droits. Je pense toutefois donner une permission spécifique pour supprimer des données J\'attends vos retours à ce sujet pour éventuellement en créer.</p>
-<h3>Feuille de route(Roadmap)</h3>
-<p>Si vous êtes sages...</p>
+<p>Dans cette première version, il n\'est pas prévu  de permissions d\'accès particulières, l\'admin du site a tous les droits. Je pense toutefois donner une permission spécifique pour supprimer des données J\'attends vos retours à ce sujet pour éventuellement en créer.</p><p>De plus, le front office (côté internaute) est encore à ses premiers balbutiements.</p>
+<p>Néanmoins, si vous êtes sages...</p>
 <ul>
+<li>Un front-office avec des graphiques dynamiques.</li>
 <li>Des scripts pour récupérer automatiquement vos résultats (tâches cron)</li>
+<li>Des templates pour vous aider à bâtir vos propres gabarits depuis ce module</li>
 </ul>
 <h3>Support</h3>
-<p>This module does not include commercial support. However, there are a number of resources available to help you with it:</p>
 <ul>
-<li>For the latest version of this module, FAQs, or to file a Bug Report, please visit the Module Forge
-<a href="http://dev.cmsmadesimple.org/projects/skeleton/">Skeleton Page</a>.</li>
-<li>Additional discussion of this module may also be found in the <a href="http://forum.cmsmadesimple.org">CMS Made Simple Forums</a>.</li>
-<li>The author, SjG, can often be found in the <a href="irc://irc.freenode.net/#cms">CMS IRC Channel</a>.</li>
-<li>Lastly, you may have some success emailing the author directly.</li>  
+<li>Pour obtenir la dernière version en cours (avant release officielle)
+<a href="https://github.com/siohan/ping">Version github</a>.</li>
+<li>L\'auteur peut aussi être contacté via skype sous le pseudo agiwebconseil.</li>
+<li>Enfin, vous pouvez aussi m\'envoyer un mail.</li>  
 </ul>
-<p>As per the GPL, this software is provided as-is. Please read the text
-of the license for the full disclaimer.</p>
-
-<h3>Copyright and License</h3>
+<p>En tant que licence GPL, ce module est livré tel quel. Merci de lire le texte complet de la license pour une information complête.</p>
+<h3>Remerciements</h3>
+<p>Merci à ma femme et à mes enfants pour leur soutien toujours indéfectible.</p>
+<p>Un remerciement tout particulier à mon ami Eric Ponchant(ericfreelance) pour son soutien, sa bienveillance, sa patience, ses conseils toujours avisés et son expertise pour m\'aider à chaque fois à me sortir de l\'ornière..</p>
+<h3>Copyright et License</h3>
 <p>Copyright &amp;copy; 2014, Claude Siohan <a href="mailto:claude@agi-webconseil.fr">claude@agi-webconseil.fr</a>. Tous droits réservés.</p>
-<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. You must agree to this license before using the module.</p>
-
+<p>Ce module est sous licence <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. Vous devez accepter la licence avant d\'utiliser ce module.</p>
+<p>Ce module a été distribué dans l\'espoir d\'être utile, mais sans
+AUCUNE GARANTIE. Il vous appartient de le tester avant toute mise en
+production, que ce soit dans le cadre d\'une nouvelle installation ou
+d\'une mise à jour du module. L\'auteur du module ne pourrait être tenu
+pour responsable de tout dysfonctionnement du site provenant de ce
+module. Pour plus d\'informations, <a
+href=\"http://www.gnu.org/licenses/licenses.html#GPL\" target=\"_blank\">consultez
+la licence GNU GPL</a>.</p>
 ';
 $lang['utma'] = '156861353.1949673112.1265210769.1285941058.1286179019.190';
 $lang['utmz'] = '156861353.1286179019.190.38.utmccn=(referral)|utmcsr=cmsmadesimple.fr|utmcct=/index.php|utmcmd=referral';

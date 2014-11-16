@@ -3,20 +3,14 @@
 if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/travaux.php');
 
 $saison = $this->GetPreference('saison_en_cours');
 /* on fait un formulaire de filtrage des résultats*/
-/**/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_poules_tab'));  
-//$tourlist = array(0 =>"0",1 =>"1",2 =>"2",3 =>"3",4 =>'All');
-//$typeCompetition = array();
 $pouleslist = array();
 $pouleslist[$this->Lang('allpoules')] = '';
-//$allequipes =  ( isset( $params['allequipes'] )?$params['allequipes']:'no');
-
-//$equipelist[$this->Lang('allequipes')] = '';
 
 $query1 = "SELECT * FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ?";
 $dbresult = $db->Execute($query1,array($saison));
@@ -24,21 +18,17 @@ $dbresult = $db->Execute($query1,array($saison));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
     $pouleslist[$row['libdivision']] = $row['idpoule'];
-    //$equipelist[$row['equipe']] = $row['equipe'];
-    //$typeCompetition[$row['name']] = $row['type_compet'];
   }
 
-if( isset($params['submitfilter']) )
-  {
-    if( isset( $params['pouleslist']) )
-      {
-	$this->SetPreference('pouleChoisi', $params['pouleslist']);
-      }
-}
-$curpoule = $this->GetPreference( 'pouleChoisi' );
+	if( isset($params['submitfilter']) )
+  	{
+    		if( isset( $params['pouleslist']) )
+      		{
+			$this->SetPreference('pouleChoisi', $params['pouleslist']);
+      		}
+	}
 
-$smarty->assign('input_compet',
-		$this->CreateInputDropdown($id,'typeCompet',$typeCompetition,-1,$curcompet));
+$curpoule = $this->GetPreference( 'pouleChoisi' );
 
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
@@ -46,32 +36,34 @@ $smarty->assign('input_tour',
 		$this->CreateInputDropdown($id,'pouleslist',$pouleslist,-1,$curpoule));
 $smarty->assign('prompt_equipe',
 		$this->Lang('equipe'));
-$smarty->assign('input_equipe',
-		$this->CreateInputDropdown($id,'equipelist',$equipelist,-1,$curequipe));
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
-
-
-
-
-$result= array ();
+echo "la poule en cours est : ".$curpoule;
+$parms = array();
+$result= array();
 $query2 = "SELECT *,ren.affiche, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND eq.saison = ?";
-$parms['saison_en_cours'] = $saison;
-
-if( isset($params['submitfilter'] )){
+$parms['saison'] = $saison;
+	if( isset($params['submitfilter'] )){
 	
-	if ($curpoule !='')
-	{
-		$query2 .=" AND eq.idpoule = ?";
-		$parms['idpoule'] = $curpoule;
+		if ($curpoule !='')
+		{
+			$query2 .=" AND eq.idpoule = ?";
+			$parms['idpoule'] = $curpoule;
+			
+			
+		}
 		
+		$dbresult= $db->Execute($query2,$parms);
+	
 	}
-
-
-}
-$dbresult= $db->Execute($query2,$parms);
-//echo $query2;
+	else
+	{
+		$dbresult= $db->Execute($query2,array($saison));
+	}
+	
+//$dbresult= $db->Execute($query2,$parms);
+echo $query2;
 
 $rowarray= array ();
 if ($dbresult && $dbresult->RecordCount() > 0)
@@ -140,13 +132,13 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	}
 	
 	//$onerow->affichage = 
-	$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
+	$onerow->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 	$onerow->deletelink= $this->CreateLink($id, 'delete_team_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }
   }
-$smarty->assign('itemsfound', $this->Lang('sheetsfoundtext'));
+$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('createlink', 

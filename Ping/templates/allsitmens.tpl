@@ -1,4 +1,4 @@
-<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
+<div class="pageoptions"><p class="pageoptions">{*$returnlink*}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$retrieveallsitmens}</p></div>
 {if isset($formstart) }

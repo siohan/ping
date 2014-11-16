@@ -22,9 +22,9 @@ class ping_admin_coeff
 {
   protected function __construct() {}
 
-  public static function coeff1($record_id)
+  public static function coeff125($record_id)
   {
-	debug_display($params, 'Parameters');
+	//debug_display($params, 'Parameters');
     $db = cmsms()->GetDb();
     	$ping = cms_utils::get_module('Ping');
 	require_once(dirname(__FILE__).'/function.calculs.php');
@@ -37,7 +37,7 @@ class ping_admin_coeff
 	$victoire = $row['victoire'];
 	$type_ecart = $row['type_ecart'];
 	$points1 = CalculPointsIndivs($type_ecart,$victoire);
-	$coeff = '1.00';
+	$coeff = '1.25';
 	$pointres = $points1*$coeff;
 	
 	

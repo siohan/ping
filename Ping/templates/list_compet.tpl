@@ -22,14 +22,10 @@
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
   <tr>	
-  <th>{$id}</th>
-  <th>Nom</th>
-  <th>Code</th>
-  <th>Coefficient</th>
-  <th>Nb joueurs</th>
-  <th>Nb parties</th>
-  <th class="pageicon">&nbsp;</th>
-  <th class="pageicon">&nbsp;</th>
+  	<th>{$id}</th>
+  	<th>Nom</th>
+  	<th>Code</th>
+  	<th>Coefficient</th>
   </tr>
  </thead>
  <tbody>
@@ -39,10 +35,6 @@
     <td>{$entry->name}</td>
     <td>{$entry->code_compet}</td>
     <td>{$entry->coefficient}</td>
-    <td>{$entry->joueurs}</td>
-	<td>{$entry->parties}</td>
-    <td>{$entry->editlink}</td>
-    <td>{$entry->deletelink}</td>
   </tr>
 {/foreach}
  </tbody>

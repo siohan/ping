@@ -77,6 +77,7 @@ $(document).ready(function(){
 	<td>{$entry->pointres}</td>
 	<td>{$entry->forfait}</td>
 	<td>{$entry->editlink}</td>
+	<td>{$entry->duplicatelink}</td>
 	<td>{$entry->deletelink}</td>
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->record_id}" class="select"></td>
   </tr>

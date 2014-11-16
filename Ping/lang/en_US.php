@@ -9,6 +9,7 @@ $lang['prefsupdated'] = 'Module preferences updated.';
 $lang['submit'] = 'Envoyer';
 $lang['accessdenied'] = 'Access Denied. Please check your permissions.';
 $lang['error'] = 'Error!';
+$lang['resultsfoundtext'] = 'records found';
 $lang['link_view'] = 'View Record';
 $lang['edit'] = 'Edit Record';
 $lang['title_num_records'] = '%s records found.';

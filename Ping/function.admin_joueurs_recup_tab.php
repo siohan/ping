@@ -20,7 +20,7 @@ $smarty->assign('display_unable_players',
 		$this->CreateLink($id,'display_unable_players', $returnid, 'liste des joueurs inactifs'));
 
 
-$result= array ();
+$dbresult= array ();
 //SELECT * FROM ping_module_ping_recup_parties AS rec right JOIN ping_module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
 $query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence, rec.sit_mens, rec.fftt, rec.spid, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_recup_parties AS rec ON j.licence = rec.licence WHERE j.actif = '1' AND (rec.saison = ? OR rec.saison IS NULL) ORDER BY j.id ASC";
 
@@ -41,7 +41,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->sit_mens= $row['sit_mens'];
 	$onerow->fftt= $row['fftt'];
 	$onerow->spid= $row['spid'];
-	$onerow->doedit= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']), $row);
+	//$onerow->doedit= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']), $row);
 	if($row['actif'] =='1'){
 		$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('unable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
 	} 
@@ -52,9 +52,13 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_sit_mens', $returnid, 
 	  $this->Lang('retrieve_sit_mens'), array('licence'=>$row['licence']));
-	$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, 'Parties disputées', array('licence'=>$row['licence']));
-	$onerow->getpartiesspid= $this->CreateLink($id, 'retrieve_parties_spid', $returnid, 'Parties SPID', array('licence'=>$row['licence']));
-	$onerow->deletelink= $this->CreateLink($id, 'delete_joueur', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
+	$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_parties'), '', '', 'systemicon')).
+$this->CreateLink($id, 'retrieve_parties', $returnid, 
+	  $this->Lang('retrieve_parties'), array('licence'=>$row['licence']));
+	$onerow->getpartiesspid= $this->CreateLink($id, 'retrieve_parties_spid', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_parties_spid'), '', '', 'systemicon')).
+$this->CreateLink($id, 'retrieve_parties_spid', $returnid, 
+	  $this->Lang('retrieve_parties_spid'), array('licence'=>$row['licence']));
+	//$onerow->deletelink= $this->CreateLink($id, 'delete_joueur', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }

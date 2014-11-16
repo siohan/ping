@@ -33,7 +33,7 @@ $(document).ready(function(){
 		<th>Dernière Situation</th>
 		<th>Parties FFTT</th>
 		<th>Parties Spid</th>
-		<th colspan='6'>Actions</th>
+		<th colspan='4'>Actions</th>
 		<th><input type="checkbox" id="selectall" name="selectall"></th>
   </tr>
  </thead>
@@ -49,8 +49,8 @@ $(document).ready(function(){
 	<td>{$entry->getpartieslink}</td>
 	<td>{$entry->getpartiesspid}</td>
 	<td>{$entry->doedit}</td>
-	<td>{$entry->deletelink}</td>
-	<td>{$entry->editlink}</td>
+<!--	<td>{$entry->deletelink}</td>
+	<td>{$entry->editlink}</td>-->
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->licence}" class="select"></td>
   </tr>
 {/foreach}

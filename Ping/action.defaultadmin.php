@@ -23,6 +23,7 @@ if (FALSE == empty($params['active_tab']))
  }	
 	echo $this->SetTabHeader('joueurs', 'Joueurs', ('joueurs' == $tab)?true:false);
 	echo $this->SetTabHeader('equipes', 'Equipes', ('Equipes' == $tab)?true:false);
+	echo $this->SetTabHeader('calendrier', 'Calendrier', ('Calendrier' == $tab)?true:false);
 	echo $this->SetTabHeader('individuelles', 'FFTT' , ('individuelles' == $tab)?true:false);
 	echo $this->SetTabHeader('results', 'SPID' , ('results' == $tab)?true:false);
 	echo $this->SetTabHeader('compets', 'Compétitions' , ('compet' == $tab)?true:false);
@@ -47,17 +48,21 @@ echo $this->StartTabContent();
         echo $this->StartTab('Individuelles', $params);//FFTT
     	include(dirname(__FILE__).'/action.admin_indivs_tab.php');
    	echo $this->EndTab();
+
+	echo $this->StartTab('Calendrier', $params);//Calendrier
+    	include(dirname(__FILE__).'/action.admin_calendar_tab.php');
+   	echo $this->EndTab();
  
 	echo $this->StartTab('results' , $params);//Spid
     	include(dirname(__FILE__).'/action.view_user_global_results.php');
    	echo $this->EndTab();
 
-       echo $this->StartTab('compets' , $params);
+       echo $this->StartTab('compets' , $params);//les types de compétitions
     	include(dirname(__FILE__).'/function.admin_competitions_tab.php');
    	echo $this->EndTab();
 
 
- 	echo $this->StartTab('equipes' , $params);//les equipes
+ 	echo $this->StartTab('equipes' , $params);//les équipes
     	include(dirname(__FILE__).'/action.admin_teams_tab.php');
    	echo $this->EndTab();
 

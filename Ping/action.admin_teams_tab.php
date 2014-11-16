@@ -14,9 +14,10 @@ $smarty->assign('score', 'Score');
 $smarty->assign('adversaires', 'Adversaires');
 
 $result= array ();
-$query = "SELECT *, eq.id,comp.name FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ?  AND (comp.code_compet = eq.type_compet OR eq.type_compet IS NULL) ";
+$query = "SELECT DISTINCT *, eq.id,comp.name FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ?  AND comp.code_compet = eq.type_compet";
 
 	$query .=" ORDER BY eq.id ASC";
+	//echo $query;
 	$dbresult= $db->Execute($query,array($saison_courante));
 
 	//echo $query;
@@ -42,7 +43,8 @@ $query = "SELECT *, eq.id,comp.name FROM ".cms_db_prefix()."module_ping_equipes 
 				$rowarray[]= $onerow;
       			}
   		}
-		$smarty->assign('itemsfound', $this->Lang('sheetsfoundtext'));
+
+		$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('items', $rowarray);
 		$smarty->assign('retrieve_teams',

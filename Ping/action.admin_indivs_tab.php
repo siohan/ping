@@ -3,15 +3,13 @@
 if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
+//debug_display($params, 'Parameters');
 require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
 
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_indivs_tab')); 
-//$saisonslist[$this->lang('allseasons')] ='';
-$datelist[$this->Lang('alldates')] = '';
-//$allequipes =  ( isset( $params['allequipes'] )?$params['allequipes']:'no');
-
+$datelist[$this->Lang('alldates')] = '';	
 $equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
@@ -25,21 +23,22 @@ while ($dbresult && $row = $dbresult->FetchRow())
     $typeCompet[$row['codechamp']] = $row['codechamp'];
   }
 
-if( isset($params['submitfilter']) )
-  {
-    	if( isset( $params['tourlist']) )
-      	{
-	$this->SetPreference('dateChoisi', $params['datelist']);
-      	}
-	if( isset( $params['playerslist']) )
-      	{
-	$this->SetPreference('playerChoisi', $params['playerslist']);
-      	}
-    if( isset( $params['typeCompet']) )
-	{ 
-	$this->SetPreference ( 'competChoisie', $params['typeCompet']);
+	if( isset($params['submitfilter']) )
+  	{
+    		if( isset( $params['tourlist']) )
+      		{
+			$this->SetPreference('dateChoisi', $params['datelist']);
+      		}
+		if( isset( $params['playerslist']) )
+      		{
+			$this->SetPreference('playerChoisi', $params['playerslist']);
+      		}
+    		if( isset( $params['typeCompet']) )
+		{ 
+			$this->SetPreference ( 'competChoisie', $params['typeCompet']);
+		}
 	}
-}
+	
 $curdate = $this->GetPreference( 'dateChoisi' );
 //$curseason = $this->GetPreference('saisonChoisie');
 $curplayer = $this->GetPreference( 'playerChoisi');
@@ -120,6 +119,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->pointres= $row['pointres'];
 	//$onerow->equipe= $this->CreateLink($id, 'create_new_user', $returnid, $row['equipe'], $row);
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
+	$onerow->duplicatelink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['id'], 'duplicate'=>'1'));
 	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_user_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;

@@ -12,10 +12,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	case "unable" :
 	foreach( $params['sel'] as $licence )
 	  {
-	    	//$query = "UPDATE ".cms_db_prefix()."module_ping_joueurs SET actif ='0'  WHERE licence = ?";
-		//$dbresult = $db->Execute($query, array( $licence ));
-		
-		ping_admin_ops::unable_player( $licence );
+	    	ping_admin_ops::unable_player( $licence );
 	  }
 	$this->SetMessage('Joueurs désactivés');
 	$this->RedirectToAdminTab('joueurs');
@@ -92,7 +89,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	    ping_admin_ops::retrieve_parties_spid( $licence );
 	  }
 	$this->SetMessage("$message");
-	$this->RedirectToAdminTab("recuperation");
+	$this->RedirectToAdminTab("recup");
 	break;
 	
 	case "coeff05" :
@@ -141,6 +138,9 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	foreach( $params['sel'] as $record_id){
 		ping_admin_ops::supp_spid( $record_id );
 	}
+	$message = 'Parties(s) SPID supprimée(s)';
+	$this->SetMessage("$message");
+	$this->RedirectToAdminTab('results');
 	break;
 
 	

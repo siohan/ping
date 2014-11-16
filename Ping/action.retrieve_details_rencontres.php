@@ -1,115 +1,114 @@
 <?php
 if( !isset($gCms) ) exit;
+$db =& $this->GetDb();
+//a faire 
+//mettre les autorisations
+//si pas de record_id redirection
+$record_id = $params['record_id'];
+//on va utiliser cette variable (record_id) comme clé secondaire dans la nouvelle table
 
-$lien = $params['lien'];
 
-/**/
-debug_display($params, 'Parameters');
-//require_once(dirname(__FILE__).'/function.calculs.php');
-
-//$result = $service->getJoueurParties("07290229");
-
-$now = trim($db->DBTimeStamp(time()), "'");
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_details_rencontres WHERE lien = ?";
-$dbretour = $db->Execute($query, array($lien));
-
-if ($dbretour && $dbretour->RecordCount() > 0)
+$query = "SELECT lien FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE id = ?";
+$dbresult = $db->Execute($query, array($record_id));
+if($dbresult && $dbresult->RecordCount()>0)
+{
+	while($row = $dbresult->FetchRow())
 	{
-    		while ($row= $dbretour->FetchRow())
-      		{
-			$message = "Le détail de cette rencontre est déjà enregistrée...";
-			$this->SetMessage("$message");
-			$this->RedirectToAdminTab('poules');
-			//return $player;
-		}
-	
-	}
-else 
-	{
-	// code...
-
+		$lien = $row['lien'];
 		$service = new Service();
 		$result = $service->getRencontre("$lien");
 
-var_dump($result);
-
-
-}
-     
-/*
-		$i = 0;
-		$compteur = 0;
+		//print_r($result);
 		
-		foreach($result as $cle =>$tab)
+			if(!is_array($result))
+			{ 
+
+				//le tableau est vide, il faut envoyer un message pour le signaler
+				$designation.= "le service est coupé";
+				$this->SetMessage("$designation");
+				$this->RedirectToAdminTab('poules');
+			}   
+			else
 			{
-				$compteur++;
+			//on essaie de faire qqs calculs
+			$tableau1 = array();
+			$tab2 = array();
+			$compteur = count($result[joueur]);
+			$comptage = count($result[partie]);
+			//on scinde le tableau principal en plusieurs tableaux ?
+			$tab1 = array_slice($result,0,1);
+			$tab2 = array_slice($result,1,1);
+			$tab3 = array_slice($result,2,1);
+			//print_r($tab1);
+			//print_r($tab2);
+			//print_r($tab3);
+			//echo "le compteur est : ".$compteur;
+			//echo "le nb de parties disputées est : ".$comptage;
+				$i=0;
+				$a=0;
+			$equa = $tab1[resultat][equa];
+			$resa = $tab1[resultat][resa];
+			$equb = $tab1[resultat][equb];
+			$resb = $tab1[resultat][resb];
+			
 				
-				$dateevent = $tab[date];
-				$chgt = explode("/",$dateevent);
-				$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
-				//echo "la date est".$date_event;
-				$nom = $tab[nom];
-				$classement = $tab[classement];
-				$cla = substr($classement, 0,1);
+					for($i=0;$i<$compteur;$i++)
+					{
+						$xja = 'xja'.$i;//ex : $xja = 'xja0';
+						$xca = 'xca'.$i;
+						$xjb = 'xjb'.$i;//ex : $xja = 'xja0';
+						$xcb = 'xcb'.$i;
+						$$xja = $tab2[joueur][$i][xja];//ex : $xja0 = '';
+						$$xca = $tab2[joueur][$i][xca];
+						$$xjb = $tab2[joueur][$i][xjb];//ex : $xja0 = '';
+						$$xcb = $tab2[joueur][$i][xcb];
+						//echo $$xja;
+					}
+						
+					for($a=0;$a<$comptage;$a++)
+					{
+						$ja = 'ja'.$a;//ex $ja = 'ja0';
+						$$ja = $tab3[partie][$a][ja];
+						$jb = 'jb'.$a;//ex $ja = 'ja0';
+						$$jb = $tab3[partie][$a][jb];
+						$scorea = 'scorea'.$a;
+						$$scorea = $tab3[partie][$a][scorea];
+						$scoreb = 'scoreb'.$a;
+						$$scoreb = $tab3[partie][$a][scoreb];
+						
+					}
 				
-					if($cla == 'N'){
-						$newclassement = explode('-', $classement);
-						$newclass = $newclassement[1];
-					}
-					else {
-						$newclass = $classement;
-					}
 					
-				$epreuve = $tab[epreuve];
-				$victoire = $tab[victoire];
 				
-	if ($victoire =='V'){
-		$victoire = 1;
-		}
-	else 
-		{$victoire = 0;}
-	$forfait = $tab[forfait];
-	
-	
-	$query = "SELECT licence, date_event,nom FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND date_event = ? AND nom = ?";
-	//echo $query;
-	$dbresult = $db->Execute($query, array($licence, $date_event,$nom));
-	if($dbresult  && $dbresult->RecordCount() == 0) {
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, datemaj, licence, date_event, nom, classement, victoire, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
-		$i++;
-		//echo $query;
-		$dbresultat = $db->Execute($query,array($now, $licence, $date_event, $nom, $newclass, $victoire, $forfait));
+				
 		
-		if(!$dbresultat)
-		{
-			echo $db->sql.'<br/>'.$db->ErrorMsg(); 
-		}
-	}
-	else { 
-		echo "Partie déjà enregistrée";
-	}
-}
-}//fin du if $dbretour
-$comptage = $i;
-$status = 'Parties SPID';
-$designation = "Récupération spid de ".$comptage." parties sur ".$compteur."  de ".$player;
-$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datemaj, status, designation, action) VALUES ('', ?, ?, ?, ?)";
-$action = "retrieve_parties_spid";
-$dbresult = $db->Execute($query, array($now, $status,$designation,$action));
-if(!$dbresult)
-{
-	echo $db->sql.'<br/>'.$db->ErrorMsg(); 
-}
-$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET spid = ? WHERE licence = ?";
-$dbresult = $db->Execute($query, array($compteur,$licence));
-if(!$dbresult){
-	echo $db->sql.'<br/>'.$db->ErrorMsg(); 
-}
-	
-	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('joueurs');
-*/
+				
+				
+				$contenu = "<table class=\"table table-bordered\">";
+				$contenu.="<tr><td>$equa</td><td>$resa</td><td>$resb</td><td>$equb</td></tr>";
+				//$contenu.="</table>";
+				//$contenu.="<table class=\"table table-bordered\">";
+				for($i=0;$i<$compteur;$i++)
+				{
+					$contenu.="<tr><td> ${'xja'.$i}</td><td>${'xca'.$i}</td><td>${'xjb'.$i}</td><td>${'xcb'.$i}</td></tr>";
+				}
+				
+				//$contenu.="</table>";
+			//	$contenu.="<table class=\"table table-bordered\">";
+				for($a=0;$a<$comptage;$a++)
+				{
+					$contenu.="<tr><td>${'ja'.$a}</td><td>${'scorea'.$a}</td><td>${'scoreb'.$a}</td><td>${'jb'.$a}</td></tr>";
+				}
+				
+				//$contenu.="<tr><td>$xja0</td><td>$xca0</td><td>$xjb0</td><td>$xcb0</td></tr>";
+				$contenu.="</table>";	
+				echo $contenu;	
+				
+			}//fin du else
+	}//fin du while
+}//fin du if primaire
 #
 # EOF
 #
+//echo $this->ProcessTemplate('details_rencontre.tpl');
 ?>

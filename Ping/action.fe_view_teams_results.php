@@ -2,9 +2,7 @@
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
-//$cle_compte = $_SESSION['cle_compte'];
 
-//echo 'la clef du compte est : '.$cle_compte;
 $numjourn = '';
 if(!isset($params['numjourn']) || $params['numjourn'] ==''){
 	$numjourn = 1;
@@ -16,105 +14,72 @@ else
 
 $db =& $this->GetDb();
 global $themeObject;
-/*
-$smarty->assign('id', $this->Lang('id'));
-$smarty->assign('equipe', 'Equipe');
-$smarty->assign('tour', 'Tour');
-$smarty->assign('joueur', 'Joueur');
-$smarty->assign('adversaire', 'Adversaire');
-$smarty->assign('victoire', 'Vic/déf');
-$smarty->assign('points', 'Points');
-*/
-$result= array ();
-//$query= "SELECT * FROM ".cms_db_prefix()."module_ping_points WHERE joueur = ? ORDER BY id ASC";
-$query = "SELECT *, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND eq.saison = ? AND ren.affiche = '1' AND ren.tour = ?";
 
-	if ($this->GetPreference('affiche_club_uniquement') =='Oui') {
-		$query.=" AND ren.club = '1'";
-	}
-	
-	
-//$query = "SELECT * FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule AND ren.club = '1' AND ren.saison = ? GROUP BY ren.date_event DESC";
-
-echo $query;
-$dbresult= $db->Execute($query, array($saison_courante, $numjourn));
-$rowclass= 'row1';
-$rowarray= array ();
-if ($dbresult && $dbresult->RecordCount() > 0)
-  {
-    while ($row= $dbresult->FetchRow())
-      {
-	$onerow= new StdClass();
-	$onerow->rowclass= $rowclass;
-	$onerow->id= $row['id'];
-	$equb = $row['equb'];
-	$equa = $row['equa'];
-	$friendlyname = $row['friendlyname'];
-	$libequipe = $row['libequipe'];
+$tableau = array();
+$i=0;
+$result = array();
+$rowarray = array();
+$rowarray2 = array();
+$query1 = "SELECT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres GROUP BY date_event";
+$dbresultat = $db->Execute($query1);
 
 
-	//$onerow->equipe= $row['equipe'];
-	$onerow->libelle=  $row['libelle'] ;
-	if(isset($friendlyname) && $friendlyname !='')
+	if($dbresultat && $dbresultat->RecordCount()>0)
 	{
-		if ($libequipe == $equa)
+		while($row = $dbresultat->FetchRow())
 		{
-			$onerow->equa= $row['friendlyname'];
+			
+			
+			$tableau[$i] = $row['date_event'];
+			//on instancie le premier tableau
+			//on va boucler à nouveau sur les rencontres selon les différentes dates
+			$query2 = "SELECT * FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event = ? AND affiche ='1'";
+			$dbresult = $db->Execute($query2, array($row['date_event']));
+			
+			if($dbresult && $dbresult->RecordCount()>0)
+			{
+				//on a des résultats, on traite l'info
+				$firstrow= new StdClass();
+				$firstrow->rowclass= $rowclass;
+				$firstrow->date_event= $row['date_event'];
+				$a = 0;
+				while($row2 = $dbresult->FetchRow())
+				{
+					$a++;
+					$onerow= new StdClass();
+					$onerow->rowclass= $rowclass;
+					$tableau[$i]['id'] = $row2['id'];
+					$tableau[$i]['equa'] = $row2['equa'];
+					$tableau[$i]['scorea'] = $row2['scorea'];
+					$tableau[$i]['scoreb'] = $row2['scoreb'];
+					$tableau[$i]['equb'] = $row2['equb'];
+					
+					$onerow->id = $row2['id'];
+					$onerow->equa = $row2['equa'];
+					$onerow->scorea = $row2['scorea'];
+					$onerow->scoreb = $row2['scoreb'];
+					$onerow->equb = $row2['equb'];
+					//$onerow->id = $row2['id'];
+					($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
+					$rowarray[]= $onerow;
+				}
+				$rowarray2[]= $firstrow;
+				unset($rowarray);
+								
+			}
+			//$smarty->assign('tabs', $tableau);
+			$smarty->assign('items', $rowarray);
+			$smarty->assign('tabs', $firstrow)
+			unset($firstarray);
+			
+			$i++;
 		}
-		
-		else{
-			$onerow->equa= $row['equa'];
-		}
-		
 	}
-	else{
-		$onerow->equa= $row['equa'];
-	}
-	$onerow->scorea= $row['scorea'];
-	$onerow->scoreb= $row['scoreb'];
-	if(isset($friendlyname) && $friendlyname !='')
+	else
 	{
-		if ($libequipe == $equb)
-		{
-			$onerow->equb= $row['friendlyname'];
-		}
-		
-		else{
-			$onerow->equb= $row['equb'];
-		}
-		
+		//pas de résultats ? On fait quoi ?
 	}
-	else{
-		$onerow->equb= $row['equb'];
-	}
-
-	$onerow->details= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid, 'Détails', array('lien'=>$row['lien']));
-//	$onerow->deletelink= $this->CreateLink($id, 'delete_team_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
-	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
-	$rowarray[]= $onerow;
-      }
-  }
-
-/**/
-$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
-$smarty->assign('itemcount', count($rowarray));
-$smarty->assign('items', $rowarray);
-//on va essayer de construire dynamiquement des liens vers les différentes journées de championnat de France par équipes
-/*
-for($i=1;$i<=10;$i++){
-	$smarty->assign("lienj$i",
-	$this->CreateFrontendLink($id,$returnid,'fe_view_teams_results', $contents = "J$i", array("numjourn"=>"$i")));
-}
-*/
-$smarty->assign('lienj1',
-		$this->CreateFrontendLink($id,$returnid,'fe_view_teams_results', $contents = 'J1', array('numjourn'=>'1')));
-$smarty->assign('lienj2',
-		$this->CreateFrontendLink($id,$returnid,'fe_view_teams_results', $contents = 'J2', array('numjourn'=>'2')));
-
-/**/
 echo $this->ProcessTemplate('fepoulesRencontres.tpl');
-
-
 #
 # EOF
 #

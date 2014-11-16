@@ -84,11 +84,6 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->name= $row['name'];
 	$onerow->code_compet= $row['code_compet'];
 	$onerow->coefficient= $row['coefficient'];
-	$onerow->parties= $row['parties'];
-	$onerow->joueurs= $row['joueurs'];
-	$onerow->indivs= $row['indivs'];
-	$onerow->editlink= $this->CreateLink($id, 'edit_compet', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-	//$onerow->deletelink= $this->CreateLink($id, 'delete_team_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }
@@ -100,10 +95,10 @@ $smarty->assign('itemsfound', $this->Lang('resultsfound'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('createlink', 
-		$this->CreateLink($id, 'add_compet', $returnid,
+		$this->CreateLink($id, 'add_type_compet', $returnid,
 				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add_compet'), '', '', 'systemicon')).
-		$this->CreateLink($id, 'add_compet', $returnid, 
-				  $this->Lang('add_compet'), 
+		$this->CreateLink($id, 'add_type_compet', $returnid, 
+				  $this->Lang('add_type_compet'), 
 				  array()));
 
 echo $this->ProcessTemplate('list_compet.tpl');

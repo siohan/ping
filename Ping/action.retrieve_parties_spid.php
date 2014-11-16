@@ -70,9 +70,11 @@ else
 				$newclassement = explode('-', $classement);
 				$newclass = $newclassement[1];
 			}
-			else {
+			else 
+			{
 				$newclass = $classement;
 			}
+			
 		//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
 		$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ?";//" AND saison = ?";
 		$dbresult = $db->Execute($query, array($licence,$mois_event));
@@ -94,21 +96,21 @@ else
 		//On a la date et le type d'épreuve
 		//on peut donc en déduire le tour via le calendrier
 		//et le coefficient pour calculer les points via la table type_competitons
-		/*
+		
 		//1 - on récupére le tour s'il existe
 		//on va fdonc chercher dans la table calendrier
-		$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE name_compet =? AND date_compet = ?";
-		$resultat = $db->Execute($query, array($epreuve, $date_event));
+		$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE date_debut = ? OR date_fin = ?";
+		$resultat = $db->Execute($query, array($date_event, $date_event));
 		
 			if ($resultat && $resultat->RecordCount()>0){
 				$row = $resultat->FetchRow();
-				$numjourn = $row[numjourn];
+				$numjourn = $row['numjourn'];
 			}
 			else
 			{
 				$numjourn = 0;
 			}
-		*/
+		
 		//2 - on récupère le coefficient de la compétition
 		$coeff = coeff($epreuve);
 		
@@ -133,6 +135,7 @@ else
 		$pointres = $points1*$coeff; 
 		$forfait = $tab[forfait];
 	
+//on autorise les doublons ?
 	
 		$query = "SELECT licence, date_event,nom FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND date_event = ? AND nom = ?";
 	//echo $query;

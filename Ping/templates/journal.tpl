@@ -59,10 +59,8 @@ $(document).ready(function(){
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
     <td>{$entry->id}</td>
-	<td>{$entry->datemaj|date_format:"%A %e %B %Y à %H:%M:%S"}</td>
+	<td>{$entry->datecreated|date_format:"%A %e %B %Y à %H:%M:%S"}</td>
     <td>{$entry->designation}</td>
-    <td>{$entry->editlink}</td>
-	<td>{$entry->deletelink}</td>
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" class="select"></td>
 	</tr>
 {/foreach}

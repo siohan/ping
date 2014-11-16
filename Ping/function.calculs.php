@@ -1184,19 +1184,18 @@ return $string;
 function coeff ($typeCompetition)
 {
 	$db  = cmsms()->GetDb();
-	
+	/*
 	if(substr_count($typeCompetition,'-')>0)
 	{
 		$type_inter = explode('-',$typeCompetition,2);
 		$type = $type_inter[0];
 	}
-	else 
-	{
-		$type = $typeCompetition;
-	}
+	*/
+		//	$type = $typeCompetition;
+	
 
 $query ="SELECT coefficient FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
-$dbretour = $db->Execute($query, array($type));
+$dbretour = $db->Execute($query, array($typeCompetition));
 
 	if ($dbretour && $dbretour->RecordCount() > 0)
   	{

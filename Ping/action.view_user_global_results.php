@@ -1,6 +1,9 @@
 <?php
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+##############################################################
+#              SPID                                          #
+##############################################################
+//debug_display($params, 'Parameters');
 
 $saison = $this->GetPreference('saison_en_cours');
 
@@ -18,7 +21,7 @@ $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
 $query = "SELECT *, pts.epreuve,pts.date_event, j.licence,pts.numjourn , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties_spid AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY j.nom ASC, pts.numjourn ASC";//"";
-echo $query;
+//echo $query;
 $dbresult = $db->Execute($query, array($saison));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
@@ -129,7 +132,7 @@ $query.=" ORDER BY joueur ASC, sp.date_event ASC";
 
 
 $dbresult= $db->Execute($query, $parms);
-echo $query;
+//echo $query;
 $rowclass= 'row1';
 $rowarray= array ();
 if ($dbresult && $dbresult->RecordCount() > 0)
@@ -151,6 +154,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->forfait= $row['forfait'];
 	//$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
 	$onerow->editlink= $this->CreateLink($id, 'edit_player_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['record_id']));
+	$onerow->duplicatelink= $this->CreateLink($id, 'do_edit_result', $returnid, $themeObject->DisplayImage('icons/system/copy.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['record_id'], 'duplicate'=>'1'));
 	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['record_id']), $this->Lang('delete_user_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
@@ -177,6 +181,7 @@ $smarty->assign('form2start',
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
 $articles = array("Mettre le Coeff à 0,5"=>"coeff05","Mettre le Coeff à 0,75"=>"coeff075","Mettre le Coeff à 1"=>"coeff1","Mettre le Coeff à 1,25"=>"coeff125","Mettre le Coeff à 1,5"=>"coeff15", "Récupérer situation mensuelle"=>"situation","Supprimer"=>"supp_spid");
+
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',
