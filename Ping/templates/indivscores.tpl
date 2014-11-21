@@ -52,6 +52,7 @@ $(document).ready(function(){
   <th>{$victoire}</th>
   <th>{$adversaire}</th>
 	<th>{$points}</th>
+	<th colspan="3">Actions</th>
   <th><input type="checkbox" id="selectall" name="selectall"></th>
   </tr>
  </thead>

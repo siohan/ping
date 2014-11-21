@@ -155,7 +155,7 @@ $rowarray= array ();
 			//$onerow->equipe= $this->createLink($id, 'viewsteamresult', $returnid, $row['equipe'],array('equipe'=>$row['equipe']),$row) ;
 			$onerow->joueur= $row['joueur'];
 			$onerow->id= $this->CreateLink($id, 'edit_joueurs', $returnid, $row['id'],array('record_id'=>$row['id']), $row);
-			$onerow->editlink= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('record_id'=>$row['id']));
+			$onerow->editlink= $this->CreateLink($id, 'add_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('add-manually'), '', '', 'systemicon'),array('licence'=>$row['licence']));
 			$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, 'Situation mensuelle', array('licence'=>$row['licence']));
 			$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, 'Parties disputées', array('licence'=>$row['licence']));
 			$onerow->deletelink= $this->CreateLink($id, 'delete_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_confirm'));
@@ -167,8 +167,8 @@ $rowarray= array ();
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
-$smarty->assign('retrieveallsitmens',
-		$this->CreateLink($id,'retrieve_all_sit_mens', $returnid, 'Récupérer toutes les situations mensuelles'));
+$smarty->assign('addallsitmenslink',
+				$this->CreateLink($id,'add_all_sit_mens', $returnid, 'Ajouter toutes situations mensuelles'));
 $smarty->assign('missing_sit_mens', 
 		$this->CreateLink($id, 'missing_sit_mens', $returnid, 'Les situations manquantes'));
 $smarty->assign('form2start',

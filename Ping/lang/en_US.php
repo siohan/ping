@@ -1,5 +1,5 @@
 <?php
-$lang['friendlyname'] = 'Calcul Tranches';
+$lang['friendlyname'] = 'Table Tennis';
 $lang['postinstall'] = 'Post Install Message, e.g., Be sure to set "Use Skeletons" permissions to use this module!';
 $lang['postuninstall'] = 'Post Uninstall Message, e.g., "Curses! Foiled Again!"';
 $lang['really_uninstall'] = 'Really? You\'re sure you want to uninstall this fine module?';

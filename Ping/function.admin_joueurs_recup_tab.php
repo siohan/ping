@@ -22,7 +22,7 @@ $smarty->assign('display_unable_players',
 
 $dbresult= array ();
 //SELECT * FROM ping_module_ping_recup_parties AS rec right JOIN ping_module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
-$query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence, rec.sit_mens, rec.fftt, rec.spid, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_recup_parties AS rec ON j.licence = rec.licence WHERE j.actif = '1' AND (rec.saison = ? OR rec.saison IS NULL) ORDER BY j.id ASC";
+$query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence, rec.sit_mens, rec.fftt, rec.spid, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_recup_parties AS rec ON j.licence = rec.licence WHERE j.actif = '1' AND (rec.saison = ? OR rec.saison IS NULL) ORDER BY joueur ASC";
 
 $dbresult= $db->Execute($query, array($saison));
 $rowclass= 'row1';

@@ -31,6 +31,8 @@ $(document).ready(function(){
     <p class="pageinput">{$input_compet} </p>*}
     <p class="pagetext">Poule</p>
     <p class="pageinput">{$input_tour} </p>
+	<p class="pagetext">Mon club uniquement:</p>
+	<p class="pageinput">{$input_club_uniquement} </p>
 {*	<p class="pagetext">{$prompt_equipe}:</p>
     <p class="pageinput">{$input_equipe} </p>
     <p class="pagetext">&nbsp;</p>*}
@@ -53,7 +55,7 @@ $(document).ready(function(){
   <th>Equipe A</th>
   <th colspan="2">Score</th>
   <th>Equipe B</th>
-<th colspan="2">Actions</th>
+<th colspan="3">Actions</th>
 <th><input type="checkbox" id="selectall" name="selectall"/></th>	
  
   </tr>

@@ -7,6 +7,7 @@
 		<!--<th>Prog mois</th>-->
 		<th>Clt référence</th>
 		<th>Points en cours</th>
+		<th>Bilan</th>
 		
 	</thead>
  <tbody>
@@ -15,6 +16,8 @@
     <td>{$entry->joueur}</td>
 	<td>{$entry->clt}</td>
 	<td>{$entry->somme}</td>
+	<td>{$entry->bilan}</td>
+	<td>{$entry->details}</td>
   </tr>
 {/foreach}
  </tbody>

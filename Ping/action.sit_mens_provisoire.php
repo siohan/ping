@@ -1,27 +1,22 @@
 <?php
 
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 $db =& $this->GetDb();
 global $themeObject;
 
 $saison_courante = $this->GetPreference('saison_en_cours');
 $phase = $this->GetPreference('phase_en_cours');
-echo $saison_courante;
-echo $phase;
-
-$smarty->assign('id', $this->Lang('id'));
-$smarty->assign('username', 'Joueur');
-$smarty->assign('points', 'Points');
 
 
 $query="SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, SUM(sp.pointres) AS Total, sp.licence FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_joueurs AS j WHERE sp.licence = j.licence AND sp.saison = ? GROUP BY joueur";	
 
 //$query.=" ORDER BY Total DESC";
 $dbresult = $db->Execute($query, array($saison_courante));
-echo $query;
+//echo $query;
 $rowclass= 'row1';
 $rowarray= array ();
+
 if ($dbresult && $dbresult->RecordCount()>0)	
 	{
 		while($row= $dbresult->FetchRow())
@@ -50,11 +45,15 @@ if ($dbresult && $dbresult->RecordCount()>0)
 			$onerow->joueur= $row['joueur'];
 			$onerow->clt= $points_ref;
 			$onerow->somme= $somme;
+			$onerow->bilan= $pointres;
+			$onerow->details= $this->CreateLink($id, 'fe_view_user_results', $returnid, 'Détails',array('licence'=>$row['licence']));
 			($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 			$rowarray[]= $onerow;
 		}
 	}
-
+	
+$smarty->assign('returnlink', 
+		$this->CreateFrontendLink($id,$returnid, 'sit_mens_provisoire',$addtext='Retour'));
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

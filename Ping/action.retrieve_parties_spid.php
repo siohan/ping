@@ -4,7 +4,7 @@ debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 require_once(dirname(__FILE__).'/function.calculs.php');
 $now = trim($db->DBTimeStamp(time()), "'");
-
+$error = 0;
 //$result = $service->getJoueurParties("07290229");
 $licence = $params['licence'];
 $designation = '';
@@ -142,20 +142,23 @@ else
 	$dbresult = $db->Execute($query, array($licence, $date_event,$nom));
 	
 		if($dbresult  && $dbresult->RecordCount() == 0) {
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, saison, datemaj, licence, date_event, epreuve, nom, numjourn,classement, victoire,ecart,type_ecart, coeff, pointres, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			$i++;
+			$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, saison, datemaj, licence, date_event, epreuve, nom, numjourn,classement, victoire,ecart,type_ecart, coeff, pointres, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			
 			//echo $query;
-			$dbresultat = $db->Execute($query,array($saison_courante,$now, $licence, $date_event, $epreuve, $nom, $numjourn, $newclass, $victoire,$ecart_reel,$type_ecart, $coeff,$pointres, $forfait));
+			$dbresultat = $db->Execute($query2,array($saison_courante,$now, $licence, $date_event, $epreuve, $nom, $numjourn, $newclass,$victoire,$ecart_reel,$type_ecart, $coeff,$pointres, $forfait));
 		
 			if(!$dbresultat)
 				{
+					$designation.="Erreur query2 ";
 					$designation.=$db->ErrorMsg(); 
+					$error++;
 				}
 			}
 			else 
 			{ 
 				echo "Partie déjà enregistrée";
 			}
+		
 		}
 
 $comptage = $i;

@@ -38,7 +38,7 @@ $statuslist[$this->lang('allstatus')] ='';
 $datelist[$this->Lang('alldates')] = '';
 $typeCompet = array();
 //$typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_recup";
+$query = "SELECT datecreated, status FROM ".cms_db_prefix()."module_ping_recup ORDER BY datecreated DESC";
 $dbresult = $db->Execute($query);
 while ($dbresult && $row = $dbresult->FetchRow())
 	{

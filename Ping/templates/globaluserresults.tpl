@@ -39,7 +39,8 @@ $(document).ready(function(){
   </div>
   {$formend}
 </fieldset>
-{/if}<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
+{/if}
+<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$retrieve_all}</p></div>
 {if $itemcount > 0}

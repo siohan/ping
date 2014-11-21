@@ -16,6 +16,7 @@ if( !isset($gCms) ) exit;
 
 $db =& $this->GetDb();
 global $themeObject;
+$maintenant = date("Y-m-d");
 //liste des liens pour récupérer les données 
 $smarty->assign('retrieve_users',
 		$this->CreateLink($id, 'retrieve_joueurs_by_club', $returnid, $contents = "Récupération des joueurs", $warn_message = "Etes vous sûr ? Trop d'appels vers la base de données peuvent avoir des conséquences importantes !"));
@@ -141,7 +142,7 @@ $rowarray= array ();
 			$rowarray[]= $onerow;
       		}
   	}
-
+$smarty->assign('maintenant',$maintenant);
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

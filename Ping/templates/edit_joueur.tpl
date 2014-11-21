@@ -10,7 +10,7 @@
 
 <div class="pageoverflow">
     <p class="pagetext">Actif:</p>
-    <p class="pageinput">{$actif}</p>
+    <p class="pageinput">{$actif}{cms_help key='help_explanation' title=$actiftext}</p>
   </div>
  <div class="pageoverflow">
     <p class="pagetext">Nom:</p>

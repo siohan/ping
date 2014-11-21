@@ -80,55 +80,47 @@ foreach($result as $cle =>$tab)
 	
 		if(is_array($scorea) && is_array($scoreb))
 		{
-			//on regarde la valeur du populate_calendar
-			//à True, elle permet 
-			//de remplir la table calendrier automatiquement
-			$designation = "Score non parvenu entre ".$equa." et ".$equb;
-			$status = "Echec";
-			$action = "retrieve_poule_rencontres";
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
-			$action = "retrieve_poules_rencontres";
-			$dbresult = $db->Execute($query, array($now,$status, $designation,$action));
+			//le score n'est pas parvenu ou le match n'a pas été joué
+			//On l'enregistre qd même
+			$scorea = 0;
+			$scoreb = 0;
+			$update = 0;		
+		}
 		
-				if(!$dbresult)
+	//on vérifie si l'enregistrement est déjà là
+	$query = "SELECT lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE lien = ? ";
+	$dbresult = $db->Execute($query, array($lien));
+	
+	//il n'y a pas d'enregistrement auparavant, on peut continuer
+			
+		if($dbresult  && $dbresult->RecordCount() == 0) 
+		{
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			//echo $query;
+			$i++;
+			$dbresultat = $db->Execute($query,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
+		
+				if(!$dbresultat)
 				{
-					$designation.=$db->ErrorMsg(); 
-				}			
-			
-			
-	
-			}
-			else 
-			{
-		
-	
-			//on vérifie si l'enregistrement est déjà là
-			$query = "SELECT lien FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE lien = ? ";
-			$dbresult = $db->Execute($query, array($lien));
-	
-			//il n'y a pas d'enregistrement auparavant, on peut continuer
-			
-				if($dbresult  && $dbresult->RecordCount() == 0) 
-				{
-					$query = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-					//echo $query;
-					$i++;
-					$dbresultat = $db->Execute($query,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
-		
-						if(!$dbresultat)
-							{
-								$designation.= $db->ErrorMsg();
+					$designation.= $db->ErrorMsg();
 								
 
-							}
-						
-							
-		
-		
-		
-		
 				}
-	}
+		}
+		elseif($dbresult->RecordCount()>0)
+		{
+			//il y a déjà un enregistrement, le score est-il à jour ?
+			$row = $dbresult->FetchRow();
+			$scoreA = $row['scorea'];
+			$scoreB = $row['scoreb'];
+				
+				if($scoreA ==0 && $scoreB ==0 && $update !=0)
+				{
+					$query = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE lien = ?";
+					$dbresultA = $db->Execute($query, array($scorea, $scoreb, $lien));
+				}
+		}
+		
 	
 	
 	//on remplit le calendrier ?
@@ -137,11 +129,14 @@ foreach($result as $cle =>$tab)
 		
 			//On fait l'inclusion ds la bdd
 			// on vérifie d'abord que l'enregistrement n'est pas déjà en bdd
-			$query = "SELECT numjourn, date_debut, date_fin, type_compet FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND type_compet = ?";
+			$query = "SELECT numjourn, date_debut, date_fin, type_compet FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND type_compet = ? ";//AND scorea !=0 AND scoreb !=0";
 			$dbresult = $db->Execute($query, array($tour, $date_event, $date_event,$type_compet));
 
 				if ($dbresult->RecordCount()==0)
 				{
+					
+					
+					
 						$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,type_compet, numjourn) VALUES ( '', ?, ?, ?, ?)";
 						$dbresult = $db->Execute($query, array($date_event,$date_event,$type_compet,$tour));
 						
@@ -150,6 +145,7 @@ foreach($result as $cle =>$tab)
 							$designation.= $db->ErrorMsg();
 						}
 				}
+				
 
 		
 	}

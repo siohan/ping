@@ -117,7 +117,8 @@ class Ping extends CMSModule
 	$this->SetParameterType('pointres', CLEAN_STRING);
 	$this->SetParameterType('coefchamp', CLEAN_STRING);
 	$this->SetParameterType('advclaof', CLEAN_STRING);
-	
+	$this->SetParameterType('club_uniquement', CLEAN_INT);
+	$this->SetParameterType('template', CLEAN_INT);
 	//
 	$this->SetParameterType('datecreated', CLEAN_STRING);
 	$this->SetParameterType('datemaj', CLEAN_STRING);

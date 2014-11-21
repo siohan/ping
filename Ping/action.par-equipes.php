@@ -32,6 +32,7 @@ $parms['saison'] = $saison;
 		$parms['type_compet'] = $type_compet;
 	}
 	
+	
 //$query.= " GROUP BY ren.date_event ";
 $query.=" ORDER BY ren.date_event DESC";
 $dbresult= $db->Execute($query, $parms);

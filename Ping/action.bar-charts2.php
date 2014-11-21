@@ -54,7 +54,7 @@ $smarty->assign('Label_defaite', 'Défaites');
 
 /**/
 $result = array();
-$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur,p.licence,SUM(p.pointres) as sumpoints,SUM(p.victoire) AS victoires,count(p.victoire) AS matchs, MONTH(p.date_event) AS mois FROM `cms_module_ping_parties_spid` AS p, `cms_module_ping_joueurs` AS j WHERE j.licence = p.licence AND p.saison = ? AND p.licence = ? ";//GROUP BY mois ORDER BY YEAR(p.date_event) ASC,mois";
+$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur,p.licence,SUM(p.pointres) as sumpoints,SUM(p.victoire) AS victoires,count(p.victoire) AS matchs, MONTH(p.date_event) AS mois FROM ".cms_db_prefix()."module_ping_parties_spid AS p, ".cms_db_prefix()."module_ping_joueurs AS j WHERE j.licence = p.licence AND p.saison = ? ";//AND p.licence = ? ";//GROUP BY mois ORDER BY YEAR(p.date_event) ASC,mois";
 $parms['saison'] = $saison;
 //$query = "SELECT SUM(vd) AS victoires, count(vd) AS total, count(vd) - SUM(vd) AS defaites  FROM ".cms_db_prefix()."module_ping_parties WHERE saison = ?";
 

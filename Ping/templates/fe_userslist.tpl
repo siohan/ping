@@ -1,41 +1,45 @@
-{debug}
-{if isset($message)}
-  {if $error != ''}
-    <p><font color="red">{$message}</font></p>
-  {else}
-    <p>{$message}</p>
-  {/if}
-{/if}
-<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
-{*if $itemcount > 0*}
+<h3>Résumé des résultats</h3>
+<table border="0" cellspacing="0" cellpadding="0" class="pagetable">
+ <tbody>
+	<thead>
+		<tr>
+			<th>Vic</th>
+			<th>Total</th>
+			<th>Pts</th>
+		</tr>
+	</thead>
+ </tbody>
+{foreach from=$items1 item=entree}
+  <tr class="{$entree->rowclass}">
+    <td>{$entree->vic}</td>
+	<td>{$entree->total}</td>
+	<td>{$entree->pts}</td>
+  </tr>
+{/foreach}
+ </tbody>
+</table>
+<h3>Le détail des résulats spid de : {$joueur}</h3>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
-  <tr>	
-  <th>{$id}</th>
-  <th>{$tour}</th>
-  <th>{$equipe}</th>
-  <th>{$joueur}</th>
-  <th>{$adversaire}</th>
-  <th>{$victoire}</th>
-  <th>{$points}</th>
-  <th class="pageicon">&nbsp;</th>
-  <th class="pageicon">&nbsp;</th>
+  <tr>
+	<th>Date</th>
+	<th>Epreuve</th>
+	<th>Adv</th>
+	<th>Vic/Def</th>
+	<th>Coeff</th>
+	<th>Pts</th>
   </tr>
  </thead>
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
-    <td>{$entry->id}</td>
-	<td>{$entry->tour}</td>
-    <td>{$entry->equipe}</td>
-    <td>{$entry->joueur}</td>
-	<td>{$entry->adversaire}</td>
-	<td>{$entry->vic_def}</td>
-	<td>{$entry->points}</td>
-	<td>{$entry->idlink}</td>
-    <td>{$entry->editlink}</td>
-    <td>{$entry->deletelink}</td>
+    <td>{$entry->date_event|date_format:"%d/%m"}</td>
+	<td>{$entry->epreuve}</td>
+    <td>{$entry->nom}({$entry->classement})</td>
+	<td>{$entry->victoire}</td>
+	<td>{$entry->coeff}</td>
+	<td>{$entry->pointres}</td>
   </tr>
 {/foreach}
  </tbody>

@@ -694,7 +694,7 @@ public static function retrieve_parties_spid( $licence )
 					//on calcule l'écart selon la grille de points de la FFTT
 					$type_ecart = ping_admin_ops::CalculEcart($ecart_reel);
 					$epreuve = $tab[epreuve];
-					echo $ecart_reel;
+					//echo $ecart_reel;
 					// de quelle compétition s'agit-il ? 
 					//On a la date et le type d'épreuve
 					//on peut donc en déduire le tour via le calendrier

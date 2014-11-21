@@ -51,7 +51,7 @@ $(document).ready(function(){
 		<th>Id</th>
 		<th>Date de mise à jour</th>
 		<th>designation</th>
-		<th colspan="2">Actions</th>
+		<!--<th colspan="2">Actions</th>-->
 		<th><input type="checkbox" id="selectall" name="selectall"/></th>
     </tr>
  </thead>

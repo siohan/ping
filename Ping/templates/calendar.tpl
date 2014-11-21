@@ -44,7 +44,7 @@ $(document).ready(function(){
 {/if}
 *}
 {*<div class="pageoptions"><p class="pageoptions">{$retrieve_users} | {$retrieve_teams} | {$retrieve_teams_autres} | {$retrieve_all_parties} | {$retrieve_all_spid} | {$retrieve_details_rencontres}</p></div>*}
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  | {$createlink}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  | {$createlink} {$maintenant}</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -61,11 +61,12 @@ $(document).ready(function(){
  </thead>
  <tbody>
 {foreach from=$items item=entry}
-  <tr class="{$entry->rowclass}">
+{if $entry->date_fin < $maintenant}<tr class="{$entry->rowclass} past" style="background: red;">{else}
+  <tr class="{$entry->rowclass}">{/if}
     <td>{$entry->id}</td>
 	<td>{$entry->name}</td>
 	<td>{$entry->type_compet}</td>
-	<td>{$entry->date_debut}</td>
+	<td>{$entry->date_debut|date_format:"%d-%m-%Y"}</td>
     <td>{$entry->date_fin}</td>
 	<td>{$entry->numjourn}
     <td>{$entry->editlink}</td>
