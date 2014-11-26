@@ -91,7 +91,7 @@ switch($current_version)
 					     "datecreated ". CMS_ADODB_DT. "");
  	$dict->ExecuteSQLArray( $sqlarray );
 	
-	$sql = "ALTER TABLE ".cms_db_prefix()."module_ping_type_competition ADD UNIQUE `ind_code_compet` (`code_compet`)";
+	$sql = "ALTER TABLE ".cms_db_prefix()."module_ping_type_competitions ADD UNIQUE `ind_code_compet` (`code_compet`)";
 	$db->Execute($sql);
 
 	$sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?)";
@@ -114,6 +114,31 @@ switch($current_version)
 					   $flds, 
 					   $taboptarray);
 	$dict->ExecuteSQLArray($sqlarray);
+	
+	$sqlarray = $dict->AlterColumnSQL(cms_db_prefix()."module_ping_parties_spid",
+					     "pointres N(6.3) ");
+ 	$dict->ExecuteSQLArray( $sqlarray );
+	$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_type_competitions",
+					"indivs L");
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_type_competitions` SET `indivs` = '1' WHERE `id` = 1";
+	$db->Execute($sql);
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_type_competitions` SET `indivs` = '1' WHERE `id` = 2";
+	$db->Execute($sql);
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_type_competitions` SET `indivs` = '1' WHERE `id` = 6";
+	$db->Execute($sql);
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_type_competitions` SET `indivs` = '1' WHERE `id` = 7";
+	$db->Execute($sql);
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_type_competitions` SET `indivs` = '1' WHERE `id` = 8";
+	$db->Execute($sql);
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_type_competitions` SET `indivs` = '1' WHERE `id` = 10";
+	$db->Execute($sql);
+	$sql = "UPDATE ".cms_db_prefix()."module_ping_type_competitions` SET `indivs` = '1' WHERE `id` = 11";
+	$db->Execute($sql);
+	$sql = "ALTER TABLE ".cms_db_prefix()."module_ping_type_competitions ADD UNIQUE `ind_code_compet` (`code_compet`)";
+	$db->Execute($sql);
+	
+	
+	
 	
 
 }

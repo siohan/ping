@@ -1,21 +1,22 @@
 <?php
-
+#############################################################
+##                  FFTT                                   ##
+#############################################################
 if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
 require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
-
+$saison = $this->GetPreference('saison_en_cours');
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_indivs_tab')); 
 $datelist[$this->Lang('alldates')] = '';	
-$equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT *,pts.codechamp , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence ORDER BY j.nom ASC, pts.numjourn ASC";//"";
-$dbresult = $db->Execute($query, array($saison_courante));
+$query1 = "SELECT pts.date_event,pts.codechamp,pts.licence , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY j.nom ASC, pts.date_event ASC";//"";
+$dbresult = $db->Execute($query1, array($saison));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
     $datelist[$row['date_event']] = $row['date_event'];
@@ -25,7 +26,7 @@ while ($dbresult && $row = $dbresult->FetchRow())
 
 	if( isset($params['submitfilter']) )
   	{
-    		if( isset( $params['tourlist']) )
+    		if( isset( $params['datelist']) )
       		{
 			$this->SetPreference('dateChoisi', $params['datelist']);
       		}
@@ -40,9 +41,7 @@ while ($dbresult && $row = $dbresult->FetchRow())
 	}
 	
 $curdate = $this->GetPreference( 'dateChoisi' );
-//$curseason = $this->GetPreference('saisonChoisie');
 $curplayer = $this->GetPreference( 'playerChoisi');
-$curequipe = $this->GetPreference( 'equipeChoisie' );
 $curCompet = $this->GetPreference( 'competChoisie');
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
@@ -57,16 +56,9 @@ $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
 
-
-$smarty->assign('id', $this->Lang('id'));
-$smarty->assign('joueur', 'Joueur');
-$smarty->assign('victoire', 'Victoire');
-$smarty->assign('adversaire', 'Adversaire');
-$smarty->assign('points', 'Points');
-
 $result= array ();
 $query = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, pts.id, pts.vd, pts.numjourn,pts.date_event, pts.advnompre,pts.pointres, pts.advclaof  FROM ".cms_db_prefix()."module_ping_parties AS pts , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence = j.licence AND pts.saison = ?";
-$parms['saison'] = $saison_courante;
+$parms['saison'] = $saison;
 
 	if( isset($params['submitfilter'] )){
 		
@@ -93,7 +85,7 @@ $parms['saison'] = $saison_courante;
 
 	}
 	
-$query.=" ORDER BY pts.date_event ASC";
+$query.=" ORDER BY joueur,pts.date_event ASC";
 $dbresult= $db->Execute($query,$parms);
 //echo $query;
 if (!$dbresult)
@@ -111,6 +103,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->id= $row['id'];
+	$onerow->date_event = $row['date_event'];
 	$onerow->numjourn= $row['numjourn'];
 	$onerow->joueur= $row['joueur'];
 	$onerow->vd= $row['vd']; 
@@ -119,8 +112,8 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->pointres= $row['pointres'];
 	//$onerow->equipe= $this->CreateLink($id, 'create_new_user', $returnid, $row['equipe'], $row);
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-	$onerow->duplicatelink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['id'], 'duplicate'=>'1'));
-	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_user_confirm'));
+	$onerow->duplicatelink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/copy.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['id'], 'duplicate'=>'1'));
+	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id'],'type_compet'=>'fftt'), $this->Lang('delete_user_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }

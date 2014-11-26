@@ -49,7 +49,6 @@ foreach($result as $cle =>$tab)
 {
 	$compteur++;
 	
-	//echo "$cle_appel <br />";
 	$licence = $tab[licence];
 	$advlic = $tab[advlic];
 	$vd = $tab[vd];
@@ -94,7 +93,7 @@ foreach($result as $cle =>$tab)
 	{
 		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$i++;
-		echo $query;
+		//echo $query;
 		$dbresultat = $db->Execute($query,array($saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
 		
 			if(!$dbresultat)

@@ -36,6 +36,8 @@ $smarty->assign('input_tour',
 		$this->CreateInputDropdown($id,'pouleslist',$pouleslist,-1,$curpoule));
 $smarty->assign('input_club_uniquement',
 		$this->CreateInputCheckbox($id,'club_uniquement',1,1));
+$smarty->assign('input_deja_joues_uniquement',
+		$this->CreateInputCheckbox($id,'deja_joues_uniquement',1,1));
 		//	(isset($params['club_uniquement'])?$params['club_uniquement']:'1'),1));
 $smarty->assign('prompt_equipe',
 		$this->Lang('equipe'));
@@ -60,6 +62,11 @@ $parms['saison'] = $saison;
 		if($params['club_uniquement']=='1')
 		{
 			$query2.=" AND club = '1'";
+		}
+		if($params['deja_joues_uniquement'])
+		{
+			$query2.=" AND (ren.scorea !=0 AND ren.scoreb !=0 )";
+		
 		}
 	}
 /*		

@@ -786,6 +786,140 @@ public static function retrieve_parties_spid( $licence )
 
 }//fin de la fonction
 
+##
+#   Retrieve parties FFTT
+
+public static function retrieve_parties_fftt( $licence )
+  {
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$ping = cms_utils::get_module('Ping');
+	//require_once(dirname(__FILE__).'/function.calculs.php');
+	$saison_courante = $ping->GetPreference('saison_en_cours');
+	$now = trim($db->DBTimeStamp(time()), "'");
+	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
+	$dbretour = $db->Execute($query, array($licence));
+	if ($dbretour && $dbretour->RecordCount() > 0)
+	  {
+	    while ($row= $dbretour->FetchRow())
+	      {
+		$player = $row['player'];
+		$service = new Service();
+		$result = $service->getJoueurParties("$licence");
+		//var_dump($result);
+		//le service est-il ouvert ?
+		/**/
+		//on teste le resultat retourné     
+
+			if(!is_array($result)){
+
+
+				$message = "Service coupé"; 
+				$status = 'Echec';
+				$designation = $message;
+				$action = "mass_action";
+				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+			}
+			else{
+				$i = 0;
+				$compteur = 0;
+				foreach($result as $cle =>$tab)
+				{
+
+					$compteur++;
+
+					
+					$licence = $tab[licence];
+					$advlic = $tab[advlic];
+					$vd = $tab[vd];
+
+						if ($vd =='V'){
+							$vd = 1;
+						}
+						else 
+						{
+							$vd = 0;
+						}
+					$numjourn = $tab[numjourn];
+					
+						if(is_array($numjourn))
+						{
+							$numjourn = '0';
+						}
+						
+					$codechamp = $tab[codechamp];
+					$dateevent = $tab[date];
+					$chgt = explode("/",$dateevent);
+					$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
+					/*
+						if (substr($chgt[1], 0,1)==0)
+						{
+							$mois_event = substr($chgt[1], 1,1);
+								//echo "la date est".$date_event;
+						}
+						else
+						{
+							$mois_event = $chgt[1];
+						}
+					*/	
+					$advsexe = $tab[advsexe];
+					$advnompre = $tab[advnompre];
+					$pointres = $tab[pointres];
+					$coefchamp = $tab[coefchamp];					
+					$advclaof = $tab[advclaof];					
+					
+					$query = "SELECT licence,advlic, numjourn, codechamp, date_event, coefchamp FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND advlic = ? AND numjourn = ? AND codechamp = ? AND date_event = ? AND coefchamp = ?";
+					//echo $query;
+					$dbresult = $db->Execute($query, array($licence, $advlic, $numjourn, $codechamp, $date_event, $coefchamp));
+
+					if($dbresult  && $dbresult->RecordCount() == 0) {
+						$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						$i++;
+						//echo $query;
+						$dbresultat = $db->Execute($query,array($saison_courante,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
+
+						if(!$dbresultat)
+							{
+								$message = $db->ErrorMsg(); 
+								$status = 'Echec';
+								$designation = $message;
+								$action = "mass_action";
+								ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+							}
+
+
+					}//fin du if recordCount() ligne 244
+
+				}//fin du foreach
+
+				$comptage = $i;
+				$status = 'Parties FFTT';
+				$designation .= "Récupération FFTT de ".$comptage." parties sur ".$compteur."  de ".$player;
+				$action = "mass_action";
+				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+
+			}//fin du if !is_array
+		}//fin du while
+
+	}//fin du if dbretour >0
+
+
+
+
+
+
+
+
+
+}//fin de la fonction
+
+public static function erase_spid ( $id, $coeff_fftt, $numjourn_fftt, $points_fftt)
+{
+	$db = cmsms()->GetDb();
+	$query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET numjourn = ?, coeff = ?, pointres = ? WHERE id = ?";
+	$db->Execute($query, array($numjourn_fftt, $coeff_fftt,$pointres_fftt));
+}
+
 public static function delete_journal($journalid)
   {
     $db = cmsms()->GetDb();

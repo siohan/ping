@@ -119,6 +119,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('advclaof', CLEAN_STRING);
 	$this->SetParameterType('club_uniquement', CLEAN_INT);
 	$this->SetParameterType('template', CLEAN_INT);
+	$this->SetParameterType('edit', CLEAN_STRING);
 	//
 	$this->SetParameterType('datecreated', CLEAN_STRING);
 	$this->SetParameterType('datemaj', CLEAN_STRING);

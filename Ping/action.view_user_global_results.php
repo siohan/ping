@@ -66,23 +66,11 @@ $curCompet = $this->GetPreference( 'competChoisie');
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_date',
-		$this->CreateInputDropdown($id,'datelist',$datelist,-1,$curdate));
-/*
-$smarty->assign('input_saison',
-				$this->CreateInputDropdown($id,'saisonslist',$saisonslist,-1,$curseason));
-*/
-/*		$smarty->assign('prompt_equipe',
-				$this->Lang('equipe'));
-
-$smarty->assign('input_equipe',
-		$this->CreateInputDropdown($id,'equipelist',$equipelist,-1,$curequipe));
-*/		
-		$smarty->assign('input_compet',
-				$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
-				
-		$smarty->assign('input_player',
-				$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
-		
+		$this->CreateInputDropdown($id,'datelist',$datelist,-1,$curdate));		
+$smarty->assign('input_compet',
+		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
+$smarty->assign('input_player',
+		$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
@@ -152,15 +140,16 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->coeff= $row['coeff'];
 	$onerow->pointres= $row['pointres'];
 	$onerow->forfait= $row['forfait'];
-	//$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
 	$onerow->editlink= $this->CreateLink($id, 'edit_player_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['record_id']));
 	$onerow->duplicatelink= $this->CreateLink($id, 'do_edit_result', $returnid, $themeObject->DisplayImage('icons/system/copy.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['record_id'], 'duplicate'=>'1'));
-	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['record_id']), $this->Lang('delete_user_confirm'));
+	$onerow->deletelink= $this->CreateLink($id, 'delete_result', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['record_id'], "type_compet"=>"spid"), $this->Lang('delete_user_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }
   }
 /**/
+$smarty->assign('verif_spid_fftt', 
+$this->CreateLink($id, 'verif_spid_fftt', $returnid, 'Vérif Spid <-> FFTT'));
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

@@ -113,13 +113,18 @@ $lang['user_updated'] = 'Utilisateur modifi&eacute;';
 $lang['vic_def'] = 'Victoire ou défaite';
 $lang['view_contacts'] = 'Voir les contacts';
 $lang['yes'] = 'Oui';
+$lang['help_tour'] = 'Utilez le N° de journée pour obtenir ses résultats uniquement';
+$lang['help_type_compet'] = 'Filtrez les résultats en précisant le type de compétition';
+$lang['help_date_debut'] = 'Utilisez la date de début de compétition au format (aaaa-mm-jj)';
+$lang['help_date_fin'] = 'Utilisez la date de fin avec la date de début au même format';
 $lang['help_skeleton_id'] = 'Identificateur interne de s&eacute;lection des enregistrements';
+$lang['help_code_compet'] = 'Ce code se trouve dans les résultats FFTT';
+$lang['help_coefficient'] = 'Utilisez le point (.) et non la virgule ex 1.25 et non pas 1,25';
 $lang['help_description'] = 'Param&egrave;tres internes utilis&eacute;s lors de la cr&eacute;ation d&#039;un nouvel enregistrement';
 $lang['help_explanation'] = 'Param&egrave;tre interne utilis&eacute; pour passer des informations explicatives lorsque l&#039;on cr&eacute;&eacute; ou l&#039;on met &agrave; jour un enregistrement';
 $lang['help_module_message'] = 'Param&egrave;tre interne utilis&eacute; pour la transmission des messages &agrave; l&#039;utilisateur';
 $lang['event_info_OnSkeletonPreferenceChange'] = 'Un &eacute;v&eacute;nement g&eacute;n&eacute;r&eacute; lorsque les pr&eacute;f&eacute;rences du module  sont chang&eacute;es';
 $lang['event_help_OnSkeletonPreferenceChange'] = '<p>An event generated when the preferences to the Skeleton Module get changed</p>
-
 <h4>Parameters</h4>
 <ul>
 <li><em>allow_add</em> - The new setting of the &quot;Allow Add&quot; preference; boolean</li>
@@ -128,6 +133,22 @@ $lang['event_help_OnSkeletonPreferenceChange'] = '<p>An event generated when the
 $lang['moddescription'] = 'Entrez tous vos résultats de ping pour analyse rapide.';
 $lang['welcome_text'] = '<p>Bienvenue dans le module de gestion des résultats de votre club de ping</p>';
 $lang['changelog'] = '<ul>
+<li>Beta 3
+<ul>
+<li>Ajouts de la première version du front-office</li>
+<li>Ajouts de paramètres pour requeter plus facilement sur le front-office</li>
+<li>Possibilité d\'ajouter manuellement des situations mensuelles antérieures</li>
+<li>Récupération du spid depuis les résultats des équipes</li>
+<li>Création d\'une situation mensuelle "provisoire" recalculée à chaque nouveau résultat</li>
+<li>Possibilité de vérifier le spid avec les parties FFTT quand disponibles</li>
+<li>Ajout, suppression, modifications de type de compétitions</li>
+<li>Récupération "en masse" du spid, des parties FFTT et des situations mensuelles</li>
+<li>Récupération de tous les matchs pour remplir le calendrier</li>
+<li>Corrections de bogues et améliorations diverses</li>
+</ul>
+<li>Version 0.1beta2
+<ul><li>Mise à jour essentiellement corrective</li>
+</ul></li>
 <li>Version 0.1beta1 Agi
 <ul>
 <li>Première release du module.</li>
@@ -142,9 +163,10 @@ Un lien pour les équipes du championnat de France par équipes, l\'autre pour l
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom. Désactivez les joueurs ne faisant pas l\'objet d\'une situation mensuelle</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
 <h3>Spid</h3>
-<p>Récupérez les résultats du spid de différentes manières. La récupération de tous les résultats en une seule fois peut s\'avérer très longue (plusieurs minutes).
+<p>Récupérez les résultats du spid de différentes manières. La récupération de tous les résultats en une seule fois peut s\'avérer très longue (plusieurs minutes).<br />
+Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensuelle du mois concerné n\'est pas renseignée.</p>
 <h3>Situation mensuelle</h3>
-<p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer toutes les situations mensuelles des joueurs de votre club</p>
+<p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer la situation mensuelle en cours de tous les joueurs de votre club</p>
 <p>ATTENTION !! La FFTT limite la situation mensuelle à 100 accès par jour et par IP.</p>
 <h2>Implémentation sur les pages de votre site</h2>
 <p>Utilisez la balise suivante : {cms_module module=\'Ping\'}. Ceci affichera par défaut les résultats des équipes.</p>

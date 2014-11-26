@@ -38,6 +38,15 @@ $error = 0;
 		{
 			$error++;
 		}
+		$indivs = '';
+		if (isset($params['indivs']) && $params['indivs'] !='')
+		{
+			$indivs = $params['indivs'];
+		}
+		else
+		{
+			$error++;
+		}
 		
 		
 		//on calcule le nb d'erreur
@@ -46,16 +55,31 @@ $error = 0;
 			$this->Setmessage('Parametres requis manquants !');
 			$this->RedirectToAdminTab('compets');
 		}		
+		$edit = '';
+		if(isset($params['edit']) && $params['edit'] =='Oui')
+		{
+			//on regarde le recor_id qui est en parametre
+			if(isset($params['record_id']) && $params['record_id'] != '')
+			{
+				$record_id= $params['record_id'];
+			}
+			
+			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET name = ?, code_compet = ?, coefficient = ?, indivs = ? WHERE id = ?";
+			$dbresult = $db->Execute($query, array($name, $code_compet, $coefficient, $indivs, $record_id));
+			$this->SetMessage("$designation");
+			//$this->RedirectToAdminTab('compets');
+		}
+		else
+		{
 		
-		
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?)";
-		$dbresult = $db->Execute($query, array($name,$code_compet, $coefficient));
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient, indivs) VALUES ('', ?, ?, ?, ?)";
+		$dbresult = $db->Execute($query, array($name,$code_compet, $coefficient, $indivs));
 		
 			if(!$dbresult)
 			{
 				$designation = $db->ErrorMsg();
 				$this->SetMessage("$designation");
-				$this->RedirectToAdminTab('compets');
+			//	$this->RedirectToAdminTab('compets');
 			}
 			else
 			{
@@ -66,8 +90,9 @@ $error = 0;
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 			}
 		
-
+		}
+/*
 $this->SetMessage('Compétition enregistrée !');
 $this->RedirectToAdminTab('compets');
-
+*/
 ?>

@@ -82,7 +82,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-		$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation", "Récupérer les parties du Spid"=>"spid");
+		$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation", "Récupérer les parties du Spid"=>"spid", "Récupérer les parties FFTT"=>"fftt_parties");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

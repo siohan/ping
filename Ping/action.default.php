@@ -24,7 +24,7 @@ $dbresult = $db->Execute($query);
 			$datearr = explode('-', $date_debut);
 			$datefr = $datearr[2] . '-' . $datearr[1] . '-' . $datearr[0];
 			
-			$query2 = "SELECT *, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison  AND ren.date_event = ?";
+			$query2 = "SELECT *, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0)  AND ren.date_event = ?";
 			//$query2 = "SELECT * FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event = ?";
 			//mon club uniquement ?
 			$query2.=" AND club = '1'";

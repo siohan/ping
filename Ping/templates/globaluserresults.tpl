@@ -41,7 +41,7 @@ $(document).ready(function(){
 </fieldset>
 {/if}
 <div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$verif_spid_fftt}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$retrieve_all}</p></div>
 {if $itemcount > 0}
 {$form2start}
@@ -73,7 +73,7 @@ $(document).ready(function(){
 	<td>{$entry->name}</td>
 	<td>{$entry->classement}</td>
 	<td>{$entry->victoire}</td>
-	{if $entry->ecart eq "0.00"}<td style="background-color: orange;">{else}<td>{/if}{$entry->ecart}</td>
+	{if $entry->ecart eq "0.00" || $entry->ecart==-$entry->classement}<td style="background-color: orange;">{else}<td>{/if}{$entry->ecart}</td>
 	{if $entry->coeff  eq "0.00"}<td style="background-color: red;">{else}<td>{/if}{$entry->coeff}</td>
 	<td>{$entry->pointres}</td>
 	<td>{$entry->forfait}</td>

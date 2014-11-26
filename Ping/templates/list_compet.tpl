@@ -26,6 +26,8 @@
   	<th>Nom</th>
   	<th>Code</th>
   	<th>Coefficient</th>
+	<th>Indivs</th>
+	<th colspan="2">Actions</th>
   </tr>
  </thead>
  <tbody>
@@ -35,6 +37,9 @@
     <td>{$entry->name}</td>
     <td>{$entry->code_compet}</td>
     <td>{$entry->coefficient}</td>
+	<td>{$entry->indivs}</td>
+	<td>{$entry->editlink}</td>
+	<td>{$entry->deletelink}</td>
   </tr>
 {/foreach}
  </tbody>

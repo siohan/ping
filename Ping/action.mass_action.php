@@ -92,6 +92,17 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	$this->RedirectToAdminTab("recup");
 	break;
 	
+	case "fftt_parties" :
+	//$saison_courante = $this->GetPreference('saison_en_cours');
+	$message='Retrouvez toutes les infos dans le journal';
+	foreach( $params['sel'] as $licence )
+	  {
+	    ping_admin_ops::retrieve_parties_fftt( $licence );
+	  }
+	$this->SetMessage("$message");
+	$this->RedirectToAdminTab("recup");
+	break;
+	
 	case "coeff05" :
 	foreach( $params['sel'] as $record_id)
 	{

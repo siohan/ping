@@ -33,6 +33,8 @@ $(document).ready(function(){
     <p class="pageinput">{$input_tour} </p>
 	<p class="pagetext">Mon club uniquement:</p>
 	<p class="pageinput">{$input_club_uniquement} </p>
+	<p class="pagetext">Déjà joués uniquement:</p>
+	<p class="pageinput">{$input_deja_joues_uniquement} </p>
 {*	<p class="pagetext">{$prompt_equipe}:</p>
     <p class="pageinput">{$input_equipe} </p>
     <p class="pagetext">&nbsp;</p>*}

@@ -84,6 +84,9 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->name= $row['name'];
 	$onerow->code_compet= $row['code_compet'];
 	$onerow->coefficient= $row['coefficient'];
+	$onerow->indivs= $row['indivs'];
+	$onerow->editlink = $this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
+	$onerow->deletelink = $this->CreateLink($id, 'delete_result', $returnid,$themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'),array("record_id"=>$row['id'], "type_compet"=>"type_compet"));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }

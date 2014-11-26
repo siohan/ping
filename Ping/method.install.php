@@ -91,7 +91,7 @@ $flds = "
 	ecart N(6.2),
 	type_ecart I(11),
 	coeff N(3.2),
-	pointres N(4.2),
+	pointres N(5.3),
 	forfait I(1) ";
 			
 // create it. 
@@ -258,7 +258,8 @@ $flds = "
 	id I(11) AUTO KEY,
 	name C(255),
 	code_compet C(3) UNIQUE,
-	coefficient N(3.2)";
+	coefficient N(3.2),
+	indivs L";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",

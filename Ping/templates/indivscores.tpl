@@ -45,13 +45,14 @@ $(document).ready(function(){
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
-  <tr>	
-  <th>{$id}</th>
-  <th>N° Journée</th>
-  <th>{$joueur}</th>
-  <th>{$victoire}</th>
-  <th>{$adversaire}</th>
-	<th>{$points}</th>
+  <tr>
+	<th>Id</th>
+	<th>N° Journée</th>
+	<th>Date</th>
+	<th>Joueur</th>
+	<th>Vic/def</th>
+	<th>Adversaire</th>
+	<th>Points</th>
 	<th colspan="3">Actions</th>
   <th><input type="checkbox" id="selectall" name="selectall"></th>
   </tr>
@@ -61,6 +62,7 @@ $(document).ready(function(){
   <tr class="{$entry->rowclass}">
     <td>{$entry->id}</td>
 	<td>{$entry->numjourn}</td>
+	<td>{$entry->date_event|date_format:"%d/%m"}
     <td>{$entry->joueur}</td>
     <td>{$entry->vd}</td>
     <td>{$entry->advnompre} </td>
