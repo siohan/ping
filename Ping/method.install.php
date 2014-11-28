@@ -302,6 +302,7 @@ $this->SetPreference('vicNorm200_299', '2');
 $this->SetPreference('vicNorm300_399', '1');
 $this->SetPreference('vicNorm400_499', '0,5');
 $this->SetPreference('vicNormPlus500', '0');
+$this->SetPreference('LastRecupSpid', '');
 
 /* les victoires anormales */
 $this->SetPreference('vicAnorm0_24', '6');
