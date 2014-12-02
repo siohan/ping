@@ -44,7 +44,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.1beta3'; }  
+  function GetVersion() { return '0.1beta3.2'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -160,6 +160,16 @@ function InitializeAdmin()
 	$this->CreateParameter('date_fin', '', $this->Lang('help_date_fin') );
 }
 
+public function HasCapability($capability, $params = array())
+{
+   if( $capability == 'tasks' ) return TRUE;
+   return FALSE;
+}
+
+public function get_tasks()
+{
+   return new PingRecupSpidTask();
+}
    /*
 
 	
