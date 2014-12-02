@@ -102,6 +102,8 @@ switch($current_version)
 
 
  case "0.1beta3" : 
+ case "0.1beta3.1" :
+ case "0.1beta3.2" : 
 
 	
 	$dict = NewDataDictionary( $db );
