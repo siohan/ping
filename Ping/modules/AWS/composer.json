@@ -1,0 +1,10 @@
+{
+	"name": "aws/aws",
+	"description": "Amazon Web Services for CMS Made Simple",
+    "require": {
+        "aws/aws-sdk-php": "2.4.*"
+    },
+	"config": {
+		"vendor-dir":"lib"	
+	}
+}

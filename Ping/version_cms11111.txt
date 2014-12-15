@@ -1,0 +1,40 @@
+ATTENTION CES FICHIERS NE SONT PAS LA VERSION OFFICIELLE !
+c'est une VERSION Francisées (Basés sur les fichiers SVN)
+Comprend les fichiers pour avoir la derniere version 1.11.10 San Cristobal  PHP 5.3.x ou 5.4.x ou 5.5.x
+Si fichier DIFF Comprend les fichiers PAR RAPPORT A VERSION CMSms 1.11.10
+
+Les fichiers contiennent les fichiers langues Us et Fr seulement. Ils sont conforme aux fichiers originaux seul les mots anglais dans les fichiers PHP sont traduits.
+Lire le fichier cms_modif_Fr.txt pour les modifications Fr.  Consulter Administration du site/Maintenance du système / Changelog
+
+----------------------------------------------------------------------------------
+
+
+EVOLUTION
+---------
+
+09/08/2014 Révision 9691 -- --Release: 1.11.11 -- Released On: 2014-08-09 22:44
+07/08 			lang FR CMSMailer CMSPrinting  install
+02/08/2014 Révision 9679 +Microtiny rev 155->156 V 1.2.7 Upgrade tinymce to 3.5.11.	
+01/08/2014 Révision 9676
+30/07/2014 Révision 9672 + Filemanager rev 362->364 V 1.4.5
+29/07/2014 Révision 9667 + News 521->522 v 2.14.4 + ModuleManager V 1.5.8 Version 1.11.11 - San Cristobal
+22/07/2014 Révision 9657
+21/07/2014 Révision 9638a + News 519->521
+19/07/2014 Révision 9638 + News 518->519
+27/06/2014 Révision 9629
+18/05/2014 Révision 9535
+29/04/2014 Révision 9513  
+24/04/2014 Révision 9505
+02/04/2014 Révision 9426 ModuleManager 1.5.7
+31/03/2014 Révision 9422 ModuleManager V 1.5.6
+23/03/2014 Révision 9391
+05/03/2014 Révision 9242b  News Rev 517->518
+12/02/2014 Révision 9242a  News  Rev 516->517 V 2.14.3
+
+===========================
+01/02/2014 Révision 9242 Release: 1.11.10 samedi 1 février 2014 18:17:57
+
+
+-------------------------------------
+JC Etiemble -  http://jc.etiemble.free.fr/
+

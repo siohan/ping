@@ -1,0 +1,1 @@
+poll list template

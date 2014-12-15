@@ -1,0 +1,1430 @@
+﻿RACINE
+------
+Version.php
+$CMS_VERSION_NAME = "Nom-SVN0000-Fr"; ou $CMS_VERSION_NAME = "Nom-0000-Fr"; 
+
+index.php a la racine
+---------------------
+        die ('There is no config.php file or install/index.php please correct one these errors!');
+        die ('Il n&#039;y a pas de fichier config.php ou de fichier install/index.php - Corriger cette erreur !');
+
+
+	echo '<html><title>Error</title></head><body>';
+	echo '<p>The following directories must be writable by the web server:<br />';
+	echo 'tmp/cache<br />';
+	echo 'tmp/templates_c<br /></p>';
+	echo '<p>Please correct by executing:<br /><em>chmod 777 tmp/cache<br />chmod 777 tmp/templates_c</em><br />or the equivilent for your platform before continuing.</p>';
+	echo '</body></html>';
+	exit;
+
+
+--->
+	echo '<html><title>Erreur</title></head><body>';
+	echo '<p>les dossiers suivant doivent avoir les droits d&#039&eacute;écriture sur le serveur web :<br />';
+	echo 'tmp/cache<br />';
+	echo 'tmp/templates_c<br /></p>';
+	echo '<p>Merci de corriger en ex&eacute;cutant :<br /><em>chmod 777 tmp/cache<br />chmod 777 tmp/templates_c</em><br /> ou l&#039&eacute;quivalent sur votre serveur avant de continuer</p>';
+	echo '</body></html>';
+	exit;
+
+
+  echo "<p>Generated in ".microtime_diff($starttime,$endtime)." seconds by CMS Made Simple using ".(isset($db->query_count)?$db->query_count:'')." SQL queries and {$memory} bytes of memory (peak memory usage was {$memory_peak}</p>";
+
+
+
+--->
+  echo "<p>Gener&eacute; en ".microtime_diff($starttime,$endtime)." secondes par CMS Made Simple utilisant ".(isset($db->query_count)?$db->query_count:'')." SQL queries et {$memory} bytes de m&eacute;moire (Sommet utilisation de la m&eacute;moire  {$memory_peak}</p>";
+
+  /index.php a la racine ----------
+
+
+Ajout d'un fichier  db_error.html  pour page d'erreur si base de données Hors service
+
+FIN RACINE
+**************************************************************************************************
+
+/admin/templates/adminlog.tpl
+------  + summary="" for the table 
+
+
+REMPLACEMENT si string $lang['admin']['xxxx']  -->  lang('xxxx')    lang('user')
+**********************************************************************************
+
+/admin/addcontent.php
+----------------------
+76
+
+		//$error = "No content types loaded!";
+		$error = "Aucun type de contenu charg&eacute;s !"; //fr		
+172 	
+		//audit($contentobj->Id(), 'Content Item: '.$contentobj->Name(), 'Added');
+		audit($contentobj->Id(), $contentobj->Name(), lang('added_content')); // fr
+
+/admin/addcss.php
+----------------
+164	
+				//audit($newstylesheet->id, 'Stylesheet: '.$css_name, 'Added');
+				audit($newstylesheet->id, $css_name, lang('added_css')); //fr
+
+/admin/addcssassoc.php
+--------------------
+139	//audit($id, 'Stylesheet Association: '.(isset($name)?$name:""), 'Added');
+	audit($id, (isset($name)?$name:""), lang('added_css_association')); //fr
+
+/admin/addgroup.php
+--------------------
+71	//audit($groupobj->id, 'Admin User Group: '.$groupobj->name, 'Added');
+	audit($groupobj->id, $groupobj->name, lang('added_group')); //fr
+
+/admin/addhtmlblob.php
+----------------------  
+111
+				//audit($blobobj->id, 'Global Content Block: '.$blobobj->name, 'Added');
+				audit($blobobj->id, 'Bloc de contenu global : '. $blobobj->name, ' Ajout&eacute;'); //fr 
+				
+
+/admin/addtemplate.php
+-----------------------
+146
+				//audit($newtemplate->id, 'HTML-template: '.$template, 'Added');
+				audit($template_id, 'Gabarit-HTML : '.$template, 'Ajout&eacute;'); //fr				
+
+				
+
+/admin/addtemplateassoc.php
+----------------
+133 	//audit($id, 'Stylesheet Association: '.(isset($name)?$name:""), 'Added');
+	audit($id, (isset($name)?$name:""), lang('added_css_association')); //fr
+					
+
+/admin/adduser.php
+-----------------
+149 	//audit($newuser->id, 'Admin Username: '.$newuser->username, 'Added');
+	audit($newuser->id, $newuser->username, lang('added_user')); //fr
+
+/admin/adduserplugin.php
+-------------------------
+129	//audit($new_usertag_id, 'User Defined Tag: '.$plugin_name, 'Added');
+	audit($new_usertag_id, $plugin_name, lang('added_udt')); // fr
+	
+	
+/admin/adminlog.php
+------------------
+72
+	// audit('', 'Admin Log', 'Cleared');
+	audit('', 'Journal des logs', 'Effac&eacute;'); //fr
+
+/admin/changegroupassign.php
+-------------------------
+132	//audit($group_id, 'Assignment Group ID: '.$group_id, 'Changed');
+	audit($group_id, 'Groupe ID '.$group_id, lang('assignmentchanged')); //fr
+
+136	//audit($userid, 'Assignment User ID: '.$userid, 'Changed');
+	audit($userid, 'Utilisateur ID '.$userid, lang('assignmentchanged')); //fr
+
+admin/changegroupperm.php 
+------------------------
+138	//audit($userid, 'Permission Group ID: '.$userid, 'Changed');
+	audit($userid, 'ID Permissions des groupes', lang('permissionschanged')); //fr
+
+$smarty->assign('title_permission',lang('permission'));
+->$smarty->assign('title_permission',lang('permissions')); // +s
+
+
+/admin/copycontent.php
+----------------------
+114	//audit($fromobj->Id(), 'Content Item: '.$fromobj->Alias(), 'Copied to: '.$tmpobj->Alias());
+	audit($fromobj->Id(),$fromobj->Alias(), lang('content_copied',$tmpobj->Alias())); //fr
+
+/admin/copystylesheet.php
+--------------------------
+80	//audit($onestylesheet->id, 'Stylesheet: '.$onestylesheet->name, 'Copied');
+	audit($onestylesheet->id, $onestylesheet->name, lang('stylesheetcopied')); //fr
+
+/admin/copytemplate.php
+----------------------
+123	//audit($onetemplate->id, 'HTML-Template: '.$onetemplate->name, 'Copied');
+	audit($onetemplate->id, $onetemplate->name, lang('templatecopied')); //fr
+
+/admin/deletecss.php
+-------------------
+116	//audit($css_id, 'Stylesheet: '.$css_name, 'Deleted');
+	audit($css_id, $css_name, lang('deleted_css')); //fr
+
+/admin/deletecssassoc.php
+---------------------------
+134	//audit($id, 'Stylesheet Association: '.(isset($name)?$name:""), 'Deleted');
+	audit($id, (isset($name)?$name:""), lang('deleted_css_association')); //fr
+
+/admin/deletegroup.php
+---------------------
+79	//audit($group_id, 'Admin User Group: '.$group_name, 'Deleted');
+	audit($group_id, $group_name, lang('deleted_group')); //fr
+
+/admin/deletehtmlblob.php
+--------------------------
+59	//audit($htmlblob_id, 'Global Content Block: '.$htmlblob_name, 'Deleted');
+	audit($htmlblob_id, $htmlblob_name, lang('deleted_gcb')); //fr
+
+/admin/deletetemplate.php
+--------------------------
+67	//audit($template_id, 'HTML-template: '.$onetemplate->name, 'Deleted');
+	audit($template_id, $onetemplate->name, lang('deleted_template')); //fr
+
+/admin/deletetemplateassoc.php
+------------
+110	//audit($id, 'Stylesheet Association: '.(isset($name)?$name:""), 'Deleted');
+	audit($id, (isset($name)?$name:""), lang('deleted_css_association')); // fr
+
+/admin/deleteuser.php
+---------------------
+62	//audit($user_id, 'Admin Username: '.$user_name, 'Deleted');
+	audit($user_id, $user_name, lang('deleted_user')); //fr
+
+/admin/deleteuserplugin.php
+----------------------------
+75	//audit($userplugin_id, 'User Defined Tag: '.$userplugin_name, 'Deleted');
+	audit($userplugin_id, $userplugin_name, lang('deleted_udt')); // fr
+
+/admin/editcontent.php
+---------------------
+150
+		//audit($contentobj->Id(), 'Content Item: '.$contentobj->Name(), 'Edited');
+		audit($contentobj->Id(), $contentobj->Name(), lang('edited_content')); // fr
+
+/admin/editcss.php
+-----------------
+198
+				//audit($css_id, 'Stylesheet: '.$css_name, 'Changed');
+				audit($css_id, 'Feuille de stylet : '.$css_name, 'Edit&eacute;e'); //fr
+  
+
+/admin/editgroup.php
+-------------------
+83	//audit($groupobj->id, 'Admin User Group: '.$groupobj->name, 'Edited');
+	audit($groupobj->id, $groupobj->name, lang('edited_group')); //fr
+	
+/admin/edithtmlblob.php
+-----------------------
+119 	
+				//audit($the_blob->id, 'Global Content Block: '.$the_blob->name, 'Edited');
+				audit($the_blob->id, 'Bloc de contenu global : '.$the_blob->name, 'Edit&eacute'); // fr
+
+
+/admin/edittemplate.php
+--------------------
+182	
+				//audit($template_id, 'HTML-template: '.$onetemplate->name, 'Edited');
+ 				audit($template_id, 'Gabarit-HTML : '.$onetemplate->name, 'Edit&eacute;'); //fr
+
+/admin/edituser.php
+----------------------
+161 	
+	   //audit($user_id, 'Admin Username: '.$thisuser->username, 'Edited');
+	  audit($user_id, $thisuser->username, lang('edited_user')); // fr
+
+/admin/edituserplugin.php
+---------------------------
+140	//audit($userplugin_id, 'User Defined Tag: '.$plugin_name, 'Edited');
+	audit($userplugin_id, $plugin_name, lang('edited_udt')); //fr
+
+
+admin/header.php
+----------------
+117 	//audit('','Core','CMSMS version '.$remote_ver.' is available');
+	audit('','Core','CMSMS version '.$remote_ver.' est disponible'); //fr
+
+124	//audit('','Core','Tested for newer CMSMS Version. None Available.');
+	audit('','Core','v&eacute;rification nouvelle version de CMSMS™. Aucune disponible.'); //fr
+
+
+admin/imagefiles.php !! pas de message sup fichier et supp Dossier
+----------------
+
+53	 
+		// audit('','Image Manager','Removed Directory '.$dir);
+		audit('','Gestion images',lang('deleted_directory').' '.$dir); //fr
+
+93
+			//audit(-1, 'Image: '.$_FILES['uploadfile']['name'], 'Uploaded');
+			audit(-1, 'Image : '.$_FILES['uploadfile']['name'], lang('uploaded_file')); //fr
+
+135
+			//audit(-1, "Image Manager", "Created new directory: ".$_POST['newdir']);
+			audit(-1, "Gestion images", "Nouveau dossier cr&eacute;&eacute; : ".$_POST['newdir']); //fr
+
+158	
+				//audit(-1, 'Image Manager', 'Image: '.$reldir . "/" . $_GET['file'], 'Deleted');
+				audit(-1, 'Gestion images','Image : '.$reldir . "/" . $_GET['file'], lang('deleted_file')); //fr
+
+185 	
+				//audit(-1, 'Directory: '.$reldir . "/" . $_GET['file'], 'Deleted');
+				audit(-1, 'Dossier : '.$reldir . "/" . $_GET['file'], lang('deleted_directory'));//fr
+
+/admin/listcontent.php
+---------------------
+130
+		//audit($contentid,'Core','Content item set as default');
+		audit($contentid,'Core','El&eacute;ment contenu d&eacute;fini par d&eacute;faut');	// fr	
+
+425
+				audit($contentid, 'Core', 'Content Item: '.$title, 'Deleted');
+				audit($contentid, 'Core', 'Contenu : '.$title, lang('deleted_content')); //fr
+
+511
+		//audit($root->get_tag('id'),'Core','failed to get content for valid content id '.$root->get_tag('id'));
+		audit($root->get_tag('id'),'Core','Impossible obtenir du contenu valide pour ID '.$root->get_tag('id'));//fr
+
+
+/admin/listmodules.php
+----------------------	  
+66 
+		  //audit('','Core','Changed permissions on '.$module.' directory');
+		  audit('','Core','Permissions chang&eacute;es du dossier '.$module);//fr		  
+95
+			//audit('','Core','Exported '.$object->GetName().' to '.$xmlname);
+			audit('','Core','Export '.$object->GetName().' to '.$xmlname);	//fr		
+		  
+165
+				//audit('','Core','Expanded XML Package '.$file['name']);
+				audit('','Core','D&eacute;compactable du XML '.$file['name']);//fr
+				
+233
+		 //audit('','Module: '.$module, 'Deleted');
+		 audit('','Module', lang('deleted_module',$module)); //fr
+		 
+303
+		//audit('','Core','Activated module '.$module);
+		audit('','Core','Module activ&eacute; '.$module); //fr
+
+314
+		//audit('','Core','Deactivated module '.$module);
+		audit('','Core','Module d&eacute;activ&eacute; '.$module); //fr
+	
+		 
+
+/admin/listusers.php 
+---------------------    
+71	
+			//audit($userid, 'Admin Username: '.$thisuser->username, 'Edited');
+			audit($userid, $thisuser->username, lang('edited_user')); //fr
+
+/admin/listusertags.php
+-----------------
+line 92
+.cms_html_entity_decode_utf8(lang('deleteconfirm', $oneplugin),true)."');\">";
+remplace par 
+.cms_html_entity_decode_utf8(lang('deleteconfirm', $label),true)."');\">";
+			
+admin/Login.php
+----------
+62		
+  //audit('','Core','Sent Lost Password Email for '.$username);		
+  audit('','Core','r&eacute;cup&eacute;ration de mot de passe perdu par email pour '.$username);  //fr
+  
+155
+				audit('','Core','Completed lost password recovery for: '.$user->username.' (IP: '.$ip_passw_recovery.')');
+				audit('','Core','R&eacute;cup&eacute;ration compl&egrave;te mot de passe perdu: '.$user->username.' (IP: '.$ip_passw_recovery.')');	// fr			
+  
+244		
+		//audit($oneuser->id, "Admin Username: ".$oneuser->username, 'Logged In');
+		audit($oneuser->id, lang('user')." : ".$oneuser->username, lang('user_login')); // fr
+
+347
+		//audit('', '(IP: ' . $ip_login_failed . ') ' . "Admin Username: " . $username, 'Login Failed');
+		audit('', '(IP: ' . $ip_login_failed . ') ' . lang('user')." : ". $username, 'Erreur Login'); //fr
+
+
+
+
+
+admin/logout.php
+-------
+// put mention into the admin log
+//audit($userid, "Admin Username: ".$username, 'Logged Out');
+audit($userid, lang('user')." : ".$username, lang('user_logout')); //fr
+
+
+/admin/multicontent.php
+---------------------
+514
+	//audit($id, 'Content Item: '.$title, 'Deleted');
+	audit($id, $title, lang('deleted_content')); //fr
+
+/admin/multistylesheet.php
+--------------------------
+126	//audit($id, 'Stylesheet: '.$title, 'Deleted');
+	audit($id, $title, lang('deleted_css')); //fr
+
+/admin/multitemplate.php
+-----------------------
+141	//audit($id, 'HTML-template: '.$title, 'Deleted');
+	audit($id, $title, lang('deleted_template')); //fr
+
+	
+/admin/myaccount.php
+-------------------	
+166
+			//audit($user_id, 'Admin Username: '.$userobj->username, 'Edited');
+			audit($userid, lang('useraccount').' : '.$userobj->username, 'Edit&eacute;');//fr
+252
+	//audit($userid, 'Admin Username: '.$userobj->username, 'Edited');
+	audit($userid, 'Nom utilisateur Admin : '.$userobj->username, 'Edit&eacute;es'); //fr
+
+	
+
+/admin/pagedefaults.php
+-------------------------
+119
+	//audit('', 'Page Defaults', 'Edited');
+	audit('',  lang('pagedefaults'), 'Edit&eacute;e'); //fr
+
+
+/admin/siteprefs.php
+-----------------------
+53
+  //die('Permission Denied'); //
+  die('Autorisation refus&eacute;e'); //
+  
+223	//audit(-1,'Website Cache', 'Cleared');
+	//audit(-1,'Cache du site', lang('cachecleared')); //fr	
+
+377	  
+	  //audit(-1, 'Global Settings', 'Edited');
+	  audit(-1, lang('globalconfig'),'Edit&eacute;s'); //fr
+
+
+
+
+/admin/systeminfo.php	 
+---------------------
+/* CMS Install Information */
+//$smarty->assign('cms_version', $GLOBALS['CMS_VERSION']);
+$smarty->assign('cms_version', $GLOBALS['CMS_VERSION'].' '. $GLOBALS['CMS_VERSION_NAME']);//fr
+
+/admin/templates/systeminfo.txt.tpl
+------------------
+<h2>{si_lang a=systeminfo_copy_paste}</h2>
+<p><strong>{'installed_modules'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'config_information'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'php_information'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'server_information'|replace:'_':' '|ucwords}</strong>:</p>
+<p class="pageback"><a class="pageback" href="{$backurl}">&#171; {si_lang a=back}</a></p>
+
+<h2>Merci de faire un copier coller de cette s&eacute;lection dans le post du forum</h2>
+Modules_installés
+information_configuration
+information_php
+href="{$backurl}">&#171; Retour au Menu</a></p>
+
+
+/admin/systemmaintenance.php
+------------------
+
+
+96 
+      //$errordetails .= "MySQL reports that table " . $check["Table"] . " does not checkout OK.<br>";
+      $errordetails .= "MySQL reporte que la table " . $check["Table"] . " ne semble pas OK.<br>";//fr 
+
+101
+  //audit('','System Maintenance', 'All db-tables optimized');
+   audit('','Maintenance syst&egrave;me', lang('sysmain_tablesoptimized'));//fr
+   
+117
+  //audit('','System Maintenance', 'All db-tables repaired');
+  audit('','Maintenance syst&egrave;me', lang('sysmain_tablesrepaired'));//fr
+
+153 
+  //audit('', 'System maintenance', 'Static routes rebuilt');
+  audit('', 'Maintenance syst&egrave;me', lang('routesrebuilt')); //fr
+
+  
+165
+ //audit('','System maintenance', 'Cache cleared');
+ audit('','Maintenance syst&egrave;me', lang('cachecleared'));//fr
+ 
+172
+  //audit('','System maintenance', 'Page hierarchy positions updated');
+  audit('','Maintenance syst&egrave;me', lang('sysmain_updatehierarchy'));//fr
+  
+ 219
+  //audit('','System maintenance', 'Fixed pages missing aliases, count:'.$count); 
+   audit('','Maintenance syst&egrave;me', 'Correction des alias manquants des pages, nombre :'.$count);
+   
+ 241
+  //audit('','System maintenance', 'Converted pages with invalid content types, count:'.$count);
+  audit('','Maintenance syst&egrave;me', 'Convertion des pages avec contenu invalide, nombre :'.$count);  
+   
+
+  
+*********************================
+/admin/themes
+-------------
+
+CMS Made Simple™  HTML -> &trade; 
+
+
+/themes/default   SUPPRIMé en version 1.11
+-------------------
+
+
+**************************
+
+/themes/NCleanGrey
+---------------------
+
+NCleanGreyTheme.php
+------------------
+line 92-93
+//		echo '<link rel="shortcut icon" href="themes/NCleanGrey/images/layout/ncleangrey-favicon.ico" />'."\n";
+//		echo '<link rel="Bookmark" href="themes/NCleanGrey/images/layout/ncleangrey-favicon.ico" />';
+Voir dans /lib/classes/class.admintheme.inc.php pour les favicons de la racine
+
+
+line 220
+	echo '<li><a rel="external" href="http://forum.cmsmadesimple.org/">'.lang('forums').'</a></li>';
+	echo '<li><a rel="external" href="http://docs.cmsmadesimple.org/">'.lang('documentation').'</a></li>';
+	echo '<li><a rel="external" href="http://dev.cmsmadesimple.org/">'.lang('forge').'</a></li>';
+	echo '<li><a rel="external" href="http://cmsmadesimple.org/main/support/IRC">'.lang('irc').'</a></li>';
+	
+	
+----------> !! Wiki FR +forum fr
+	echo '<li><a rel="external" href="http://forum.cmsmadesimple.org/index.php/board,10.0.html/">'.lang('forums').'</a></li>';
+	echo '<li><a rel="external" href="http://docs.cmsmadesimple.org/">'.lang('documentation').'</a></li>';
+	echo '<li><a rel="external" href="http://www.cmsmadesimple.org/main/support/IRC">'.lang('irc').'</a></li>';
+	echo '<li><a rel="external" href="http://wiki.cmsmadesimple.fr/wiki/Accueil">'.lang('wiki').'</a></li>';
+ 
+
+line 283 modif  
+$tag = '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr"';
+
+
+
+
+-----------
+login.php
+----------
+line 21  modif  <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+line 23  <title><?php echo lang('logintitle')?></title> 
+-->      <title><?php echo lang('logintitle').' : '.$config['root_url']?></title>
+line 26-27 
+<link rel="shortcut icon" href="themes/NCleanGrey/images/layout/ncleangrey-favicon.ico" />
+<link rel="Bookmark" href="themes/NCleanGrey/images/layout/ncleangrey-favicon.ico" />
+-->
+<link rel="shortcut icon" href="../favicon_cms.ico" />
+<link rel="Bookmark" href="../favicon.ico" />
+
+
+
+------------------------
+
+/admin/themes/NCleanGrey/css/style.css
+suivant demande...
+
+-----------------------
+/admin/themes/OneEleven ??
+
+
+/OneEleven/templates/footer.tpl
+-----------------
+			<li>
+				<a href="http://docs.cmsmadesimple.org/" rel="external" title="{'documentation'|lang}">{'documentation'|lang}</a>
+			</li>			
+
+			<li>
+				<a href="http://forum.cmsmadesimple.org/" rel="external" title="{'forums'|lang}">{'forums'|lang}</a>
+			</li>
+			<li>
+				<a href="http://www.cmsmadesimple.org/about-link/" rel="external" title="{'about'|lang}">{'about'|lang}</a>
+			</li>
+			<li>
+				<a href="http://www.cmsmadesimple.org/about-link/about-us/" rel="external" title="{'team'|lang}">{'team'|lang}</a>
+			</li>
+
+-->
+			<li>
+				<a href="http://docs.cmsmadesimple.org/" rel="external" title="{'documentation'|lang}">{'documentation'|lang}</a>
+			</li>			
+			<li>
+				<a href="http://wiki.cmsmadesimple.fr/wiki/Accueil" rel="external" title="{'wiki'|lang}">{'wiki'|lang}</a>
+			</li>
+			<li>
+				<a href="http://www.cmsmadesimple.fr/forum/" rel="external" title="{'forums'|lang}">{'forums'|lang}</a>
+			</li>
+			<li>
+				<a href="http://www.cmsmadesimple.org/about-link/" rel="external" title="{'about'|lang}">{'about'|lang}</a>
+			</li>
+			<li>
+				<a href="http://www.cmsmadesimple.org/about-link/about-us/" rel="external" title="{'team'|lang}">{'team'|lang}</a>
+			</li>			
+
+/OneEleven/templates/shortcuts.tpl
+-----------------------
+	
+
+      <li><a rel="external" class="external" href="http://forum.cmsmadesimple.org" title="{'forums'|lang}">{'forums'|lang}</a></li>
+      <li><a rel="external" class="external" href="http://cmsmadesimple.org/main/support/IRC">{'irc'|lang}</a></li>
+      <li><a rel="external" class="external" href="http://wiki.cmsmadesimple.org/index.php/User_Handbook/Admin_Panel/Extensions/Modules">
+	-->
+      <li><a rel="external" class="external" href="http://www.cmsmadesimple.fr/forum/" title="{'forums'|lang}">{'forums'|lang}</a></li>
+      <li><a rel="external" class="external" href="http://wiki.cmsmadesimple.fr/wiki/Accueil" title="{'wiki'|lang}">{'wiki'|lang}</a></li>
+      <li><a rel="external" class="external" href="http://cmsmadesimple.org/main/support/IRC">{'irc'|lang}</a></li>
+      <li><a rel="external" class="external" href="http://wiki.cmsmadesimple.fr/wiki/Cat&eacute;gorie:Modules">{'module_help'|lang}</a></li>
+
+
+/OneEleven/templates/pagetemplate.tpl
+------------------
+		<link rel="shortcut icon" href="{$config.admin_url}/themes/OneEleven/images/favicon/cmsms-favicon.ico"/>
+rempalcer par
+<link rel="shortcut icon" href="../favicon_cms.ico" />
+
+/OneEleven/templates/login.tpl
+------------------------
+		<!-- link rel="shortcut icon" href="{$config.admin_url}/themes/OneEleven/images/favicon/cmsms-favicon.ico"/ -->
+		<link rel="shortcut icon" href="../favicon_cms.ico" />
+		
+
+
+Fin /admin/themes ******************************
+
+
+FIN /admin
+**************************************************************************************************
+
+/install
+--------
+
+/install/lib/classes/CMSInstaller.class.php
+-------------------------------------------
+			//array_unshift($languages, 'en_US');
+			array_unshift($languages,'fr_FR', 'en_US'); // modif pour fr en 1er
+
+
+/install/index.php
+/install/upgrade.php
+-----------------
+
+installerShowErrorPage
+SESSION module is disabled or missing in your PHP, you have problem with some modules and functionality! Ask your provider, exiting
+Le module SESSION est invalide ou manquant dans la configuration PHP, vous aurez des probl&egrave;mes avec certains modules et fonctionnalit&eacute;s ! voir votre h&eacute;bergeur ! Stop
+
+
+installerShowErrorPage
+('Tokenizer extension is disabled or missing in your PHP, this could cause pages to render as purely white. We required you have this installed! Check your installation, exiting!'
+
+Ne pas avoir les fonctions Tokenizer pourraient faire en sorte de rendre les pages blanches. Vous devez v&eacute;rifieer que ces fonctions soient install&eacute;es, Stop
+
+
+installerShowErrorPage
+('Smarty.class.php cannot be found or not readable! Check your installation for '. $pathSmartClass .', exiting', 'Smarty.class.php_cannot_be_found_or_not_readable');
+
+
+non trouv&eacute ou impossible &agrave lire ! V&eacute;rifier votre installation pour  ...   Stop !
+
+
+installerShowErrorPage
+('Directory not writable! '. $test->error .'<br />Please correct by executing: <em>chmod 777</em> or set writing permission for php process, exiting', 'Directory_not_writable');
+
+Le dossier n&#039;a pas de permissions en &eacute;criture !
+Corriger en &eacute;x&eacute;cutant : <em>chmod 777</em> ou l&#039;&eacute;quivalent sur votre h&eacute;bergement, Stop !
+
+
+$installer->showErrorPage
+("SESSION not working, you have problem with some modules and functionality! Ask your provider, exiting");
+SESSION ne fonctionne pas, vous aurez des probl&egrave;mes avec le fonctionnement,voir votre h&eacute;bergeur ! Stop !
+
+
+/install/cmschecksum.php
+------------------------
+$result = "-- Missing Languagestring - $name --";
+Manque cha&icirc;ne de langue
+
+/install/translation.functions.php
+-----------------------
+$result = "-- Missing Languagestring - $name --";
+Manque cha&icirc;ne de langue
+
+/install/templates/installer_start.tpl
+--------------------
+	<title>CMS Made Simple Install/Upgrade</title>
+CMS Made Simple Installation/Upgrade   -+> CMS Made Simple Installation/Mise &agrave; jour
+
+		<h1>Install/Upgrade System</h1>
+Installation/Upgrade du Syst&egrave;me      -->  Mise &agrave; jour du Syst&egrave;me
+
+
+
+/install/templates/pagestart.tpl
+--------------
+<h2>Thanks for choosing CMS Made Simple</h2>
+Merci d&#039;avoir choisi CMS Made Simple&trade;
+
+line7
+<td style="font-size: 0.8em; text-align:center;">Choose the language you would prefer to use<br /><em>This does effect in this process and your admin user preference</em></td>
+
+
+td style="font-size: 1em; text-align:center;">Choisissez votre langue pour la suite de l&#039;installation<br />Cela affecte uniquement le processus d&#039;installation/mise &agrave; jour, et n&#039;aura aucun effet sur les param&egrave;tres par d&eacute;faut de CMS Made Simple&trade;</td>
+
+line 27
+			<td style="font-size: 0.8em; text-align:center;">This version contains release notes necessary for properly upgrading (English only).  <em>Please read them before proceeding</em>.</td>
+
+			<td class="msg-botton">Cette version contient les notes pour effectuer correctement la mise &agrave; jour n&eacute;cessaire (en anglais - Traduction Fr partielle). <br /><strong> Merci de lire ATTENTIVEMENT avant d&#039;engager le processus ..</strong>.</td>
+
+
+value="submit" >> Envoyer
+
+
+
+--------SQL-------
+
+/install/schemas/
+initial.sql + extra.sql => Modification en FR 
+{DB_PREFIX}content VALUES + content_props VALUES (56  Le Gestionnaire de fichiers
+{DB_PREFIX}content VALUES + content_props VALUES (57  Les Impressions
+{DB_PREFIX}content VALUES + content_props VALUES (58  Le Gestionnaire d'images
+{DB_PREFIX}content VALUES + content_props VALUES (59  Erreur de page !!
+
+Attention version EN dernier 
+INSERT INTO {DB_PREFIX}content_props VALUES (56
+INSERT INTO {DB_PREFIX}content VALUES (56
+En version FR
+INSERT INTO {DB_PREFIX}content_props VALUES (60  <p>Le thème Simplex
+INSERT INTO {DB_PREFIX}content VALUES (60  Bienvenue au thème Simplex
++ formulaire de contact demo avec function.contact_form.php
+INSERT INTO {DB_PREFIX}content VALUES (61, 'Balise Contact', 'content' + INSERT INTO {DB_PREFIX}content_props VALUES (61,
+
+
+/install/upgrades
+-----------------
+traduction des upgrade.xx.to.xx
+
+
+----------- 
+/install/lang/ext/fr_FR.php
+MODIFICATION line 287
+
+<p>Pour MySQL, employez ce qui suit :</p>
+<p>Connectez-vous &agrave; MySQL depuis une console puis tapez les commandes suivantes :</p>
+<ol>
+<li>create database cms; (Utiliser le nom que vous voulez, sauf contrainte h&eacute;bergeur, mais retenez le nom exact)</li>
+<li>grant all privileges on cms.* to cms_user@localhost identified by &#039;cms_pass&#039;;</li>
+</ol>';
+
+
+
+<p><strong>Connectez-vous &agrave; MySQL depuis une console puis tapez les commandes suivantes :</strong><br />
+- create database cms; (Utiliser le nom que vous voulez, sauf contrainte h&eacute;bergeur, mais retenez le nom exact)<br />
+- grant all privileges on cms.* to cms_user@localhost identified by &#039;cms_pass&#039;;<br />
+</p>
+<p><strong>Ou utiliser un programme comme PhpMyAdmin ou le panneau d\'administration de votre compte.</strong></p>';
+
+
+FIN /install
+**************************************************************************************************
+
+ /lib
+-----
+
+/lib/adodb.functions.php
+-------------------------
+MESSAGE d'erreur en Fr
+
+line 34
+			die('The ADOdb Lite database abstraction library cannot be found, CMS Made Simple cannot load.');
+La biblioth&egrave;que d\'abstraction de base de donn&eacute;es ADOdb Lite ne peut pas &ecirc;tre trouv&eacute;e, CMS Made Simple ne peut pas d&eacute;marrer.
+
+line 60
+	  $str = "Attempt to connect to database {$config['db_name']} on {$config['db_username']}@{$config['db_hostname']} failed";
+En attente de la connexion &agrave; la base de donn&eacute;e                        en d&eacute;faut
+
+
+Line 95 : 	
+echo "<strong>Database Connection Failed</strong><br />";
+	echo "Error: {$error_message} ({$error_number})<br />";
+	echo "Function Performed: {$function_performed}<br />";
+
+
+	echo "<strong>D&eacute;faut de connection sur la base de donn&eacute;es</strong><br />";
+	echo "Erreur : {$error_message} ({$error_number})<br />";
+	echo "Fonction : {$function_performed}<br />";
+//	echo "H&eacute;bergement/base de donn&eacute;es : {$host}/{$database}<br />";
+//	echo "base de donn&eacute;e  Type: {$dbtype}<br />";
+
+	
+lib/misc.functions.php
+--------------------
+142 146
+	//audit('','Core','Attempt to redirect to invalid alias: '.$alias);
+	audit('','Core','Tente de se rediriger vers un alias non valide : '.$alias);//fr
+
+/lib/module.functions.php
+-------------------
+
+	  return '<!-- ERROR: module name not specified -->';
+Erreur : Nom de module non sp&eacute;cifi&eacute;  -> Nom de module incorrect // cause en prends pas le &eacute;
+
+					return "<!-- Not a tag module -->\n";
+Pas une balise module
+
+
+/lib/page.functions.php
+--------------------------
+
+
+
+/lib/shutdown.php supprimé
+----------------
+
+
+================
+	
+
+/lib/classes/class.admintheme.inc.php
+------------------------------------
+157
+	echo '<li><a rel="external" href="http://forum.cmsmadesimple.org/">'.lang('forums').'</a></li>';
+	echo '<li><a rel="external" href="http://wiki.cmsmadesimple.org/">'.lang('wiki').'</a></li>';
+	echo '<li><a rel="external" href="http://cmsmadesimple.org/main/support/IRC">'.lang('irc').'</a></li>';
+	echo '<li><a rel="external" href="http://wiki.cmsmadesimple.org/index.php/User_Handbook/Admin_Panel/Extensions/Modules">'.lang('module_help').'</a></li>';
+------>
+WIKI FR
+	echo '<li><a rel="external" href="http://forum.cmsmadesimple.org/index.php/board,10.0.html/">'.lang('forums').'</a></li>';
+	echo '<li><a rel="external" href="http://wiki.cmsmadesimple.fr/wiki/Accueil">'.lang('wiki').'</a></li>';
+	echo '<li><a rel="external" href="http://cmsmadesimple.org/main/support/IRC">'.lang('irc').'</a></li>';
+	echo '<li><a rel="external" href="http://wiki.cmsmadesimple.org/index.php/User_Handbook/Admin_Panel/Extensions/Modules/fr">'.lang('module_help').'</a></li>';
+
+483
+<a href="http://www.cmsmadesimple.org">CMS Made Simple&trade;</a> is Free Software released under the GNU/GPL License
+<a href="http://www.cmsmadesimple.org">CMS Made Simple&trade;</a> est un logiciel libre utilisant la licence GNU/GPL
+
+function DisplayHTMLHeader($showielink = false, $addt = '')
+
+ajouter line 1486 pour le theme par défaut aprés
+<link rel="stylesheet" type="text/css" href="style.php?{$urlext}" />
+<link rel="shortcut icon" href="../favicon_cms.ico" />
+<link rel="Bookmark" href="../favicon.ico" />
+
+
+
+/lib/classes/class.CmsAdminThemeBase.php 
+---------------------------------------
+
+			//audit(get_userid(FALSE),'Admin Theme','No module information found for user');
+			audit(get_userid(FALSE),'Admin Theme','Aucune information module trouv&eacute;e pour un utilisateur'); // fr
+			
+pour les menus
+----------
+private function _populate_admin_navigation($subtitle='')
+
+
+/lib/classes/class.cms_config.php
+-----------------------------
+
+    //$output = "<?php\n# CMS Made Simple Configuration File\n# Documentation: /doc/CMSMS_config_reference.pdf\n#\n";
+    $output = "<?php\n# CMS Made Simple - Fichier de configuration \n# Documentation : /doc/CMSMS_config_reference.pdf\n#\n"; //fr
+
+
+/lib/classes/class.CMS_Content_Block.php
+-----------------------------------
+NE PAS traduire throw new  ...
+97
+	//throw new CmsEditContentException('Duplicate content block: '.$rec['name']);
+	throw new CmsEditContentException('Bloc de contenu dupliqu&eacute; : '.$rec['name']); //fr
+
+272
+		    //@trigger_error('Attempt to call a module action, without specifying a valid module name');
+		    @trigger_error('Tente un appel sur une action du module, sans specification de nom valide de module');  //fr
+
+2280
+		    //@trigger_error('Attempt to access module '.$modulename.' which could not be found (is it properly installed and configured?');
+		    @trigger_error('Tente un acces au module '.$modulename.' qui ne peut etre trouve (est-il installe et configure ?');  //fr
+
+320
+		    //@trigger_error('Attempt to access module '.$key.' which could not be found (is it properly installed and configured?');
+		    @trigger_error('Tente un accès au module '.$key.' qui ne peut être trouvé (est-il installé et configuré?');  //fr
+
+			
+		    //return self::content_return("<!-- Not a tag module -->\n", $params, $smarty);
+		    return self::content_return("<!-- Pas une balise module -->\n", $params, $smarty); //fr
+
+
+lib/classes/class.CmsLangOperations.php
+------------------------------
+
+    //if( !isset(self::$_langdata[$curlang][$realm][$key]) ) return "-- Add me: $key --";
+    if( !isset(self::$_langdata[$curlang][$realm][$key]) ) return "-- Ajoutez-moi : $key --";	//fr
+
+
+207
+	    trigger_error('Attempt to load admin realm from non admin action');
+Tentative de chargement action non admin
+
+
+/lib/classes/class.CMSModule.php
+-------------------
+1760		  
+		  //audit('',$this->GetName(),'Module is not properly cleaning input params');
+		  audit('',$this->GetName(),'Param&egrave;tres incorrectement nettoy&eacute;s par le module'); //fr
+
+
+/lib/classes/class.CMSModuleContentType.php  A traduire ??
+-------------------------------------------
+2 fois
+	      return 'ModuleName() not defined properly';
+
+class.CMSGlobalContentTemplateResource.php
+---------------------------------------------
+46
+	$source = "<!-- Html blob '" . $name . "' does not exist  -->";
+	$source = "<!-- Html blob '" . $name . "' non existant -->"; // fr
+	
+	audit('', 'Global Content Block: '.$name , 'Can not open or does not exist!');
+	audit('', 'Bloc contenu global : '.$name , ' Ne peut pas &ecirc;tre ouvert ou inexstant !'); //fr
+
+/lib/classes/class.cms_module_smarty_plugin_manager.php
+------------------------
+139
+				  //audit('','cms_module_smarty_plugin_manager','Cannot load plugin '.$row['name'].' from module '.$row['module'].' because of errors in the callback');
+				  audit('','cms_module_smarty_plugin_manager','Impossible de charger le plug-in '.$row['name'].' depuis le module '.$row['module'].' cause erreurs dans le callback'); // fr	
+158
+		  //audit('','cms_module_smarty_plugin_manager','Cannot load plugin '.$row['name'].' from module '.$row['module'].' because callback not callable (module disabled?)');
+		  audit('','cms_module_smarty_plugin_manager','Impossible de charger le plug-in '.$row['name'].' depuis le module '.$row['module'].' cause callback non appelable (module désactiv&eacute; ?)');	//fr  
+		  
+
+/lib/classes/class.CmsNlsOperations.php
+------------------------
+431
+	//die('language detector already set');
+	die('detection de langue deja active'); //fr
+
+
+/lib/classes/class.CMSNullTemplateResource.php 
+----------------------------------
+46
+	$source = "<!-- Html blob '" . $name . "' does not exist  -->";
+	$source = "<!-- Html blob '" . $name . "' non existant -->"; // fr
+
+	audit('', 'Global Content Block: '.$name , 'Can not open or does not exist!');
+	audit('', 'Bloc contenu global : '.$name , ' Ne peut pas &ecirc;tre ouvert ou inexstant !'); //fr
+
+/lib/classes/class.CmsRegularTaskHandler.php
+---------------------------------------------
+//audit('','Automated Task Failed',$task->get_name()); // en					
+	audit('','D&eacute;faut t&acirc;che auto',$task->get_name()); //fr
+
+//audit('','Automated Task Succeeded',$task->get_name()); // eb
+	audit('','T&acirc;che auto r&eacute;alis&eacute;e',$task->get_name()); //fr
+
+
+/lib/classes/class.cms_variables.php
+---------------------------------
+
+	//trigger_error('Modification of internal data is deprecated: '.$key,E_USER_NOTICE);
+	trigger_error('Modification des donnees internes est obsolete :'.$key,E_USER_NOTICE); //fr
+
+	//trigger_error('Unsetting internal variable '.$key.' is invalid',E_USER_ERROR);
+	trigger_error('desactivation variable config '.$key.' est invalide',E_USER_ERROR); //fr
+
+
+/lib/classes/class.ContentBase.php A traduire ??
+------------------ 
+# :TODO: Translate the error message
+1328
+		  $debug_errors .= "<p>Could not retrieve content from db</p>\n";
+
+1345
+		      $debug_errors .= "<p>Could not load properties for content</p>\n";
+
+1362
+	      $debug_errors .= "<p>The id wasn't valid : $id</p>\n";
+
+1431
+		  $debug_errors .= "<p>Could not load properties for content</p>\n";
+
+1353
+	      $debug_errors .= "<p>Error updating content</p>\n";
+
+1590
+	      $debug_errors .= "<p>Error updating : the content has no properties</p>\n";
+
+1679
+	      $debug_errors .= "<p>Error inserting content</p>\n";
+
+	  debug_buffer('save from ' . __LINE__);
+
+	      $debug_errors .= "<p>Error inserting : the content has no properties</p>\n";
+
+	      $debug_errors .= "<p>Could not delete content : invalid Id</p>\n";
+
+		  $debug_errors .= "<p>Error deleting content</p>\n";
+
+	
+/lib/classes/class.moduleoperations.inc.php
+---------------------------------------
+
+	//if( !$brief ) audit('','Module', 'Expanded module: '.$moduledetails['name'].' version '.$moduledetails['version']);
+	if( !$brief ) audit('','Module', 'Fichier XML : '.$moduledetails['name'].' version '.$moduledetails['version']); //fr
+
+	
+		 //audit('',$module_obj->GetName(), 'Installed version '.$module_obj->GetVersion()); 
+		audit('',$module_obj->GetName(), 'Version install&eacute;e '.$module_obj->GetVersion());//fr
+
+				audit('','Core',"Cannot load module $module_name ... Problem loading dependent module $name version $ver");
+				audit('','Core',"Ne peut pas charger le module $module_name ... Probl&egrave;me de chargement selon le module $name version $ver"); //fr		
+				  
+		//audit('','Core',"Cannot load module $module_name ... some problem instantiating the class");
+		  audit('','Core',"Ne peut pas charger le module $module_name ... un probl&egrave;me instanciation de la classe");	//fr			  
+
+		  
+		  
+		  //audit('','Core','Cannot load module '.$module_name.' it is not compatible wth this version of CMSMS');
+		  audit('','Core','Ne peut pas charger le module '.$module_name.' pas compatible avec cette version de CMSMS'); // fr
+
+		  
+		
+	
+		//audit('','Module', 'Upgraded module '.$module_obj->GetName().' to version '.$module_obj->GetVersion());
+		audit('','Module', 'Mise &agrave; jour '.$module_obj->GetName().' &agrave; la version '.$module_obj->GetVersion());//fr
+
+
+	
+			//audit('','Module','Uninstalled module '.$module);
+			audit('','Module',lang('uninstalled_mod').$module);//fr
+
+======	
+
+	
+/lib/classes/contenttypes/Content.inc.php 
+------------------
+		//return array($label.':',$field); --> return array($label,$field); // Révision: 9637
+
+
+
+ =======
+
+/lib/classes/module_support/modform.inc.php
+--------------------------
+898
+			//return '<!-- ERROR: could not get an alias for pageid='.$pageid.'-->';
+			return '<!-- ERREUR : trouve pas allias pour pageid='.$pageid.'-->'; //fr
+
+/lib/classes/module_support/modlang.inc.php
+-----------------------------------------	
+		//$result = "-- Missing Languagestring - module:".$modinstance->GetName()." string:$name--";
+		$result = "-- Manque cha&icirc;ne de langue - module : ".$modinstance->GetName()." string:$name--"; //fr
+
+
+/lib/classes/module_support/modmisc.inc.php
+-------------------------------------------
+	Line 87: 				$str .= '<em>(optional)</em> ';
+						$str .= '<em>(option)</em>&nbsp;';//fr
+
+	
+========
+
+/lib/filemanager/ImageManager/images.php 
+----------------------------------------
+pour la gestion images dans  Contenu/Gestionnaire d'images
+ title="Edit" par  title="Edition"  et  title="Trash" title="Effacer"  title="Effacer l'image" ->pour l'image seule
+et alt="Trash"/> --> alt="Effacer"/>  et alt="Edit"/> --> alt="Edition"/>
+
+========
+/lib/smarty/error-console.tpl
+--------------------------------
+
+color: black; /* color: #c3c3c3;*/
+
+					trace.innerHTML = "View Full Trace &darr;";
+				} else {
+					el.style.display = "block";
+					trace.innerHTML = "Close Full Trace 
+					
+            <h1>Oops!</h1>
+              <p class="info">
+                Sorry, it looks like something went wrong and an error has occurred.
+                <br />
+                Don’t worry, it can happen to any of us.
+            </p>
+            <div class="clear"></div>
+            <div class="error">
+                <h2 class="error-message"><span class="important">Error:</span> at line {$e_line} in file {$e_file}:</h2>
+                <p class="message">
+                    <strong>Message:</strong>
+                </p>			
+
+				<a id="open" href="javascript:toggle();">View Full Trace &darr;</a>
+				
+---------->
+
+					trace.innerHTML = "Cliquer pour voir toutes les lignes &darr;";
+				} else {
+					el.style.display = "block";
+					trace.innerHTML = "Cliquer pour fermer  &uarr;";
+					
+            <h2>Oups !</h2>
+              <p class="info">
+                Désolé, il semble que quelque chose ne va pas pas et une erreur est survenue.
+                <br />
+                Ne vous inquiétez pas, cela peut arriver ...
+            </p>
+            <div class="clear"></div>
+            <div class="error">
+                <h2 class="error-message"><span class="important">Erreur :</span> à la ligne{$e_line} dans le fichier {$e_file}:</h2>
+                <p class="message">
+                    <strong>Message :</strong>
+                </p>
+				
+				<a id="open" href="javascript:toggle();">Cliquer pour voir toutes les lignes &darr;</a>				
+
+========
+
+/smarty/plugins/function.html_select_date.php 
+------------------------------------------------
+POUR news afficher date - Date à laquelle l'article sera posté  12/08/2010
+    //$month_format    = "%B"; --> May ..
+   $month_format    = "%m";  // *--> 05  Format mois sur 2 chiffres Modif par JCE76350
+
+       "D" -> day, "M" -> month, "Y" -> year. */
+    //$field_order     = 'MDY';
+   $field_order     = 'DMY';	//Jour Mois Année  Modif par JCE76350
+
+========
+
+/smarty/sysplugins/smarty_internal_templatecompilerbase.php
+----
+575
+            $this->trigger_template_error("unknown tag \"" . 
+			
+            $this->trigger_template_error("balise inconnue \"" . 			
+822
+        $match = preg_split("/\n/", $this->lex->data);
+        $error_text = 'Syntax Error in template "' . $this->template->source->filepath . '"  on line ' . 
+		
+        $match = preg_split("/\n/", $this->lex->data);
+        $error_text = 'Erreur de syntaxe "' . $this->template->source->filepath . '"  ligne ' . 	
+		
+
+
+
+FIN /lib
+**************************************************************************************************
+
+/modules
+--------
+
+*************
+CMSPrinting
+********
+method.upgrade.php
+//$this->Audit( 0, 'CMSPrinting', 'Upgraded to version: '.$this->GetVersion());
+$this->Audit( 0, $this->Lang('friendlyname'), $this->Lang('upgraded',$this->GetVersion())); //fr
+
+
+*************
+FileManager
+********
+
+action.upload.php
+-----------------
+	//$str = $fileobject->name.' uploaded to '.filemanager_utils::get_full_cwd();
+	$str = $fileobject->name.' upload&eacute; vers '.filemanager_utils::get_full_cwd(); //fr
+
+		// if( isset($params['thumb']) )  $str .= ' and a thumbnail was generated';
+         if( isset($params['thumb']) ) $str .= ' et une vignette g&eacute;n&eacute;r&eacute;e'; //fr	
+		 
+//audit('',$this->GetName(),'upload failed: '.$e->GetMessage());		
+audit('',$this->GetName(),'échec upload : '.$e->GetMessage()); //fr
+
+action.newdir.php
+----------------
+		//$this->Audit(0, "File Manager", "Created new directory: ".$params["newdirname"]);
+		$this->Audit(0, "Gestionnaire de fichiers", "Nouveau dossier cr&eacute;&eacute; : ".$params["newdirname"]);//fr 
+
+action.changedir.php
+-------------
+	//  audit('','FileManager','Attempt to set working directory to an invalid location: '.$newdir);
+	audit('','Gestionnaire de fichiers','Tente de valider un dossier de travail avec un emplacement non valide : '.$newdir); //fr				
+
+action.delete.php
+-----------	
+   //$this->Audit('',"File Manager", "Removed file: ".$fn);
+    $this->Audit('',"Gestionnaire de fichiers", "Fichier supprim&eacute; : ".$fn);	//fr
+	
+action.rename.php
+---------------
+      //$this->Audit('',"File Manager", "Renamed file: ".$fullnewname);
+	  $this->Audit('',"Gestionnaire de fichiers", "Fichier renomm&eacute; : ".$fullnewname);//fr
+	
+action.unpack.php
+-------------
+//$this->Audit('',"File Manager", "Unpacked file: ".$src);
+$this->Audit('',"Gestionnaire de fichiers", "Fichier d&eacute;compact&eacute; : ".$src); //fr
+	
+ method.install 
+ ------------
+$this->CreatePermission('Use FileManager Advanced',$this->Lang("permissionadvanced"));
+$this->CreatePermission('Use FileManager Advanced','Use FileManager Advanced / Utilisation avanc&eacute;e du Gestionnaire de fichiers');
+	
+templates/uploadview.tpl
+-------------------------
+<div id="dropzone" class="vcentered hcentered"><p id="dropzonetext">Drop Files Here</p></div> ---->
+<div id="dropzone" class="vcentered hcentered"><p id="dropzonetext">{$mod->Lang('prompt_dropfiles')}</p></div>
+
+	
+*************
+MenuManager
+***************
+
+MenuManager.module.php
+---------------------------
+    //$this->CreateParameter('show_all', '0', $this->lang('help_show_all'));
+	$this->CreateParameter('show_all', '1', $this->lang('help_show_all'));
+
+
+method.install 
+--------------
+$this->CreatePermission('Manage Menu', 'Manage Menu');
+$this->CreatePermission('Manage Menu', 'Manage Menu / G&eacute;rer les menus');
+
+method.upgrade.php
+--------------------
+		$this->CreatePermission('Manage Menu', 'Manage Menu');
+		$this->CreatePermission('Manage Menu', 'Manage Menu / G&eacute;rer les menus');
+				
+				
+action.deletetemplate.php
+-----------------
+//audit('',$this->GetName(),'Deleted template '.$params['tplname']);
+audit('',$this->GetName(),'gabarit supprim&eacute; : '.$params['tplname']);
+
+
+action.edittemplate.php
+------------------------
+
+ //audit('',$this->GetName().'Edited template '.$newtemplate);
+ audit('',$this->GetName().' '.$newtemplate.' gabarit &eacute;dit&eacute;');
+ 
+ //audit('',$this->GetName(),$newtemplate.' set as default');
+  audit('',$this->GetName(),$newtemplate.' gabarit d&eacute;finit par d&eacute;faut'); // ne fonctionne pas
+  
+
+
+
+				
+***********
+Microtiny  Attention dépend de 'FileManager'
+**********
+/method.install.php
+/method.upgrade.php
+
+//$this->CreatePermission('MicroTiny View HTML Source','MicroTiny View HTML Source');
+$this->CreatePermission('MicroTiny View HTML Source','MicroTiny View HTML Source / Voir le source HTML de MicroTiny');//fr
+
+
+*************
+ModuleManager
+************
+
+
+
+
+****
+NEWS  
+****
+
+News.module.php
+-------------------------
+Line 211
+    function GetDfltEmailTemplate()
+   
+      $text = "A new news article has been posted to your website.  The details are as follows:";
+      $text .= "Title:      {\$title}\n";
+      $text .= "IP Address: {\$ipaddress}\n";
+      $text .= "Summary:    {\$summary|strip_tags}\n";
+      $text .= "Post Date:  {\$postdate|date_format}\n";
+      $text .= "Start Date: {\$startdate|date_format}\n";
+      $text .= "End Date:   {\$enddate|date_format}\n";
+ 
+      $text = "Un nouvel article pour votre site web. Les details suivent :\n";
+      $text .= "Titre :      {\$title}\n";
+      $text .= "Adresse Ip : {\$ipaddress}\n";
+      $text .= "Sommaire :   {\$summary|strip_tags}\n";
+      $text .= "Date poste :   {\$postdate|date_format}\n";
+      $text .= "Date de debut:  {\$startdate|date_format}\n";
+      $text .= "Date de fin :    {\$enddate|date_format}\n";
+
+
+	  
+action.addarticle.php
+		//audit($articleid, 'News: '.$articleid, 'Article added');
+		audit($articleid, 'News : '.$articleid, ' Article ajout&eacute;');// fr
+
+action.addcategory.php
+	  //audit($catid, 'News category: '.$catid, ' Category added');
+	  audit($catid, 'News cat&eacute;gorie : '.$catid, ' Cat&eacute;gorie ajout&eacute;e');//fr
+
+action.admin_addfielddef.php
+		//audit($name, 'News custom: '.$name, 'Field definition added');
+		audit($name, 'News d&eacute;finition : '.$name, ' Definition de champ ajout&eacute;');//fr
+		
+action.admin_deletefielddef.php
+		//audit($name, 'News custom: '.$name, 'Field definition deleted');
+		audit($name, 'News d&eacute;finition : '.$name, ' Definition de champ supprim&eacute;');//fr
+		
+action.admin_editfielddef.php
+		//audit($name, 'News custom: '.$name, 'Field definition edited');
+		audit($name, 'News d&eacute;finition: '.$name, ' Definition de champ &eacute;dit&eacute;');	//fr	
+
+action.deletecategory.php
+	  //audit($catid, 'News category: '.$catid, ' Category deleted');
+	  audit($catid, 'News cat&eacute;gorie : '.$catid, ' Cat&eacute;gorie supprim&eacute;e');//fr
+	  
+action.editarticle.php
+		//audit($articleid, 'News: '.$articleid, 'Article edited');
+		audit($articleid, 'News : '.$articleid, ' Article &eacute;dit&eacute;');// fr
+
+action.editcategory.php
+		//audit($catid, 'News category: '.$catid, ' Category edited');
+		audit($catid, 'News cat&eacute;gorie : '.$catid, ' Cat&eacute;gorie &eacute;dit&eacute;e');//fr
+
+
+action.fesubmit.php
+--------------------
+243 	
+		//audit('', 'News Frontend Submit', 'Article added');
+		audit('', 'Soumission de News Frontend', 'Article added'); //fr
+
+
+method.install.php
+------------------
+#Set Permission
+$this->CreatePermission('Modify News', 'Modify News');
+$this->CreatePermission('Approve News', 'Approve News For Frontend Display');
+$this->CreatePermission('Delete News', 'Delete News Articles');
+
+$this->CreatePermission('Modify News', 'Modify News / Modifier les articles (News)');
+$this->CreatePermission('Approve News', 'Approve News For Frontend Display / Approuver des articles (News) soumis via les pages du site (frontend)');
+$this->CreatePermission('Delete News', 'Delete News Articles / Supprimer les articles (News)');
+
+
+AVOIR-----------------------------------------------------------------
+ //   $this->SetPreference('current_summary_template','Sample');
+    $this->SetPreference('current_summary_template','Exemple');
+
+    $this->SetPreference('current_detail_template','Sample');  Exemple
+
+    $this->SetPreference('current_form_template','Sample'); Exemple
+
+    $this->SetPreference('current_browsecat_template','Sample'); Exemple
+----
+
+
+//$this->SetPreference('email_subject',$this->Lang('subject_newnews'));
+$this->SetPreference('email_subject','Un nouvel article sur le site'); //fr
+
+//$db->Execute($query, array($catid, 'General', -1));
+$db->Execute($query, array($catid, 'G&eacute;n&eacute;rale', -1)); // fr
+
+$db->Execute($query, array($articleid, $catid, 1, 'News Module Installed', 'The news module was installed.  Exciting. This news article is not using the Summary field and therefore there is no link to read more. But you can click on the news heading to read only this article.', null, null, null, 'published', null));
+
+$db->Execute($query, array($articleid, $catid, 1, 'Module Articles (News)', 'Le module Articles (News) a &eacute;t&eacute; install&eacute;. Cet article  n&#039;emploie pas le champ r&eacute;capitulatif et donc il n&#039;y a aucun lien pour lire plus. Mais vous pouvez cliquer sur le titre pour lire seulement cet article. INFORMATION : consulter les forums <a href="http://www.cmsmadesimple.fr" 
+title=".fr" target="_blank">cmsmadesimple.fr</a> et <a href="http://forum.cmsmadesimple.org/index.php?board=10.0" title=".org" target="_blank">cmsmadesimple.org</a> pour les francophones.', null, null, null, 'published', null));
+
+method.upgrade.php
+------------------
+		//$this->CreatePermission('Delete News', 'Delete News Articles');
+		$this->CreatePermission('Delete News', 'Delete News Articles / Supprimer les articles (News)'); //fr
+		
+A 2 endroits
+	//$this->CreatePermission('Approve News','Approve News For Frontend Display');
+	$this->CreatePermission('Approve News', 'Approve News For Frontend Display / Approuver des articles (News) soumis via les pages du site');  //fr 
+	
+
+/lib/class.news_admin_ops.php
+-----------------------------
+	//audit($articleid, 'News: '.$articleid, 'Article deleted');
+	audit($articleid, 'News : '.$articleid, 'Article supprim&eacute;'); // fr
+
+
+
+********
+Printing Supprimé en V1.10
+********
+
+
+********
+Search
+********
+method.install.php 
+-------------------
+line 61 $this->SetPreference('searchtext','mot ...');
+
+
+***********
+ThemeManager  
+*************
+ThemeManager.module.php
+-------------------------
+    // create a permission
+    $this->CreatePermission('Manage Themes', 'Manage Themes');
+    $this->CreatePermission('Manage Themes', 'Manage Themes / G&eacute;rer les th&egrave;mes'); 
+
+
+
+
+
+*****
+SOAP  supprimé en V1.10
+*****
+
+
+
+**********
+TinyMCE  Pour information
+*********
+TinyMCE.module.php	
+		$this->plugins_default_enabled = "paste,advimage,advlink,contextmenu,inlinepopups,spellchecker";
+
+--> - contextmenu
+
+search,replace,separator, Si   	searchreplace
+
++ profilespanel.tpl espace après les :
+
+
++ method.install.php
+$this->CreatePermission('allowadvancedprofile', $this->Lang('allowadvancedprofile'));
+-->
+$this->CreatePermission('allowadvancedprofile', 'Allow usage of advanced profile in TinyMCE/Autoriser l&#039;utilisation des param&egrave;tres avanc&eacute;s dans le profil de TinyMCE');
+
+
++ method.uninstall.php
+$this->RemovePermission('allowadvancedprofile'); //
+
++ function.contact_form.php.jce
+Formulaire de contact MODIFICATION PAR bess le 23/01/2012 Version 1.6 + add cms1.11
+
+FIN /modules
+**************************************************************************************************
+
+/pluging
+---------
+
+plugins/function.image.php  
+---------------------------------
+		$text = '<!-- empty results from image plugin -->';
+r&eacute;sultats vide pour le plugin image
+
+
+plugins/function.title.php
+--------------------------
+Line 28: 		
+$result = "404 Error";
+---> $result = "Erreur 404 - La page est introuvable ";
+
+
+Voir possibilté des plugings à la JCE
+
+FIN /pluging
+**************************************************************************************************
+

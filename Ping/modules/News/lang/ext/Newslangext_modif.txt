@@ -1,0 +1,20 @@
+
+'Autoriser l&#039;utilisation de l&#039;&eacute;diteur WYSIWYG dans le sommaire&nbsp;';
+'Autoriser l&#039;utilisation de l&#039;&eacute;diteur WYSIWYG dans le champ sommaire&nbsp;';
+
+
+1- news 
+$lang['firstpage'] = '$lt;'; so HTML is <
+If I enter into Translatecenter &lt;
+The translate file commes with &amp;lt; so HTML is &lt;   NOT < 
+same to $lang['nextpage'] = '&gt;';
+
+modif
+$lang['prompt_page'] = 'Page ';
+$lang['firstpage'] = '&lt;&lt;';
+$lang['prevpage'] = '&lt;';
+$lang['nextpage'] = '&gt;';
+$lang['lastpage'] = '&gt;&gt;';
+
+$lang['subject_newnews'] = 'Un nouvel article a &eacute;t&eacute; post&eacute;';
+Un nouvel article a été posté

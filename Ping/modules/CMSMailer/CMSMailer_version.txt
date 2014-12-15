@@ -1,0 +1,13 @@
+
+CMSMailer.module.php 
+
+dans le core
+17/01/2011 31->32 V 2.0.1
+17/09/2010 30->31
+20/04/2010 28->30 V 2.0
+19/04/2010 27->28 Upgrades phpmailer to 5.1 (requires PHP 5.3) and adds support for SSL/TLS in the cmsmailer settings.
+28/02/2010 26->27
+15/02/2009 25->26 
+
+-------------------------------------------
+JC Etiemble -  http://jc.etiemble.free.fr/

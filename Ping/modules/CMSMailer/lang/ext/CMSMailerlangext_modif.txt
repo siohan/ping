@@ -1,0 +1,14 @@
+
+
+Suppression des entités HTML --> erreur codage
+Ce message est une v&eacute;rification de la validit&eacute; des param&egrave;tres du module CMSMailer.Si vous le recevez, tout fonctionne bien
+-->
+$lang['testbody'] = 'Ce message est une vérification de la validité des paramètres du module CMSMailer.
+Si vous le recevez, tout fonctionne bien.';
+
+
+<li>Pour la derni&egrave;re version de ce module, les FAQs, ou pour annoncer un bug, veuillez visiter la <a href="http://dev.cmsmadesimple.org/" target="_blank">forge de CMS Made Simple</a>.</li>
+<li>Des discussions compl&eacute;mentaires relatives &agrave; ce module peuvent aussi &ecirc;tre trouv&eacute;es sur les <a href="http://forum.cmsmadesimple.org" target="_blank">Forums CMS Made Simple</a>.</li>
+
+<p>Copyright &copy; 2005, Robert Campbell <a href="mailto:calguy1000@hotmail.com">calguy1000@hotmail.com</a>. Tous droits r&eacute;serv&eacute;s.</p>
+<p>Ce module est distribu&eacute; sous la licence <a href="http://www.gnu.org/licenses/licenses.html#GPL" target="_blank">GNU Public License</a>. Vous devez agr&eacute;er aux termes de cette licence pour pouvoir utiliser ce module.</p>
