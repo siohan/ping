@@ -1,5 +1,9 @@
 <?php
-
+######################################################################
+###                   L'onglet de la situation mensuelle           ###
+#                                                                  ###
+# Auteur : Claude SIOHAN                                           ###
+######################################################################
 if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
@@ -15,8 +19,8 @@ $annee_courante = date('Y');
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_situation_mensuelle_tab')); 
 $saisonslist[$this->lang('allseasons')] ='';
-$monthslist[$this->Lang('allmonths')] = '';
-//$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8");
+//$monthslist[$this->Lang('allmonths')] = '';
+$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8");
 $yearslist = array("2014"=>"2014");
 $tourlist[$this->Lang('alltours')] = '';
 $equipelist[$this->Lang('allequipes')] = '';
@@ -170,7 +174,9 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('addallsitmenslink',
-				$this->CreateLink($id,'add_all_sit_mens', $returnid, 'Ajouter toutes situations mensuelles'));
+		$this->CreateLink($id,'add_all_sit_mens', $returnid, 'Ajouter manuellement les situations mensuelles'));
+$smarty->assign('retrieveallsitmens',
+		$this->CreateLink($id,'retrieve_all_sit_mens', $returnid, 'Ajouter automatiquement les situations mensuelles'));
 $smarty->assign('missing_sit_mens', 
 		$this->CreateLink($id, 'missing_sit_mens', $returnid, 'Les situations manquantes'));
 $smarty->assign('form2start',

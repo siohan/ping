@@ -1,11 +1,10 @@
 <?php
-
 if( !isset($gCms) ) exit;
 ##############################################################################
 ###                    JOURNAL                                               ###
 ##############################################################################
 
-/**/
+
 	if (isset($params['submit_massdelete']) )
   	{
      		if( isset($params['sel']) && is_array($params['sel']) && count($params['sel']) > 0 )
@@ -16,7 +15,7 @@ if( !isset($gCms) ) exit;
 	  		}
       		}
   	}
-/**/
+
 
 $db =& $this->GetDb();
 global $themeObject;
@@ -37,39 +36,43 @@ $smarty->assign('retrieve_details_rencontres',
 		$this->CreateLink($id, 'retrieve_club', $returnid, $contents = 'Récupérations du détail des rencontres'));
 
 /* on fait un formulaire de filtrage des résultats*/
-$smarty->assign('formstart',$this->CreateFormStart($id,'admin_data_tab')); 
+//$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'journal')));
+$smarty->assign('formstart', $this->CreateFormStart($id, 'admin_journal_tab'));
 $statuslist[$this->lang('allstatus')] ='';
 $datelist[$this->Lang('alldates')] = '';
 $typeCompet = array();
 //$typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT datecreated, status FROM ".cms_db_prefix()."module_ping_recup ORDER BY datecreated DESC";
-$dbresult = $db->Execute($query);
-while ($dbresult && $row = $dbresult->FetchRow())
-	{
-		setlocale (LC_TIME, 'fr_FR'); 
-		//$datelist[$row['datecreated']] = strftime("%A %e %B %Y à %H:%M:%S",strtotime($row['datecreated']));
-		$datelist[$row['datecreated']] = $row['datecreated']; 
-		// $playerslist[$row['player']] = $row['licence'];
-		$statuslist[$row['status']] = $row['status'];
-		//$equipelist[$row['equipe']] = $row['equipe'];
-		//$typeCompet[$row['codechamp']] = $row['codechamp'];
-	}
+$query1 = "SELECT datecreated, status FROM ".cms_db_prefix()."module_ping_recup ORDER BY datecreated DESC";
+$dbresult1 = $db->Execute($query1);
 
-			if( isset($params['submitfilter']) )
-		  	{
-		    		if( isset( $params['datelist']) )
-		      		{
-					$this->SetPreference('dateChoisi', $params['datelist']);
-		      		}
+if($dbresult1 && $dbresult1->RecordCount()>0)
+{
+	
+
+	while ($row = $dbresult1->FetchRow())
+		{
+			setlocale (LC_TIME, 'fr_FR'); 
+			$datelist[$row['datecreated']] = $row['datecreated']; 
+			$statuslist[$row['status']] = $row['status'];
+		}
+
+				if( isset($params['submitfilter']) )
+			  	{
+			    		if( isset( $params['datelist']) )
+			      		{
+						$this->SetPreference('dateChoisi', $params['datelist']);
+			      		}
 		
-				if( isset( $params['statuslist']) )
-		      		{
-					$this->SetPreference('statusChoisie', $params['statuslist']);
-		      		}
-			}
+					if( isset( $params['statuslist']) )
+			      		{
+						$this->SetPreference('statusChoisie', $params['statuslist']);
+			      		}
+				}
+
 		
 $curdate = $this->GetPreference( 'dateChoisi' );
 $curstatus = $this->GetPreference('statusChoisie');
+}
 
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
@@ -85,40 +88,41 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query= "SELECT * FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
+$query2= "SELECT * FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
 
 	if( isset($params['submitfilter'] ))
 	{
 
 		if ($curdate !='')
 		{
-			$query .=" AND datecreated = ? ";
+			$query2.=" AND datecreated = ? ";
 			$parms['datecreated'] = $curdate;
 		
 		}
 		if($curstatus !='')
 		{
-			$query.=" AND status = ?";
+			$query2.=" AND status = ?";
 			$parms['status'] = $curstatus;
 		}
 
-		$dbresult= $db->Execute($query,$parms);
+		$dbresult2= $db->Execute($query2,$parms);
 	}
 
 	else 
 	{
-		$query .=" ORDER BY id DESC";
-		$dbresult= $db->Execute($query);
+		$query2.=" ORDER BY id DESC";
+		$dbresult2= $db->Execute($query2);
 	}//fin du if dbresult
 	//echo $query;
 	
-		if (!$dbresult)
+		/*
+		if (!$dbresult2)
 		{
 
 			die('FATAL SQL ERROR: '.$db->ErrorMsg().'<br/>QUERY: '.$db->sql);
 
 		}
-
+		*/
 
 
 
@@ -126,31 +130,17 @@ $query= "SELECT * FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
 $rowclass= 'row1';
 $rowarray= array ();
 
-	if ($dbresult && $dbresult->RecordCount() > 0)
+	if ($dbresult2 && $dbresult2->RecordCount() > 0)
   	{
-    		while ($row= $dbresult->FetchRow())
+    		while ($row= $dbresult2->FetchRow())
       		{
-			//	$actif = $row['actif'];
 			$onerow= new StdClass();
 			$onerow->rowclass= $rowclass;
 			$onerow->id= $row['id'];
 			$onerow->datecreated= $row['datecreated'];
 			$onerow->designation= $row['designation'];
 			$onerow->action= $row['action'];
-			/*
-			if($actif == 1)
-			{
-				$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
-			}
-			else 
-			{
-				$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
-			}
-			
-			$onerow->editlink= $this->CreateLink($id, $row['action'], $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),$this->Lang('retrieve_users_confirm'));
-			$onerow->deletelink= $this->CreateLink($id, 'delete_user', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
-			*/
-			$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
+			//$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
 			($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 			$rowarray[]= $onerow;
       		}
@@ -165,7 +155,7 @@ $smarty->assign('createlink',
 		$this->CreateLink($id, 'add_compte', $returnid, 
 				  $this->Lang('addnewsheet'), 
 				  array()));
-$smarty->assign('form2start',$this->CreateFormStart($id,'admin_data_tab',$returnid));
+$smarty->assign('form2start',$this->CreateFormStart($id,'admin_journal_tab',$returnid));
 $smarty->assign('form2end',$this->CreateFormEnd());
 $smarty->assign('submit_massdelete',
 		$this->CreateInputSubmit($id,'submit_massdelete',$this->Lang('delete_selected'),

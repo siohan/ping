@@ -3,6 +3,7 @@ $lang['active'] = 'Actif';
 $lang['accessdenied'] = 'Acc&eacute;s Interdit. V&eacute;rifier vos permissions.';
 $lang['add_user'] = 'Ajouter un joueur(euse)';
 $lang['add-manually'] = 'Ajouter manuellement';
+$lang['add'] = "Ajouter";
 $lang['adresse'] = 'Adresse';
 $lang['allseasons'] = 'Toutes les saisons';
 $lang['allstatus'] = "Tous les statuts";
@@ -14,6 +15,7 @@ $lang['allmonths'] = 'Tous les mois';
 $lang['allcompet'] = 'Toutes les compétitions';
 $lang['add_compet'] = 'Ajouter une nouvelle compétition';
 $lang['add_type_compet'] = 'Ajouter une nouvelle compétition';
+$lang['addmanually'] = "ajouter manuellement";
 $lang['allplayers'] = 'Tous les joueurs';
 $lang['add_contact'] = 'Ajouter un contact';
 $lang['addnewsheet'] = 'Ajouter une rencontre';
@@ -61,6 +63,8 @@ $lang['link_view'] = 'Voir l&#039;enregistrement';
 $lang['lists'] = 'Listes';
 $lang['listsfoundtext'] = 'liste(s) trouv&eacute;e(s)';
 $lang['messages'] = 'messages';
+$lang['missing_sit_mens'] = 'Situation mensuelle manquante';
+$lang['missing_parameters'] = 'Paramètre(s) manquant(s)';
 $lang['name'] = 'Nom';
 $lang['needpermission'] = 'Vous n\'avez pas la permission d\'accéder';
 $lang['no'] = 'Non';
@@ -81,6 +85,7 @@ $lang['prompt_nombreRencontres'] = 'Nb de parties disputées';
 $lang['really_uninstall'] = '\312tes-vous s\373r de vouloir d\351sinstaller ce super module ?';
 $lang['resultsfound'] = 'résultat(s)';
 $lang['resultsfoundtext'] = 'r&eacute;sultat(s) trouv&eacute;(s)';
+$lang['resultfoundtext'] = 'r&eacute;sultat(s) trouv&eacute;(s)';
 $lang['retrieveallpartiesspid'] = 'Récupérer toutes les parties Spid';
 $lang['retrieve_parties'] = 'Parties FFTT';
 $lang['retrieve_parties_spid'] = 'Parties SPID';
@@ -92,8 +97,10 @@ $lang['score_equipe'] = 'Score Equipe';
 $lang['score_adv'] = 'Score Adversaires';
 $lang['sheetsfoundtext'] = 'rencontre(s) trouv&eacute;e(s)';
 $lang['submit'] = 'Sauvegarder';
+$lang['submitasnew'] = 'Ajouter comme nouveau';
 $lang['title_allow_add'] = 'Les utilisateurs peuvent ajouter des enregistrements ?';
 $lang['title_allow_add_help'] = 'Cliquez ici pour permettre aux utilisateurs d&#039;ajouter des enregistrements.';
+$lang['title_club_number'] = "Numéro de votre club";
 $lang['title_mod_prefs'] = 'Pr&eacute;ferences du module';
 $lang['title_general'] = 'Information g&eacute;n&eacute;rales';
 $lang['title_description'] = 'Description ';
@@ -117,7 +124,7 @@ $lang['help_tour'] = 'Utilez le N° de journée pour obtenir ses résultats uniq
 $lang['help_type_compet'] = 'Filtrez les résultats en précisant le type de compétition';
 $lang['help_date_debut'] = 'Utilisez la date de début de compétition au format (aaaa-mm-jj)';
 $lang['help_date_fin'] = 'Utilisez la date de fin avec la date de début au même format';
-$lang['help_skeleton_id'] = 'Identificateur interne de s&eacute;lection des enregistrements';
+$lang['help_limit'] = 'Pour limiter le nb à x résultats';
 $lang['help_code_compet'] = 'Ce code se trouve dans les résultats FFTT';
 $lang['help_coefficient'] = 'Utilisez le point (.) et non la virgule ex 1.25 et non pas 1,25';
 $lang['help_description'] = 'Param&egrave;tres internes utilis&eacute;s lors de la cr&eacute;ation d&#039;un nouvel enregistrement';
@@ -145,6 +152,9 @@ $lang['changelog'] = '<ul>
 <li>Récupération "en masse" du spid, des parties FFTT et des situations mensuelles</li>
 <li>Récupération de tous les matchs pour remplir le calendrier</li>
 <li>Corrections de bogues et améliorations diverses</li>
+</ul>
+<li>Version 0.2</li>
+<ul><li>Implémentation des tâches pseudo-cron (scripts semi-automatiques)</li>
 </ul>
 <li>Version 0.1beta2
 <ul><li>Mise à jour essentiellement corrective</li>
@@ -183,13 +193,13 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 <li>"type_compet" - le type de compétition à afficher ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\'} (disponibles ds l\'onglet "Compétitions")</li>
 <li>"tour" - Indique le N° de journée officiel ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\' tour=\'1\'}</li></ul>
 <h3>Feuille de route</h3>
-<p>Dans cette version, il n\'est pas prévu  de permissions d\'accès particulières, l\'admin du site a tous les droits. Je pense toutefois donner une permission spécifique pour supprimer des données J\'attends vos retours à ce sujet pour éventuellement en créer.</p><p>De plus, le front office (côté internaute) est encore à ses premiers balbutiements.</p>
-<p>Néanmoins, si vous êtes sages...</p>
 <ul>
 <li>Un front-office avec des graphiques dynamiques.</li>
-<li>Des scripts pour récupérer automatiquement vos résultats (tâches cron)</li>
 <li>Des templates pour vous aider à bâtir vos propres gabarits depuis ce module</li>
 </ul>
+<h3>Scripts automatiques (pseudo-cron)</h3>
+<p>Les tâches pseudo-cron s\'éxécutent automatiquement en fonction des visites sur votre site(internautes et admins du site)<br />
+Dans la version 0.2, les scripts automatiques concernent les résultats du Spid et de la FFTT. Ils s\'éxécutent tous les jours (si visites du site). Ils récupèrent les résultats de x joueurs dont la mise à jour date de x jours. Il est donc possible de configurer ces x.</p><p>Attention, des temps de latence peuvent être observés dûs à l\'éxécution des scripts.</p>
 <h3>Support</h3>
 <ul>
 <li>Pour obtenir la dernière version en cours (avant release officielle)
@@ -213,9 +223,5 @@ module. Pour plus d\'informations, <a
 href=\"http://www.gnu.org/licenses/licenses.html#GPL\" target=\"_blank\">consultez
 la licence GNU GPL</a>.</p>
 ';
-$lang['utma'] = '156861353.1949673112.1265210769.1285941058.1286179019.190';
-$lang['utmz'] = '156861353.1286179019.190.38.utmccn=(referral)|utmcsr=cmsmadesimple.fr|utmcct=/index.php|utmcmd=referral';
-$lang['qca'] = 'P0-1075820551-1265210768764';
-$lang['utmb'] = '156861353';
-$lang['utmc'] = '156861353';
+
 ?>

@@ -64,16 +64,16 @@ if($dbresult && $dbresult->RecordCount()>0)
 						$$xja = $tab2[joueur][$i][xja];//ex : $xja0 = '';
 						$$xjb = $tab2[joueur][$i][xjb];//ex : $xja0 = '';
 						
-					$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
-					//echo $query;
-					$dbresult = $db->Execute($query, array($$xjb,$$xja));
+					$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
+					//echo $query2;
+					$dbresult2 = $db->Execute($query2, array($$xjb,$$xja));
 						
-						if($dbresult && $dbresult->RecordCount()>0)
+						if($dbresult2 && $dbresult2->RecordCount()>0)
 						{
-							while($row= $dbresult->FetchRow())
+							while($row2= $dbresult2->FetchRow())
 							{
-								$licence = $row['licence'];
-								ping_admin_ops::retrieve_parties_spid($licence);
+								$licence = $row2['licence'];
+								ping_admin_ops::retrieve_parties_spid($licence, $record_id);
 								
 								
 							}
@@ -88,8 +88,8 @@ if($dbresult && $dbresult->RecordCount()>0)
 					}
 						
 //on met la valeur uploaded à 1
-$query2 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET `uploaded` = 1 WHERE id = ?";
-$dbresultat = $db->Execute($query2, array($record_id));				
+$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET `uploaded` = 1 WHERE id = ?";
+$dbresultat = $db->Execute($query3, array($record_id));				
 				
 					
 				

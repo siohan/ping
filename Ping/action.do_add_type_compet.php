@@ -10,6 +10,7 @@ if (!isset($gCms)) exit;
 	}
 //on récupère les valeurs
 //pour l'instant pas d'erreur
+$designation = '';
 $error = 0;
 		$name = '';
 		if (isset($params['name']) && $params['name'] !='')
@@ -58,7 +59,7 @@ $error = 0;
 		$edit = '';
 		if(isset($params['edit']) && $params['edit'] =='Oui')
 		{
-			//on regarde le recor_id qui est en parametre
+			//on regarde le record_id qui est en parametre
 			if(isset($params['record_id']) && $params['record_id'] != '')
 			{
 				$record_id= $params['record_id'];
@@ -66,6 +67,7 @@ $error = 0;
 			
 			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET name = ?, code_compet = ?, coefficient = ?, indivs = ? WHERE id = ?";
 			$dbresult = $db->Execute($query, array($name, $code_compet, $coefficient, $indivs, $record_id));
+			$designation.="Compétition modifiée";
 			$this->SetMessage("$designation");
 			//$this->RedirectToAdminTab('compets');
 		}
@@ -91,8 +93,8 @@ $error = 0;
 			}
 		
 		}
-/*
-$this->SetMessage('Compétition enregistrée !');
+
+$this->SetMessage("$designation");
 $this->RedirectToAdminTab('compets');
-*/
+
 ?>

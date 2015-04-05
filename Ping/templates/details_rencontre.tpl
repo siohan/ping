@@ -1,12 +1,13 @@
-<pre>{$items|var_dump}</pre>
-<pre>{$entrees|var_dump}</>
-	<table class="table">
-{foreach from=$items key=key item = entry}
+{*<pre>{$items|var_dump}</pre>*}
+{*<pre>{$entrees|var_dump}</pre>*}
 
-	<tr><td>({$key} - {$entry->equa} {$entry->resa}</td><td> - {$entry->resb} {$entry->equb}</td></tr>
-	<tr>
-		<td>{$entry->xja0} {$entry->scorea0} - {$entry->scoreb0}{$entry->xjb0}</td>
-	</tr>
+{foreach from=$items  item=entry}
 
+	<h3>Les résultats du {$entry->date_event}</h3>
+		<table class="table table-bordered">
+			{foreach from=$prods_{$entry->valeur} item=donnee}
+				<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td><td>{$donnee->details}</td></tr>
+			{/foreach}
+		</table>
+	
 {/foreach}
-</table>

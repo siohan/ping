@@ -1,6 +1,5 @@
-<div class="pageoptions"><p class="pageoptions">{*$returnlink*}</p></div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} {*| {$addallsitmenslink}*}</p></div>
-<div class="pageoptions"><p class="pageoptions">{$retrieveallsitmens}</p></div>
+{*<pre>{$items|var_dump}</pre>*}
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieveallsitmens} | {$addallsitmenslink}</p></div>
 {if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>
@@ -22,6 +21,7 @@
  <thead>
 	<tr>
 		<th>ID</th>
+		<th>Licence</th>
 		<th>Mois</th>
 		<th>Joueur</th>
 		<th>Points</th>
@@ -37,6 +37,7 @@
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
 	<td>{$entry->id}</td>
+	<td>{$entry->licence}</td>
 	<td>{$entry->mois}</td>
     <td>{$entry->joueur}</td>
     <td>{$entry->points}</td>

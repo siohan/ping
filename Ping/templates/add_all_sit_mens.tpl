@@ -1,5 +1,6 @@
-<pre>{*$rowarray|var_dump*}</pre>
+{*<pre>{$rowarray|var_dump}</pre>*}
 <div class="pageoverflow">
+	<p>Seules les situations renseignées seront prises en compte (>0)</p>
 {$formstart}
 {$mois_courant}
 <div class="pageoverflow">
@@ -12,7 +13,7 @@
     <div class="section-{$cnt}">
         
         <p class="pagetext"> {$entry} :</p>
-	    <p class="pageinput"><input type="text" class="cms_textfield" name="m1_{$key}" id="m1_{$key}" value=""></p>
+	    <p class="pageinput"><input type="text" class="cms_textfield" name="{$actionid}licence[{$key}]" id="{$actionid}{$key}" value=""></p>
         
     </div>
     {/foreach}

@@ -68,8 +68,8 @@ foreach($result as $cle =>$tab)
 	//$type_compet = $type;
 	
 	
-	$query = "SELECT phase, saison, liendivision FROM ".cms_db_prefix()."module_ping_equipes WHERE liendivision = ? AND phase = ? AND saison = ?";
-	$dbresult = $db->Execute($query, array($liendivision, $phase, $saison));
+	$query = "SELECT phase, saison, liendivision FROM ".cms_db_prefix()."module_ping_equipes WHERE liendivision = ? AND saison = ?";
+	$dbresult = $db->Execute($query, array($liendivision, $saison));
 	
 		if($dbresult  && $dbresult->RecordCount() == 0) 
 		{

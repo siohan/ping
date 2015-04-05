@@ -31,6 +31,37 @@
 		<p class="pagetext">Afficher les résultats de mes équipes uniquement</p>
 		<p class="pageinput">{$input_affiche_club_uniquement}</p>
 	</div>
+	<!--
+	<div class="pageoverflow">
+		<p class="pagetext">Récupération si situation mensuelle à jour ?</p>
+		<p class="pageinput">{$sitmens_ok_only}</p>
+	</div>
+	-->
+	</fieldset>
+	<fieldset>
+		<legend>Scripts automatiques</legend>
+		<fieldset>
+			<legend>Spid</legend>
+			<div class="pageoverflow">
+				<p class="pagetext">Récupération tous les x jours</p>
+				<p class="pageinput">{$input_spid_interval}</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext">Résultats de x joueurs</p>
+				<p class="pageinput">{$input_spid_nombres}</p>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>FFTT</legend>
+			<div class="pageoverflow">
+				<p class="pagetext">Récupération tous les x jours</p>
+				<p class="pageinput">{$input_fftt_interval}</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext">Résultats de x joueurs</p>
+				<p class="pageinput">{$input_fftt_nombres}</p>
+			</div>
+		</fieldset>
 	</fieldset>
 	<div class="pageoverflow">
 		<p class="pagetext">&nbsp;</p>

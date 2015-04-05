@@ -1230,8 +1230,9 @@ if ($dbretour && $dbretour->RecordCount() > 0)
 else{
 	echo "coefficient introuvable !";
 }		
-function dateversfr ($date){	   
-	$datearr = explode('/', $date);
+function dateversfr ($date,$delimiter){	   
+	
+	$datearr = explode($delimiter, $date);
 	$datefr = $datearr[2] . '-' . $datearr[1] . '-' . $datearr[0];
 	return $datefr;
 	}
@@ -1248,7 +1249,31 @@ function mois_francais($mois,$longueur){
 	$month_francais = $months["$month_to_display"];
 	return $month_francais;
 }
-
+function get_name($nom){
+	$explosion = explode(' ',$nom);
+	$compteur = count($explosion);
+	$name = array();
+	$prenom = array();
+	
+	$i =0;
+	foreach ($explosion as $testcase) {
+	$i++;	
+	  if (ctype_upper($testcase)) {
+	    $name[$i] = $testcase;
+		//echo "La chaîne".$i." $testcase ne contient que des majuscules.\n";
+	  } else {
+	   // echo "La chaîne".$i." $testcase ne contient pas que des majuscules.\n";
+		$prenom[$i] = $testcase;
+	  }
+	}
+	
+	$nom_final = implode(' ',$name);
+	$prenom_final = implode(' ',$prenom);
+	$result[0] = $nom_final;
+	$result[1] = $prenom_final;
+	return $result;
+	
+}
 
 
 ?>

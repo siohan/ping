@@ -19,13 +19,13 @@ if (FALSE == empty($params['active_tab']))
 	echo $this->SetTabHeader('joueurs', 'Joueurs', ('joueurs' == $tab)?true:false);
 	echo $this->SetTabHeader('equipes', 'Equipes', ('Equipes' == $tab)?true:false);
 	echo $this->SetTabHeader('calendrier', 'Calendrier', ('Calendrier' == $tab)?true:false);
-	echo $this->SetTabHeader('fftt', 'FFTT' , ('individuelles' == $tab)?true:false);
-	echo $this->SetTabHeader('spid', 'SPID' , ('results' == $tab)?true:false);
+	echo $this->SetTabHeader('fftt', 'FFTT' , ('fftt' == $tab)?true:false);
+	echo $this->SetTabHeader('spid', 'SPID' , ('spid' == $tab)?true:false);
 	echo $this->SetTabHeader('compets', 'Compétitions' , ('compet' == $tab)?true:false);
 	
-	echo $this->SetTabHeader('poules', 'Résultats des poules', ('Résultats des poules' == $tab)?true:false);
+	echo $this->SetTabHeader('poules', 'Résultats', ('Résultats' == $tab)?true:false);
 	echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
-	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('Situation mensuelle' == $tab)?true:false);
+	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('situation' == $tab)?true:false);
 	echo $this->SetTabHeader('journal', 'Journal', ('Journal' == $tab)?true:false);
 	
 	if($this->CheckPermission('Ping Set Prefs')){
@@ -61,7 +61,7 @@ echo $this->StartTabContent();
    	echo $this->EndTab(); 	
 
 	echo $this->StartTab('poules' , $params);//résultats des poules
-    	include(dirname(__FILE__).'/action.admin_poules_tab.php');
+    	include(dirname(__FILE__).'/action.admin_poules_tab2.php');
    	echo $this->EndTab();
 
 	echo $this->StartTab('recup' , $params);

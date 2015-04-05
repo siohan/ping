@@ -44,8 +44,9 @@ $(document).ready(function(){
 {/if}
 *}
 {*<div class="pageoptions"><p class="pageoptions">{$retrieve_users} | {$retrieve_teams} | {$retrieve_teams_autres} | {$retrieve_all_parties} | {$retrieve_all_spid} | {$retrieve_details_rencontres}</p></div>*}
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  | {$createlink} {$maintenant}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  | {$createlink} {*$maintenant*}</p></div>
 {if $itemcount > 0}
+<p class="pageoptions">{$phase1} | {$phase2}</p>
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
@@ -61,7 +62,7 @@ $(document).ready(function(){
  </thead>
  <tbody>
 {foreach from=$items item=entry}
-{if $entry->date_fin < $maintenant}<tr class="{$entry->rowclass} past" style="background: red;">{else}
+{if $entry->date_fin < $maintenant}<tr class="{$entry->rowclass} past" style="background: grey; font-color: white;">{else}
   <tr class="{$entry->rowclass}">{/if}
     <td>{$entry->id}</td>
 	<td>{$entry->name}</td>

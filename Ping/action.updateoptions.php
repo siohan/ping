@@ -14,6 +14,11 @@ $this->SetPreference('saison_en_cours', $params['saison_en_cours']);
 $this->SetPreference('nom_equipes', strtoupper($params['nom_equipes']));
 $this->SetPreference('populate_calendar', $params['populate_calendar']);
 $this->SetPreference('affiche_club_uniquement', $params['affiche_club_uniquement']);
+$this->SetPreference('spid_nombres', $params['spid_nombres']);
+$this->SetPreference('fftt_nombres', $params['fftt_nombres']);
+$this->SetPreference('spid_interval', $params['spid_interval']);
+$this->SetPreference('fftt_interval', $params['fftt_interval']);
+
 /*
 $this->SetPreference('formsubmit_emailaddress', $params['formsubmit_emailaddress']);
 $this->SetPreference('email_subject',$params['email_subject']);

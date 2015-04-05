@@ -34,6 +34,8 @@ $(document).ready(function(){
     <p class="pageinput">{$input_date} </p>
 	<p class="pagetext">Joueur :</p>
     <p class="pageinput">{$input_player} </p>
+	<p class="pagetext">Erreurs uniquement:</p>
+	<p class="pageinput">{$input_error_only} </p>
     <p class="pagetext">&nbsp;</p>
     <p class="pageinput">{$submitfilter}{$hidden|default:''}</p>
   </div>

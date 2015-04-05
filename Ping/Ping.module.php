@@ -30,10 +30,9 @@
 
 #-------------------------------------------------------------------------
 /**
- * Skeleton example class
  *
  * @author Claude SIOHAN
- * @since 1.0
+ * @since 0.1.1
  * @version $Revision: 3827 $
  * @modifiedby $LastChangedBy: wishy $
  * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 12 Mar 2007) $
@@ -44,7 +43,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.1rc1'; }  
+  function GetVersion() { return '0.2.1'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -86,7 +85,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('tourlist',CLEAN_INT);
 	$this->SetParameterType('equipelist',CLEAN_STRING);
 	$this->SetParameterType('type_compet',CLEAN_STRING);
-	$this->SEtParameterType('record_joueur', CLEAN_STRING);
+	$this->SetParameterType('record_joueur', CLEAN_STRING);
 	$this->SetParameterType('cancel',CLEAN_STRING);
 	$this->SetParameterType('id_user',CLEAN_INT);
 	$this->SetParameterType('nom_complet',CLEAN_STRING);
@@ -95,7 +94,6 @@ class Ping extends CMSModule
 	$this->SetParameterType('commune',CLEAN_STRING);
 	$this->SetParameterType('email',CLEAN_STRING);
 	$this->SetParameterType('confirm_email',CLEAN_STRING);
-	$this->SetParameterType('passe', CLEAN_STRING);
 	$this->SetParameterType('record_id', CLEAN_INT);
 	$this->SetParameterType('type_competition', CLEAN_STRING);
 	$this->SetParameterType('date_compet', CLEAN_NONE);
@@ -120,10 +118,12 @@ class Ping extends CMSModule
 	$this->SetParameterType('club_uniquement', CLEAN_INT);
 	$this->SetParameterType('template', CLEAN_INT);
 	$this->SetParameterType('edit', CLEAN_STRING);
+	$this->SetParameterType('limit', CLEAN_INT);
 	//
 	$this->SetParameterType('datecreated', CLEAN_STRING);
 	$this->SetParameterType('datemaj', CLEAN_STRING);
 	$this->SetParameterType('mois', CLEAN_INT);
+	$this->SetParameterType('month', CLEAN_STRING);
 	$this->SetParameterType('monthslist',CLEAN_INT);
 	$this->SetParameterType('annee', CLEAN_INT);
 	$this->SetParameterType('phase', CLEAN_INT);
@@ -158,6 +158,7 @@ function InitializeAdmin()
 	$this->CreateParameter('type_compet', 1, $this->Lang('help_type_compet'));
 	$this->CreateParameter('date_debut', '', $this->Lang('help_date_debut') );
 	$this->CreateParameter('date_fin', '', $this->Lang('help_date_fin') );
+	$this->CreateParameter('limit', 10000, $this->Lang('help_limit'));
 }
 
 public function HasCapability($capability, $params = array())
@@ -168,7 +169,10 @@ public function HasCapability($capability, $params = array())
 
 public function get_tasks()
 {
-   return new PingRecupSpidTask();
+   $obj = array();
+	$obj[0] = new PingRecupFfttTask();
+   	$obj[1] = new PingRecupSpidTask();  
+return $obj; 
 }
    /*
 

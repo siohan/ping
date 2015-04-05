@@ -22,35 +22,34 @@ $(document).ready(function(){
 //]]>
 </script>
 <h2>Etat des récupérations des joueurs actifs</h2>
+<p>Légende : <br />
+	{$attention_img} : Parties non récupérées par situation(s) mensuelle(s) manquante(s)</p>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  {*$barcharts*}</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
 	<tr>
-		<th>{$id}</th>
+		<th>Id</th>
 		<th>Joueur</th>
 		<th>Dernière Situation</th>
 		<th>Parties FFTT</th>
 		<th>Parties Spid</th>
-		<th colspan='4'>Actions</th>
+		<th colspan='3'>Actions</th>
 		<th><input type="checkbox" id="selectall" name="selectall"></th>
-  </tr>
+	</tr>
  </thead>
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
 	<td>{$entry->id}</td>
-	<td>{$entry->joueur}</td>
-	<td>{$entry->sit_mens}</td>
-	<td>{$entry->fftt}</td>
-	<td>{$entry->spid}</td>
+	<td>{$entry->joueur} ({$entry->licence})</td>
+	<td>{if $entry->sit_mens ==''}{$entry->push_player}{else}{$entry->sit_mens}{/if}</td>
+	<td>{$entry->fftt}<br />(maj le {$entry->maj_fftt|date_format:"%A %e %B"})</td>
+	<td>{$entry->spid}/{$entry->spid_total}{if $entry->spid != $entry->spid_total}{$attention_img}{$entry->correction}{/if}<br />(maj le {$entry->maj_spid|date_format:"%A %e %B"})</td>
     <td>{$entry->sitmenslink}</td>
 	<td>{$entry->getpartieslink}</td>
 	<td>{$entry->getpartiesspid}</td>
-	<td>{$entry->doedit}</td>
-<!--	<td>{$entry->deletelink}</td>
-	<td>{$entry->editlink}</td>-->
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->licence}" class="select"></td>
   </tr>
 {/foreach}

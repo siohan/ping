@@ -1,6 +1,6 @@
 <?php
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $iddiv = $params['iddiv'];
 $idpoule = $params['idpoule'];
@@ -15,7 +15,7 @@ if(!isset($iddiv) && empty($iddiv)){
 $now = trim($db->DBTimeStamp(time()), "'");
 $nom_equipes = $this->GetPreference('nom_equipes');
 $saison = $this->GetPreference('saison_en_cours');
-
+$update = '0';//valeur par défaut
 $service = new Service();
 $result = $service->getPouleRencontres($iddiv,$idpoule);
 
@@ -51,13 +51,13 @@ foreach($result as $cle =>$tab)
 	$annee_date = $date_extract[2] + 2000;
 	$date_event = $annee_date."-".$date_extract[1]."-".$date_extract[0];
 	$uploaded = 0;//initialement mis à 0, indique si le détail des matchs a été uploadé ou non.
-	
+	//on regarde s'il s'agit d'une équipe de mon club ou non
 	$cluba = strpos($equa,$nom_equipes);
 	$clubb = strpos($equb,$nom_equipes);
 	
 		if ($cluba !== false || $clubb !== false)
 		{
-			$club = 1;
+			$club = 1;//equipe de mon club on affiche
 			$affichage = 1;
 		}
 		else
@@ -88,17 +88,18 @@ foreach($result as $cle =>$tab)
 		}
 		
 	//on vérifie si l'enregistrement est déjà là
-	$query = "SELECT lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE lien = ? ";
-	$dbresult = $db->Execute($query, array($lien));
+	$query = "SELECT id,lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv =? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
+	$dbresult = $db->Execute($query, array($iddiv,$idpoule, $date_event,$equa,$equb));
 	
 	//il n'y a pas d'enregistrement auparavant, on peut continuer
 			
-		if($dbresult  && $dbresult->RecordCount() == 0) 
+		if($dbresult->RecordCount() == 0) 
 		{
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$query1 = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
 			$i++;
-			$dbresultat = $db->Execute($query,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
+			$uploaded = 0;
+			$dbresultat = $db->Execute($query1,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
 		
 				if(!$dbresultat)
 				{
@@ -107,17 +108,24 @@ foreach($result as $cle =>$tab)
 
 				}
 		}
-		elseif($dbresult->RecordCount()>0)
+		elseif($dbresult->RecordCount() >0)
 		{
 			//il y a déjà un enregistrement, le score est-il à jour ?
+			$update = 1;
 			$row = $dbresult->FetchRow();
+			$id = $row['id'];
 			$scoreA = $row['scorea'];
 			$scoreB = $row['scoreb'];
 				
-				if($scoreA ==0 && $scoreB ==0 && $update !=0)
+				if($scoreA ==0 && $scoreB ==0)
 				{
-					$query = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE lien = ?";
-					$dbresultA = $db->Execute($query, array($scorea, $scoreb, $lien));
+					$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+					$dbresultA = $db->Execute($query3, array($scorea, $scoreb, $id));
+					$i++;
+					if(!$dbresultA)
+					{
+						$designation.= $db->ErrorMsg();
+					}
 				}
 		}
 		
@@ -154,7 +162,7 @@ foreach($result as $cle =>$tab)
 
 $comptage = $i;
 $status = 'Poules';
-$designation.= "Récupération de ".$comptage." rencontres de la poule ".$idpoule;
+$designation.= "Mise à jour de ".$comptage." rencontres de la poule ".$idpoule;
 $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 $action = "retrieve_poules_rencontres";
 $dbresult = $db->Execute($query, array($now,$status, $designation,$action));
@@ -164,7 +172,7 @@ if(!$dbresult)
 }
 	
 	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('equipes');
+	$this->RedirectToAdminTab('poules');
 /*	*/
 #
 # EOF

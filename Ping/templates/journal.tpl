@@ -22,6 +22,7 @@ $(document).ready(function(){
 });
 //]]>
 </script>
+
 {if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>

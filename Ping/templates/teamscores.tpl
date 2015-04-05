@@ -17,10 +17,10 @@
 </fieldset>
 {/if}
 *}
-<div class="pageoptions"><p class="pageoptions">{$retrieve_teams} | {$retrieve_teams_autres}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$retrieve_teams} | {$retrieve_teams_autres} | {$edit_team}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
-
+<p class="pageoptions">{$phase1} | {$phase2}</p>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
 	<tr>
@@ -42,8 +42,9 @@
     <td>{$entry->friendlyname}</td>
 <!--	<td>{$entry->view}</td>-->
 	<td>{$entry->editlink}</td>
+	<td>{$entry->addnewlink}</td>
     <td>{$entry->retrieve_poule_rencontres}</td>
-	<td>{$entry->classement}</td>
+<!--	<td>{$entry->classement}</td>-->
     <td>{$entry->deletelink}</td>
   </tr>
 {/foreach}

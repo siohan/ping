@@ -74,6 +74,12 @@ $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_type_competitions" );
 $dict->ExecuteSQLArray($sqlarray);
 
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_adversaires" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_classement" );
+$dict->ExecuteSQLArray($sqlarray);
+
 
 // remove the sequence
 $db->DropSequence( cms_db_prefix()."module_ping_seq" );

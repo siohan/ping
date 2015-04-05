@@ -40,12 +40,24 @@
     <p class="pageinput">{$friendlyname}</p>
   </div>
 <div class="pageoverflow">
+    <p class="pagetext">Id de la division:</p>
+    <p class="pageinput">{$iddiv}</p>
+  </div>
+<div class="pageoverflow">
+    <p class="pagetext">Id de la poule:</p>
+    <p class="pageinput">{$idpoule}</p>
+  </div>
+<div class="pageoverflow">
+    <p class="pagetext">Organisateur:</p>
+    <p class="pageinput">{$organisme}</p>
+  </div>
+<div class="pageoverflow">
     <p class="pagetext">Compétition:</p>
     <p class="pageinput">{$type_compet}</p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
-    <p class="pageinput">{$submit}{$cancel}{$back}</p>
+    <p class="pageinput">{$Ajouter}{$submit}{$cancel}{$back}</p>
   </div>
 {$formend}
 </div>

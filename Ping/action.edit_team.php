@@ -24,14 +24,11 @@ if( isset( $params['error'] ) )
 
 
 $record_id = '';
-if( !isset( $params['record_id'] ) || $params['record_id'] == '')    
+if( isset( $params['record_id'] ) || $params['record_id'] != '')    
 {
 	
-	$params['message'] = $this->Lang('error_insufficientparams');
-	    $params['error'] = 1;
-	$this->SetMessage("Paramètres manquants");
-	    $this->RedirectToAdminTab('equipes' );
-	    return;
+	$record_id = $params['record_id'];
+	    
 }
 
     // find the user
@@ -48,6 +45,9 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 		$libdivision = $dbresult['libdivision'];
 		$friendlyname = $dbresult['friendlyname'];
 		$type_compet = $dbresult['type_compet'];
+		$iddiv = $dbresult['iddiv'];
+		$idpoule = $dbresult['idpoule'];
+		//$organisme = $dbresult['iddiv'];
 		
 		
 	}
@@ -79,21 +79,32 @@ $smarty->assign('libdivision',
 		$this->CreateInputText($id, 'libdivision',$libdivision,30,150));
 $smarty->assign('friendlyname',
 		$this->CreateInputText($id, 'friendlyname',$friendlyname,10,80));
+$smarty->assign('iddiv', 
+		$this->CreateInputText($id, 'iddiv', $iddiv, 10,20));
+$smarty->assign('idpoule', 
+		$this->CreateInputText($id, 'idpoule', $idpoule, 10,20));
+$numero_club = $this->GetPreference('club_number');
+$ligue = substr($numero_club, 0,2);
+
+$organisme['ligue'] = '10'.$ligue;
+$organisme['departement'] = substr($numero_club,2,2);
+$organisme['federation'] = '100001';
+$smarty->assign('organisme',
+		$this->CreateInputDropdown($id,'organisme',$organisme));
+
 		//on fait le tour des compétitions possibles excepté U pour undefined
 $query = "SELECT name, code_compet FROM ".cms_db_prefix()."module_ping_type_competitions";
 $dbresultat = $db->Execute($query);
 while ($dbresultat && $row = $dbresultat->FetchRow())
   {
-    //$datelist[$row['date_event']] = $row['date_event'];
-    //$playerslist[$row['player']] = $row['licence'];
-//$saisonslist[$row['saison']] = $row['saison'];
-    //$equipelist[$row['equipe']] = $row['equipe'];
     $typeCompet[$row['name']] = $row['code_compet'];
   }
 
 
 $smarty->assign('type_compet',
-		$this->CreateInputDropdown($id, 'type_compet',$typeCompet,$type_compet,$type_compet));					
+		$this->CreateInputDropdown($id, 'type_compet',$typeCompet,$type_compet,$type_compet));	
+$smarty->assign('Ajouter',
+	$this->CreateInputSubmit($id, 'Ajouter', $this->Lang('submitasnew'), 'class="button"'));				
 $smarty->assign('submit',
 		$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
 $smarty->assign('cancel',

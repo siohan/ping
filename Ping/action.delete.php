@@ -1,7 +1,7 @@
 <?php
 if (!isset($gCms)) exit;
 
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 
 if (!$this->CheckPermission('Ping Delete'))
 	{

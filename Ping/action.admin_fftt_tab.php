@@ -10,7 +10,7 @@ require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
 $saison = $this->GetPreference('saison_en_cours');
 /* on fait un formulaire de filtrage des résultats*/
-$smarty->assign('formstart',$this->CreateFormStart($id,'admin_indivs_tab')); 
+$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'fftt')));
 $datelist[$this->Lang('alldates')] = '';	
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();

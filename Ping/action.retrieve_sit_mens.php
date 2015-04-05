@@ -1,6 +1,17 @@
 <?php
+#################################################################################
+###                   Récupération de la situation mensuelle                  ###
+###                   Auteur Claude SIOHAN                                    ###
+#################################################################################
+
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//on vérifie les permissions
+if (!$this->CheckPermission('Ping Use'))
+{
+	echo $this->ShowErrors($this->Lang('needpermission'));
+	return;
+}
+//debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $db=$gCms->GetDb();
 
@@ -16,7 +27,20 @@ $designation = ''; //instanciation du message de sortie
 
 //echo "le mois de la situation mensuelle est : ".$mois_sit_mens;
 $now = trim($db->DBTimeStamp(time()), "'");
-$licence = $params['licence'];
+
+$licence = '';
+
+	if(!isset($params['licence']) && $params['licence'] =='')
+	{
+		$designation .= 'Pas de n° de licence';
+		$this->SetMessage($designation);
+		$this->RedirectToAdminTab('recup');
+	}
+	else
+	{
+		$licence = $params['licence'];
+	}
+
 //on vérifie que le joueur en question est bien actif
 $query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
 $dbresult = $db->Execute($query, array($licence));
@@ -42,18 +66,16 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 	{
 
 //echo 'la licence est : '.$licence;
-
-
 //echo "le mois courant est le : ".$mois_courant." annee courante :  ".$annee_courante;
 
 	$service = new Service();
-	$result = $service->getJoueur("$licence2");
+	$result = $service->getJoueur("$licence");
 	$row = $dbresult->FetchRow();
 	$player = $row['player'];
-    //var_dump($result);
+//var_dump($result);
 //echo "la licence est $result[licence]";
 			
-		$licence = $result[licence];
+		$licence2 = $result[licence];
 	//	echo "la licence est $licence <br />";
 		$nom = $result[nom];
 		$prenom = $result[prenom];
@@ -72,7 +94,7 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 		$progmois = $result[progmois];
 		$progann = $result[progann];
 		
-		if( $licence == '')
+		if( $licence2 == '')
 		{
 			// il n'y a pas de correspondance
 			//ou le joueur est désactivé
@@ -92,7 +114,7 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 			
 			$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
-			$dbresultat = $db->Execute($query,array($now,$now,$mois_courant, $annee_courante, $phase, $licence, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
+			$dbresultat = $db->Execute($query,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
 				//On vérifie que l'insertion se passe bien
 				
 				if(!$dbresultat)
@@ -125,14 +147,14 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 			
 					*/
 					$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
-					$dbresult = $db->Execute($query, array($licence));
+					$dbresult = $db->Execute($query, array($licence2));
 			
 						if($dbresult->RecordCount() == 0) 
 						{
 							$fftt = 0;
 							$spid = 0;
 							$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
-							$dbresult = $db->Execute($query, array($saison, $now, $licence, $mois_sit_mens, $fftt, $spid));
+							$dbresult = $db->Execute($query, array($saison, $now, $licence2, $mois_sit_mens, $fftt, $spid));
 				
 							$this->SetMessage("Situation mensuelle ajoutée");
 							$this->RedirectToAdminTab('situation');
@@ -140,7 +162,7 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 						else 
 						{
 							$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
-							$dbresult = $db->Execute($query, array($now, $mois_sit_mens, $licence));
+							$dbresult = $db->Execute($query, array($now, $mois_sit_mens, $licence2));
 
 								if(!$dbresult)
 								{

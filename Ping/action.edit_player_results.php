@@ -32,9 +32,13 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 	    $this->Redirect( $id, 'defaultadmin', $returnid, $params );
 	    return;
 }
+else
+{
+	$record_id = $params['record_id'];
+}
 
     // find the user
-    $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
+    $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid AS s, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE s.epreuve = tc.name AND s.id = ?";
     $dbresult = $db->GetRow($query, array( $params['record_id'] ));
     if( !$dbresult)
       {
@@ -55,8 +59,21 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 		$points = $dbresult['points'];
 		$forfait = $dbresult['forfait'];
 		
-}
+			if($victoire ==1)
+			{
+				
+				$selectedindex1 = 0;
+				//$selectedvalue = 1;
+			}
+			else
+			{
+				$selectedindex1 = 1;
+				//$selectedvalue = 0;
+			}
+		
+		
 
+}
    
 $smarty->assign('formstart',
 		    $this->CreateFormStart( $id, 'do_edit_result', $returnid ) );
@@ -95,7 +112,7 @@ $smarty->assign('prompt_victoire_defaite',
 		$this->Lang('vic_def'));
 		
 		$smarty->assign('victoire',
-				$this->CreateInputDropdown($id, 'victoire',$items = array("V"=>"1","D"=>"0"),$selectedindex=$victoire, $selectedvalue=$victoire,5));
+				$this->CreateInputDropdown($id, 'victoire',$items = array("V"=>"1","D"=>"0"),$selectedindex = $selectedindex1, $selectedvalue=$victoire,5));
 /*		
 $smarty->assign('vic_def',
 		$this->CreateInputText($id, 'vic_def',$vic_def,5,10));

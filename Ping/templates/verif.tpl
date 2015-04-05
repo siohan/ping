@@ -1,9 +1,11 @@
+<p>{$itemscount} résultat(s) trouvé(s)</p>
 {if $itemscount>0}
-<p>La première colonne est celle du spid, la deuxième FFTT</p>
+<p>La première colonne est celle du spid, la deuxième FFTT | {$Corriger}</p>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
 	<thead>
 		<tr>
 			<th>Id</th>
+			<th>Date</th>
 			<th>Date</th>
 			<th>Licence </th>
 			<th>Licence</th>
@@ -22,8 +24,9 @@
 	<tbody>
 	{foreach from=$items item=entry}
 		<tr class="{$entry->rowclass}">
-			<td>{$entry->id}</td>
-			<td>{$entry->date_event|date_format:"%d/%m"}</td>
+			<td>{$entry->record_id}</td>
+			<td>{$entry->date_spid|date_format:"%d/%m"}</td>
+			<td>{$entry->date_fftt|date_format:"%d/%m"}</td>
 			<td>{$entry->licence_spid}</td>
 			<td>{$entry->licence_fftt}</td>
 			<td>{$entry->nom_spid}</td>
@@ -36,7 +39,7 @@
 			<td>{$entry->coeff_fftt}</td>
 			<td{if $entry->points_spid != $entry->points_fftt} style="background-color: red;"}{/if}>{$entry->points_spid}</td>
 			<td>{$entry->points_fftt}</td>
-			<td>{$entry->eraselink}</td>
+			<!--<td>{$entry->eraselink}</td>-->
 			
 		</tr>
 	{/foreach}
@@ -45,5 +48,6 @@
 			
 </table>
 {else}
-<p>Aucune erreur : {$returnlink}</p>
+<p>Aucune erreur </p>
 {/if}
+<p>{$returnlink}</p>

@@ -1,19 +1,29 @@
 <?php
-   if (!isset($gCms)) exit;
+#############################################################
+###            Ajout manuel d'une situation mensuelle     ###
+###                                                       ###
+###            Auteur : Claude SIOHAN                     ###
+#############################################################
+#
+#
+#
+if (!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 $nom_equipes = $this->GetPreference('nom_equipes');
 $saison = $this->GetPreference('saison_en_cours');
-//$mois_courant = date('m');//c'est le mois de référence avec lequel il faut travailler en prod
-$mois_courant = 7;
+$mois_courant = date('n');
+//$mois_courant = 11;
+//$mois_courant = 7;//c'est le mois de référence avec lequel il faut travailler en prod
 //echo "le mois courant est :".$mois_courant;
 $db =& $this->GetDb();
 global $themeObject;
 $result= array();
 $parms = array();
 $saison = $this->GetPreference('saison_en_cours');
-//$phase = $this->GetPreference('phase_en_cours');
-$phase = 2;
+$phase = $this->GetPreference('phase_en_cours');
+//$phase = 1;//pour test
+$smarty->assign('phase',$phase);
 $annee_courante = date('Y');
 
 	if($phase==1)
@@ -63,7 +73,8 @@ $dbresult = $db->Execute($query, array($licence));
 			$smarty->assign('prenom',
 					$this->CreateInputText($id, 'prenom', $prenom, 30, 80));
 			$smarty->assign('mois_courant', $mois_courant);				
-			$smarty->assign('rowarray',$rowarray);				
+			$smarty->assign('rowarray',$rowarray);
+							
 		}			
 			
 	}	

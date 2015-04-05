@@ -1,10 +1,10 @@
 <?php
    if (!isset($gCms)) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 $nom_equipes = $this->GetPreference('nom_equipes');
 $saison = $this->GetPreference('saison_en_cours');
-$mois_courant = date('m');
+$mois_courant = date('n');
 //echo "le mois courant est :".$mois_courant;
 $db =& $this->GetDb();
 global $themeObject;
@@ -41,14 +41,18 @@ $dbresultat = $db->Execute($query1);
 			$rowarray[$licence] = $joueur;	
 			$smarty->assign('rowjoueur',$joueur);
 			$smarty->assign('licence',$licence);
-			$smarty->assign('rowarray',$rowarray);
+			$smarty->assign('rowarray', $rowarray);
+			/*
+			$smarty->assign('rowarray',
+			$this->CreateInputText($id,'rowarray',$rowarray, 30,40));
+			*/
 			//echo "le nb de lignes est  : ".$max;
 			//print_r($rowarray);
 			$smarty->assign('formstart',
 	    			$this->CreateFormStart( $id, 'do_add_all_sit_mens', $returnid ) );
-				$tableau = array("12"=>"Décembre");
+				
 				$smarty->assign('choix_mois',
-					$this->CreateInputDropdown($id, 'choix_mois',$tableau, $mois_courant,-1));
+					$this->CreateInputDropdown($id, 'choix_mois',$liste_mois, $mois_courant,-1));
 			//$smarty->assign('lignes', $max);	
 						
 							

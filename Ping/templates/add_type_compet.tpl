@@ -16,12 +16,16 @@
   </div>  
 <div class="pageoverflow">
     <p class="pagetext">Code :</p>
-    <p class="pageinput">{$code_compet} {*$tooltip*}</p>
+    <p class="pageinput">{$code_compet} {$tooltip}</p>
   </div>
 	<div class="pageoverflow">
     <p class="pagetext">coefficient:</p>
     <p class="pageinput">{$coefficient}</p>
   </div>
+	<div class="pageoverflow">
+  <p class="pagetext">Compétition individuelles:</p>
+  <p class="pageinput">{$indivs}</p>
+</div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
     <p class="pageinput">{$submit}{$cancel}</p>

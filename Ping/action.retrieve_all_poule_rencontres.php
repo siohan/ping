@@ -25,7 +25,7 @@ $dbresult = $db->Execute($query, array($saison));
 			$result = $service->getPouleRencontres("$iddiv","$idpoule");
 
 
-			var_dump($result);	
+			//var_dump($result);	
 			$i=0;
 			foreach($result as $cle =>$tab)
 			{
@@ -60,16 +60,30 @@ $dbresult = $db->Execute($query, array($saison));
 				$scorea = $tab[scorea];
 				$scoreb = $tab[scoreb];
 				$lien = $tab[lien];	
+				//
+				//on vérifie que le score a bien été saisi
+				//si le score est saisi on obtient un string pour les variables scorea et scoreb
+				//sinon il s'agit d'un array	
 
-				$query = "SELECT lien FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE lien = ? ";
-				$dbresult = $db->Execute($query, array($lien));
+					if(is_array($scorea) && is_array($scoreb))
+					{
+						//le score n'est pas parvenu ou le match n'a pas été joué
+						//On l'enregistre qd même
+						$scorea = 0;
+						$scoreb = 0;
+						$update = 0;		
+					}
+				//on vérifie si l'enregistrement est déjà là
+				$query = "SELECT id,lien,scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE WHERE iddiv =? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
+				$dbresult = $db->Execute($query, array($iddiv,$idpoule,$date_event,$equa,$equb));
 				
 					if($dbresult  && $dbresult->RecordCount() == 0) 
 					{
-						$query = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						$query = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 						//	echo $query;
 						$i++;
-						$dbresultat = $db->Execute($query,array($idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
+						$uploaded = 0;
+						$dbresultat = $db->Execute($query,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
 
 						if(!$dbresultat)
 						{
@@ -79,10 +93,30 @@ $dbresult = $db->Execute($query, array($saison));
 							
 						
 					}
+					elseif($dbresult->RecordCount() >0)
+					{
+						//il y a déjà un enregistrement, le score est-il à jour ?
+						$update = 1;
+						$row = $dbresult->FetchRow();
+						$id = $row['id'];
+						$scoreA = $row['scorea'];
+						$scoreB = $row['scoreb'];
+
+							if($scoreA ==0 && $scoreB ==0)
+							{
+								$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+								$dbresultA = $db->Execute($query3, array($scorea, $scoreb, $id));
+								$i++;
+								if(!$dbresultA)
+								{
+									$designation.= $db->ErrorMsg();
+								}
+							}
+					}
 					
 					$comptage = $i;
 					$status = 'Poules';
-					$designation = "Récupération de ".$comptage." rencontres de la poule ".$idpoule;
+					$designation = "Mise à jour de ".$comptage." rencontres de la poule ".$idpoule;
 					$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 					$action = "retrieve_poules_rencontres";
 					$dbresult = $db->Execute($query, array($now,$status, $designation,$action));

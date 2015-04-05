@@ -29,7 +29,9 @@ $smarty->assign('code_compet',
 		$this->CreateInputText($id, 'code_compet',$code_compet,2,3));
 $listecoeff = array("0,25"=>"0.25","0,50"=>"0.50","0,75"=>"0.75", "1,00"=>"1.00", "1,25"=>"1.25","1,50"=>"1.50");
 $smarty->assign('coefficient',
-		$this->CreateInputDropdown($id, 'coefficient',$listecoeff,3));	
+		$this->CreateInputDropdown($id, 'coefficient',$listecoeff,3));
+$smarty->assign('indivs',
+		$this->CreateInputDropdown($id, 'indivs',array("Oui"=>"Oui", "Non"=>"Non")));	
 $smarty->assign('tooltip',$helptext = 'Doit être unique');	
 $smarty->assign('submit',
 		$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
@@ -38,7 +40,7 @@ $smarty->assign('cancel',
 					$this->Lang('cancel')));
 $smarty->assign('back',
 		$this->CreateInputSubmit($id,'back',
-					$this->ang('back')));
+					$this->Lang('back')));
 
 $smarty->assign('formend',
 		$this->CreateFormEnd());

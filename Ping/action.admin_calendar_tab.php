@@ -16,7 +16,13 @@ if( !isset($gCms) ) exit;
 
 $db =& $this->GetDb();
 global $themeObject;
+$designation = '';
 $maintenant = date("Y-m-d");
+//les liens pour switcher d'une phase à l'autre
+$smarty->assign('phase2',
+		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 2', array("phase"=>"2") ));
+$smarty->assign('phase1',
+		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 1', array("phase"=>"1") ));
 //liste des liens pour récupérer les données 
 $smarty->assign('retrieve_users',
 		$this->CreateLink($id, 'retrieve_joueurs_by_club', $returnid, $contents = "Récupération des joueurs", $warn_message = "Etes vous sûr ? Trop d'appels vers la base de données peuvent avoir des conséquences importantes !"));
@@ -67,7 +73,10 @@ while ($dbresult && $row = $dbresult->FetchRow())
 		
 $curdate = $this->GetPreference( 'dateChoisi' );
 $curstatus = $this->GetPreference('statusChoisie');
-
+$smarty->assign('phase2',
+		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 2', array("phase"=>"2") ));
+$smarty->assign('phase1',
+		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 1', array("phase"=>"1") ));
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_date',
@@ -82,37 +91,40 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query= "SELECT cal.id, comp.coefficient,comp.name,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet";
+$query = "SELECT cal.id, comp.coefficient,comp.name,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet";
 
-	if( isset($params['submitfilter'] ))
+if($this->GetPreference('phase_en_cours') =='1' )
+{
+	if($params['phase'] ==2)
 	{
-
-		if ($curdate !='')
-		{
-			$query .=" AND datecreated = ? ";
-			$parms['datecreated'] = $curdate;
-		
-		}
-		if($curstatus !='')
-		{
-			$query.=" AND status = ?";
-			$parms['status'] = $curstatus;
-		}
-
-		$dbresult= $db->Execute($query,$parms);
+		$query.= " AND MONTH(cal.date_debut) >= 1 AND MONTH(cal.date_debut) <=7"; 
 	}
-
-	else 
+	else
 	{
+		$query.= " AND MONTH(cal.date_debut) > 7 AND MONTH(cal.date_debut) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
+	}
+}
+elseif( $this->GetPreference('phase_en_cours') == '2')
+{
+	if($params['phase'] ==1)
+	{
+		$query.= " AND MONTH(cal.date_debut) > 7 AND MONTH(cal.date_debut) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
+	}
+	else
+	{
+		$query.= " AND MONTH(cal.date_debut) >= 1 AND MONTH(cal.date_debut) <=7";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";	
+	}
+}
+
 		$query .=" ORDER BY cal.date_debut ASC";
 		$dbresult= $db->Execute($query);
-	}//fin du if dbresult
+
 	//echo $query;
 	
 		if (!$dbresult)
 		{
 
-			die('FATAL SQL ERROR: '.$db->ErrorMsg().'<br/>QUERY: '.$db->sql);
+			$designation.= $db->ErrorMsg();
 
 		}
 
@@ -157,7 +169,7 @@ $smarty->assign('createlink',
 		$this->CreateLink($id, 'add_compet', $returnid,
 				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add'), '', '', 'systemicon')).
 		$this->CreateLink($id, 'add_compet', $returnid, 
-				  $this->Lang('addnewsheet'), 
+				  $this->Lang('add'), 
 				  array()));
 $smarty->assign('form2start',$this->CreateFormStart($id,'admin_data_tab',$returnid));
 $smarty->assign('form2end',$this->CreateFormEnd());

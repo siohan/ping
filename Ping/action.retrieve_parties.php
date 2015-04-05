@@ -1,5 +1,10 @@
 <?php
 if( !isset($gCms) ) exit;
+if (!$this->CheckPermission('Ping Use'))
+{
+	echo $this->ShowErrors($this->Lang('needpermission'));
+	return;
+}
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 
@@ -24,7 +29,7 @@ $dbretour = $db->Execute($query, array($licence));
 	else
 	{
 		$this->SetMessage("Joueur introuvable");
-		$this->RedirectToAdminTab('joueurs');
+		$this->RedirectToAdminTab('recup');
 	}
 
 
@@ -34,11 +39,11 @@ $service = new Service();
 $result = $service->getJoueurParties("$licence");
 
 
-	if (!is_array($result))
+	if (!is_array($result)|| count($result)==0)
 	{
 		//
 		$this->SetMessage('Pb accès résultat');
-		$this->RedirectToAdminTab('recuperation');
+		$this->RedirectToAdminTab('recup');
 	}
 	
 //var_dump($result);  
@@ -117,11 +122,11 @@ $dbresult = $db->Execute($query, array($now, $status,$designation,$action));
 $query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
 $dbresult = $db->Execute($query, array($licence));
 $lignes = $dbresult->RecordCount();
-
+	$aujourdhui = date('Y-m-d');
 	if($lignes>0)
 	{
-		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET fftt = ? WHERE licence = ?";
-		$dbresult = $db->Execute($query, array($compteur,$licence));
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET fftt = ?, maj_fftt = ? WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($compteur,$aujourdhui,$licence));
 	}
 	else
 	{
@@ -140,7 +145,7 @@ $lignes = $dbresult->RecordCount();
 	}
 	
 	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('recuperation');
+	$this->RedirectToAdminTab('recup');
 
 #
 # EOF
