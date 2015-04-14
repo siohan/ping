@@ -25,10 +25,38 @@
 {/if}
 {if $itemcount >0}
 	{if $affiche=='0'}
-	
+	<h3>Les résultats de {$joueur}</h3>
 		<table class="table table-bordered">
 		 <thead>
 		  <tr>
+			<th>Date</th>
+			<th>Epreuve</th>
+			<th>Adv</th>
+			<th>Vic/Def</th>
+			
+			<th>Pts</th>
+		  </tr>
+		 </thead>
+		 <tbody>
+		{foreach from=$items item=entry}
+		  <tr class="{$entry->rowclass}">
+			<td>{$entry->date_event|date_format:"%d/%m"}</td>
+			<td>{$entry->epreuve}</td>
+			<td>{$entry->nom}({$entry->classement})</td>
+		    <td>{$entry->victoire}</td>		
+			<td>{$entry->pointres}</td>
+		  </tr>
+		{/foreach}
+		 </tbody>
+		</table>
+	<p>{$resultats}</p>
+	{else}
+		<h3>Le détail des résultats spid de {$joueur}</h3>
+		<table  class="table table-bordered">
+		 <thead>
+		  <tr>
+			<th>Date</th>
+			<th>Epreuve</th>
 			<th>Adv</th>
 			<th>Vic/Def</th>
 			<th>Coeff</th>
@@ -38,32 +66,11 @@
 		 <tbody>
 		{foreach from=$items item=entry}
 		  <tr class="{$entry->rowclass}">
-			<td>{$entry->date_event|date_format:"%d/%m"}</td>
-			<td>{$entry->advnompre}({$entry->advclaof})</td>
-		    <td>{$entry->vd}</td>		
-			<td>{$entry->pointres}</td>
-		  </tr>
-		{/foreach}
-		 </tbody>
-		</table>
-	<p>{$resultats}</p>
-	{else}
-		<h3>Le détail des résultats officiels de {$joueur}</h3>
-		<table  class="table table-bordered">
-		 <thead>
-		  <tr>
-			<th>Date</th>
-			<th>Adv</th>
-			<th>Vic/Def</th>
-			<th>Pts</th>
-		  </tr>
-		 </thead>
-		 <tbody>
-		{foreach from=$items item=entry}
-		  <tr class="{$entry->rowclass}">
 		    <td>{$entry->date_event|date_format:"%d/%m"}</td>
-		    <td class="name">{$entry->advnompre}({$entry->advclaof})</td>
-			<td>{$entry->vd}</td>
+			<td>{$entry->epreuve}</td>
+		    <td class="name">{$entry->nom}({$entry->classement})</td>
+			<td>{$entry->victoire}</td>
+			<td>{$entry->coeff}</td>
 			<td>{$entry->pointres}</td>
 		  </tr>
 		{/foreach}

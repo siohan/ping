@@ -42,12 +42,6 @@ $dbresultat = $db->Execute($query1);
 			$smarty->assign('rowjoueur',$joueur);
 			$smarty->assign('licence',$licence);
 			$smarty->assign('rowarray', $rowarray);
-			/*
-			$smarty->assign('rowarray',
-			$this->CreateInputText($id,'rowarray',$rowarray, 30,40));
-			*/
-			//echo "le nb de lignes est  : ".$max;
-			//print_r($rowarray);
 			$smarty->assign('formstart',
 	    			$this->CreateFormStart( $id, 'do_add_all_sit_mens', $returnid ) );
 				

@@ -29,7 +29,7 @@ $smarty->assign('jour_sit_mens',
 		$this->CreateInputText($id,'jour_sit_mens', $this->GetPreference('jour_sit_mens', ''), 5, 7));
 $smarty->assign('input_populate_calendar',$this->CreateInputDropdown($id,'populate_calendar',$items,-1,$this->GetPreference('populate_calendar'),50,255));
 $smarty->assign('input_affiche_club_uniquement',$this->CreateInputDropdown($id,'affiche_club_uniquement',$items,-1,$this->GetPreference('affiche_club_uniquement'),50,255));
-$valeurs_interval = array("1 jour"=>"1","2 jours"=>"2");
+$valeurs_interval = array("1 jour"=>"1","2 jours"=>"2","3 jours"=>"3","Jamais"=>"365");
 $valeurs_nombres_spid = array("25 joueurs"=>"25", "50 joueurs"=>"50", "75 joueurs"=>"75","100 joueurs"=>"100");
 $valeurs_nombres_fftt = array("25 joueurs"=>"25", "50 joueurs"=>"50", "75 joueurs"=>"75","100 joueurs"=>"100");
 $smarty->assign('input_spid_interval',

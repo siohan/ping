@@ -1,20 +1,3 @@
-{literal}
-<script>
- $(function() {
-   $( "#m1_date_compet" ).datepicker({ dateFormat: "yy-mm-dd" });
- });
- </script>
-{/literal}
-<label>{$text}</label>
-{if $error}
-<font color="red">
-{/if}
-{if $message ne ""}
-<strong>{$message}</strong>
-{/if}
-{if $error}
-</font>
-{/if}
 <div class="pageoverflow">
 {$formstart}
 {$record_id}
@@ -28,24 +11,24 @@
     <p class="pageinput">{$phase}</p>
   </div> 
 <div class="pageoverflow">
-    <p class="pagetext">Equipe:</p>
-    <p class="pageinput">{$libequipe}</p>
+    <p class="pagetext">Equipe: (Ex : RP FOUESNANT1)</p>
+    <p class="pageinput">{$libequipe} {*$help_libelle_equipe*}{*cms_help key='help_libelle_equipe'*}</p>
   </div>
   <div class="pageoverflow">
-    <p class="pagetext">Division</p>
-    <p class="pageinput">{$libdivision}</p>
+    <p class="pagetext">Division (Ex : Nationale 1 Messieurs Poule C)</p>
+    <p class="pageinput">{$libdivision} {*cms_help key='help_libdivision'*}</p>
   </div>
 <div class="pageoverflow">
-    <p class="pagetext">Donnez un nom court (ex N1 A):</p>
-    <p class="pageinput">{$friendlyname}</p>
+    <p class="pagetext">Donnez un nom court : (Ex : N1 ou N1(A))</p>
+    <p class="pageinput">{$friendlyname} {*cms_help key='help_friendlyname'*}</p>
   </div>
 <div class="pageoverflow">
-    <p class="pagetext">Id de la division:</p>
-    <p class="pageinput">{$iddiv}</p>
+    <p class="pagetext">Id de la division : (Voir aide du module)</p>
+    <p class="pageinput">{$iddiv} {*cms_help key='help_iddiv'*}</p>
   </div>
 <div class="pageoverflow">
-    <p class="pagetext">Id de la poule:</p>
-    <p class="pageinput">{$idpoule}</p>
+    <p class="pagetext">Id de la poule :</p>
+    <p class="pageinput">{$idpoule} {*cms_help key='help_idpoule'*}</p>
   </div>
 <div class="pageoverflow">
     <p class="pagetext">Organisateur:</p>

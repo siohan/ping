@@ -41,7 +41,7 @@ $affiche = 1;
 		}
 		
 		$rowarray1 = array();
-		$query = "SELECT SUM(vd) AS vic, count(vd) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties WHERE saison = ? AND licence = ?";
+		$query = "SELECT SUM(victoire) AS vic, count(victoire) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
 		//qqs paramètres
 		$parms['saison'] = $saison_courante;
 		$parms['licence'] = $licence;
@@ -112,7 +112,7 @@ $affiche = 1;
 		$joueur = $row1['joueur'];
 		$smarty->assign('joueur', $joueur);
 		$result= array ();
-		$query3= "SELECT advnompre, advclaof,pointres, vd,date_event FROM ".cms_db_prefix()."module_ping_parties WHERE saison = ? AND licence = ?";//" ORDER BY date_event ASC";
+		$query3= "SELECT nom, classement,pointres, victoire,date_event,epreuve,numjourn FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";//" ORDER BY date_event ASC";
 		$parms['licence'] = $licence;
 		$parms['saison'] = $saison_courante;
 		if($affiche =='1')
@@ -139,7 +139,6 @@ $affiche = 1;
 					$query3.= " AND MONTH(date_event) >= 1 AND MONTH(date_event) <=7";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";	
 				}
 			}
-			$query3.= " ORDER BY date_event DESC";
 		}
 		elseif($affiche =='0')
 		{
@@ -205,10 +204,10 @@ $affiche = 1;
 			$onerow= new StdClass();
 			$onerow->rowclass= $rowclass;
 			$onerow->date_event= $row['date_event'];
-			$onerow->advnompre= $row['advnompre'];
-			//$onerow->nom= $row['nom'];
-			$onerow->advclaof= $row['advclaof'];
-			$onerow->vd= $row['vd'];
+			$onerow->epreuve= $row['epreuve'];
+			$onerow->nom= $row['nom'];
+			$onerow->classement= $row['classement'];
+			$onerow->victoire= $row['victoire'];
 			//$onerow->coeff= $row['coeff'];
 			$onerow->pointres= $row['pointres'];
 			$rowarray[]= $onerow;
@@ -229,7 +228,7 @@ $smarty->assign('affiche',$affiche);
 $smarty->assign('resultats',
 		$this->CreateLink($id,'user_results',$returnid, array('licence'=>$licence)));
 */
-echo $this->ProcessTemplate('user_results.tpl');
+echo $this->ProcessTemplate('user_results_prov.tpl');
 
 
 #

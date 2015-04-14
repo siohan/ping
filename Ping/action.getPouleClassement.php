@@ -69,7 +69,7 @@ if(!is_array($result) || count($result)==0)
 //on supprime tt ce qui était ds la bdd pour cette poule
 $query = "DELETE FROM ".cms_db_prefix()."module_ping_classement WHERE iddiv = ? AND idpoule= ? AND idequipe = ? AND saison = ?";
 $dbresult = $db->Execute($query, array($iddiv, $idpoule, $record_id,$saison_courante));
-
+$i=0;//on initialise un compteur 
 //on récupère le résultat et on fait le foreach
 foreach($result as $cle =>$tab)
 {
@@ -86,15 +86,20 @@ foreach($result as $cle =>$tab)
 	if(!$dbresultat)
 	{
 		$designation.= $db->ErrorMsg();
-		$status = 'Ok';
-		$action = 'getPouleclassement';
-		$this->SetMessage("$designation");
-		ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
+		$status = 'Ko';
+		
+	}
+	else
+	{
+		$designation.="Récupération du classement de la poule : ".$poule;
+		$status = "Ok";
 	}
 	
 }
-
-$this->SetMessage('Classement récupéré');
+$action = 'getPouleclassement';
+$this->SetMessage("$designation");
+ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
+$this->SetMessage("$designation");
 $this->RedirectToAdminTab('equipes');
 
 

@@ -121,6 +121,14 @@ $lang['vic_def'] = 'Victoire ou défaite';
 $lang['view_contacts'] = 'Voir les contacts';
 $lang['yes'] = 'Oui';
 $lang['help_tour'] = 'Utilez le N° de journée pour obtenir ses résultats uniquement';
+$lang['help_libelle_equipe'] = 'Ex : RP FOUESNANT 1';
+$lang['help_libdivision'] = 'Ex :Nationale 1 Messieurs Poule C';
+$lang['help_friendlyname'] = 'Ce nom servira à indentifier plus facilement vos équipes ex : Nationale 1 Messieurs Poule C devient N1 ou N1(C)';
+$lang['help_iddiv'] = 'Consultez l\'aide sur le module';
+$lang['help_idpoule'] = 'Consultez l\'aide sur le module';
+//$lang[''] = '';
+//$lang[''] = '';
+//$lang[''] = '';
 $lang['help_type_compet'] = 'Filtrez les résultats en précisant le type de compétition';
 $lang['help_date_debut'] = 'Utilisez la date de début de compétition au format (aaaa-mm-jj)';
 $lang['help_date_fin'] = 'Utilisez la date de fin avec la date de début au même format';
@@ -169,7 +177,8 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 <h2>Première utilisation</h2>
 <ol><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
 <li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
-Un lien pour les équipes du championnat de France par équipes, l\'autre pour les autres compétitions et indiquez le type de compétitions auxquelles elles participent.</li>
+Un lien pour les équipes du championnat de France par équipes, l\'autre pour les autres compétitions et indiquez le type de compétitions auxquelles elles participent.
+<br /><br />Pour une récupération manuelle, rendez-vous sur le site FFTT.com sur la page de résultats de vos équipes. En mettant votre souris sur la poule vous obtiendrez en bas à gauche l\'url complete sous cette forme : www.fftt.com/sportif/chpt_equipe/chp_div.php?organisme_pere=X1&cx_poule=X2&D1=X3.<br />X1 représente l\'organisme dont dépend la compétition (100001 pour national, 10 + n° de la ligue ex : 1007 pour la bretagne pour le niveau régional et départemental ex 29 pour le finistère)<br />X2 pour le  N° de poule et X3 pour le N° de division </li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom. Désactivez les joueurs ne faisant pas l\'objet d\'une situation mensuelle</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
 <h3>Spid</h3>

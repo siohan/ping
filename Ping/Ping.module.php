@@ -43,7 +43,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.2.1'; }  
+  function GetVersion() { return '0.2.2'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -237,7 +237,12 @@ return $obj;
     //...
   }
 
- 
+ 	function GetHeaderHTML() {
+		$tmpl = <<<EOT
+<link rel="stylesheet" type="text/css" href="../modules/Ping/bootstrap-table.css" media="screen" /> <!-- bootstrap-table.css -->
+EOT;
+		return $this->ProcessTemplateFromData($tmpl);
+	}
 
 function dropdown ($competition){
 	$db  = cmsms()->GetDb();

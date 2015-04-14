@@ -8,13 +8,44 @@ if(!isset($gCms)) exit;
 require_once(dirname(__FILE__).'/include/prefs.php');
 $date_courante = date('Y-m-d');
 //echo "la date courante : ".$date_courante;
-$smarty->assign('phase2',
-		$this->CreateLink($id,'admin_poules_tab2',$returnid, 'Phase 2', array("phase"=>"2") ));
-$smarty->assign('phase1',
-		$this->CreateLink($id,'admin_poules_tab2',$returnid, 'Phase 1', array("phase"=>"1") ));
-//la requete
-$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, cal.type_compet,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.code_compet = cal.type_compet ";
+//on teste un affichage par mois
+$mois_courant = date('n');
+$mois_choisi = '';
+if(isset($params['mois']) && $params['mois'] !='')
+{
+	$mois_choisi = $params['mois'];
+}
+else
+{
+	$mois_choisi = $mois_courant;
+}
+if($mois_choisi ==1)
+{
+	$mois_precedent = 12;
+}
+else
+{
+	$mois_precedent = $mois_choisi -1;
+}
+if($mois_choisi==12)
+{
+	$mois_suivant = 1;
+}
+else
+{
+	$mois_suivant = $mois_choisi + 1;
+}
 
+$smarty->assign('mois_precedent',
+		$this->CreateLink($id,'defaultadmin',$returnid, 'Précédent', array("active_tab"=>"resultats","mois"=>"$mois_precedent") ));
+$smarty->assign('mois_suivant',
+		$this->CreateLink($id,'defaultadmin',$returnid, 'Suivant', array("active_tab"=>"resultats","mois"=>"$mois_suivant") ));
+$smarty->assign('all_results', 
+		$this->CreateLink($id, 'retrieve_all_poule_rencontres', $returnid, 'Récupérer tous les résultats'));
+//la requete
+$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, cal.type_compet,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.code_compet = cal.type_compet AND MONTH(cal.date_debut) = ?";
+//$parms['date_debut'] = $mois_courant;
+/*
 	if($this->GetPreference('phase_en_cours') =='1' )
 	{
 		if($params['phase'] ==2)
@@ -37,10 +68,10 @@ $query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_comp
 			$query.= " AND MONTH(cal.date_debut) >= 1 AND MONTH(cal.date_debut) <=7";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";	
 		}
 	}
-
+*/
 $query.=" ORDER BY cal.date_debut ASC";
-$dbresult = $db->Execute($query);
-
+$dbresult = $db->Execute($query,array($mois_choisi));
+//echo $query;
 
 
 $rowarray = array();
@@ -55,12 +86,6 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$type_compet = $row['type_compet'];
 		$jour_compet = $row['jour_compet'];
 		$coefficient = $row['coefficient'];
-		
-		if($jour_compet <= 10)
-		{
-			$onerow->attention = 1;
-		}
-		
 		$compet = $row['name'];
 		$onerow = new StdClass();
 		$onerow->rowclass = $rowclass;

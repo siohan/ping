@@ -5,17 +5,18 @@ if (!$this->CheckPermission('Ping Use'))
 	echo $this->ShowErrors($this->Lang('needpermission'));
 	return;
 }
-//$themeObject =& $gCms->variables['admintheme'];
+
 require_once(dirname(__FILE__).'/include/prefs.php');
 $db =& $this->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
 $saison_courante = $this->GetPreference('saison_en_cours');
-
+$phase_courante = $this->GetPreference('phase_en_cours');
+$phase = (isset($params['phase']))?$params['phase']:$phase_courante;
 $smarty->assign('phase2',
-		$this->CreateLink($id,'admin_teams_tab',$returnid, 'Phase 2', array("phase"=>"2") ));
+		$this->CreateLink($id,'defaultadmin',$returnid, 'Phase 2', array("active_tab"=>"equipes","phase"=>"2") ));
 $smarty->assign('phase1',
-		$this->CreateLink($id,'admin_teams_tab',$returnid, 'Phase 1', array("phase"=>"1") ));
+		$this->CreateLink($id,'defaultadmin',$returnid, 'Phase 1', array("active_tab"=>"equipes","phase"=>"1") ));
 //la requete
 $smarty->assign('id', $this->Lang('id'));
 $smarty->assign('equipe', 'Equipes');
@@ -24,10 +25,10 @@ $smarty->assign('score', 'Score');
 $smarty->assign('adversaires', 'Adversaires');
 
 $result= array ();
-$query = "SELECT DISTINCT *, eq.id,comp.name, comp.code_compet FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ?  AND comp.code_compet = eq.type_compet";
+$query = "SELECT DISTINCT *, eq.id,comp.name, comp.code_compet FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ? AND comp.code_compet = eq.type_compet";
 if($this->GetPreference('phase_en_cours') =='1' )
 {
-	if($params['phase'] ==2)
+	if($phase ==2)
 	{
 		$query.= " AND eq.phase=2"; 
 	}
@@ -38,7 +39,7 @@ if($this->GetPreference('phase_en_cours') =='1' )
 }
 elseif( $this->GetPreference('phase_en_cours') == '2')
 {
-	if($params['phase'] ==1)
+	if($phase ==1)
 	{
 		$query.= " AND eq.phase=1";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
 	}
@@ -80,7 +81,11 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				{
 					//$calendrierimage = $themeObject->DisplayImage('icons/system/calendrier.jpg', $this->Lang('download_poule_results'),'','','systemicon');
 					$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$calendarImage, array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv'], 'type_compet'=>$row['type_compet']));
-					//$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,$podiumImage, array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['id'], "type_compet"=>$row['code_compet']));
+					$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,$podiumImage, array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['id'], "type_compet"=>$row['code_compet']));
+				}
+				else
+				{
+					$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid,$themeObject->DisplayImage('icons/system/warning.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 				}
 				
 				if($this->CheckPermission('Ping Delete'))

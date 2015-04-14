@@ -17,8 +17,6 @@
 </fieldset>
 {/if}
 *}
-<div class="pageoptions"><p class="pageoptions">{$retrieve_teams} | {$retrieve_teams_autres} | {$edit_team}</p></div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <p class="pageoptions">{$phase1} | {$phase2}</p>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -35,20 +33,16 @@
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
-	<td>{$entry->id}</td>
+	<td>{$entry->friendlyname}</td>
     <td>{$entry->libequipe}</td>
-    <td>{$entry->libdivision}</td>
-	<td>{$entry->name}</td>
-    <td>{$entry->friendlyname}</td>
-<!--	<td>{$entry->view}</td>-->
-	<td>{$entry->editlink}</td>
-	<td>{$entry->addnewlink}</td>
-    <td>{$entry->retrieve_poule_rencontres}</td>
-	<td>{$entry->classement}</td>
-    <td>{$entry->deletelink}</td>
+    <td>{$entry->clt}</td>
+    <td>{$entry->equipe}</td>
+
   </tr>
 {/foreach}
  </tbody>
 </table>
+{else}
+<p>No results yet</p>
 {/if}
 

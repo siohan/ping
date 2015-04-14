@@ -1,6 +1,6 @@
 {*<pre>{$items|var_dump}</pre>*}
 {assign var=compteur value = 0}
-<p>{$phase1} | {$phase2}</p>
+<p style="width: 100%"><span style="text-align: left">{$mois_precedent} | {$mois_suivant}</span><span style="float:right">{$all_results}</span></p>
 
 {foreach from=$items item=entry}
 {*<p><pre>{$prods_{$compteur++}|var_dump}</pre></p>*}

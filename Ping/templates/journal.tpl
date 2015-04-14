@@ -42,7 +42,7 @@ $(document).ready(function(){
   {$formend}
 </fieldset>
 {/if}
-{*<div class="pageoptions"><p class="pageoptions">{$retrieve_users} | {$retrieve_teams} | {$retrieve_teams_autres} | {$retrieve_all_parties} | {$retrieve_all_spid} | {$retrieve_details_rencontres}</p></div>*}
+{if isset($pagestring)}<div class="grid_6" style="text-align: right;">{$pagestring}</div>{/if}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 {$form2start}

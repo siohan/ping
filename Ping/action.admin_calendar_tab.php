@@ -18,11 +18,45 @@ $db =& $this->GetDb();
 global $themeObject;
 $designation = '';
 $maintenant = date("Y-m-d");
+
+$mois_choisi = '';
+if(isset($params['mois']) && $params['mois'] !='')
+{
+	$mois_choisi = $params['mois'];
+}
+else
+{
+	$mois_choisi = $mois_courant;
+}
+if($mois_choisi ==1)
+{
+	$mois_precedent = 12;
+}
+else
+{
+	$mois_precedent = $mois_choisi -1;
+}
+if($mois_choisi==12)
+{
+	$mois_suivant = 1;
+}
+else
+{
+	$mois_suivant = $mois_choisi + 1;
+}
+
+$smarty->assign('mois_precedent',
+		$this->CreateLink($id,'defaultadmin',$returnid, '<< Précédent', array("active_tab"=>"calendrier","mois"=>"$mois_precedent") ));
+$smarty->assign('mois_suivant',
+		$this->CreateLink($id,'defaultadmin',$returnid, 'Suivant >>', array("active_tab"=>"calendrier","mois"=>"$mois_suivant") ));
+
 //les liens pour switcher d'une phase à l'autre
+/*
 $smarty->assign('phase2',
 		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 2', array("phase"=>"2") ));
 $smarty->assign('phase1',
 		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 1', array("phase"=>"1") ));
+*/
 //liste des liens pour récupérer les données 
 $smarty->assign('retrieve_users',
 		$this->CreateLink($id, 'retrieve_joueurs_by_club', $returnid, $contents = "Récupération des joueurs", $warn_message = "Etes vous sûr ? Trop d'appels vers la base de données peuvent avoir des conséquences importantes !"));
@@ -73,10 +107,7 @@ while ($dbresult && $row = $dbresult->FetchRow())
 		
 $curdate = $this->GetPreference( 'dateChoisi' );
 $curstatus = $this->GetPreference('statusChoisie');
-$smarty->assign('phase2',
-		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 2', array("phase"=>"2") ));
-$smarty->assign('phase1',
-		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 1', array("phase"=>"1") ));
+
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_date',
@@ -91,8 +122,8 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query = "SELECT cal.id, comp.coefficient,comp.name,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet";
-
+$query = "SELECT cal.id, comp.coefficient,comp.name,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND MONTH(cal.date_debut) = ?";
+/*
 if($this->GetPreference('phase_en_cours') =='1' )
 {
 	if($params['phase'] ==2)
@@ -115,9 +146,9 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 		$query.= " AND MONTH(cal.date_debut) >= 1 AND MONTH(cal.date_debut) <=7";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";	
 	}
 }
-
+*/
 		$query .=" ORDER BY cal.date_debut ASC";
-		$dbresult= $db->Execute($query);
+		$dbresult= $db->Execute($query, array($mois_choisi));
 
 	//echo $query;
 	

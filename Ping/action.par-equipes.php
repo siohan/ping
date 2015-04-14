@@ -37,7 +37,7 @@ $dbresult = $db->Execute($query);
 			$onerow->valeur = $i;
 			
 			
-			$query2 = "SELECT *,ren.equa, ren.equb, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0)  AND ren.date_event = ?";
+			$query2 = "SELECT *,eq.id AS ind,ren.equa, ren.equb, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0)  AND ren.date_event = ?";
 			$parms['date_event'] = $date_debut;
 			
 			if(isset($params['type_compet']) && $params['type_compet'])
@@ -69,6 +69,7 @@ $dbresult = $db->Execute($query);
 					$onerow2 = new StdClass();
 					$onerow2->rowclass =$rowclass;
 					$onerow2->id= $row2['id'];
+					$onerow2->ind= $row2['ind'];
 					$onerow2->date_event= $row2['date_event'];
 					$onerow2->equb = $row2['equb'];
 					$onerow2->equa = $row2['equa'];
@@ -113,6 +114,7 @@ $dbresult = $db->Execute($query);
 						$onerow2->equb= $row2['equb'];
 					}
 					$onerow2->details= $this->CreateLink($id, 'retrieve_details_rencontres', $returnid, 'Détails', array('record_id'=>$row2['id'], 'template'=>'1'));
+					$onerow2->class= $this->CreateLink($id, 'classement_equipes', $returnid, 'Classement', array('record_id'=>$row2['ind']));
 					$rowarray2[] = $onerow2;
 					
 					

@@ -8,6 +8,7 @@ if (isset($params['cancel'])) { $this->Redirect($id, 'defaultadmin', $returnid);
 require_once(dirname(__FILE__).'/function.calculs.php');
 //echo $params['record_id'];
 $designation = '';
+$error =0;
 /*
 		if (!$this->CheckPermission('Manage Comments'))
 		{
@@ -16,15 +17,13 @@ $designation = '';
 		}
 */
 		/*On récupère les variable et on les traite */
-		$record_id = '';
-		if( !isset( $params['record_id'] ) || $params['record_id'] == '')    
+		$record_id = ''; 
+		if( isset( $params['record_id'] ) && $params['record_id'] != '')    
 		{
-
-			$message = $this->Lang('error_insufficientparams');
-			$this->SetMessage("$message");
-			$this->RedirectToAdminTab('equipes');
+			$id = $params['record_id'];
+			
 		}
-		$id = $params['record_id'];
+		
 		if (isset($params['saison']))
 		{
 			$saison = $params['saison'];
@@ -46,9 +45,14 @@ $designation = '';
 		{
 			$friendlyname = $params['friendlyname'];
 		}
-		if (isset($params['type_compet']))
+		if (isset($params['type_compet']) && $params['type_compet'] !='')
 		{
 			$type_compet = $params['type_compet'];
+		}
+		else
+		{
+			$error++;
+			
 		}
 		if (isset($params['iddiv']))
 		{
@@ -64,6 +68,11 @@ $designation = '';
 		}
 		$liendivision = "cx_poule=".$idpoule."&D1=".$iddiv."&organisme_pere=".$organisme;
 		//echo "le lien est : ".$lien;
+		if($error>0)
+		{
+			$this->SetMessage('Manque le type de compétition !');
+			$this->RedirectToAdminTab('equipes');
+		}
 		if(isset($params['Ajouter']))
 		{
 			

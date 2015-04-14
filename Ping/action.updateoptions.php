@@ -1,7 +1,7 @@
 <?php
 if (!isset($gCms)) exit;
 
-if( !$this->CheckPermission( 'Modify Site Preferences' ) )
+if( !$this->CheckPermission( 'Ping Set Prefs' ) )
 {
   return;
 }

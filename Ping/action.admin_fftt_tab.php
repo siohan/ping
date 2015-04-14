@@ -82,10 +82,15 @@ $parms['saison'] = $saison;
 			$parms['codechamp'] = $curCompet;
 		}
 
-
+		$query.=" ORDER BY joueur,pts.date_event ASC";
+	}
+	else
+	{
+		$query.=" ORDER BY joueur,pts.date_event ASC LIMIT 100";
+		
 	}
 	
-$query.=" ORDER BY joueur,pts.date_event ASC";
+
 $dbresult= $db->Execute($query,$parms);
 //echo $query;
 if (!$dbresult)
@@ -137,8 +142,6 @@ $smarty->assign('actiondemasse',
 $smarty->assign('submit_massaction',
 		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
 
-$smarty->assign('retour',
-		$this->CreateLink($id,'admin_indivs_tab', $returnid,$contents ='Retour à la liste'));
 echo $this->ProcessTemplate('fftt.tpl');
 
 

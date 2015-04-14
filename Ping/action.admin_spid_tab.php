@@ -9,66 +9,45 @@ $saison = $this->GetPreference('saison_en_cours');
 
 $db =& $this->GetDb();
 global $themeObject;
-$this->SetCurrentTab('results');
-/* on fait un formulaire de filtrage des résultats*/
-//$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'spid')));
-$smarty->assign('formstart',$this->CreateFormStart($id,'admin_spid_tab'));
-//$saisonslist[$this->lang('allseasons')] ='';
-$datelist[$this->Lang('alltours')] = '';
-//$allequipes =  ( isset( $params['allequipes'] )?$params['allequipes']:'no');
 
+/* on fait un formulaire de filtrage des résultats*/
+$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'spid')));
+//$smarty->assign('formstart',$this->CreateFormStart($id,'admin_spid_tab'));
+
+$datelist[$this->Lang('alltours')] = '';
 $equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT pts.epreuve,pts.date_event, j.licence,pts.numjourn , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties_spid AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY pts.date_event ASC,player ASC, pts.numjourn ASC";//"";
+$query = "SELECT pts.epreuve, pts.date_event, j.licence,pts.numjourn , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties_spid AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY pts.date_event ASC,player ASC, pts.numjourn ASC";//"";
 //echo $query;
 $dbresult = $db->Execute($query, array($saison));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
-    	/*
-	$date_evenement = $row['date_event'];
-	$date_fr = dateversfr($date_evenement,$delimiter = '-');
-	echo $date_fr;
-	*/
-	$datelist[$row['date_event']] = $row['date_event'];
-    $playerslist[$row['player']] = $row['licence'];
-//$saisonslist[$row['saison']] = $row['saison'];
-    //$equipelist[$row['equipe']] = $row['equipe'];
-    $typeCompet[$row['epreuve']] = $row['epreuve'];
+    	$datelist[$row['date_event']] = $row['date_event'];
+    	$playerslist[$row['player']] = $row['licence'];
+	$typeCompet[$row['epreuve']] = $row['epreuve'];
   }
 
 if( isset($params['submitfilter']) )
   {
     	if( isset( $params['datelist']) )
       	{
-	$this->SetPreference('dateChoisi', $params['datelist']);
+		$this->SetPreference('dateChoisi', $params['datelist']);
       	}
-/*
-	if( isset( $params['saisonslist']) )
-      	{
-	$this->SetPreference('saisonChoisie', $params['saisonslist']);
-      	}
-*/
 	if( isset( $params['playerslist']) )
       	{
-	$this->SetPreference('playerChoisi', $params['playerslist']);
+		$this->SetPreference('playerChoisi', $params['playerslist']);
       	}
-    /*if( isset( $params['equipelist']))
-	{
-	$this->SetPreference( 'equipeChoisie', $params['equipelist']);
-	}
-	*/
-    if( isset( $params['typeCompet']) )
+        if( isset( $params['typeCompet']) )
 	{ 
-	$this->SetPreference ( 'competChoisie', $params['typeCompet']);
+		$this->SetPreference ( 'competChoisie', $params['typeCompet']);
 	}
 }
 $curdate = $this->GetPreference( 'dateChoisi' );
-//$curseason = $this->GetPreference('saisonChoisie');
 $curplayer = $this->GetPreference( 'playerChoisi');
-$curequipe = $this->GetPreference( 'equipeChoisie' );
 $curCompet = $this->GetPreference( 'competChoisie');
+
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_date',
@@ -84,11 +63,10 @@ $smarty->assign('submitfilter',
 $smarty->assign('formend',$this->CreateFormEnd());
 
 $result= array ();
-//$query= "SELECT * FROM ".cms_db_prefix()."module_ping_points WHERE joueur = ? ORDER BY id ASC";
-//$query = "SELECT type_compet, joueur, sum(vic_def) AS victoires, sum(points) AS total, count(*) AS sur FROM ".cms_db_prefix()."module_ping_points  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
+
 $query2 = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
 
-$parms['saison'] = $saison;//si le filtre a été soumis
+$parms['saison'] = $saison;
 
 if( isset($params['submitfilter'] ))
 {
@@ -115,12 +93,16 @@ if( isset($params['submitfilter'] ))
 	{
 		$query2.=" AND sp.classement = -sp.ecart ";
 	}
-
+	$query2.=" ORDER BY joueur ASC, sp.date_event ASC";
+}
+else
+{
+	$query2.=" ORDER BY joueur ASC, sp.date_event ASC LIMIT 100";
 }
 
 
 
-$query2.=" ORDER BY joueur ASC, sp.date_event ASC";
+
 
 
 $dbresult2= $db->Execute($query2, $parms);
@@ -164,18 +146,21 @@ $smarty->assign('verif_spid_fftt',
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
+/*
 $smarty->assign('createlink', 
 		$this->CreateLink($id, 'create_new_user3', $returnid,
 				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addnewsheet'), '', '', 'systemicon')).
 		$this->CreateLink($id, 'create_new_user3', $returnid, 
 				  $this->Lang('addnewsheet'), 
 				  array()));
+
 $smarty->assign('retrieve_all', 
 		$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid,
 				$themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('long_import'), '', '', 'systemicon')).
 				$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid, 
 								  $this->Lang('retrieveallpartiesspid'), 
 								  array()));
+*/
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

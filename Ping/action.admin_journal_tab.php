@@ -19,6 +19,7 @@ if( !isset($gCms) ) exit;
 
 $db =& $this->GetDb();
 global $themeObject;
+//require_once(dirname(__FILE__).'/function.calculs.php');
 //liste des liens pour récupérer les données 
 $smarty->assign('retrieve_users',
 		$this->CreateLink($id, 'retrieve_joueurs_by_club', $returnid, $contents = "Récupération des joueurs", $warn_message = "Etes vous sûr ? Trop d'appels vers la base de données peuvent avoir des conséquences importantes !"));
@@ -86,34 +87,64 @@ $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
 
-
-$result= array ();
-$query2= "SELECT * FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
-
+$edit = 0;//pour completer la requete.
+$parm= array ();
+$critere = '';
+$activation = 0;
+$query2= "SELECT id, datecreated, designation, status,action FROM ".cms_db_prefix()."module_ping_recup";
+$result= $db->Execute($query2);
+$totalrows = $result->RecordCount();
 	if( isset($params['submitfilter'] ))
 	{
 
 		if ($curdate !='')
 		{
-			$query2.=" AND datecreated = ? ";
+			$edit = 1;
+			$critere.=" WHERE datecreated = ? ";
 			$parms['datecreated'] = $curdate;
 		
 		}
 		if($curstatus !='')
 		{
-			$query2.=" AND status = ?";
-			$parms['status'] = $curstatus;
+			if($edit==1)
+			{
+				$critere.=" AND status = ?";
+				$parms['status'] = $curstatus;
+			}
+			else
+			{
+				$critere.=" WHERE status = ?";
+				$parms['status'] = $curstatus;
+			}
 		}
-
-		$dbresult2= $db->Execute($query2,$parms);
+		$activation = 1;//permet de différencier les deux requetes
+		
 	}
+	
+	$critere.= " ORDER BY datecreated DESC";
+	//on instancie des variables pour créer une pagination dans l'onglet journal
+	
+	//fin du if dbresult
+	$dbresult2 = ''; 
+        $page = 1;
+	if (isset($_GET['page']))$page = $_GET['page'];
 
-	else 
+	$limit = 20;
+	if(isset($params['limit']))
+	$page_string = "";
+	$from = ($page * $limit) - $limit;
+	if($activation=='0')
 	{
-		$query2.=" ORDER BY id DESC";
-		$dbresult2= $db->Execute($query2);
-	}//fin du if dbresult
-	//echo $query;
+		$dbresult2 = $db->SelectLimit('SELECT id, datecreated, designation, status,action FROM '.cms_db_prefix().'module_ping_recup '.$critere.'', $limit, $from);
+
+	}
+	
+	elseif($activation=='1')
+	{
+		$dbresult2 = $db->SelectLimit('SELECT id, datecreated, designation, status,action FROM '.cms_db_prefix().'module_ping_recup '.$critere.'', $limit, $from, $parms);
+		
+	}
+	echo $totalrows;
 	
 		/*
 		if (!$dbresult2)
@@ -132,7 +163,9 @@ $rowarray= array ();
 
 	if ($dbresult2 && $dbresult2->RecordCount() > 0)
   	{
-    		while ($row= $dbresult2->FetchRow())
+    		$page_string = pagination($page, $totalrows, $limit);
+		$smarty->assign("pagestring",$page_string);
+		while ($row= $dbresult2->FetchRow())
       		{
 			$onerow= new StdClass();
 			$onerow->rowclass= $rowclass;

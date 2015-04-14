@@ -54,12 +54,12 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	else {
 		$onerow->editlink= $this->CreateLink($id, 'enable_player', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('enable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
 	}
-	/*
+	
 	if($row['sit_mens'] =='')
 	{
 		$onerow->push_player = $this->CreateLink($id, 'push_player',$returnid, 'Récupérer le joueur',array('licence'=>$row['licence']));
 	}
-	*/
+	
 	$onerow->correction= $this->CreateLink($id, 'add_sit_mens', $returnid, 'Corriger',  array('licence'=>$row['licence']));
 	//$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, 'Désactiver',array('licence'=>$row['licence']));
 	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).

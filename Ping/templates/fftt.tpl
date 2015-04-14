@@ -81,6 +81,3 @@ $(document).ready(function(){
   </div>
 {$form2end}
 {/if}
-
-<div class="pageoptions"><p class="pageoptions">{$retour}</p></div><hr />
-<div class="pageoptions"><p class="pageoptions">{*$createlink*}</p></div>

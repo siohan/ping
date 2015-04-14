@@ -46,7 +46,7 @@ $(document).ready(function(){
 {*<div class="pageoptions"><p class="pageoptions">{$retrieve_users} | {$retrieve_teams} | {$retrieve_teams_autres} | {$retrieve_all_parties} | {$retrieve_all_spid} | {$retrieve_details_rencontres}</p></div>*}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  | {$createlink} {*$maintenant*}</p></div>
 {if $itemcount > 0}
-<p class="pageoptions">{$phase1} | {$phase2}</p>
+<p class="pageoptions">{$mois_precedent} | {$mois_suivant}</p>
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>

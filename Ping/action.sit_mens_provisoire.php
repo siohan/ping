@@ -44,19 +44,7 @@ if ($dbresult && $dbresult->RecordCount()>0)
 		{
 			$licence = $row['licence'];
 			$joueur = $row['joueur'];
-			$pointres = $row['Total'];
-			
-			/*
-				if( $phase==1)
-				{
-					$mois_reference = 9;
-				}
-				else
-				{
-					$mois_reference = 1;
-				}
-			*/
-				
+			$pointres = $row['Total'];	
 			$query2 = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ?";
 			$dbresult2 = $db->Execute($query2,array($licence,$mois_courant));
 			$row2 = $dbresult2->FetchRow();
@@ -70,7 +58,7 @@ if ($dbresult && $dbresult->RecordCount()>0)
 			$onerow->clt= $points_ref;
 			$onerow->somme= $somme;
 			$onerow->bilan= $pointres;
-			$onerow->details= $this->CreateLink($id, 'user_results', $returnid, 'Détails',array('licence'=>$row['licence'],'month'=>$mois_courant));
+			$onerow->details= $this->CreateLink($id, 'user_results_prov', $returnid, 'Détails',array('licence'=>$row['licence'],'month'=>$mois_courant));
 			($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 			$rowarray[]= $onerow;
 		}

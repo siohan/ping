@@ -17,13 +17,13 @@ if (FALSE == empty($params['active_tab']))
   $tab = 'rencontres';
  }	
 	echo $this->SetTabHeader('joueurs', 'Joueurs', ('joueurs' == $tab)?true:false);
-	echo $this->SetTabHeader('equipes', 'Equipes', ('Equipes' == $tab)?true:false);
-	echo $this->SetTabHeader('calendrier', 'Calendrier', ('Calendrier' == $tab)?true:false);
+	echo $this->SetTabHeader('equipes', 'Equipes', ('equipes' == $tab)?true:false);
+	echo $this->SetTabHeader('calendrier', 'Calendrier', ('calendrier' == $tab)?true:false);
 	echo $this->SetTabHeader('fftt', 'FFTT' , ('fftt' == $tab)?true:false);
 	echo $this->SetTabHeader('spid', 'SPID' , ('spid' == $tab)?true:false);
 	echo $this->SetTabHeader('compets', 'Compétitions' , ('compet' == $tab)?true:false);
 	
-	echo $this->SetTabHeader('poules', 'Résultats', ('Résultats' == $tab)?true:false);
+	echo $this->SetTabHeader('poules', 'Résultats', ('resultats' == $tab)?true:false);
 	echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
 	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('situation' == $tab)?true:false);
 	echo $this->SetTabHeader('journal', 'Journal', ('Journal' == $tab)?true:false);
