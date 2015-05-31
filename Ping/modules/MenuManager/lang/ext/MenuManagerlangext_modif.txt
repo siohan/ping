@@ -1,4 +1,0 @@
-
-
-Ajout
-<p><strong>Note : </strong>pour que l&#039;affichage des infobulles sur le titres des menus et les cibles dans l&#039;onglet "option" de la page, soit actif, utiliser le gabarit menu "accessible_simple_navigation.tpl".</p>

@@ -1,7 +1,0 @@
-
-
-$lang['fileinfo'] = 'Information&nbsp;';
-
-$lang['fileowner'] = 'Propri&eacute;taire fichier'; =  = 'Prop. fichier&nbsp;';
-
-$lang['fileperms'] = 'Permissions';  = 'Perm&nbsp;';

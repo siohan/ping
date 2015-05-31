@@ -1,6 +1,0 @@
-mise &agrave; jour  ->  mise &agrave; niveau
-
-
-$lang['really_uninstall'] = 'Etes-vous sur de vouloir desinstaller ce module&nbsp;? Vous allez perdre toutes ses fonctionalites.';
-
-\u00CAtes-vous s\u00FBr de vouloir d\u00E9sinstaller ce module ? Vous allez perdre toutes ses fonctionalit\u00E9s

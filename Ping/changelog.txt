@@ -1,4 +1,0 @@
-#
-Ajout d'une colonne pour différencier les compétitions individuelles des par équipes
-Ajout des paramètres pour le front-office
-Tentative de résolution du bug concernant le coefficient du critérium fédéral
