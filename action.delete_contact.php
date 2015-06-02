@@ -11,7 +11,7 @@ $message = '';
 		}
 
 		$record_id = '';
-		if (isset($params['record_id']))
+		if (isset($params['record_id']) && $params['record_id'] != '')
 		{
 			$record_id = $params['record_id'];
 		}
@@ -24,4 +24,7 @@ $message = '';
 
 $this->SetMessage("$message");
 $this->RedirectToAdminTab('joueurs');
+#
+# EOF
+#
 ?>

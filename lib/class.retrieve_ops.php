@@ -96,7 +96,7 @@ public function retrieve_parties_spid( $licence )
 							$mois_event = $chgt[1];
 						}
 					//on va vérifier si on a la situation mensuelle du joueur du club à jour pour le mois en question
-					$retour_sit_mens = ping_admin_ops::get_sit_mens($licence,$mois_event,$annee);
+					$retour_sit_mens = ping_admin_ops::get_sit_mens($licence,$mois_event,$saison_courante);
 					if($retour_sit_mens==0)
 					{
 						$designation.="Situation du mois ".$mois_event." manquante pour ".$player;
@@ -273,12 +273,12 @@ public function retrieve_parties_spid( $licence )
 							$coeff[0] = '0.00';
 							//on créé un code compet temporaire
 							$code_compet_temp = ping_admin_ops::random(3);
-							$coeff[1] = $code_compet_temp;
+							$coeff[1] = $type_compet_tmp;
 							$coeff_provisoire = '0.00';
 							//on fait qd même l'inclusion d'une nouvelle compet
 							$indivs2 = 1;
 							$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name,code_compet,coefficient,indivs) VALUES ('',?, ?, ?, ?)";
-							$db->Execute($query, array($epreuve,$code_compet_temp,$coeff_provisoire, $indivs2));
+							$db->Execute($query, array($epreuve,$type_compet_tmp,$coeff_provisoire, $indivs2));
 							//echo "coefficient introuvable !";
 						}
 					

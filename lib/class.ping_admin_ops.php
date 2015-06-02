@@ -510,13 +510,14 @@ public static function get_name($nom)
 //end of function
 }
 // cette fonction recherche la situation mensuelle d'un joueur du club ds la bdd
-public static function get_sit_mens($licence, $mois_event, $annee)
+public static function get_sit_mens($licence, $mois_event, $saison)
 {
 	global $gCms;
 	$db = cmsms()->GetDb();
 	$ping = cms_utils::get_module('Ping');
 	$saison = $ping->GetPreference('saison_en_cours');
 	$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND saison = ?";
+	$db->debug=true;
 	$dbresult = $db->Execute($query, array($licence,$mois_event,$saison));
 	//si la situation mensuelle du joueur du club n'existe pas ?
 	//alors on n'enregistre pas le résultat et on le signale
@@ -1297,6 +1298,7 @@ public static function retrieve_parties_fftt( $licence )
 	$aujourdhui = date('Y-m-d');
 	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 	$dbretour = $db->Execute($query, array($licence));
+	$designation = '';
 	if ($dbretour && $dbretour->RecordCount() > 0)
 	{
 	    while ($row= $dbretour->FetchRow())
