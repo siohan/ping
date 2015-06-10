@@ -797,6 +797,7 @@ public function retrieve_sit_mens($licence)
 	//on vérifie si la situation mensuelle a déjà été prise en compte
 	global $gCms;
 	$db = cmsms()->GetDb();
+	$ping = cms_utils::get_module('Ping');
 	$now = trim($db->DBTimeStamp(time()), "'");
 
 	$mois_courant = date('n');//Mois au format 1, 2, 3 etc....
@@ -806,9 +807,9 @@ public function retrieve_sit_mens($licence)
 	$now = trim($db->DBTimeStamp(time()), "'");
 	$mois_reel = $mois_courant - 1;
 	$mois_sm = $mois_francais["$mois_reel"];
-	$mois_sit_mens = $mois_sm." ".$annee_courante;
+	$mois_sit_mens = $mois_sm." ".$annee_courante;	
+	$saison = $ping->GetPreference('saison_en_cours');
 	
-	$saison = $this->GetPreference('saison_en_cours');
 	$query = "SELECT licence, mois FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND saison = ?";
 	$dbresult = $db->Execute($query, array($licence,$mois_courant,$saison));
 

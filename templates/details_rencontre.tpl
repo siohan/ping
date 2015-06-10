@@ -1,5 +1,5 @@
 {*<pre>{$items|var_dump}</pre>*}
-{**}<pre>{$prods_2|var_dump}</pre>{**}
+{*<pre>{$prods_2|var_dump}</pre>*}
 {if $parameters == 1}
 <h3>Les résultats du {$date_event}</h3>
 	<table class="table table-bordered">

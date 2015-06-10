@@ -20,8 +20,8 @@ $this->SetPreference('spid_interval', $params['spid_interval']);
 $this->SetPreference('fftt_interval', $params['fftt_interval']);
 $this->SetMessage('Vos options ont été mises à jours');
 $this->Audit('', 'Ping',$params['club_number']);
-$this->RedirectToAdminTab('joueurs');
-//$this->RedirectToAdminTab('joueurs', array('message'=>'Full'));//$this->Redirect($id,'delete_all','',array($message=>'Options Ok'));
+//$this->RedirectToAdminTab('joueurs');
+$this->RedirectToAdminTab('joueurs', array('message'=>'Full'));//$this->Redirect($id,'delete_all','',array($message=>'Options Ok'));
 /*
 $params = array('tab_message'=> 'optionsupdated', 'active_tab' => 'options');
 $this->Redirect($id, 'options', '', $params);

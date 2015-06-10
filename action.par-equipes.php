@@ -274,7 +274,7 @@ $i=0;
 
 						$query3.=" AND ren.club = '1'";
 						$dbresultat = $db->Execute($query3,$parms);
-						echo $query3.'<br />';
+						//echo $query3.'<br />';
 
 
 						$rowarray2 = array();

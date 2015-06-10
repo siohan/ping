@@ -67,7 +67,13 @@ $sqlarray= $dict->CreateTableSQL( cms_db_prefix()."module_ping_equipes",
 				  $taboptarray);
 				
 $dict->ExecuteSQLArray($sqlarray);
-
+//on créé un index pour éviter les doublons
+$idxflds = 'saison, libequipe, liendivision';
+$tabname = cms_db_prefix()."module_ping_equipes";
+$idxname = 'unicite';
+$idxoptarray = 'Unique';
+  $sqlarray = $dict->CreateIndexSQL($idxname, $tabname, $idxflds);
+  $dict->ExecuteSQLArray($sqlarray);
 //une nouvelle table pour les victoires brutes (pas de victoires détaillées pour l'instant)
 $dict = NewDataDictionary( $db );
 
@@ -294,6 +300,7 @@ $flds = "
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",
 				   $flds, 
 				   $taboptarray);
+//créé un index sur la table
 $dict->ExecuteSQLArray($sqlarray);
 ##on insère les valeurs par défaut
 	
