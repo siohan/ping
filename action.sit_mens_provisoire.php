@@ -18,7 +18,7 @@ if($jour_courant <=10)
 
 //$mois_courant = 3;
 
-$query="SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, SUM(sp.pointres) AS Total, sp.licence FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_joueurs AS j WHERE sp.licence = j.licence AND sp.saison = ? AND MONTH(date_event) = ? ";	
+$query="SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, SUM(sp.pointres) AS Total, j.licence FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_parties_spid AS sp  ON sp.licence = j.licence WHERE sp.saison = ? AND j.actif='1' AND MONTH(date_event) = ? OR MONTH(date_event) IS NULL";	
 /*
 if($phase == 1)
 {
@@ -45,8 +45,8 @@ if ($dbresult && $dbresult->RecordCount()>0)
 			$licence = $row['licence'];
 			$joueur = $row['joueur'];
 			$pointres = $row['Total'];	
-			$query2 = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ?";
-			$dbresult2 = $db->Execute($query2,array($licence,$mois_courant));
+			$query2 = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND saison = ?";
+			$dbresult2 = $db->Execute($query2,array($licence,$mois_courant, $saison_courante));
 			$row2 = $dbresult2->FetchRow();
 						
 			$points_ref = $row2['points'];

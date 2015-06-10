@@ -1,8 +1,8 @@
 <?php
 //ce fichier fait des actions de masse, il est appelé depuis l'onglet de récupération des infos sur les joueurs
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
-var_dump($params['sel']);
+//debug_display($params, 'Parameters');
+//var_dump($params['sel']);
 $db =& $this->GetDb();
 if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
   {

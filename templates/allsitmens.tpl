@@ -1,7 +1,7 @@
 {*<pre>{$items|var_dump}</pre>*}
-<div class="pageoptions"><p class="warning">
-{if $jour < 10}
-Attention ! L'accès n'est pas encore libre ! Vous ne pouvez pas récupérer les situations mensuelles automatiquement{else}L'accès est désormais libre, vous pouvez désormais récupérer les situations mensuelles.{/if}</p></div>
+<div class="pageoptions">
+{if $jour <10}
+<p class="warning">Attention ! L'accès n'est pas encore libre ! Vous ne pouvez pas récupérer les situations mensuelles automatiquement</p>{else}<p class="success">L'accès est désormais libre, vous pouvez  récupérer les situations mensuelles.</p>{/if}</div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieveallsitmens} | {$addallsitmenslink}</p></div>
 {if isset($formstart) }
 <fieldset>

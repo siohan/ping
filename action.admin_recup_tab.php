@@ -32,9 +32,10 @@ if ($dbresult && $dbresult->RecordCount() > 0)
     while ($row= $dbresult->FetchRow())
       {
 	$actif = $row['actif'];
-	//$licence = $row['licence'];
+	$licence = $row['licence'];
 	$sit_mens = $row['sit_mens'];
-	
+	$fftt = ping_admin_ops::compte_fftt($licence);
+	$spid = ping_admin_ops::compte_spid($licence);
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->id= $row['id'];
@@ -42,9 +43,11 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->licence= $row['licence'];
 	//$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
 	$onerow->sit_mens= $row['sit_mens'];
-	$onerow->fftt= $row['fftt'];
+	$onerow->fftt= $fftt;
+	//$onerow->fftt= $row['fftt'];
 	$onerow->maj_fftt= $row['maj_fftt'];
-	$onerow->spid= $row['spid'];
+	//$onerow->spid= $row['spid'];
+	$onerow->spid= $spid;
 	$onerow->spid_total= $row['spid_total'];
 	$onerow->maj_spid= $row['maj_spid'];
 	//$onerow->doedit= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']), $row);
@@ -64,7 +67,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	//$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, 'Désactiver',array('licence'=>$row['licence']));
 	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_sit_mens', $returnid, 
-	  	$this->Lang('retrieve_sit_mens'), array('licence'=>$row['licence']));
+	  	$this->Lang('retrieve_sit_mens'), array('licence'=>$row['licence']),$warn_message='Attention ! Accès libre ?');
 	$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_parties'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_parties', $returnid, 
 	  	$this->Lang('retrieve_parties'), array('licence'=>$row['licence']));

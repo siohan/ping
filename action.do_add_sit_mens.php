@@ -3,7 +3,7 @@ if (!isset($gCms)) exit;
 require_once(dirname(__FILE__).'/include/prefs.php');
 //debug_display($params, 'Parameters');
 $phase = $this->GetPreference('phase_en_cours');
-
+$saison = $this->GetPreference('saison_en_cours');
 	if (!$this->CheckPermission('Ping Manage'))
 	{
 		$designation.=$this->Lang('needpermission');
@@ -84,9 +84,9 @@ $i = 0;
 					if( $value >0 )
 					{
 						
-					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id, datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id, datecreated, datemaj, saison, mois, annee, phase, licence, nom, prenom, points) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 					//echo $query2;
-					$dbresultat = $db->Execute($query2, array($now, $now, $key, $annee_ref, $phase, $licence,$nom, $prenom,$value));
+					$dbresultat = $db->Execute($query2, array($now, $now,$saison, $key, $annee_ref, $phase, $licence,$nom, $prenom,$value));
 					$i++;
 					}
 				}

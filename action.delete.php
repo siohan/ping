@@ -104,7 +104,8 @@ $designation = '';
 					
 					$this->SetMessage('situation supprimée');
 					$this->RedirectToAdminTab('situation');
-				break;	
+				break;
+				
 			}
 		}
 		

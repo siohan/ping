@@ -69,9 +69,11 @@ $smarty->assign('input_tour',
 $smarty->assign('input_month',
 		$this->CreateInputDropdown($id,'monthslist',$monthslist,-1,$curmonth));
 $smarty->assign('prompt_equipe',
-		$this->Lang('equipe'));		
+		$this->Lang('equipe'));	
+/*	
 $smarty->assign('input_compet',
 		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
+*/
 $smarty->assign('input_player',
 		$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
 $smarty->assign('submitfilter',

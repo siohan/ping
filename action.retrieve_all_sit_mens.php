@@ -17,6 +17,7 @@ $mois_courant = date('n');
 //pour test, je change manuellement le mois courant
 //$mois_courant = 2;
 $annee_courante = date('Y');
+$saison = $this->GetPreference('saison_en_cours');
 $mois_francais = array('Janvier', 'Février','Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Août', 'Septembre', 'Octobre','Novembre','Décembre');
 $now = trim($db->DBTimeStamp(time()), "'");
 $mois_reel = $mois_courant - 1;
@@ -72,26 +73,26 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		{
 			
 				
-			$nom = $result[nom];
-			$prenom = $result[prenom];
-			$natio = $result[natio];
-			$clglob = $result[clglob];
-			$points = $result[point];
-			$aclglob = $result[aclglob];
-			$apoint = $result[apoint];
-			$clnat = $result[clnat];
-			$categ = $result[categ];
-			$rangreg = $result[rangreg];
-			$rangdep = $result[rangdep];
-			$valcla = $result[valcla];
-			$clpro = $result[clpro];
-			$valinit = $result[valinit];
-			$progmois = $result[progmois];
-			$progann = $result[progann];
+			$nom = $result['nom'];
+			$prenom = $result['prenom'];
+			$natio = $result['natio'];
+			$clglob = $result['clglob'];
+			$points = $result['point'];
+			$aclglob = $result['aclglob'];
+			$apoint = $result['apoint'];
+			$clnat = $result['clnat'];
+			$categ = $result['categ'];
+			$rangreg = $result['rangreg'];
+			$rangdep = $result['rangdep'];
+			$valcla = $result['valcla'];
+			$clpro = $result['clpro'];
+			$valinit = $result['valinit'];
+			$progmois = $result['progmois'];
+			$progann = $result['progann'];
 
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, saison, mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
-			$dbresultat = $db->Execute($query,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $points, $clnat, $rangreg, $rangdep, $progmois));
+			$dbresultat = $db->Execute($query,array($now,$now,$saison,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $points, $clnat, $rangreg, $rangdep, $progmois));
 
 				if(!$dbresultat)
 				{

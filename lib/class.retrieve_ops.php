@@ -251,18 +251,18 @@ public function retrieve_parties_spid( $licence )
 						$row = $dbepreuve->FetchRow();
 						$indivs = $row['indivs'];
 						$indivs3 = $row['indivs'];
-						$type_compet_tmp = $row['code_compet'];
+						$type_compet_temp = $row['code_compet'];
 						
 						if($indivs == 1) //on est bien dans une compet individuelles
 						{
 							//on est bien dans le cadre d'une compet individuelle
 							$query_participe = "SELECT * FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND type_compet = ?";
-							$dbparticipe = $db->Execute($query_participe,array($licence,$type_compet_tmp));
+							$dbparticipe = $db->Execute($query_participe,array($licence,$type_compet_temp));
 							
 							if($dbparticipe->RecordCount()==0)//le joueur n'est pas inscrit, on le fait
 							{
 								$query_participe2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence,type_compet) VALUES (?,?)";
-								$dbparticipe2 = $db->Execute($query_participe2, array($licence,$type_compet_tmp));
+								$dbparticipe2 = $db->Execute($query_participe2, array($licence,$type_compet_temp));
 							}
 						}
 					}
@@ -270,15 +270,14 @@ public function retrieve_parties_spid( $licence )
 					{
 						if($epreuve != 'Critérium fédéral')
 						{
-							$coeff[0] = '0.00';
 							//on créé un code compet temporaire
-							$code_compet_temp = ping_admin_ops::random(3);
-							$coeff[1] = $type_compet_tmp;
+							$type_compet_temp = ping_admin_ops::random(3);
+							//$coeff[1] = $type_compet_tmp;
 							$coeff_provisoire = '0.00';
 							//on fait qd même l'inclusion d'une nouvelle compet
 							$indivs2 = 1;
 							$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name,code_compet,coefficient,indivs) VALUES ('',?, ?, ?, ?)";
-							$db->Execute($query, array($epreuve,$type_compet_tmp,$coeff_provisoire, $indivs2));
+							$db->Execute($query, array($epreuve,$type_compet_temp,$coeff_provisoire, $indivs2));
 							//echo "coefficient introuvable !";
 						}
 					
@@ -305,8 +304,8 @@ public function retrieve_parties_spid( $licence )
 					*/
 					//2 - on récupére le tour s'il existe
 					//on va fdonc chercher dans la table calendrier
-					$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet =? AND date_debut = ? OR date_fin = ?";
-					$resultat = $db->Execute($query, array($type_compet_tmp, $date_mysql,$date_mysql));
+					$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet = ? AND date_debut = ? OR date_fin = ?";
+					$resultat = $db->Execute($query, array($type_compet_temp, $date_mysql,$date_mysql));
 
 						if ($resultat && $resultat->RecordCount()>0){
 							$row = $resultat->FetchRow();
@@ -315,11 +314,12 @@ public function retrieve_parties_spid( $licence )
 						else
 						{
 							$numjourn = 0;//on insère dans le calendrier ? Ben oui !						
-							//$type_compet = $code_compet_tmp;
+							//le code existe déjà ou pas ?
+							$type_compet = $type_compet_temp;
 							//on oublie pas le tag !
-							$tag = ping_admin_ops::create_tag($type_compet_tmp,$indivs, $date_mysql, $date_mysql);
+							$tag = ping_admin_ops::create_tag($type_compet_temp,$indivs, $date_mysql, $date_mysql);
 							$querycal = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,type_compet,date_debut,date_fin,numjourn,tag) VALUES ('', ?, ?, ?, ?, ?)";
-							$req = $db->Execute($querycal,array($type_compet_tmp,$date_mysql,$date_mysql,$numjourn,$tag));							
+							$req = $db->Execute($querycal,array($type_compet_temp,$date_mysql,$date_mysql,$numjourn,$tag));							
 						}
 					
 					
@@ -490,11 +490,11 @@ public static function retrieve_parties_fftt( $licence )
 							$mois_event = $chgt[1];
 						}
 					*/	
-					$advsexe = $tab[advsexe];
-					$advnompre = $tab[advnompre];
-					$pointres = $tab[pointres];
-					$coefchamp = $tab[coefchamp];					
-					$advclaof = $tab[advclaof];					
+					$advsexe = $tab['advsexe'];
+					$advnompre = $tab['advnompre'];
+					$pointres = $tab['pointres'];
+					$coefchamp = $tab['coefchamp'];					
+					$advclaof = $tab['advclaof'];					
 					
 					$query = "SELECT licence,advlic, numjourn, codechamp, date_event, coefchamp FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND advlic = ? AND numjourn = ? AND codechamp = ? AND date_event = ? AND coefchamp = ?";
 					//echo $query;

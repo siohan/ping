@@ -29,7 +29,7 @@ if($dbresult && $dbresult->RecordCount() > 0)
 		$player = $row['player'];
 		
 		
-		ping_admin_ops::retrieve_parties_spid($licence);
+		retrieve_ops::retrieve_parties_spid($licence);
 		
 			
 	}//fin du while

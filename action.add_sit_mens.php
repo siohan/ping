@@ -53,9 +53,9 @@ $smarty->assign('formstart',
 $smarty->assign('licence',
 		$this->CreateInputText($id,'licence',$licence,10,15));
 $i=0;
-$query = "SELECT j.nom, j.prenom, j.licence, st.mois, st.points FROM ".cms_db_prefix()."module_ping_sit_mens AS st, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE st.licence = j.licence AND j.licence = ?";//" AND saison = ?";
+$query = "SELECT j.nom, j.prenom, j.licence, st.mois, st.points FROM ".cms_db_prefix()."module_ping_sit_mens AS st, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE st.licence = j.licence AND j.licence = ? AND saison = ?";
 //echo $query;
-$dbresult = $db->Execute($query, array($licence));
+$dbresult = $db->Execute($query, array($licence,$saison));
 
 	if($dbresult && $dbresult->RecordCount()>0)
 	{

@@ -54,9 +54,9 @@ foreach($result as $cle =>$tab)
 {
 	$compteur++;
 	
-	$licence = $tab[licence];
-	$advlic = $tab[advlic];
-	$vd = $tab[vd];
+	$licence = $tab['licence'];
+	$advlic = $tab['advlic'];
+	$vd = $tab['vd'];
 	
 		if ($vd =='V')
 		{
@@ -67,29 +67,29 @@ foreach($result as $cle =>$tab)
 			$vd = 0;
 		}
 		
-	$numjourn = $tab[numjourn];
+	$numjourn = $tab['numjourn'];
 	
 		if(is_array($numjourn))
 		{
 			$numjourn = '0';
 		}
 		
-	$codechamp = $tab[codechamp];
+	$codechamp = $tab['codechamp'];
 	
 	//on essaie de déterminer le nom de cette compet ?
 	$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competition WHERE code_compet = ?";
 	
-	$dateevent = $tab[date];
+	$dateevent = $tab['date'];
 	$chgt = explode("/",$dateevent);
 	$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
 	//echo "la date est".$date_event;
 	
 //	$date_event = conv_date_vers_mysql($dateevent);
-	$advsexe = $tab[advsexe];
-	$advnompre = $tab[advnompre];
-	$pointres = $tab[pointres];
-	$coefchamp = $tab[coefchamp];
-	$advclaof = $tab[advclaof];
+	$advsexe = $tab['advsexe'];
+	$advnompre = $tab['advnompre'];
+	$pointres = $tab['pointres'];
+	$coefchamp = $tab['coefchamp'];
+	$advclaof = $tab['advclaof'];
 	
 /**/	$query = "SELECT licence,advlic, numjourn, codechamp, date_event, coefchamp FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND advlic = ? AND numjourn = ? AND codechamp = ? AND date_event = ? AND coefchamp = ?";
 	$dbresult = $db->Execute($query, array($licence, $advlic, $numjourn, $codechamp, $date_event, $coefchamp));
@@ -107,9 +107,9 @@ foreach($result as $cle =>$tab)
 			}
 	}
 }
-$comptage = $i;
+$comptage == $i;
 $status = 'Parties FFTT';
-$designation.= "Récupération de ".$comptage." parties sur ".$compteur." de ".$player;
+$designation.= "Récupération de ".$i." parties sur ".$compteur." de ".$player;
 $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 $action = "retrieve_parties";
 $dbresult = $db->Execute($query, array($now, $status,$designation,$action));

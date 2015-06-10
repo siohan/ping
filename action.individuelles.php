@@ -103,7 +103,7 @@ var_dump($array_V);
 			
 			$array = ping_admin_ops::array_code_compet($type_compet=$code);
 			//echo "le mois de référence est : ".$mois_ref;
-			if($mois_ref == $mois_en_cours && $jour <10)
+			if($mois_ref == $mois_en_cours && $jour <=10)
 			{
 				//on est dans le spid
 				$spid =1;
@@ -182,6 +182,7 @@ var_dump($array_V);
 					$i++;	
 					
 				}//fin du $result2
+				
 				
 			$rowarray[]  = $onerow;
 			$smarty->assign('items', $rowarray);

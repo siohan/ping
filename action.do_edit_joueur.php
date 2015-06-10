@@ -74,16 +74,24 @@ $designation = '';
 			if(!$dbresult){
 				$designation.= $db->ErrorMsg();
 			}
-			else{
+			else
+			{
 				$designation.="Ajout de ".$nom." ".$prenom;
 			}
 			
 			//il faut aussi insérer le joueur dans la table des situations mensuelles
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
-			$dbresult = $db->Execute($query, array($saison, $now, $licence, 'Janvier 2000', '0','0'));
+			//est-il déjà présent ?
+			$query = "SELECT licence FROM".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
+			$dbresult = $db->Execute($query, array($licence));
+			$compteur = $dbresult->RecordCount();
+			if($compteur ==0)
+			{			
+				$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
+				$dbresult = $db->Execute($query, array($saison, $now, $licence, 'Janvier 2000', '0','0'));
 			
-			if(!$dbresult){
-				$designation.= $db->ErrorMsg();
+				if(!$dbresult){
+					$designation.= $db->ErrorMsg();
+				}
 			}
 			
 		}

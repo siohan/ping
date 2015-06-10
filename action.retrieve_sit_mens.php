@@ -22,7 +22,7 @@ $annee_courante = date('Y');
 $mois_reel = $mois_courant - 1;
 $mois_sm = $mois_francais["$mois_reel"];
 $mois_sit_mens = $mois_sm." ".$annee_courante;
-
+$saison = $this->GetPreference('saison_en_cours');
 $designation = ''; //instanciation du message de sortie
 
 //echo "le mois de la situation mensuelle est : ".$mois_sit_mens;
@@ -75,24 +75,24 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 //var_dump($result);
 //echo "la licence est $result[licence]";
 			
-		$licence2 = $result[licence];
+		$licence2 = $result['licence'];
 	//	echo "la licence est $licence <br />";
-		$nom = $result[nom];
-		$prenom = $result[prenom];
-		$natio = $result[natio];
-		$clglob = $result[clglob];
-		$point = $result[point];
-		$aclglob = $result[aclglob];
-		$apoint = $result[apoint];
-		$clnat = $result[clnat];
-		$categ = $result[categ];
-		$rangreg = $result[rangreg];
-		$rangdep = $result[rangdep];
-		$valcla = $result[valcla];
-		$clpro = $result[clpro];
-		$valinit = $taresultb[valinit];
-		$progmois = $result[progmois];
-		$progann = $result[progann];
+		$nom = $result['nom'];
+		$prenom = $result['prenom'];
+		$natio = $result['natio'];
+		$clglob = $result['clglob'];
+		$point = $result['point'];
+		$aclglob = $result['aclglob'];
+		$apoint = $result['apoint'];
+		$clnat = $result['clnat'];
+		$categ = $result['categ'];
+		$rangreg = $result['rangreg'];
+		$rangdep = $result['rangdep'];
+		$valcla = $result['valcla'];
+		$clpro = $result['clpro'];
+		$valinit = $taresultb['valinit'];
+		$progmois = $result['progmois'];
+		$progann = $result['progann'];
 		
 		if( $licence2 == '')
 		{
@@ -103,7 +103,7 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 			$status = "error";
 			$designation = "Licence absente pour ".$player." ou coupure du service";
 			$action = "retrieve_sit_mens";
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datemaj, status, designation, action) VALUES ('', ?, ?, ?, ?)";
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 			$dbresult = $db->Execute($query, array($now, $status, $designation, $action));
 			$this->SetMessage("licence absente à la FFTT ou coupure du service");
 				$this->RedirectToAdminTab('situation');
@@ -112,9 +112,9 @@ $dbresultat = $db->Execute($query, array($licence,$mois_courant,$annee_courante)
 		else
 		{
 			
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj,saison mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
-			$dbresultat = $db->Execute($query,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
+			$dbresultat = $db->Execute($query,array($now,$now,$saison,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
 				//On vérifie que l'insertion se passe bien
 				
 				if(!$dbresultat)
