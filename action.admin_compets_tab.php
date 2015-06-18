@@ -24,12 +24,12 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->tag= $row['tag'];
 	$onerow->coefficient= $row['coefficient'];
 	$onerow->indivs= $row['indivs'];
-	
+	/*
 	if($row['indivs'] =='1')
 	{
 		$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('type_compet'=>$row['code_compet']));
 	}
-	
+	*/
 	$onerow->editlink = $this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
 	
 	if($this->CheckPermission('Ping Delete'))

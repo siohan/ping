@@ -256,13 +256,13 @@ public function retrieve_parties_spid( $licence )
 						if($indivs == 1) //on est bien dans une compet individuelles
 						{
 							//on est bien dans le cadre d'une compet individuelle
-							$query_participe = "SELECT * FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND type_compet = ?";
-							$dbparticipe = $db->Execute($query_participe,array($licence,$type_compet_temp));
+							$query_participe = "SELECT * FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND type_compet = ? AND date_debut = ?";
+							$dbparticipe = $db->Execute($query_participe,array($licence,$type_compet_temp,$date_mysql));
 							
 							if($dbparticipe->RecordCount()==0)//le joueur n'est pas inscrit, on le fait
 							{
-								$query_participe2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence,type_compet) VALUES (?,?)";
-								$dbparticipe2 = $db->Execute($query_participe2, array($licence,$type_compet_temp));
+								$query_participe2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence,type_compet,date_debut) VALUES (?, ?, ?)";
+								$dbparticipe2 = $db->Execute($query_participe2, array($licence,$type_compet_temp,$date_mysql));
 							}
 						}
 					}

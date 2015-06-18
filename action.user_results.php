@@ -3,11 +3,11 @@ if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 $db =& $this->GetDb();
 //global $themeObject;
-require_once(dirname(__FILE__).'/include/prefs.php');
+//require_once(dirname(__FILE__).'/include/prefs.php');
 $licence = '';
 $date_event = '';
-$affiche = 1;
-
+$affiche = 1;//cette variable détermine l'affichage par mois
+$saison_courante = $this->GetPreference('saison_en_cours');
 	if(!isset($params['licence']) && $params['licence'] =='' )
 	{
 		echo "la licence est absente !";
@@ -46,6 +46,7 @@ $affiche = 1;
 		$parms['saison'] = $saison_courante;
 		$parms['licence'] = $licence;
 		//on presente phase par phase ?
+		
 		if($affiche ==1)
 		{
 			if($this->GetPreference('phase_en_cours') =='1' )
@@ -93,7 +94,7 @@ $affiche = 1;
 					$rowarray1[]= $onerow1;
 				}
 			}
-		$smarty->assign('items1', $rowarray1);
+			$smarty->assign('items1', $rowarray1);
 
 
 		$query1 = "SELECT CONCAT_WS(' ', nom, prenom) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
@@ -115,6 +116,7 @@ $affiche = 1;
 		$query3= "SELECT advnompre, advclaof,pointres, vd,date_event FROM ".cms_db_prefix()."module_ping_parties WHERE saison = ? AND licence = ?";//" ORDER BY date_event ASC";
 		$parms['licence'] = $licence;
 		$parms['saison'] = $saison_courante;
+		
 		if($affiche =='1')
 		{
 			if($this->GetPreference('phase_en_cours') =='1' )
@@ -167,58 +169,36 @@ $affiche = 1;
 		}
 		
 		$dbresult3 = $db->Execute($query3, $parms);
-		/*
-			if($dbresult3 && $dbresult3->RecordCount()>0)
-			{
-				while($row1 = $dbresult3->FetchRow())
-				{
-					$onerow1= new StdClass();
-					$onerow1->rowclass= $rowclass;
-					$onerow1->vic= $row1['vic'];
-					$onerow1->total= $row1['total'];
-					$onerow1->pts= $row1['pts'];
-			
-					($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
-					$rowarray1[]= $onerow1;
-				}
-			}//echo $query;
-		*/
-		/*
-		if($affiche ==1)
-		{
-			//On met un ordre particulier ou pas ?
-			$query3.=" ORDER BY date_event DESC";
-			$dbresult3= $db->Execute($query3, array($licence, $saison_courante));
-		}
-		else
-		{
-			$dbresult3= $db->Execute($query3, array($licence, $saison_courante,$date_debut, $date_fin));
-		}
-		*/
+		
 		$rowarray= array ();
 
 		if ($dbresult3 && $dbresult3->RecordCount() > 0)
-		  {
+		{
 		    while ($row= $dbresult3->FetchRow())
-		      {
+			{
 	
-			$onerow= new StdClass();
-			$onerow->rowclass= $rowclass;
-			$onerow->date_event= $row['date_event'];
-			$onerow->advnompre= $row['advnompre'];
-			//$onerow->nom= $row['nom'];
-			$onerow->advclaof= $row['advclaof'];
-			$onerow->vd= $row['vd'];
-			//$onerow->coeff= $row['coeff'];
-			$onerow->pointres= $row['pointres'];
-			$rowarray[]= $onerow;
-		      }
-		  }
+				$onerow= new StdClass();
+				$onerow->rowclass= $rowclass;
+				$onerow->date_event= $row['date_event'];
+				$onerow->advnompre= $row['advnompre'];
+				//$onerow->nom= $row['nom'];
+				$onerow->advclaof= $row['advclaof'];
+				$onerow->vd= $row['vd'];
+				//$onerow->coeff= $row['coeff'];
+				$onerow->pointres= $row['pointres'];
+				$rowarray[]= $onerow;
+		      	}
+		}
+		else
+		{
+			$this->RedirectForFrontEnd($id, $returnid, 'user_results', array('licence'=>$licence));
+		}
+		
 		$smarty->assign('resultats',
 				$this->CreateLink($id,'user_results',$returnid,$contents = 'Tous ses résultats', array('licence'=>$licence)));
 	}//fin du else (if $licence isset)
 
-$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
+$smarty->assign('itemsfound', $this->Lang('resultfoundtext'));
 $smarty->assign('ok',$ok);
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('retour',

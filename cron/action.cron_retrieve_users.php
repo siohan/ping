@@ -1,15 +1,12 @@
 <?php
-/**
- * Generates a backup of the database and sends it in an email
- *
- * @author Elijah Lofgren < elijahlofgren [at] elijahlofgren.com>
- * @version $Id: backup-database-cron.php 2135 2005-08-07 13:43:29Z elijahlofgren $
- */
+
 //require_once ('../../../../config.php');
 //$link = mysqli_connect($config['db_hostname'],$config['db_username'],$config['db_password'],$config['db_name']) or die("Error " . mysqli_error($link));
 //echo $config['db_hostname'];
-echo "Coucou !";
 
+$link = mysqli_connect('agiwebcoce-ran.mysql.db','agiwebcoce-ran','TypapyzT1','agiwebcoce-ran') or die("Error " . mysqli_error($link));
+$query1 = "INSERT INTO demo_adminlog ( user_id, username, item_name, action) VALUES('1', 'Siohan cron', 'Tennis de table', 'Execution tache cron')";
+$result = mysqli_query($link,$query1);
 
 #
 #EOF

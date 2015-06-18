@@ -11,8 +11,7 @@
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
 	<td>{$entry->joueur}</td>
-	<td>{$entry->adv}</td>
-	<td>{$entry->ecart}</td>
+	<td>{$entry->adv}({$entry->advclaof})</td>
     <td>{$entry->pointres}</td>
     </tr>
 {/foreach}

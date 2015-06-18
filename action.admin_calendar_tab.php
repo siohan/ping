@@ -163,7 +163,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND MONTH(cal.date_debut) = ?";
+$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,comp.indivs,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND MONTH(cal.date_debut) = ?";
 		$query .=" ORDER BY cal.date_debut ASC";
 		$dbresult= $db->Execute($query, array($mois_choisi));
 
@@ -187,6 +187,7 @@ $rowarray= array ();
   	{
     		while ($row= $dbresult->FetchRow())
       		{
+			$indivs = $row['indivs'];
 			$onerow= new StdClass();
 			$onerow->rowclass= $rowclass;
 			$onerow->id= $row['id'];
@@ -197,6 +198,11 @@ $rowarray= array ();
 			$onerow->date_fin= $row['date_fin'];
 			$onerow->numjourn= $row['numjourn'];
 			$onerow->tag= $row['tag'];
+			$onerow->indivs = $row['indivs'];
+			if($indivs =='1')
+			{
+				$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('type_compet'=>$row['type_compet'],'date_debut'=>$row['date_debut'],'date_fin'=>$row['date_fin']));
+			}
 			$onerow->retrievelink= $this->CreateLink($id, 'retrieve_indivs', $returnid, 'Récupérer', array("type_compet"=>$row['type_compet'], "coefficient"=>$row['coefficient']));
 			$onerow->editlink= $this->CreateLink($id, 'add_compet', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('record_id'=>$row['id']));
 			

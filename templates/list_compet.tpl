@@ -36,9 +36,7 @@
     <td>{$entry->id}</td>
     <td>{$entry->name}</td>
    	<td>{$entry->coefficient}</td>
-	<td>{$entry->indivs}
-	{if $entry->indivs == 1}
-	|{$entry->participe}{/if}</td>
+	<td>{if $entry->indivs =='1'}Oui{else}Non{/if}</td>
 	<td>{$entry->tag}</td>
 	<td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>

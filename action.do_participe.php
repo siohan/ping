@@ -24,29 +24,44 @@ $error = 0;
 		{
 			$error++;
 		}
-		//on vire toutes les données de cette compet avant 
-		$query = "DELETE FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ?";
-		$dbquery = $db->Execute($query, array($type_compet));	
-		$licence = '';
-		if (isset($params['licence']) && $params['licence'] != '')
+		$date_debut = '';
+		if (isset($params['date_debut']) && $params['date_debut'] != '')
 		{
-			$licence = $params['licence'];
+			$date_debut = $params['date_debut'];
+		}
+		else
+		{
 			$error++;
 		}
-		foreach($licence as $key=>$value)
+		$date_debut = '';
+		if (isset($params['date_fin']) && $params['date_fin'] != '')
 		{
-			
-			
-					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence, type_compet) VALUES (?, ?)";
-					echo $query2;
-					$dbresultat = $db->Execute($query2, array($key, $type_compet));
-					
-				
-				
-			
-				
+			$date_fin = $params['date_fin'];
 		}
-
+		else
+		{
+			$error++;
+		}
+		if($error ==0)
+		{
+			//on vire toutes les données de cette compet avant 
+			$query = "DELETE FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ? AND date_debut = ?";
+			$dbquery = $db->Execute($query, array($type_compet, $date_debut));	
+			$licence = '';
+			if (isset($params['licence']) && $params['licence'] != '')
+			{
+				$licence = $params['licence'];
+				$error++;
+			}
+			foreach($licence as $key=>$value)
+			{
+				$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence, type_compet,date_debut) VALUES (?, ?, ?)";
+				echo $query2;
+				$dbresultat = $db->Execute($query2, array($key, $type_compet, $date_debut));
+			}
+			
+		}
+		
 
 $this->SetMessage('participants ajoutés !');
 $this->RedirectToAdminTab('compets');

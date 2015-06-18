@@ -71,8 +71,9 @@ $dict->ExecuteSQLArray($sqlarray);
 $idxflds = 'saison, libequipe, liendivision';
 $tabname = cms_db_prefix()."module_ping_equipes";
 $idxname = 'unicite';
-$idxoptarray = 'Unique';
-  $sqlarray = $dict->CreateIndexSQL($idxname, $tabname, $idxflds);
+//$idxoptarray = 'Unique';
+$dict = NewDataDictionary( $db );
+  $sqlarray = $dict->CreateIndexSQL('unicite', 'demo_module_ping_equipes', 'saison, libequipe, liendivision');//, array('UNIQUE'));
   $dict->ExecuteSQLArray($sqlarray);
 //une nouvelle table pour les victoires brutes (pas de victoires détaillées pour l'instant)
 $dict = NewDataDictionary( $db );
@@ -238,6 +239,7 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
+	saison C(255),
 	type_compet C(3),
 	date_debut D,
 	date_fin D,
@@ -326,7 +328,9 @@ $dict->ExecuteSQLArray($sqlarray);
 $dict = NewDataDictionary( $db );
 $flds = "
 	licence I(11),
-	type_compet C(3)";
+	type_compet C(3),
+	date_debut D,
+	date_fin D";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_participe",

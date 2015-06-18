@@ -218,6 +218,7 @@ case "0.2.2" :
 		       $dict->ExecuteSQLArray($sqlarray);
 	}
 case "0.2.3" : 
+case "0.2.3.1" :
 	{
 		$dict = NewDataDictionary($db);
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_type_competitions", "tag C(255)");
@@ -319,7 +320,41 @@ case "0.2.3" :
 		
 		
 	}
+case "0.2.4" : 
+	{
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_calendrier", "saison C(255)");
+		$dict->ExecuteSQLArray( $sqlarray );
+		$query = "UPDATE ".cms_db_prefix()."module_ping_calendrier SET saison= '2014-2015' WHERE MONTH(date_debut)>=9 AND YEAR(date_debut) = '2014' OR (MONTH(date_debut)<=7 AND YEAR(date_debut) = '2015')";
+		$db->Execute($query);
+		
+		//modification de la table participe
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_participe", "date_debut D, date_fin D");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//on supprime tous les enregistrements de la table participe !!
+		//du coup , on fait uniquement des insert !
+		
+		$query = "TRUNCATE TABLE ".cms_db_prefix()."module_ping_participe";
+		$db->Execute($query);
+		
+		//on met à jour la table avec les éléments existants depuis la table spid
+		
+		$query = "SELECT DISTINCT sp.licence,sp.date_event,sp.epreuve, tc.indivs,tc.code_compet FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE sp.epreuve = tc.name AND saison = '2014-2015' AND tc.indivs = 1 ORDER BY sp.licence ASC";
+		$dbresult = $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$query1 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence, type_compet, date_debut) VALUES (?, ?, ?)";
+				$dbresultat = $db->Execute($query1, array($row['licence'],$row['code_compet'], $row['date_event']));
 
+			}
+		}
+		
+		
+	}
 
 }
 

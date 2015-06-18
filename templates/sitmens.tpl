@@ -25,7 +25,8 @@ $(document).ready(function(){
 <div class="pageoptions"><p class="pageoptions">{$mois_precedent}&nbsp;{$mois_suivant} </p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} </p></div>
 {if $itemcount > 0}
-<table border="0" cellspacing="0" cellpadding="0" class="table table-hover" id="articlelist">
+<h3> Situation officielle du mois de {$mois_choisi}</h3>
+<table class="table table-bordered tablesorter" id="articlelist">
  <thead>
 	<tr>
 		<th>Joueur</th>

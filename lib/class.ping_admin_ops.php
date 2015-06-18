@@ -535,30 +535,38 @@ public static function get_sit_mens($licence, $mois_event, $saison)
 //end of function
 }
 
-public static function array_code_compet($type_compet)
+public static function array_code_compet($code,$date_debut,$date_fin)
 {
 	global $gCms;
 	$db = cmsms()->GetDb();
 	$ping = cms_utils::get_module('Ping');
-	$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ?";
-	$dbresultat4 = $db->Execute($query4,array($type_compet));
+	
+		$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ? AND date_debut BETWEEN  ? AND ?";
+		$dbresultat4 = $db->Execute($query4,array($code, $date_debut,$date_fin));
+	
+	
 	$row4 = $dbresultat4->GetRows();
 	$lignes = $dbresultat4->RecordCount();
-	//echo $lignes."<br />";
-	//echo $row4[1][licence];
-	$lic = array();
-	$i=0;
-
-	for($i=0;$i<=$lignes;$i++)
+	if($lignes >0)
 	{
-		$tab[$i] = $row4[$i]['licence'];
 		
-		array_push($lic,$tab[$i]);
-		//$licen = array();
-		//$licen = substr(implode(", ", $lic), 0, -3);
-		//$licen = implode(", ", $lic);
+	
+		//echo $lignes."<br />";
+		//echo $row4[1][licence];
+		$lic = array();
+		$i=0;
+
+		for($i=0;$i<=$lignes;$i++)
+		{
+			$tab[$i] = $row4[$i]['licence'];
+		
+			array_push($lic,$tab[$i]);
+			//$licen = array();
+			//$licen = substr(implode(", ", $lic), 0, -3);
+			//$licen = implode(", ", $lic);
+		}
+		return $lic;
 	}
-	return $lic;
 //end of function
 }
 

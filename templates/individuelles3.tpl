@@ -15,7 +15,7 @@
 		{*<pre>{$prods_{$entry->valeur}|var_dump}</pre>*}	<tr><td>{$donnee->joueur}</td><td>{$donnee->vic}</td><td>{$donnee->sur}</td><td>{$donnee->pts}</td><td>{$donnee->details}</td></tr>
 		{/foreach}
 		</table>
-		
+		{if $entry->spid == 1}(* Estimations Spid){/if}
 		{else}
 		<p>Pas encore de résultats !</p>
 		{/if}
