@@ -97,6 +97,7 @@ public function retrieve_parties_spid( $licence )
 						}
 					//on va vérifier si on a la situation mensuelle du joueur du club à jour pour le mois en question
 					$retour_sit_mens = ping_admin_ops::get_sit_mens($licence,$mois_event,$saison_courante);
+					
 					if($retour_sit_mens==0)
 					{
 						$designation.="Situation du mois ".$mois_event." manquante pour ".$player;
@@ -106,40 +107,40 @@ public function retrieve_parties_spid( $licence )
 					else
 					{
 						
-					$nom = $tab['nom'];
-					//on adapte son nom d'abord
-					$nom_global = ping_admin_ops::get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
-					$nom_reel1 = $nom_global[0];
-					$nom_reel = addslashes($nom_global[0]);//le nom					
-					$prenom_reel = $nom_global[1];//le prénom
-					$annee_courante = date('Y');
+						$nom = $tab['nom'];
+						//on adapte son nom d'abord
+						$nom_global = ping_admin_ops::get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
+						$nom_reel1 = $nom_global[0];
+						$nom_reel = addslashes($nom_global[0]);//le nom					
+						$prenom_reel = $nom_global[1];//le prénom
+						$annee_courante = date('Y');
 					
-					$classement = $tab['classement'];//classement fourni par le spid
-					$cla = substr($classement, 0,1);
-						//Avec le nom on va aller chercher la situation mensuelle de l'adversaire
-						//on pourra la stocker pour qu'elle re-serve et l'utiliser pour affiner le calcul des points
-						//d'abord on va chercher ds la bdd si l'adversaire y est déjà pour le mois et la saison en question
-						$query4 = "SELECT points FROM ".cms_db_prefix()."module_ping_adversaires WHERE nom = ? AND prenom = ? AND mois = ? AND annee = ?";
-						//echo $query4.'<br />';
-						$dbresult4 = $db->Execute($query4, array($nom_reel1, $prenom_reel,$mois_event,$annee_courante));
+						$classement = $tab['classement'];//classement fourni par le spid
+						$cla = substr($classement, 0,1);
+							//Avec le nom on va aller chercher la situation mensuelle de l'adversaire
+							//on pourra la stocker pour qu'elle re-serve et l'utiliser pour affiner le calcul des points
+							//d'abord on va chercher ds la bdd si l'adversaire y est déjà pour le mois et la saison en question
+							$query4 = "SELECT points FROM ".cms_db_prefix()."module_ping_adversaires WHERE nom = ? AND prenom = ? AND mois = ? AND annee = ?";
+							//echo $query4.'<br />';
+							$dbresult4 = $db->Execute($query4, array($nom_reel1, $prenom_reel,$mois_event,$annee_courante));
 
-							if($dbresult4 && $dbresult4->RecordCount()>0 && $dbresult4->RecordCount() <2)//ok on a un enregistrement qui correspond
-							{
-								$row4 = $dbresult4->FetchRow();
-								$newclass = $row4['points'];
-							}
-							//deuxième cas : 
-							//on n'a pas d'enregistrement et on est dans le mois courant et l'année courante : on va chercher les points avec la classe pour ensuite l'insérer ds la bdd
-							elseif($dbresult4->RecordCount()==0 && $mois_event == date('n') && $annee == date('Y'))
-							{
-								//on va chercher la sit mens du pongiste
+								if($dbresult4 && $dbresult4->RecordCount()>0 && $dbresult4->RecordCount() <2)//ok on a un enregistrement qui correspond
+								{
+									$row4 = $dbresult4->FetchRow();
+									$newclass = $row4['points'];
+								}
+								//deuxième cas : 
+								//on n'a pas d'enregistrement et on est dans le mois courant et l'année courante : on va chercher les points avec la classe pour ensuite l'insérer ds la bdd
+								elseif($dbresult4->RecordCount()==0 && $mois_event == date('n') && $annee == date('Y'))
+								{
+									//on va chercher la sit mens du pongiste
 								
 
-								$service = new Service();
-								$resultat = $service->getJoueursByName("$nom_reel", $prenom ="$prenom_reel");
-								//var_dump($resultat);
-								if(is_array($resultat) && count($resultat)>0 && count($resultat)<2)
-								{//on a bien un tableau avec au moins un élément : c'est ok !
+									$service = new Service();
+									$resultat = $service->getJoueursByName("$nom_reel", $prenom ="$prenom_reel");
+									//var_dump($resultat);
+									if(is_array($resultat) && count($resultat)>0 && count($resultat)<2)
+									{//on a bien un tableau avec au moins un élément : c'est ok !
 
 										//on a un résultat ?
 										//echo "Glop";
@@ -190,16 +191,31 @@ public function retrieve_parties_spid( $licence )
 										}
 
 
+									}
+									else
+									{
+										if(count($resultat)>1)//homonymie, etc...
+										{
+											$designation.="Homonymie pour ".$player;
+											$error++;
+										}
+										//echo "Pas Glop";
+										if($cla == 'N'){
+										$newclassement = explode('-', $classement);
+										$newclass = $newclassement[1];
+										}
+										else 
+										{
+											$newclass = $classement;
+										}
+									}//fin du if is_array($resultat)
 								}
 								else
 								{
-									if(count($resultat)>1)//homonymie, etc...
+									//troisième cas : 
+									//on n'a pas les points et on n'est pas dans le mois courant, on n'insère pas et on utilise le classement fourni
+									if($cla == 'N')
 									{
-										$designation.="Homonymie pour ".$player;
-										$error++;
-									}
-									//echo "Pas Glop";
-									if($cla == 'N'){
 										$newclassement = explode('-', $classement);
 										$newclass = $newclassement[1];
 									}
@@ -207,105 +223,93 @@ public function retrieve_parties_spid( $licence )
 									{
 										$newclass = $classement;
 									}
-								}//fin du if is_array($resultat)
-							}
-							else
+								}
+						//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
+						$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND saison = ?";
+						$dbresult = $db->Execute($query, array($licence,$mois_event,$saison_courante));
+						//si la situation mensuelle du joueur du club n'existe pas ?
+						//alors on n'enregistre pas le résultat et on le signale
+						
+							if ($dbresult && $dbresult->RecordCount() == 0)
 							{
-								//troisième cas : 
-								//on n'a pas les points et on n'est pas dans le mois courant, on n'insère pas et on utilise le classement fourni
-								if($cla == 'N'){
-									$newclassement = explode('-', $classement);
-									$newclass = $newclassement[1];
-								}
-								else 
-								{
-									$newclass = $classement;
-								}
+								//$designation.="Ecart non calculé";
+								$ecart = 0;
+								$error++;
 							}
-					//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
-					$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND saison = ?";
-					$dbresult = $db->Execute($query, array($licence,$mois_event,$saison_courante));
-					//si la situation mensuelle du joueur du club n'existe pas ?
-					//alors on n'enregistre pas le résultat et on le signale
-						if ($dbresult && $dbresult->RecordCount() == 0)
-						{
-							//$designation.="Ecart non calculé";
-							$ecart = 0;
-							$error++;
-						}
 						
 
-					$row = $dbresult->FetchRow();
-					$points = $row['points'];
-					$ecart_reel = $points - $newclass;
+						$row = $dbresult->FetchRow();
+						$points = $row['points'];
+						$ecart_reel = $points - $newclass;
 					
-					//on calcule l'écart selon la grille de points de la FFTT
-					$type_ecart = ping_admin_ops::CalculEcart($ecart_reel);
-					$epreuve = $tab['epreuve'];
+						//on calcule l'écart selon la grille de points de la FFTT
+						$type_ecart = ping_admin_ops::CalculEcart($ecart_reel);
+					
+						$epreuve = $tab['epreuve'];
 					// le joueur participe à cette compétition ? (pour les epreuves individuelles uniquement)
-					$query_epreuve = "SELECT indivs, code_compet FROM ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE tc.name = ?";
-					$dbepreuve = $db->Execute($query_epreuve,array($epreuve));
-					
-					if($dbepreuve && $dbepreuve->RecordCount()>0)
-					{
-						$row = $dbepreuve->FetchRow();
-						$indivs = $row['indivs'];
-						$indivs3 = $row['indivs'];
-						$type_compet_temp = $row['code_compet'];
-						
-						if($indivs == 1) //on est bien dans une compet individuelles
+						$query_epreuve = "SELECT indivs, code_compet FROM ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE tc.name = ?";
+						$dbepreuve = $db->Execute($query_epreuve,array($epreuve));
+				
+						if($dbepreuve && $dbepreuve->RecordCount()>0)
 						{
-							//on est bien dans le cadre d'une compet individuelle
-							$query_participe = "SELECT * FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND type_compet = ? AND date_debut = ?";
-							$dbparticipe = $db->Execute($query_participe,array($licence,$type_compet_temp,$date_mysql));
-							
-							if($dbparticipe->RecordCount()==0)//le joueur n'est pas inscrit, on le fait
+							$row = $dbepreuve->FetchRow();
+							$indivs = $row['indivs'];
+							$indivs3 = $row['indivs'];
+							$type_compet_temp = $row['code_compet'];
+					
+							if($indivs == 1) //on est bien dans une compet individuelles
 							{
-								$query_participe2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence,type_compet,date_debut) VALUES (?, ?, ?)";
-								$dbparticipe2 = $db->Execute($query_participe2, array($licence,$type_compet_temp,$date_mysql));
+								//on est bien dans le cadre d'une compet individuelle
+								$query_participe = "SELECT * FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND type_compet = ? AND date_debut = ?";
+								$dbparticipe = $db->Execute($query_participe,array($licence,$type_compet_temp,$date_mysql));
+						
+								if($dbparticipe->RecordCount()==0)//le joueur n'est pas inscrit, on le fait
+								{
+									$query_participe2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence,type_compet,date_debut) VALUES (?, ?, ?)";
+									$dbparticipe2 = $db->Execute($query_participe2, array($licence,$type_compet_temp,$date_mysql));
+								}
 							}
 						}
-					}
-					else //la compet n'existe pas , on l'ajoute au type de compétiton
-					{
-						if($epreuve != 'Critérium fédéral')
+						else //la compet n'existe pas , on l'ajoute au type de compétiton
 						{
-							//on créé un code compet temporaire
-							$type_compet_temp = ping_admin_ops::random(3);
-							//$coeff[1] = $type_compet_tmp;
-							$coeff_provisoire = '0.00';
-							//on fait qd même l'inclusion d'une nouvelle compet
-							$indivs2 = 1;
-							$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name,code_compet,coefficient,indivs) VALUES ('',?, ?, ?, ?)";
-							$db->Execute($query, array($epreuve,$type_compet_temp,$coeff_provisoire, $indivs2));
-							//echo "coefficient introuvable !";
+							if($epreuve != 'Critérium fédéral')
+							{
+								//on créé un code compet temporaire
+								$type_compet_temp = ping_admin_ops::random(3);
+								//$coeff[1] = $type_compet_tmp;
+								$coeff_provisoire = '0.00';
+								//on fait qd même l'inclusion d'une nouvelle compet
+								$indivs2 = 1;
+								$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name,code_compet,coefficient,indivs) VALUES ('',?, ?, ?, ?)";
+								$db->Execute($query, array($epreuve,$type_compet_temp,$coeff_provisoire, $indivs2));
+								//echo "coefficient introuvable !";
+							}
+				
 						}
-					
-					}
-					
-					// de quelle compétition s'agit-il ? 
-					//On a la date et le type d'épreuve
-					//on peut donc en déduire le tour via le calendrier
-					//et le coefficient pour calculer les points via la table type_competitons
-					//1 - on récupère le coefficient de la compétition
-					$coeff = ping_admin_ops::coeff($epreuve,$licence);// la licence en cas de critérium fédéral(2 coeffs distincts)
-					//var_dump($coeff);
-					$coeff_reel_tmp = $coeff[0];
-					//echo 'le coeff est : '.$coeff_reel_tmp;
-					/*$error_coeff = '';
-						if(isset($coeff[1]))
-						{
-							$code_compet_tmp = $coeff[1];
-						}
-						if($coeff_reel_tmp =='0.00' || !isset($coeff_reel_tmp))
-						{
-							$error_coeff = 1;
-						}
-					*/
-					//2 - on récupére le tour s'il existe
-					//on va fdonc chercher dans la table calendrier
-					$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet = ? AND date_debut = ? OR date_fin = ?";
-					$resultat = $db->Execute($query, array($type_compet_temp, $date_mysql,$date_mysql));
+				
+						// de quelle compétition s'agit-il ? 
+						//On a la date et le type d'épreuve
+						//on peut donc en déduire le tour via le calendrier
+						//et le coefficient pour calculer les points via la table type_competitons
+						//1 - on récupère le coefficient de la compétition
+						$coeff = ping_admin_ops::coeff($epreuve,$licence);// la licence en cas de critérium fédéral(2 coeffs distincts)
+						//var_dump($coeff);
+						$coeff_reel_tmp = $coeff[0];
+						//echo 'le coeff est : '.$coeff_reel_tmp;
+						/*$error_coeff = '';
+							if(isset($coeff[1]))
+							{
+								$code_compet_tmp = $coeff[1];
+							}
+							if($coeff_reel_tmp =='0.00' || !isset($coeff_reel_tmp))
+							{
+								$error_coeff = 1;
+							}
+						*/
+						//2 - on récupére le tour s'il existe
+						//on va fdonc chercher dans la table calendrier
+						$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet = ? AND date_debut = ? OR date_fin = ?";
+						$resultat = $db->Execute($query, array($type_compet_temp, $date_mysql,$date_mysql));
 
 						if ($resultat && $resultat->RecordCount()>0){
 							$row = $resultat->FetchRow();
@@ -321,27 +325,28 @@ public function retrieve_parties_spid( $licence )
 							$querycal = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,type_compet,date_debut,date_fin,numjourn,tag) VALUES ('', ?, ?, ?, ?, ?)";
 							$req = $db->Execute($querycal,array($type_compet_temp,$date_mysql,$date_mysql,$numjourn,$tag));							
 						}
-					
-					
-					
-					//fin du point 2
+				
+				
+				
+						//fin du point 2
 
-					$victoire = $tab['victoire'];
+						$victoire = $tab['victoire'];
 
-						if ($victoire =='V'){
-							$victoire = 1;
-						}
-						else 
-						{
-							$victoire = 0;
-						}
+							if ($victoire =='V')
+							{
+								$victoire = 1;
+							}
+							else 
+							{
+								$victoire = 0;
+							}
 
-					//on peut désormais calculer les points 
-					$points1 = ping_admin_ops::CalculPointsIndivs($type_ecart, $victoire);
-					$pointres = $points1*$coeff_reel_tmp;
-					$forfait = $tab['forfait'];
+						//on peut désormais calculer les points 
+						$points1 = ping_admin_ops::CalculPointsIndivs($type_ecart, $victoire);
+						$pointres = $points1*$coeff_reel_tmp;
+						$forfait = $tab['forfait'];
 
-					
+				
 						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, saison, datemaj, licence, date_event, epreuve, nom, numjourn,classement, victoire,ecart,type_ecart, coeff, pointres, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 						$i++;
 						//echo $query;
@@ -354,14 +359,9 @@ public function retrieve_parties_spid( $licence )
 								$designation = $message;
 								$action = "mass_action";
 								ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
-							}
-					
-						
-					
-					
-					
+							}				
 
-					//on met à jour la date de maj des résultats SPID
+							//on met à jour la date de maj des résultats SPID
 					
 					
 					}//fin du if si la sit mens du joueur du club est dûment renseignée
