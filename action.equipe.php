@@ -2,7 +2,7 @@
 if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 $db =& $this->GetDb();
-$saison = $this->GetPreference('saison_en_cours');
+$saison = (isset($params['saison']))?$params['saison']:$this->GetPreference('saison_en_cours');
 $record_id = '';
 if(!isset($params['record_id']) || $params['record_id'] =='')
 {
@@ -22,8 +22,9 @@ if($dbresult && $dbresult->RecordCount()>0)
 	while($row = $dbresult->FetchRow())
 	{
 		$classement = $row['clt'];
+		$joue = $row['joue'];
 		$friendlyname = $row['friendlyname'];
-		if($classement=='0')
+		if($classement=='0' || $joue =='0' )
 		{
 			$classement = '-';
 		}
@@ -54,8 +55,10 @@ $smarty->assign('items', $rowarray);
 
 
 
-$query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND ren.saison = '2014-2015' AND eq.id = ? GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
-$parms['date_event'] = $record_id;
+$query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv,eq.id as id_alias FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND ren.saison = ? AND eq.id = ? GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
+$parms['saison'] = $saison;
+$parms['id_alias'] = $record_id;
+
 $dbresultat = $db->Execute($query2,$parms);
 $rowarray2 = array();
 $i = 0;

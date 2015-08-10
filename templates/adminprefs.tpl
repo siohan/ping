@@ -5,6 +5,18 @@
 		<p class="pagetext">Le numéro de votre club</p>
 		<p class="pageinput">{$input_club_number}</p>
 	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Votre zone</p>
+		<p class="pageinput">{$input_zone}</p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Votre ligue</p>
+		<p class="pageinput">{$input_ligue}</p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Votre département</p>
+		<p class="pageinput">{$input_dep}</p>
+	</div>
 
 	<div class="pageoverflow">
 		<p class="pagetext">Phase en cours:</p>

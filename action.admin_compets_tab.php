@@ -4,7 +4,21 @@ if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
+//créations de liens de récupération des compétitions
+//on récupère d'abord les préférences de zones, ligues et département
+$fede = '100001';
+$zone = $this->GetPreference('zone');
+$ligue = $this->GetPreference('ligue');
+$dep = $this->GetPreference('dep');
 
+$smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Zone indivs', array("idorga"=>$zone,"type"=>"I")));
+$smarty->assign('zone_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Zone Equipes', array("idorga"=>$zone,"type"=>"I")));
+$smarty->assign('Nat_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'National indivs', array("idorga"=>$fede,"type"=>"I")));
+$smarty->assign('Nat_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'National Equipes', array("idorga"=>$fede,"type"=>"E")));
+$smarty->assign('ligue_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Ligue indivs', array("idorga"=>$ligue,"type"=>"I")));
+$smarty->assign('ligue_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Ligue Equipes', array("idorga"=>$ligue,"type"=>"E")));
+$smarty->assign('dep_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Dép indivs', array("idorga"=>$dep,"type"=>"I")));
+$smarty->assign('dep_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Dép Equipes', array("idorga"=>$dep,"type"=>"E")));
 $result= array ();
 $query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions";
 

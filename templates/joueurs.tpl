@@ -21,10 +21,11 @@ $(document).ready(function(){
 });
 //]]>
 </script>
-{* les messages ci-dessous proviennent de la page action.admin_joueurs_tab*}
+{* les messages ci-dessous proviennent de la page action.updateoptions.php*}
 {if $msg =='Full'}
-<p class="warning">Vider les tables pour commencer l'essai ? {$delete_all}</a></p>
+<p class="warning">Cliquez ci-après pour finaliser le changement de saison {$delete_all}</a></p>
 {/if}
+
 {if $saison_en_cours != $saison}
 <p class="warning">Attention !! Vous devez changer vos paramètres dans l'onglet "Configuration"</p>{/if}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;{$retrieve_users}&nbsp;|&nbsp;{$createlink}&nbsp;| &nbsp;| {$display_unable_players}&nbsp;</p></div>

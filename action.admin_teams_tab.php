@@ -25,7 +25,7 @@ $smarty->assign('score', 'Score');
 $smarty->assign('adversaires', 'Adversaires');
 
 $result= array ();
-$query = "SELECT DISTINCT *, eq.id,comp.name, comp.code_compet FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ? AND comp.code_compet = eq.type_compet";
+$query = "SELECT DISTINCT *, eq.id,comp.name, comp.code_compet, eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ? AND comp.code_compet = eq.type_compet";
 if($this->GetPreference('phase_en_cours') =='1' )
 {
 	if($phase ==2)
@@ -72,6 +72,7 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				$onerow->friendlyname= $row['friendlyname'];
 				$onerow->name= $row['name'];
 				$onerow->type_compet = $row['code_compet'];
+				$onerow->tag = $row['tag_equipe'];
 				//$onerow->view= $this->createLink($id, 'viewteamresult', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('download_poule_results'), '', '', 'systemicon'),array('cle'=>$row['cle'])) ;
 				
 				$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));

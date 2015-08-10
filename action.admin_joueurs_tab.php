@@ -2,6 +2,11 @@
 
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
+if(!$this->CheckPermission('Ping Use'))
+{
+	$this->SetMessage($this->Lang('needpermission'));
+	$this->RedirectToAdminTab('joueurs');
+}
 require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
 $db =& $this->GetDb();

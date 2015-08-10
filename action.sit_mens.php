@@ -77,7 +77,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	
 		$onerow= new StdClass();
 		$onerow->rowclass= $rowclass;
-		$onerow->joueur= $this->CreateLink($id,'user_results',$returnid, $row['joueur'], array("licence"=>$row['licence'],"month"=>$mois_choisi-1));
+		$onerow->joueur= $this->CreateLink($id,'user_results',$returnid, $row['joueur'], array("licence"=>$row['licence'],"month"=>$mois_choisi-1,"saison"=>$saison_courante));
 		$onerow->points = $row['points'];
 		$onerow->clnat= $row['clnat'];
 		$onerow->rangreg= $row['rangreg'];

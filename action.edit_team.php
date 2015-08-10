@@ -67,10 +67,10 @@ $listsaisons = array( '2014-2015'=>'2014-2015');
 $listphase = array('1'=>'1', '2'=>'2');
    
 $smarty->assign('saison',
-		$this->CreateInputDropdown($id, 'saison',$listsaisons,
+		$this->CreateInputText($id, 'saison',
 		(isset($saison)?$saison:$this->GetPreference('saison_en_cours'))));
 $smarty->assign('phase',
-		$this->CreateInputDropdown($id, 'phase',$listphase,
+		$this->CreateInputText($id, 'phase',
 		(isset($phase)?$phase:$this->GetPreference('Phase_en_cours'))));
 $smarty->assign('libequipe',
 		$this->CreateInputText($id, 'libequipe',

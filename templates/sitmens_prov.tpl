@@ -1,7 +1,18 @@
+<script src="http://code.jquery.com/jquery.min.js"></script>
+{literal}
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function() { 
+        $('table').tablesorter( { sortList:[[0,0],[1,0]] } ); 
+    } 
+);
+//]]>
+</script>
+{/literal}
 <div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
-<table class="table table-bordered">
+<table class="table table-bordered tablesorter" id="tablesorter">
 	<thead>
 		<th>Joueur</th>
 		<!--<th>Prog mois</th>-->

@@ -159,8 +159,8 @@ foreach($result as $cle =>$tab)
 					
 					
 					
-						$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,type_compet, numjourn,tag) VALUES ( '', ?, ?, ?, ?, ?)";
-						$dbresult = $db->Execute($query, array($date_event,$date_event,$type_compet,$tour,$tag));
+						$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,type_compet, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
+						$dbresult = $db->Execute($query, array($date_event,$date_event,$type_compet,$tour,$tag,$saison));
 						
 						if($dbresult)
 						{

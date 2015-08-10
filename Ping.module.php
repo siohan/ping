@@ -2,16 +2,16 @@
 
 #-------------------------------------------------------------------------
 # Module : Ping - 
-# Version : 0.2.3, Sc
+# Version : 0.2.5, Sc
 # Auteur : Claude SIOHAN
 #-------------------------------------------------------------------------
 /**
  *
  * @author Claude SIOHAN
- * @since 0.2.4
+ * @since 0.2.5
  * @version $Revision: 3827 $
- * @modifiedby $LastChangedBy: wishy $
- * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 12 Mar 2007) $
+ * @modifiedby $LastChangedBy: Claude
+ * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 28 Juil 2015) $
  * @license GPL
  **/
 class Ping extends CMSModule
@@ -19,7 +19,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.2.4'; }  
+  function GetVersion() { return '0.2.5'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }

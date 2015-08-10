@@ -8,7 +8,7 @@ global $themeObject;
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 $phase = $this->GetPreference('phase_en_cours');
 
-$mois_courant = date('n');
+$mois_courant = 5;// date('n');
 $jour_courant = date('j');
 
 if($jour_courant <=10)

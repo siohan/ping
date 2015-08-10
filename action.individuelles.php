@@ -103,30 +103,7 @@ var_dump($array_V);
 			
 			if(count($array)>0)
 			{
-				/*
-				if($mois_ref == $mois_en_cours && $jour <=10)
-				{
-					//on est dans le spid
-					$spid =1;
-					$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(victoire) AS vic, count(victoire) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
-				//	$tab = 'array'.'_'.$code;
-				//	var_dump($$tab);
-					$query2.=" AND j.licence IN ( '" . implode($array, "', '") . "' )";
-					$query2.=" GROUP BY joueur,j.licence";
-					//echo $query2;
-					$result2 = $db->Execute($query2, array($date_debut, $date_fin));
-				}
-				else
-				{
-					//on est dans la FFTT
-					$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(vd) AS vic, count(vd) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
-				//	$tab = 'array'.'_'.$code;
-				//	var_dump($$tab);
-					$query2.=" AND j.licence IN ( '" . implode($array, "', '") . "' )";
-					$query2.=" GROUP BY joueur,j.licence";
-					//echo $query2;
-				}
-				*/
+				
 				//on est dans la FFTT
 				$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(vd) AS vic, count(vd) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
 			//	$tab = 'array'.'_'.$code;
@@ -142,7 +119,7 @@ var_dump($array_V);
 				{
 					//on est dans le spid
 					$spid =1;
-					$onerow->
+					//$onerow->
 					$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(victoire) AS vic, count(victoire) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
 				//	$tab = 'array'.'_'.$code;
 				//	var_dump($$tab);
@@ -173,29 +150,11 @@ var_dump($array_V);
 							}
 							else
 							{
-								$onerow2->details = $this->CreateLink($id, 'user_results', $returnid, "Détails",array('licence'=>$licence,'date_debut'=>$date_debut, 'date_fin'=>$date_fin)) ;
+								$onerow2->details = $this->CreateLink($id, 'user_results', $returnid, "Détails",array('licence'=>$licence,'date_debut'=>$date_debut, 'date_fin'=>$date_fin, 'saison'=>$saison_courante)) ;
 							}
 						
 							$onerow2->compteur = $compteur;
-							/*
-							//on commence la troisième requete 
-							//on récupère le détail
-							$query3 = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND date_event = ?";
-							$dbresult3 = $db->Execute($query3, array($licence,$date_debut));
-						
-							if($dbresult3 && $dbresult3->RecordCount()>0)
-							{
-								//un nouveau while et oui !
-								while($row3 = $dbresult3->FetchRow())
-								{
-									$onerow3 = new StdClass();
-									$onerow3->joueur = $row2['joueur'];
-									$onerow3->joueur = $row2['joueur'];
-									$onerow3->joueur = $row2['joueur'];
-									$onerow3->joueur = $row2['joueur'];
-								}
-							}
-							*/
+							
 						
 						$rowarray2[] = $onerow2;	
 						}//fin du deuxième while

@@ -18,6 +18,7 @@
 {/if}
 -->
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$Nat_equipes} - {$Nat_indivs} - {$zone_equipes}`- {$zone_indivs} - {$ligue_equipes} - {$ligue_indivs} - {$dep_equipes} - {$dep_indivs}</p></div>
 {if $itemcount > 0}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>

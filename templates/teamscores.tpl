@@ -29,6 +29,7 @@
 		<th>Niveau</th>
 		<th>Compétition</th>
 		<th>Nom court</th>
+		<th>Tag pour affichage</th>
 		<th colspan="4">Actions</th>
 	</tr>
  </thead>
@@ -40,7 +41,7 @@
     <td>{$entry->libdivision}</td>
 	<td>{$entry->name}</td>
     <td>{$entry->friendlyname}</td>
-<!--	<td>{$entry->view}</td>-->
+	<td>{$entry->tag}</td>
 	<td>{$entry->editlink}</td>
 	<td>{$entry->addnewlink}</td>
     <td>{$entry->retrieve_poule_rencontres}</td>

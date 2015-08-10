@@ -13,6 +13,7 @@ $mois_courant = date('n');
 $mois_choisi = '';
 $phase_choisie = '';
 $phase_en_cours = $this->GetPreference('phase_en_cours');
+$saison = $this->GetPreference('saison_en_cours');
 if(isset($params['phase_choisie']) && $params['phase_choisie'] !='')
 {
 	$phase_choisie = $params['phase_choisie'];
@@ -91,7 +92,7 @@ $smarty->assign('mois_suivant',
 $smarty->assign('all_results', 
 		$this->CreateLink($id, 'retrieve_all_poule_rencontres', $returnid, 'Récupérer tous les résultats'));
 //la requete
-$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, cal.type_compet,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.code_compet = cal.type_compet AND MONTH(cal.date_debut) = ?";
+$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, cal.type_compet,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.code_compet = cal.type_compet AND MONTH(cal.date_debut) = ? AND cal.saison = ?";
 //$parms['date_debut'] = $mois_courant;
 /*
 	if($this->GetPreference('phase_en_cours') =='1' )
@@ -118,7 +119,7 @@ $query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_comp
 	}
 */
 $query.=" ORDER BY cal.date_debut ASC";
-$dbresult = $db->Execute($query,array($mois_choisi));
+$dbresult = $db->Execute($query,array($mois_choisi,$saison));
 //echo $query;
 
 

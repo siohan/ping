@@ -41,6 +41,15 @@ $string .= $chaine[rand()%strlen($chaine)];
 }
 return $string;
 }
+function random_serie($car) {
+$string = "";
+$chaine = "ABCDEFGHIJKLMOPQRSTUVWXYZ0123456789";
+srand((double)microtime()*1000000);
+for($i=0; $i<$car; $i++) {
+$string .= $chaine[rand()%strlen($chaine)];
+}
+return $string;
+}
 public function CalculPointsIndivs($ecart,$victoire) {
 
 
@@ -692,6 +701,19 @@ function create_tag($code_compet,$indivs,$date_debut,$date_fin)
 		
 	
 }
+
+function tag_equipe($record_id)
+{
+	
+			$db  = cmsms()->GetDb();
+			$tag = "{Ping action='equipe'";			
+			$tag.=" record_id='$record_id'";				
+			$tag.="}";
+			
+			return $tag;		
+	
+}
+
 public static function coeff ($typeCompetition,$licence)
 {
 	$db  = cmsms()->GetDb();

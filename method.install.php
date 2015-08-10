@@ -60,7 +60,8 @@ $flds= "id I(11) KEY AUTO,
 	liendivision C(255),
 	idpoule I(11),
 	iddiv I(11),
-	type_compet C(3) DEFAULT 'U'";
+	type_compet C(3) DEFAULT 'U',
+	tag C(255)";
 
 $sqlarray= $dict->CreateTableSQL( cms_db_prefix()."module_ping_equipes",
 				  $flds,
@@ -296,7 +297,9 @@ $flds = "
 	code_compet C(3) UNIQUE,
 	coefficient N(3.2),
 	indivs L,
-	tag C(255)";
+	tag C(255),
+	idepreuve I(11),
+	idorga I(11)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",
@@ -304,25 +307,6 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competition
 				   $taboptarray);
 //créé un index sur la table
 $dict->ExecuteSQLArray($sqlarray);
-##on insère les valeurs par défaut
-	
-	$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient,indivs,tag) VALUES ('', ?, ?, ?, ?, ?)";
-	$db->execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25','1','{Ping action=\'individuelles\' type_compet=\'I\'}'));
-	$db->execute($insert_sql, array('Critérium fédéral Jeunes', 'J', '1.00','1','{Ping action=\'individuelles\' type_compet=\'J\'}'));
-	$db->execute($insert_sql, array('Chpt France par équipes masculin', '1', '1.00','0','{Ping action=\'par-equipes\' type_compet=\'1\'}'));
-	$db->execute($insert_sql, array('Chpt France par équipes féminin', '2', '1.00','0','{Ping action=\'par-equipes\' type_compet=\'2\'}'));
-	$db->execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75','0','{Ping action=\'par-equipes\' type_compet=\'K\'}'));
-	$db->execute($insert_sql, array('Championnats de France Vétérans', 'V', '1.00','1','{Ping action=\'individuelles\' type_compet=\'V\'}'));
-	$db->execute($insert_sql, array('Championnat Jeunes', '+', '0.75','0','{Ping action=\'par-equipes\' type_compet=\'+\'}'));
-	$db->execute($insert_sql, array('Championnat jeunes poussins benjamins', 'ECP', '1.25','0','{Ping action=\'par-equipes\' type_compet=\'ECP\'}'));
-	$db->execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50','0','{Ping action=\'par-equipes\' type_compet=\'EIJ\'}'));
-	$db->execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50','1','{Ping action=\'individuelles\' type_compet=\'Z\'}'));
-	$db->execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75','1','{Ping action=\'individuelles\' type_compet=\'T\'}'));
-	$db->execute($insert_sql, array('Indéterminé.', 'U', '0.00','0',''));
-	$db->Execute($insert_sql, array('Championnats de France Corpo.','E','1.00','1','{Ping action=\'individuelles\' type_compet=\'E\'}'));
-	$db->Execute($insert_sql, array('Finales par classement', 'H', '1.25','1','{Ping action=\'individuelles\' type_compet=\'H\'}'));
-	$db->Execute($insert_sql, array('Championnat par équipes corpo','3','0.75','0','{Ping action=\'par-equipes\' type_compet=\'3\'}'));
-########
 #
 #
 $dict = NewDataDictionary( $db );
@@ -439,6 +423,8 @@ $this->SetPreference('defaultMonthSitMens', '5');
 $this->SetPreference('phase', '1');
 $this->SetPreference('populate_calendar', 'Oui');
 $this->SetPreference('affiche_club_uniquement', 'Oui');
+#
+#Préférences de l'application
 #
 #
 #Setup events

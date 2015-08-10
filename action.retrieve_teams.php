@@ -60,17 +60,17 @@ foreach($result as $cle =>$tab)
 {
 	
 	$i++;
-	$libequipe = $tab[libequipe];
+	$libequipe = $tab['libequipe'];
 	$newphase = explode ("-",$libequipe);
 	//echo "la phase est ".$newphase[1];
 	$phase = substr($newphase[1], -1);
 	$new_equipe = $newphase[0];
 	//echo "la phase est ".$phase;
 	
-	$libdivision = $tab[libdivision];
-	$liendivision = $tab[liendivision];
-	$idpoule = $tab[idpoule];
-	$iddiv = $tab[iddiv];
+	$libdivision = $tab['libdivision'];
+	$liendivision = $tab['liendivision'];
+	$idpoule = $tab['idpoule'];
+	$iddiv = $tab['iddiv'];
 	
 	//$type_compet = $type;
 	
@@ -80,10 +80,17 @@ foreach($result as $cle =>$tab)
 	
 		if($dbresult  && $dbresult->RecordCount() == 0) 
 		{
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?)";
+			//On va essayer de créer un tag pour aider à afficher les équipes
+			//On récupère le mast_insert_id d'abord
+			$query1 = "SHOW TABLE STATUS LIKE '".cms_db_prefix()."module_ping_equipes' ";
+			$dbresult = $db->Execute($query1);
+			$row = $dbresult->FetchRow();
+			$record_id = $row['Auto_increment'];
+			$tag = ping_admin_ops::tag_equipe($record_id);
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet, tag) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
 			$compteur++;
-			$dbresultat = $db->Execute($query,array($saison, $phase, $new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet));
+			$dbresultat = $db->Execute($query,array($saison, $phase, $new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet, $tag));
 		
 			if(!$dbresultat)
 			{

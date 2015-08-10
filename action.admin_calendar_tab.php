@@ -22,6 +22,7 @@ $mois_courant = date('n');
 $mois_choisi = '';
 $phase_choisie = '';
 $phase_en_cours = $this->GetPreference('phase_en_cours');
+$saison = $this->GetPreference('saison_en_cours');
 if(isset($params['phase_choisie']) && $params['phase_choisie'] !='')
 {
 	$phase_choisie = $params['phase_choisie'];
@@ -163,9 +164,9 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,comp.indivs,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND MONTH(cal.date_debut) = ?";
+$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,comp.indivs,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND cal.saison = ? AND MONTH(cal.date_debut) = ?";
 		$query .=" ORDER BY cal.date_debut ASC";
-		$dbresult= $db->Execute($query, array($mois_choisi));
+		$dbresult= $db->Execute($query, array($saison, $mois_choisi));
 
 	//echo $query;
 	

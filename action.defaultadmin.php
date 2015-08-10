@@ -30,6 +30,7 @@ if (FALSE == empty($params['active_tab']))
 	
 	if($this->CheckPermission('Ping Set Prefs')){
 		echo $this->SetTabHeader('configuration', 'Configuration' , ('configuration' == $tab)?true:false);
+		echo $this->SetTabHeader('compte', 'compte' , ('compte' == $tab)?true:false);
 	}
 
 echo $this->EndTabHeaders();
@@ -78,6 +79,9 @@ echo $this->StartTabContent();
 if($this->CheckPermission('Ping Set Prefs')){
 	echo $this->StartTab('configuration' , $params);
 	include(dirname(__FILE__).'/action.admin_options_tab.php');
+	echo $this->EndTab();
+	echo $this->StartTab('compte' , $params);
+	include(dirname(__FILE__).'/action.admin_compte_tab.php');
 	echo $this->EndTab();
 }
 echo $this->EndTabContent();

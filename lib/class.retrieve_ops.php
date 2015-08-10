@@ -308,7 +308,7 @@ public function retrieve_parties_spid( $licence )
 						*/
 						//2 - on récupére le tour s'il existe
 						//on va fdonc chercher dans la table calendrier
-						$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet = ? AND date_debut = ? OR date_fin = ?";
+						$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet = ? AND (date_debut = ? OR date_fin = ?)";
 						$resultat = $db->Execute($query, array($type_compet_temp, $date_mysql,$date_mysql));
 
 						if ($resultat && $resultat->RecordCount()>0){
@@ -322,8 +322,8 @@ public function retrieve_parties_spid( $licence )
 							$type_compet = $type_compet_temp;
 							//on oublie pas le tag !
 							$tag = ping_admin_ops::create_tag($type_compet_temp,$indivs, $date_mysql, $date_mysql);
-							$querycal = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,type_compet,date_debut,date_fin,numjourn,tag) VALUES ('', ?, ?, ?, ?, ?)";
-							$req = $db->Execute($querycal,array($type_compet_temp,$date_mysql,$date_mysql,$numjourn,$tag));							
+							$querycal = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,type_compet,date_debut,date_fin,numjourn,tag, saison) VALUES ('', ?, ?, ?, ?, ?, ?)";
+							$req = $db->Execute($querycal,array($type_compet_temp,$date_mysql,$date_mysql,$numjourn,$tag, $saison_courante));							
 						}
 				
 				

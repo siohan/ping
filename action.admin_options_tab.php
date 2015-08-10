@@ -8,10 +8,34 @@ if(!$this->CheckPermission('Ping Use') && !$this->CheckPermission('Ping Set Pref
 }
   // CreateFormStart sets up a proper form tag that will cause the submit to
   // return control to this module for processing.
+
+$mois_courant = date('m');
+$annee_courante = date('Y');
+
+if($mois_courant >= 7)
+{
+	$annee_debut = $annee_courante;
+	$annee_fin = $annee_courante +1;
+}
+else
+{
+	$annee_debut = $annee_courante -1;
+	$annee_fin = $annee_courante;
+}
+$saison_actuelle = $annee_debut.'-'.$annee_fin;
+//$saisondropdown['.$saison_actuelle.'] = $saison_actuelle;
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));
 $smarty->assign('endform', $this->CreateFormEnd ());
 $smarty->assign('title_club_number',$this->Lang('title_club_number'));
 $smarty->assign('input_club_number',$this->CreateInputText($id,'club_number',$this->GetPreference('club_number',''),50,255));
+// Construire la liste dynamiquement avec une requete
+$listeligues = array("Bretagne"=>"1007", "Champagne"=>"1008");
+$smarty->assign('input_ligue',$this->CreateInputDropdown($id, 'ligue', $listeligues,-1,$this->GetPreference('ligue'),50,255));
+
+$listezones = array("Bretagne"=>"1007", "Champagne"=>"1008");
+$listedeps = array("Finistère"=>"29", "Morbihan"=>"56");
+$smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listezones,-1,$this->GetPreference('zone'),50,255));
+$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listedeps,-1,$this->GetPreference('dep'),50,255));
 $saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
 //$smarty->assign('title_formsubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
 $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));
@@ -20,8 +44,11 @@ $items = array();
 $items['Oui'] = 'Oui';
 $items['Non'] = 'Non';
 $saisondropdown = array();
+
 $saisondropdown['2013-2014'] = '2013-2014';
 $saisondropdown['2014-2015'] = '2014-2015';
+$saisondropdown['2015-2016'] = '2015-2016';
+
 $smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
 $smarty->assign('input_nom_equipes', 
 		$this->CreateInputText($id, 'nom_equipes', $this->GetPreference('nom_equipes', ''), 50,250));

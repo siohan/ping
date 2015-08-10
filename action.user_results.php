@@ -7,7 +7,7 @@ $db =& $this->GetDb();
 $licence = '';
 $date_event = '';
 $affiche = 1;//cette variable détermine l'affichage par mois
-$saison_courante = $this->GetPreference('saison_en_cours');
+$saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPreference('saison_en_cours');
 	if(!isset($params['licence']) && $params['licence'] =='' )
 	{
 		echo "la licence est absente !";
@@ -24,6 +24,7 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 			$affiche = 0;
 			$date_debut = $params['date_debut'];
 			$date_fin = $params['date_fin'];
+			//on en déduit la saison pour le cas où on ne serait pas dans la saison en cours
 		}
 		
 		if(isset($params['month']) && $params['month'] !='')
@@ -35,16 +36,21 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 		if($affiche ==1)
 		{
 			$smarty->assign('phase2',
-					$this->CreateLink($id,'user_results',$returnid, 'Phase 2', array("phase"=>"2","licence"=>$licence) ));
+					$this->CreateLink($id,'user_results',$returnid, 'Phase 2', array("phase"=>"2","licence"=>$licence,'saison'=>$saison_courante) ));
 			$smarty->assign('phase1',
-					$this->CreateLink($id,'user_results',$returnid, 'Phase 1', array("phase"=>"1","licence"=>$licence) ));
+					$this->CreateLink($id,'user_results',$returnid, 'Phase 1', array("phase"=>"1","licence"=>$licence,'saison'=>$saison_courante) ));
 		}
 		
 		$rowarray1 = array();
-		$query = "SELECT SUM(vd) AS vic, count(vd) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties WHERE saison = ? AND licence = ?";
+		$query = "SELECT SUM(vd) AS vic, count(vd) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ?";//" WHERE saison = ? AND licence = ?";
 		//qqs paramètres
-		$parms['saison'] = $saison_courante;
 		$parms['licence'] = $licence;
+		if($affiche !='0'){
+			$query.=" AND saison = ?";
+			$parms['saison'] = $saison_courante;
+		}
+		//$parms['saison'] = $saison_courante;
+		
 		//on presente phase par phase ?
 		
 		if($affiche ==1)
@@ -113,7 +119,8 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 		$joueur = $row1['joueur'];
 		$smarty->assign('joueur', $joueur);
 		$result= array ();
-		$query3= "SELECT advnompre, advclaof,pointres, vd,date_event FROM ".cms_db_prefix()."module_ping_parties WHERE saison = ? AND licence = ?";//" ORDER BY date_event ASC";
+		$query3= "SELECT advnompre, advclaof,pointres, vd,date_event FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ?";//" AND licence = ?";//" ORDER BY date_event ASC";
+		
 		$parms['licence'] = $licence;
 		$parms['saison'] = $saison_courante;
 		
@@ -189,13 +196,17 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 				$rowarray[]= $onerow;
 		      	}
 		}
+		elseif($saison_courante != $this->GetPreference('saison_en_cours')) // il n'y a pas de résultats on redirige vers les résultats génériques de cette personne
+		{
+			$this->RedirectForFrontEnd($id, $returnid, 'user_results', array('licence'=>$licence,'saison'=>$saison_courante));
+		}
 		else
 		{
 			$this->RedirectForFrontEnd($id, $returnid, 'user_results', array('licence'=>$licence));
 		}
 		
 		$smarty->assign('resultats',
-				$this->CreateLink($id,'user_results',$returnid,$contents = 'Tous ses résultats', array('licence'=>$licence)));
+				$this->CreateLink($id,'user_results',$returnid,$contents = 'Tous ses résultats', array('licence'=>$licence,'saison'=>$saison_courante)));
 	}//fin du else (if $licence isset)
 
 $smarty->assign('itemsfound', $this->Lang('resultfoundtext'));

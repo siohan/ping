@@ -83,8 +83,10 @@ $error =0;
 		else
 		{
 			//on a pas de modification du coeff, on change simplement les données sans recalculer
-			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? , liendivision = ?, type_compet = ? WHERE id = ?";
-			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$liendivision, $type_compet,$id));
+			//on refait le tag
+			$tag = ping_admin_ops::tag_equipe($id);
+			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? , liendivision = ?, type_compet = ?, tag = ? WHERE id = ?";
+			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$liendivision, $type_compet,$tag,$id));
 			//echo $query;
 			$designation.="Equipe mise à jour avec succès";
 		}

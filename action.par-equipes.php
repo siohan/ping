@@ -4,7 +4,7 @@
 require_once(dirname(__FILE__).'/include/prefs.php');
 $nom_equipes = $this->GetPreference('nom_equipes');
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
-echo 'la saison courantest : '.$saison_courante;
+//echo 'la saison courantest : '.$saison_courante;
 $db =& $this->GetDb();
 global $themeObject;
 $result= array();
@@ -247,7 +247,7 @@ $i=0;
 				$query2 = "SELECT *, ren.id, ren.saison FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_calendrier AS cal  WHERE ren.date_event = cal.date_debut AND cal.date_debut<=NOW() AND ren.saison = ?";//GROUP BY date_debut ORDER BY date_debut DESC";
 				$parms['saison'] = $saison_courante;//$query2 = "SELECT ren.date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule";
 				$query2.=" GROUP BY ren.date_event ORDER BY ren.date_event DESC";
-				echo $query2;
+				//echo $query2;
 				$dbresult = $db->Execute($query2,$parms);
 				
 				

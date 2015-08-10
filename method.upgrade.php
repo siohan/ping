@@ -355,7 +355,21 @@ case "0.2.4" :
 		
 		
 	}
-
+case "0.2.5" :
+case "0.3" : 
+	{
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_equipes", "tag C(255)");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_type_competitions", "idepreuve I(11)");
+		$dict->ExecuteSQLArray( $sqlarray );
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_type_competitions", "idorga I(11)");
+		$dict->ExecuteSQLArray( $sqlarray );
+	}
+	
 }
 
 
