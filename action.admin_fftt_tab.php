@@ -112,12 +112,13 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->numjourn= $row['numjourn'];
 	$onerow->joueur= $row['joueur'];
 	$onerow->vd= $row['vd']; 
+//	$onerow->licence = $row['licence'];
 	$onerow->advnompre= $row['advnompre'];
 //	$onerow->adversaire= $row['adversaire'];
 	$onerow->pointres= $row['pointres'];
 	//$onerow->equipe= $this->CreateLink($id, 'create_new_user', $returnid, $row['equipe'], $row);
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-	$onerow->duplicatelink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/copy.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['id'], 'duplicate'=>'1'));
+	
 	
 	if($this->CheckPermission('Ping Delete'))
 	{
@@ -136,7 +137,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation");
+$articles = array("Supprimer"=>"supp_fftt");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

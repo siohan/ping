@@ -22,6 +22,7 @@ else
 	$annee_debut = $annee_courante -1;
 	$annee_fin = $annee_courante;
 }
+$smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve_organismes',$returnid,'Récupérer les organismes'));
 $saison_actuelle = $annee_debut.'-'.$annee_fin;
 //$saisondropdown['.$saison_actuelle.'] = $saison_actuelle;
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));
@@ -29,13 +30,37 @@ $smarty->assign('endform', $this->CreateFormEnd ());
 $smarty->assign('title_club_number',$this->Lang('title_club_number'));
 $smarty->assign('input_club_number',$this->CreateInputText($id,'club_number',$this->GetPreference('club_number',''),50,255));
 // Construire la liste dynamiquement avec une requete
+$tableau = array('Z','L','D');//on oublie la Fédé qui est tjs à 100001
+foreach($tableau as $valeur)
+{
+	$query = "SELECT idorga, libelle FROM ".cms_db_prefix()."module_ping_organismes WHERE scope = ?";
+	$dbresult = $db->Execute($query,array($valeur));
+	while ($dbresult && $row = $dbresult->FetchRow())
+	  {
+		if($valeur =='L')
+		{
+			$listorga_L[$row['libelle']] = $row['idorga'];
+		}
+		elseif($valeur =='Z')
+		{
+			$listorga_Z[$row['libelle']] = $row['idorga']; 
+		}
+		else
+		{
+			$listorga_D[$row['libelle']] = $row['idorga']; 
+		}
+	    	
+	  }
+	
+}
+
 $listeligues = array("Bretagne"=>"1007", "Champagne"=>"1008");
-$smarty->assign('input_ligue',$this->CreateInputDropdown($id, 'ligue', $listeligues,-1,$this->GetPreference('ligue'),50,255));
+$smarty->assign('input_ligue',$this->CreateInputDropdown($id, 'ligue', $listorga_L,-1,$this->GetPreference('ligue'),50,255));
 
 $listezones = array("Bretagne"=>"1007", "Champagne"=>"1008");
 $listedeps = array("Finistère"=>"29", "Morbihan"=>"56");
-$smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listezones,-1,$this->GetPreference('zone'),50,255));
-$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listedeps,-1,$this->GetPreference('dep'),50,255));
+$smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listorga_Z,-1,$this->GetPreference('zone'),50,255));
+$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listorga_D,-1,$this->GetPreference('dep'),50,255));
 $saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
 //$smarty->assign('title_formsubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
 $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));

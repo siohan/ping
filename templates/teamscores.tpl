@@ -17,7 +17,7 @@
 </fieldset>
 {/if}
 *}
-<div class="pageoptions"><p class="pageoptions">{$retrieve_teams} | {$retrieve_teams_autres} | {$edit_team}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$retrieve_teams} |{$retrieve_teams_fem} | {$retrieve_teams_autres} | {$edit_team}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <p class="pageoptions">{$phase1} | {$phase2}</p>

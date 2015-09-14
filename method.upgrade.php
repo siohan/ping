@@ -368,6 +368,135 @@ case "0.3" :
 		$dict = NewDataDictionary($db);
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_type_competitions", "idorga I(11)");
 		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$dict = NewDataDictionary( $db );
+
+		// table schema description
+		$flds = "
+			id I(11) AUTO KEY,
+			libelle C(255),
+			idorga I(11),
+			code C(5),
+			scope C(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_organismes",
+						   $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		# create table divisions
+		// table schema description
+		$flds = "
+			id I(11) AUTO KEY,
+			idorga I(11),
+			idepreuve I(11),
+			iddivision I(11),
+			libelle C(255),
+			saison C(255),
+			indivs I(1),
+			scope C(1),
+			uploaded C(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_divisions",
+						   $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		#
+		# create table div_classement//debut de la création
+		// table schema description
+		$flds = "
+			id I(11) AUTO KEY,
+			idepreuve I(11),
+			iddivision I(11),
+			tableau I(11),
+			tour I(11),
+			rang I(11),
+			nom C(255),
+			clt C(255),
+			club C(255),
+			points N(6,3),
+			saison C(255)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_classement",
+						 $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		#
+			# create table div_poules//debut de la création
+			// table schema description
+			$flds = "
+				id I(11) AUTO KEY,
+				idepreuve I(11),
+				iddivision I(11),
+				libelle C(255),
+				tour I(3),
+				tableau I(11),
+				lien C(255),
+				saison C(255),
+				uploaded I(1)";
+
+			// create it. 
+			$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",
+							$flds, 
+							$taboptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+			//on créé un index pour cette table
+			$idxoptarray = array('UNIQUE');
+			$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
+				    cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau',$idxoptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+			//
+			//un nouvel index
+			$idxoptarray = array('UNIQUE');
+			$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'sit_mens',
+				    cms_db_prefix().'module_ping_sit_mens', 'licence, mois, annee',$idxoptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+			//
+			$idxoptarray = array('UNIQUE');
+			$sqlarray = $dict->CreateIndexSQL('unicite',
+				         cms_db_prefix().'module_ping_equipes', 'saison, libequipe, liendivision',$idxoptarray);
+				       $dict->ExecuteSQLArray($sqlarray);
+		
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_joueurs", "type C(1), certif C(255), validation D, echelon C(1), place I(4), point I(4), cat C(5)");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		
+		//Création de la table feuille de rencontre
+		$flds = "
+			id I(11) AUTO KEY,
+			fk_id I(11),
+			xja C(255),
+			xca C(255),
+			xjb C(255),
+			xcb C(255)";
+		$qslarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_feuilles_rencontres", $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+
+		//Création de la table parties des rencontres par équipes
+		$flds = "
+			id I(11) AUTO KEY,
+			fk_id I(11),
+			joueurA C(255),
+			cltA C(255),
+			joueurB C(255),
+			cltB C(255)";
+		$qslarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		#indexes
+
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
+				    				cms_db_prefix().'module_ping_feuilles_rencontres', 'fk_id');
+		$dict->ExecuteSQLArray($sqlarray);
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
+			    cms_db_prefix().'module_ping_rencontres_parties', 'fk_id');
+			       $dict->ExecuteSQLArray($sqlarray);
+			
+			
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_equipes", "idepreuve C(11)");
+		$dict->ExecuteSQLArray( $sqlarray );
 	}
 	
 }

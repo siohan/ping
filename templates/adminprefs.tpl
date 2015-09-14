@@ -1,3 +1,6 @@
+<div class="alert  alert-info">
+    <p class="alert-info">Les organismes n'appraissent pas ?( Ligues, Zones, dép) {$recup_orga}</p>
+</div>
 {$startform}
 <fieldset>
 <legend>Configuration principale</legend>

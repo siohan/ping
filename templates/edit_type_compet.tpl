@@ -26,6 +26,10 @@
     <p class="pagetext">Compétion individuelle ?</p>
     <p class="pageinput">{$indivs}</p>
   </div>
+<div class="pageoverflow">
+    <p class="pagetext">Organisateur ?</p>
+    <p class="pageinput">{$orga}</p>
+  </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
     <p class="pageinput">{$submit}{$dupliquer}{$cancel}</p>

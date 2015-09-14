@@ -35,6 +35,15 @@ else
 	$designation.=" Votre mot de passe est manquant.";
 	
 }
+$serie = $this->GetPreference('serie');
+if(!isset($serie) || $serie =='')
+{
+	//on crée la préférence unique
+	$serie = ping_admin_ops::random_serie(15);
+	//et on l'envoie
+	$this->SetPreference('serie', $serie);
+	
+}
 /*
 if(isset($params['tm']) && $params['tm'] !='' && strlen($params['tm']) == 17)
 {
@@ -58,6 +67,7 @@ else
 	//on met l'id de l'application et le mot de passe en préférence
 	$this->SetPreference('idAppli',$idAppli);
 	$this->SetPreference('motdepasse',$cde);
+	$this->RedirectToAdminTab('configuration');
 	
 }
 #

@@ -12,15 +12,7 @@ $this->SetPreference('zone', $params['zone']);
 $this->SetPreference('dep', $params['dep']);
 //pour la version 0.1 beta2 on proposera de déduire la ligue et le département auxquels le club appartient
 //et on les mettra dans les préférences à créer également
-$serie = $this->GetPreference('serie');
-if(!isset($serie) || $serie =='')
-{
-	//on crée la préférence unique
-	$serie = ping_admin_ops::random_serie(15);
-	//et on l'envoie
-	$this->SetPreference('serie', $serie);
-	
-}
+
 
 $this->SetPreference('phase_en_cours', $params['phase_en_cours']);
 $this->SetPreference('saison_en_cours', $params['saison_en_cours']);

@@ -111,12 +111,22 @@ $i=0;
 		$query2 = "SELECT eq.id AS ind,ren.equa,ren.equb,ren.scorea,ren.scoreb,ren.date_event, eq.friendlyname, ren.id, TRIM(eq.libequipe) FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison";
 		$parms['saison'] = $saison_courante;
 		//$query2.=" GROUP BY ren.date_event ORDER BY ren.date_event DESC";	
-			if(isset($params['type_compet']) && $params['type_compet'])
+			if((isset($params['type_compet']) && $params['type_compet']) || (isset($params['idepreuve']) && $params['idepreuve'] != ""))
 			{
-				$param_type = 1;
+				$param_type = 1;// ce serait bien de dire de quoi il s'agit....
 				$parameters = 2;
-				$query2.=" AND eq.type_compet = ?";
-				$parms['type_compet'] = $params['type_compet'];
+				if(isset($params['type_compet']) && $params['type_compet'] != "")
+				{
+					$query2.=" AND eq.type_compet = ?";
+					$parms['type_compet'] = $params['type_compet'];
+					$type_req = 1; //on différencie les deux requetes
+				}
+				elseif(isset($params['idepreuve']) && $params['idepreuve'] !="")
+				{
+					$query2.=" AND eq.idepreuve = ?";
+					$parms['idepreuve'] = $params['idepreuve'];
+					$type_req = 0;
+				}
 				
 				$query2.=" GROUP BY ren.date_event ORDER BY ren.date_event DESC";
 				
@@ -132,8 +142,16 @@ $i=0;
 						//echo 'la date_event est : '.$date_event2;
 						$query2 ="SELECT *,ren.equa,ren.date_event, ren.equb, ren.id AS ind, TRIM(eq.libequipe),eq.friendlyname FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule AND ren.iddiv = eq.iddiv  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0) AND ren.saison = ?";
 						$parms['saison'] = $saison_courante;
-						$query2.=" AND eq.type_compet = ?";
-						$parms['type_compet'] = $params['type_compet'];
+						if($type_req ==1)
+						{
+							$query2.=" AND eq.type_compet = ?";
+							$parms['type_compet'] = $params['type_compet'];
+						}
+						else
+						{
+							$query2.=" AND eq.idepreuve = ?";
+							$parms['idepreuve'] = $params['idepreuve'];
+						}
 						$query2.=" AND ren.date_event = ?";
 						$parms['date_event'] = $date_event2;
 						$query2.=" AND ren.club = '1'";
@@ -268,7 +286,8 @@ $i=0;
 						$onerow->valeur = $i;
 						
 						$query3 ="SELECT eq.id as eq_id,ren.equa,ren.scorea,ren.date_event, ren.equb,ren.scoreb, ren.id AS ind, TRIM(eq.libequipe) AS equipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0) AND ren.saison = ? ";
-						$parms['saison'] = $saison_courante;$query3.= " AND ren.date_event = ?";
+						$parms['saison'] = $saison_courante;
+						$query3.= " AND ren.date_event = ?";
 						//$query3 ="SELECT *,ren.equa, ren.equb, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0) ";
 						$parms['date_event'] = $date_debut;//$query2 = "SELECT eq.id AS ind,ren.equa,ren.equb,ren.scorea,ren.scoreb,ren.date_event, eq.friendlyname, ren.id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0) AND eq.id = ?";//"  AND ren.date_event = ?";
 

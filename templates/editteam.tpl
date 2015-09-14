@@ -36,7 +36,7 @@
   </div>
 <div class="pageoverflow">
     <p class="pagetext">Compétition:</p>
-    <p class="pageinput">{$type_compet}</p>
+    <p class="pageinput">{$idepreuve}</p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>

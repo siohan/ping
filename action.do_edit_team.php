@@ -45,9 +45,9 @@ $error =0;
 		{
 			$friendlyname = $params['friendlyname'];
 		}
-		if (isset($params['type_compet']) && $params['type_compet'] !='')
+		if (isset($params['idepreuve']) && $params['idepreuve'] !='')
 		{
-			$type_compet = $params['type_compet'];
+			$idepreuve = $params['idepreuve'];
 		}
 		else
 		{
@@ -76,8 +76,8 @@ $error =0;
 		if(isset($params['Ajouter']))
 		{
 			
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision,friendlyname, liendivision, idpoule, iddiv, type_compet) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			$dbresult = $db->Execute($query,array($saison, $phase, $libequipe, $libdivision,$friendlyname, $liendivision, $idpoule, $iddiv, $type_compet));
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision,friendlyname, liendivision, idpoule, iddiv, idepreuve) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$dbresult = $db->Execute($query,array($saison, $phase, $libequipe, $libdivision,$friendlyname, $liendivision, $idpoule, $iddiv, $idepreuve));
 			$designation.="Equipe ajoutée avec succès";
 		}
 		else
@@ -85,8 +85,8 @@ $error =0;
 			//on a pas de modification du coeff, on change simplement les données sans recalculer
 			//on refait le tag
 			$tag = ping_admin_ops::tag_equipe($id);
-			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? , liendivision = ?, type_compet = ?, tag = ? WHERE id = ?";
-			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$liendivision, $type_compet,$tag,$id));
+			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? , liendivision = ?, idepreuve = ?, tag = ? WHERE id = ?";
+			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$liendivision, $idepreuve,$tag,$id));
 			//echo $query;
 			$designation.="Equipe mise à jour avec succès";
 		}

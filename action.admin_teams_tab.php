@@ -103,9 +103,11 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('items', $rowarray);
 		$smarty->assign('retrieve_teams',
-		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Récupération des équipes", array('type'=>'M')));
+		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes masculines", array('type'=>'M')));
+		$smarty->assign('retrieve_teams_fem',
+		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes féminines", array('type'=>'F')));
 		$smarty->assign('retrieve_teams_autres',
-				$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Récupération des équipes seniors"));
+				$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Autres équipes"));
 		$smarty->assign('edit_team',
 				$this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add'), '', '', 'systemicon')).$this->CreateLink($id, 'edit_team', $returnid, 
 								  $this->Lang('addmanually'), 

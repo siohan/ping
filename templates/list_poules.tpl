@@ -17,37 +17,28 @@
 </fieldset>
 {/if}
 -->
-<div class="pageoptions"><p class="pageoptions">{$divisions}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
-<div class="pageoptions"><p class="pageoptions">{$Nat_equipes} - {$Nat_indivs} - {$zone_equipes}`- {$zone_indivs} - {$ligue_equipes} - {$ligue_indivs} - {$dep_equipes} - {$dep_indivs}</p></div>
+
 {if $itemcount > 0}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
   <tr>	
-  	<th>{$id}</th>
-  	<th>Nom</th>
-  	<th>Coefficient</th>
-	<th>Indivs</th>
-	<th>Echelon</th>
-	<th>Tag pour affichage</th>
+	<th>Epreuve</th>
+	<th>Tour</th>
 	<th colspan="3">Actions</th>
   </tr>
  </thead>
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
-    <td>{$entry->id}</td>
-    <td>{$entry->name} ({$entry->idepreuve})</td>
-   	<td>{$entry->coefficient}</td>
-	<td>{if $entry->indivs =='1'}Oui{else}Non{/if}</td>
-	<td>{$entry->orga}</td>
-	<td>{$entry->tag}</td>
-	<td>{$entry->national}-{$entry->zone}-{$entry->ligue}-{$entry->dep}</td>
-	<td>{$entry->editlink}</td>
-	<td>{$entry->deletelink}</td>
+   		<td>{$entry->libelle}</td>
+		<td>{$entry->tour}</td>
+		<td>{$entry->poule} - {$entry->partie} - {$entry->classement}</td>
+		<td>{$entry->editlink}</td>
+		<td>{$entry->deletelink}</td>
   </tr>
 {/foreach}
  </tbody>
 </table>
 {/if}
-<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>
+

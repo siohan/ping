@@ -42,17 +42,31 @@ else
 	$type = 'E';
 }
 //on instancie la classe service
-$service = new Service();
+$service = new Servicen();
 
 $result = '';
-$result = $service->getEpreuves("$idorga","$type");
+$page = "xml_epreuve";
+$var = "organisme=".$idorga."&type=".$type;
+$lien = $service->GetLink($page, $var);
+$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+if($xml === FALSE)
+{
+	// Le service est coupé
+	$array = 0;
+}
+else
+{
+	$array = json_decode(json_encode((array)$xml), TRUE);
+	$lignes = count($array['epreuve']);
+}
 
 //var_dump($result);
 /**/
 //on va tester si la variable est bien un tableau   
-	if(!is_array($result))  {
+	if(!is_array($array) || $lignes == 0)  {
 		
-		$this->SetMessage("Le service est coupé");
+		$this->SetMessage("Le service est coupé ou il n'y a pas encore de résultats");
 		$this->RedirectToAdminTab('epreuves');
 	}
 
@@ -60,13 +74,13 @@ $result = $service->getEpreuves("$idorga","$type");
 $i=0;
 //on initialise un deuxième compteur
 $compteur=0;
-foreach($result as $cle =>$tab)
+foreach($xml as $cle =>$tab)
 {
 	
 	$i++;
-	$idepreuve = $tab['idepreuve'];
-	$idorga  = $tab['idorga'];
-	$libelle = $tab['libelle'];
+	$idepreuve = (isset($tab->idepreuve)?"$tab->idepreuve":"");
+	$idorga  = (isset($tab->idorga)?"$tab->idorga":"");
+	$libelle = (isset($tab->libelle)?"$tab->libelle":"");
 	// 1- on vérifie si cette épreuve est déjà dans la base
 	$query = "SELECT name FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
 	$dbresult = $db->Execute($query, array($libelle));
@@ -87,8 +101,9 @@ foreach($result as $cle =>$tab)
 		else
 		{
 			//l'épreuve est déjà renseignée, on fait un update
-			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET idepreuve = ?, idorga = ? WHERE name = ? ";
-			$dbresult = $db->Execute($query, array($idepreuve,$idorga,$libelle));
+			if($idorga == $this->GetPreference(''))
+			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET idepreuve = ? WHERE name = ? ";
+			$dbresult = $db->Execute($query, array($idepreuve,$libelle));
 		}//fin du if $dbresult
 	
 	

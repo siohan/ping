@@ -20,7 +20,7 @@ if(!isset($club_number) && $club_number =='')
 }
 $now = trim($db->DBTimeStamp(time()), "'");
 //on instancie la classe service
-$service = new Service();
+$service = new Servicen();
 $type = '';
 $result = '';
 if(isset($params['type']) && $params['type'] !='')
@@ -28,49 +28,69 @@ if(isset($params['type']) && $params['type'] !='')
 	$type = $params['type'];
 }
 
+$page = "xml_equipe";
+$var = "numclu=".$club_number;
 
-	if (isset($type) && $type != '')
+	if (isset($type) && $type == '')
 	{
-		$result = $service->getEquipesByClub("$club_number");
+		//$result = $service->getEquipesByClub("$club_number");
+		
 		$chpt = "A"; //pour autres championnat
 		$type_compet = 'U';//pour undefined
+		$var.="";
 	}
-	else
+	elseif($type =='M')
 	{
-		$type = 'M';
-		$result = $service->getEquipesByClub("$club_number", "$type");
-		$chpt = "S"; //pour championnat seniors
-		$type_compet = '1';
-	}
-
-//var_dump($result);
-/**/
-//on va tester si la variable est bien un tableau   
-	if(!is_array($result))  {
 		
+		$type_compet = '1';
+		$idepreuve = '1073';
+		$var.="&type=M";
+	}
+	elseif($type == 'F')
+	{
+		$var.="&type=F";
+		$type_compet = '1';
+		$idepreuve = '2012';
+	}
+	$lien = $service->GetLink($page,$var);
+	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+	if($xml === FALSE)
+	{
 		$this->SetMessage("Le service est coupé");
 		$this->RedirectToAdminTab('equipes');
 	}
+	else
+	{
+		$array = json_decode(json_encode((array)$xml), TRUE);
+	}
+//var_dump($xml);
+/**/
+//on va tester si la variable est bien un tableau   
+	
 
 ///on initialise un compteur général $i
 $i=0;
 //on initialise un deuxième compteur
 $compteur=0;
-foreach($result as $cle =>$tab)
+foreach($xml as $cle =>$tab)
 {
 	
 	$i++;
-	$libequipe = $tab['libequipe'];
+	$libequipe = (isset($tab->libequipe)?"$tab->libequipe":"");
 	$newphase = explode ("-",$libequipe);
 	//echo "la phase est ".$newphase[1];
 	$phase = substr($newphase[1], -1);
 	$new_equipe = $newphase[0];
 	//echo "la phase est ".$phase;
 	
-	$libdivision = $tab['libdivision'];
-	$liendivision = $tab['liendivision'];
-	$idpoule = $tab['idpoule'];
-	$iddiv = $tab['iddiv'];
+	$libdivision = (isset($tab->libdivision)?"$tab->libdivision":"");
+	$liendivision = (isset($tab->liendivision)?"$tab->liendivision":"");
+	$tableau = parse_str($liendivision, $output);
+	//echo $tableau;
+	$idpoule = $output['cx_poule'];
+	$iddiv = $output['D1'];
+	
+	
 	
 	//$type_compet = $type;
 	

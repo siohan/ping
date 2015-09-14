@@ -16,10 +16,10 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 
 	while ($row= $dbresult->FetchRow())
       	{
-		$service = new Service();
+		$service = new retrieve_ops();
 		$licence = $row['licence'];
 		$joueur = $row['joueur'];
-		ping_admin_ops::retrieve_parties_fftt("$licence");
+		retrieve_ops::retrieve_parties_fftt("$licence");
      	}
 		
 		

@@ -192,13 +192,19 @@ if($dbresult && $dbresult->RecordCount()>0)
 
 					 	if($pb==1) 
 						{
+							
 							if($date_event <= $date_courante)
 							{
-								$onerow2->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents = 'MAJ', array('idpoule'=>$row2['idpoule'], 'iddiv'=>$row2['iddiv'], 'type_compet'=>$row['type_compet']));
+							
+								$onerow2->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents = 'MAJ', array('idpoule'=>$row2['idpoule'], 'iddiv'=>$row2['iddiv'], 'idepreuve'=>$row['idepreuve']));
+							
 							}
+							
 						}
+						
 						if($date_event <= $date_courante)
 						{
+						
 							$onerow2->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres2', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('record_id'=>$row2['id']));
 						}
 						

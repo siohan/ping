@@ -634,7 +634,7 @@ public static function CalculEcart($ecart)
 	elseif($ecart <= -400 && $ecart > -500){$ecart = -8; return $ecart; }
 	elseif($ecart <= -500){$ecart = -9; return $ecart; }
 }
-function tag($id,$code_compet,$indivs,$date_debut ='',$date_fin='')
+function tag($id,$idepreuve,$indivs,$date_debut ='',$date_fin='')
 {
 	
 			$db  = cmsms()->GetDb();
@@ -648,7 +648,7 @@ function tag($id,$code_compet,$indivs,$date_debut ='',$date_fin='')
 			{
 				$tag.="par-equipes'";
 			}
-			$tag.=" type_compet='$code_compet'";
+			$tag.=" idepreuve='$idepreuve'";
 			
 				if(isset($date_debut) && $date_debut !='')
 				{

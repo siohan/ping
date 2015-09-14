@@ -8,7 +8,7 @@
 /**
  *
  * @author Claude SIOHAN
- * @since 0.2.5
+ * @since 0.3
  * @version $Revision: 3827 $
  * @modifiedby $LastChangedBy: Claude
  * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 28 Juil 2015) $
@@ -19,7 +19,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.2.5'; }  
+  function GetVersion() { return '0.3'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -118,6 +118,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('type', CLEAN_STRING);
 	$this->SetParameterType('idpoule', CLEAN_INT);
 	$this->SetParameterType('iddiv', CLEAN_INT);
+	$this->SetParameterType('tableau', CLEAN_INT);
 	$this->SetParameterType('lien', CLEAN_STRING);
 	$this->SetParameterType('message', CLEAN_STRING);
 

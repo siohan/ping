@@ -21,7 +21,8 @@ if ($dbretour && $dbretour->RecordCount() > 0)
       	{
 		$player = $row['player'];
 		//return $player;
-		$resultats = retrieve_ops::retrieve_parties_spid($licence);
+		$service = new retrieve_ops();
+		$resultats = $service->retrieve_parties_spid($licence);
 		//var_dump($resultats);
 	}
 	

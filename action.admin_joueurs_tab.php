@@ -30,7 +30,7 @@ $smarty->assign('display_unable_players',
 
 $result= array ();
 //SELECT * FROM ".cms_db_prefix()."module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
-$query= "SELECT id, CONCAT_WS(' ',nom, prenom) AS joueur, licence, actif, sexe, birthday FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif= '1'  ORDER BY joueur ASC";
+$query= "SELECT id, CONCAT_WS(' ',nom, prenom) AS joueur, licence, actif, sexe, birthday FROM ".cms_db_prefix()."module_ping_joueurs  ORDER BY joueur ASC";
 if($travaux=='true'){echo $query;}
 $dbresult= $db->Execute($query);
 $rowclass= 'row1';
@@ -90,7 +90,7 @@ if(isset($params['message']) && $params['message'] !='')
 
 
 $smarty->assign('delete_all',
-		$this->CreateLink($id,'delete_all',$returnid,'Vider les tables'));
+		$this->CreateLink($id,'delete_all',$returnid,'Finaliser l\installation'));
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

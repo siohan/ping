@@ -4,7 +4,11 @@ if( !isset($gCms) ) exit;
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $iddiv = $params['iddiv'];
 $idpoule = $params['idpoule'];
-$type_compet = $params['type_compet'];
+$idepreuve = "";
+if(isset($params['idepreuve']) && $params['idepreuve'] != "")
+{
+	$idepreuve = $params['idepreuve'];
+}
 $message = '';
 if(!isset($iddiv) && empty($iddiv)){
 	$message.="Paramètres manquants";
@@ -16,15 +20,31 @@ $now = trim($db->DBTimeStamp(time()), "'");
 $nom_equipes = $this->GetPreference('nom_equipes');
 $saison = $this->GetPreference('saison_en_cours');
 $update = '0';//valeur par défaut
-$service = new Service();
-$result = $service->getPouleRencontres($iddiv,$idpoule);
+$service = new Servicen();
+$page = "xml_result_equ";
+$var = "auto=1&D1=".$iddiv."&cx_poule=".$idpoule;
+$lien = $service->GetLink($page, $var);
+$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+if($xml === FALSE)
+{
+	//le service est coupé
+	$array = 0;
+	$lignes = 0;
+}
+else
+{
+	$array = json_decode(json_encode((array)$xml), TRUE);
+	$lignes = count($array['tour']);
+}
+//echo "le nb de lignes est : ".$lignes;
+//$result = $service->getPouleRencontres($iddiv,$idpoule);
 
 $designation = '';
 //var_dump($result);
 /**/
 //on va tester la valeur de la variable $result
 //cela permet d'éviter de boucler s'il n'y a rien dans le tableau
-if(!is_array($result))
+if(!is_array($array))
 { 
 	
 		//le tableau est vide, il faut envoyer un message pour le signaler
@@ -34,44 +54,40 @@ if(!is_array($result))
 }   
 else{
 $i=0;
-foreach($result as $cle =>$tab)
+foreach($xml as $cle =>$tab)
 {
 	
 	
-	$libelle = $tab[libelle];
-	$equa = $tab[equa];
-	$equb = $tab[equb];
-	
+	$libelle = (isset($tab->libelle)?"$tab->libelle":"");
+	$equa = (isset($tab->equa)?"$tab->equa":"");
+	$equb = (isset($tab->equb)?"$tab->equb":"");
+
 	//on fait quelque transformations des infos recueillies
 	preg_match_all('#[0-9]+#',$libelle,$extract);
 	$tour = $extract[0][0];
-	
+
 	$extraction = substr($libelle,-8);
 	$date_extract = explode('/', $extraction);
 	$annee_date = $date_extract[2] + 2000;
 	$date_event = $annee_date."-".$date_extract[1]."-".$date_extract[0];
-	$uploaded = 0;//initialement mis à 0, indique si le détail des matchs a été uploadé ou non.
-	//on regarde s'il s'agit d'une équipe de mon club ou non
+	$uploaded = 0;
+
 	$cluba = strpos($equa,$nom_equipes);
 	$clubb = strpos($equb,$nom_equipes);
-	
+
 		if ($cluba !== false || $clubb !== false)
 		{
-			$club = 1;//equipe de mon club on affiche
+			$club = 1;
 			$affichage = 1;
 		}
 		else
 		{
 			$club = 0;
-			//on affiche ou pas ?
-			//On regarde ce que l'admin a décidé ds la configuration
-		
 		}
-		
-	$scorea = $tab[scorea];
-	$scoreb = $tab[scoreb];
-	//echo gettype($scorea);
-	$lien = $tab[lien];
+	
+	$scorea = (isset($tab->scorea)?"$tab->scorea":"");
+	$scoreb = (isset($tab->scoreb)?"$tab->scoreb":"");
+	$lien = (isset($tab->lien)?"$tab->lien":"");
 	
 	//
 	//on vérifie que le score a bien été saisi
@@ -138,7 +154,7 @@ foreach($result as $cle =>$tab)
 			//on prépare le tag
 			$indivs = 0;//puisqu'on est dans un contexte d'équipes
 			$tag = "{Ping action='par-equipes'";
-			$tag.=" type_compet='$type_compet'";
+			$tag.=" idepreuve='$idepreuve'";
 			
 				if(isset($date_event) && $date_event !='')
 				{

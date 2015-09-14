@@ -60,12 +60,12 @@ class PingRecupFfttTask implements CmsRegularTask
 		//on instancie la classe Service
 		
 		
-		$service = new Service();
+		$service = new retrieve_ops();
 
 		while($row = $dbresult->FetchRow())
 		{
 			$licence = $row['licence'];
-			ping_admin_ops::retrieve_parties_fftt($licence);
+			$retrieve = $service->retrieve_parties_fftt($licence);
 		}
 		
 	}

@@ -1,6 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 
 	if (!$this->CheckPermission('Ping Manage'))
 	{
@@ -50,7 +50,15 @@ $error = 0;
 		{
 			$error++;
 		}
-		
+		$idorga = '';
+		if (isset($params['idorga']) && $params['idorga'] !='')
+		{
+			$idorga = $params['idorga'];
+		}
+		else
+		{
+			$error++;
+		}
 		
 		//on calcule le nb d'erreur
 		if($error>0)
@@ -68,8 +76,8 @@ $error = 0;
 			}
 			//il faut aussi créer un tag
 			$tag = ping_admin_ops::tag($record_id,$code_compet, $indivs);
-			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET name = ?, coefficient = ?, indivs = ?,tag = ? WHERE id = ?";
-			$dbresult = $db->Execute($query, array($name, $coefficient, $indivs,$tag, $record_id));
+			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET name = ?, coefficient = ?, indivs = ?,tag = ?,idorga = ? WHERE id = ?";
+			$dbresult = $db->Execute($query, array($name, $coefficient, $indivs,$tag, $idorga,$record_id));
 			$designation.="Compétition modifiée";
 			$this->SetMessage("$designation");
 			//$this->RedirectToAdminTab('compets');

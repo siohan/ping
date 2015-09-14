@@ -18,55 +18,9 @@ $designation.="Table temporaire vidée !";
 
 $query2 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET saison = ?, spid_total = '0'";
 $dbresult - $db->Execute($query2, array($saison));
-/*
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_classement";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
 
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_calendrier";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
 
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_comm";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
 
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_equipes";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_joueurs";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_participe";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_parties";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_poules_rencontres";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_recup";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_recup_parties";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";
-
-$query = "DELETE FROM ".cms_db_prefix()."module_ping_sit_mens";
-$db->Execute($query);
-$designation.="Table temporaire vidée !";		
-*/
 $this->SetMessage("$designation");
 $this->RedirectToAdminTab('joueurs',array('message'=>'empty'));
 ?>

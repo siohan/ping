@@ -38,6 +38,7 @@ $lang['dash_record_count'] = 'Ce module g&egrave;re %s enregistrements';
 $lang['do_not_display'] = 'Ne plus afficher sur le site';
 $lang['display_on_frontend'] = 'Afficher sur le site';
 $lang['delete'] = 'Supprimer';
+$lang['delete_all_div'] = 'Ceci supprimera la division, les tours, parties et classements liés';
 $lang['delete_selected'] = 'Supprimer la sélection';
 $lang['delete_result_confirm'] = 'Voulez-vous vraiment supprimer ce résultat ? Tous les résultats individuels liés seront également supprimés';
 $lang['delete_confirm'] = 'Voulez vous supprimer cet enregistrement ?';

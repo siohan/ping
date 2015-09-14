@@ -6,6 +6,7 @@ if(!$this->CheckPermission('Ping Use'))
 	$this->SetMessage($this->Lang('needpermission'));
 	$this->RedirectToAdminTab('joueurs');
 }
+require_once(dirname(__FILE__).'/include/prefs.php');
 $now = trim($db->DBTimeStamp(time()), "'");
 $saison = $this->GetPreference('saison_en_cours');
 $club_number = $this->GetPreference('club_number');
@@ -26,80 +27,133 @@ if(!isset($club_number) || $club_number =='')
 	$this->SetMessage('Le numéro de club n\'est pas défini !');
 	$this->RedirectToAdminTab('configuration');
 }
-$service = new Service();
-$result = $service->getJoueursByClub("$club_number");
 
-//var_dump($result);
-if (!is_array($result))
+//$service = new ServiceB();
+//$result = $service->getLicencesByClub("$club_number");
+
+//ci-dessous, on met à jour les joueurs se trouvant dans la base classement de la FFTT
+if(isset($params['direction']) && $params['direction']== "fftt")
 {
-	$this->SetMessage('Service coupé');
+	$page = "xml_liste_joueur";
+	$service = new Servicen();
+	//paramètres nécessaires 
+	$var = "club=".$club_number;
+	$lien = $service->GetLink($page,$var);
+	$xml = simplexml_load_string($lien);
+	
+	$i =0;//compteur pour les nouvelles inclusions
+	$a = 0;//compteur pour les mises à jour
+	foreach($xml as $tab)
+	{
+		$licence = (isset($tab->licence)?"$tab->licence":"");
+		$actif = 1;
+			
+			//le joueur existe déjà , on fait un upgrade
+			//on vérifie
+		$a++;
+		$query = "UPDATE ".cms_db_prefix()."module_ping_joueurs SET actif = ? WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($actif, $licence));
+				
+	}// fin du foreach
+	//on redirige sur l'onglet joueurs
+	$message = $a." mises à jour";
+	$this->SetMessage($message);
 	$this->RedirectToAdminTab('joueurs');
 }
-/**/
-$i =0;
-foreach($result as $cle =>$tab)
+else 
 {
-	$licence = $tab['licence'];
-	$nom = $tab['nom'];
-	$prenom = $tab['prenom'];
-	$actif = 1;	
-	//$designation = 'récupération des joueurs';
-	
-	$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
-	$dbresult = $db->Execute($query, array($licence));
-	
-	if($dbresult  && $dbresult->RecordCount() == 0) 
+	$page = "xml_licence_b";
+	$service = new Servicen();
+	//paramètres nécessaires 
+	$var="club=".$club_number;
+	$lien = $service->GetLink($page,$var);
+	//echo $lien;//var_dump($lien);
+	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+	//var_dump($xml);
+	if($xml === FALSE)
 	{
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_joueurs (id, licence, nom, prenom,actif) VALUES ('', ?, ?, ?, ?)";
-		$dbresultat = $db->Execute($query,array($licence,$nom, $prenom,$actif));
-		$i++;
+		$array = 0;
+		$lignes = 0;
+	}
+	else
+	{
+		$array = json_decode(json_encode((array)$xml), TRUE);
+		$lignes = count($array['licence']);
+	}
+	//echo "le nb de lignes est : ".$lignes;
+	if($lignes == 0)
+	{
 		
-		if(!$dbresultat)
-		{
-			$designation.= $db->ErrorMsg();
-		}
-		else
-		{
-			//on écrit dans le journal
-			$status = 'Ok';
-			$message = "Inclusion de ".$nom." ".$prenom;
-			$action = "retrieve_users";
-			ping_admin_ops::ecrirejournal($now,$status,$message,$action);
-		}
+	}
+	else
+	{
 		
-		//on va chercher la situation mensuelle si elle est accessible
-		
-		$sit_mens = '';	
-		//on réalise aussi une inclusion dans la table des situations mensuelles
-		//si l'accès est libre cad après le 10 de chq mois
-		if($jour >= 10)
-		{
-			ping_admin_ops::retrieve_sit_mens($licence);
-			$sit_mens = $mois_sit_mens;
-		}
-		else
-		{
-			$sit_mens = 'Janvier 1970';
-		}
-		
-		//on fait l'ajout dans la table table_recup
-		// on part du principe que si le joueur n'existe pas dans la table joueurs alors il n'existe pas non plus ailleurs
-		$fftt = 0;
-		$spid = 0;
-		$query2 ="INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id,saison,datemaj,licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
-		$result = $db->Execute($query2, array($saison, $now, $licence, $sit_mens, $fftt, $spid));
-		
-	}		
 	
 	
+			$i =0;//compteur pour les nouvelles inclusions
+			$a = 0;//compteur pour les mises à jour
+			foreach($xml as $tab)
+			{
+				//$licence = (isset($tab->licence)?"$tab->licence":"");
+				$licence = (isset($tab->licence)?"$tab->licence":"");
+				$nom = (isset( $tab->nom)?"$tab->nom":"");
+				$prenom = (isset($tab->prenom)?"$tab->prenom": "");
+				$nclub = (isset($tab->numclub)?"$tab->numclub":"");
+				$actif = 0;
+				$sexe = (!empty($tab->sexe)?"$tab->sexe":"");
+				$type = (!empty($tab->type)?"$tab->type" :"");
+				$certif = (!empty($tab->certif)?"$tab->certif":"");
+				$validation = (!empty($tab->validation)?"$tab->validation":"");
+				$echelon = (!empty($tab->echelon)?"$tab->echelon":"");
+
+				$place = (!empty($tab->place)?"$tab->place":"");
+				$point = (!empty($tab->point)?"$tab->point":"");
+				$cat = (!empty($tab->cat)?"$tab->cat":"");
+
+
+				//$designation = 'récupération des joueurs';
+
+				$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
+				$dbresult = $db->Execute($query, array($licence));
+
+				if($dbresult  && $dbresult->RecordCount() == 0) 
+				{
+					$query = "INSERT INTO ".cms_db_prefix()."module_ping_joueurs (id, licence, nom, prenom,actif, sexe, type, certif, validation, echelon, place, point, cat) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					$dbresultat = $db->Execute($query,array($licence,$nom, $prenom,$actif, $sexe, $type, $certif, $validation, $echelon,$place,$point, $cat));
+					$i++;
+
+					if(!$dbresultat)
+					{
+						$designation.= $db->ErrorMsg();
+					}
+					else
+					{
+						//on écrit dans le journal
+						$status = 'Ok';
+						$message = "Inclusion de ".$nom." ".$prenom;
+						$action = "retrieve_users";
+						ping_admin_ops::ecrirejournal($now,$status,$message,$action);
+					}
+			
+				}
+				else
+				{
+					//le joueur existe déjà , on fait un upgrade
+					//on vérifie
+					$a++;
+					$query = "UPDATE ".cms_db_prefix()."module_ping_joueurs SET actif = ?,sexe = ?, type = ?, certif = ?, validation = ?, echelon = ?, place = ?, point = ?, cat = ? WHERE licence = ?";
+					$dbresult = $db->Execute($query, array($actif,$sexe, $type, $certif,$validation, $echelon, $place, $point, $cat, $licence));
+				}		
+
 		
-}// fin du foreach
+			}// fin du foreach
+	$this->Redirect($id,'retrieve_users',$returnid,$params = array("direction"=>"fftt"));
+	
+	}
+}
 
+	
 
-	$designation.= "Inclusion de  ".$i." joueurs (voir journal)";
-	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('joueurs');
-/**/
 #
 # EOF
 #

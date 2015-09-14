@@ -21,7 +21,7 @@ if($dbresult && $dbresult->RecordCount() > 0)
 {
 	 
 	//on instancie la classe et on va commencer à boucler
-	$service = new Service();
+	$service = new Servicen();
 	
 	while ($row= $dbresult->FetchRow())
 	{
@@ -29,7 +29,7 @@ if($dbresult && $dbresult->RecordCount() > 0)
 		$player = $row['player'];
 		
 		
-		retrieve_ops::retrieve_parties_spid($licence);
+		$retrieve_spid = $service->retrieve_parties_spid($licence);
 		
 			
 	}//fin du while

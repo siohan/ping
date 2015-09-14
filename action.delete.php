@@ -106,6 +106,25 @@ $designation = '';
 					$this->RedirectToAdminTab('situation');
 				break;
 				
+				case "division" :
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_divisions WHERE id = ?";
+					$db->Execute($query, array($record_id));
+					
+					//on supprime aussi les autres tours , parties, et classement affiliés
+					//on commence par les tours
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_tours WHERE iddivision = ?";
+					$db->Execute($query, array($record_id));
+					//on continue par les parties
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_parties WHERE iddivision = ?";
+					$db->Execute($query, array($record_id));
+					//enfin les classements
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_classement WHERE iddivision = ?";
+					$db->Execute($query, array($record_id));
+					
+					$this->SetMessage('Division supprimée');
+					$this->Redirect('defaultadmin2');
+				break;
+				
 			}
 		}
 		

@@ -27,8 +27,13 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 	    return;
 }
 
-
-    // find the user
+//les organismes
+$fede = '100001';
+$zone = $this->GetPreference('zone');
+$ligue = $this->GetPreference('ligue');
+$dep = $this->GetPreference('dep');
+$tableau = array("Fédération"=>$fede, "Zone"=>$zone,"Ligue"=>$ligue, "Comité"=>$dep);
+    // 
     $query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE id = ?";
     $dbresult = $db->GetRow($query, array( $params['record_id'] ));
 
@@ -44,7 +49,8 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 		$name = $dbresult['name'];
 		$code_compet = $dbresult['code_compet'];
 		$coefficient = $dbresult['coefficient'];
-		$indivs = $dbresult['indivs'];		
+		$indivs = $dbresult['indivs'];
+		$idorga = $dbresult['idorga'];		
 	}
 
    
@@ -64,7 +70,9 @@ $smarty->assign('coefficient',
 		$this->CreateInputText($id, 'coefficient',$coefficient,5,10));
 		$itemsindivs = array("Non"=>"0","Oui"=>"1");
 $smarty->assign('indivs',
-		$this->CreateInputDropdown($id, 'indivs',$itemsindivs));
+		$this->CreateInputDropdown($id, 'indivs',$itemsindivs,-1,$indivs));
+		$smarty->assign('orga',
+				$this->CreateInputDropdown($id, 'idorga',$tableau,-1,$idorga));
 $smarty->assign('edit',
 		$this->CreateInputText($id,'edit','Oui'));							
 $smarty->assign('submit',

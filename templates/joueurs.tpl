@@ -23,12 +23,12 @@ $(document).ready(function(){
 </script>
 {* les messages ci-dessous proviennent de la page action.updateoptions.php*}
 {if $msg =='Full'}
-<p class="warning">Cliquez ci-après pour finaliser le changement de saison {$delete_all}</a></p>
+<p class="warning">Cliquez ci-après pour finaliser le changement de saison {$delete_all}</p>
 {/if}
 
 {if $saison_en_cours != $saison}
 <p class="warning">Attention !! Vous devez changer vos paramètres dans l'onglet "Configuration"</p>{/if}
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;{$retrieve_users}&nbsp;|&nbsp;{$createlink}&nbsp;| &nbsp;| {$display_unable_players}&nbsp;</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;{$retrieve_users}&nbsp;|&nbsp;{$createlink}&nbsp;{*| &nbsp;| {$display_unable_players}&nbsp;*}</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -50,7 +50,7 @@ $(document).ready(function(){
 	<td>{$entry->id}</td>
 	<td>{$entry->joueur}</td>
 	<td>{$entry->licence}</td>
-    <td>{$entry->actif}</td>
+    <td{if $entry->actif =="0"} class="warning"{else} class="info"{/if}>{$entry->actif}</td>
 	<td>{$entry->sexe}</td>
 	<td>{$entry->birthday}</td>
 	<td>{$entry->doedit}</td>

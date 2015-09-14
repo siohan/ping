@@ -40,6 +40,13 @@ $flds = "
 	pts I(11),
 	birthday D,
 	sexe C(1),
+	type C(1),
+	certif C(255),
+	validation D,
+	echelon C(1),
+	place I(4),
+	point I(4),
+	cat C(5),
 	adresse C(255),
 	ville C(255),
 	codepostal C(5) ";
@@ -61,7 +68,8 @@ $flds= "id I(11) KEY AUTO,
 	idpoule I(11),
 	iddiv I(11),
 	type_compet C(3) DEFAULT 'U',
-	tag C(255)";
+	tag C(255),
+	idepreuve C(11)";
 
 $sqlarray= $dict->CreateTableSQL( cms_db_prefix()."module_ping_equipes",
 				  $flds,
@@ -308,6 +316,86 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competition
 //créé un index sur la table
 $dict->ExecuteSQLArray($sqlarray);
 #
+$dict = NewDataDictionary( $db );
+
+// table schema description
+$flds = "
+	id I(11) AUTO KEY,
+	libelle C(255),
+	idorga I(11),
+	code C(5),
+	scope C(1)";
+
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_organismes",
+				   $flds, 
+				   $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+#
+# create table divisions
+// table schema description
+$flds = "
+	id I(11) AUTO KEY,
+	idorga I(11),
+	idepreuve I(11),
+	iddivision I(11),
+	libelle C(255),
+	saison C(255),
+	indivs I(1),
+	scope C(1),
+	uploaded C(1)";
+
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_divisions",
+				   $flds, 
+				   $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+#
+# create table div_poules//debut de la création
+// table schema description
+$flds = "
+	id I(11) AUTO KEY,
+	idepreuve I(11),
+	iddivision I(11),
+	libelle C(255),
+	tour I(3),
+	tableau I(11),	
+	lien C(255),
+	saison C(255),
+	uploaded I(1)";
+
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",
+				$flds, 
+				$taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+//on créé un index sur la table div_poules
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
+	    cms_db_prefix().'module_ping_div_poules', 'idepreuve, iddivision, tableau',$idxoptarray);
+	       $dict->ExecuteSQLArray($sqlarray);
+#
+# create table div_classement//debut de la création
+// table schema description
+$flds = "
+	id I(11) AUTO KEY,
+	idepreuve I(11),
+	iddivision I(11),
+	tableau I(11),
+	tour I(11),
+	rang I(11),
+	nom C(255),
+	clt C(255),
+	club C(255),
+	points N(6,3),
+	saison C(255)";
+
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_classement",
+				 $flds, 
+				$taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+#
 #
 $dict = NewDataDictionary( $db );
 $flds = "
@@ -343,6 +431,30 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_classement",
 				   $flds, 
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
+
+//Création de la table feuille de rencontre
+$flds = "
+	id I(11) AUTO KEY,
+	fk_id I(11),
+	xja C(255),
+	xca C(255),
+	xjb C(255),
+	xcb C(255)";
+$qslarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_feuilles_rencontres", $flds, $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+
+//Création de la table parties des rencontres par équipes
+$flds = "
+	id I(11) AUTO KEY,
+	fk_id I(11),
+	joueurA C(255),
+	cltA C(255),
+	joueurB C(255),
+	cltB C(255)";
+$qslarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+
+//mieux vaut créer un index sur la clé étrangère fk_id
 //$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
 #
 #
@@ -432,7 +544,14 @@ $this->CreateEvent('OnUserAdded');
 $this->CreateEvent('OnUserDeleted');
 #
 //on insère les éléments par défaut
+#indexes
 
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
+		    				cms_db_prefix().'module_ping_feuilles_rencontres', 'fk_id');
+$dict->ExecuteSQLArray($sqlarray);
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
+	    cms_db_prefix().'module_ping_rencontres_parties', 'fk_id');
+	       $dict->ExecuteSQLArray($sqlarray);
 #
 // put mention into the admin log
 $this->Audit( 0, 

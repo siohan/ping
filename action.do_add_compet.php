@@ -1,6 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 
 	if (!$this->CheckPermission('Ping Manage'))
 	{
@@ -13,10 +13,10 @@ if (!isset($gCms)) exit;
 $error = 0;
 $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		
-		$type_compet = '';
-		if (isset($params['type_compet']) && $params['type_compet'] != '')
+		$idepreuve = '';
+		if (isset($params['idepreuve']) && $params['idepreuve'] != '')
 		{
-			$type_compet = $params['type_compet'];
+			$idepreuve = $params['idepreuve'];
 		}
 		else
 		{
@@ -65,7 +65,7 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 			$record_id = $params['record_id'];
 			$edit = 1;//c'est un update
 		}
-		$tag = ping_admin_ops::tag($record_id,$type_compet,$indivs,$date_debut,$date_fin);
+		$tag = ping_admin_ops::tag($record_id,$idepreuve,$indivs,$date_debut,$date_fin);
 		
 		//on calcule le nb d'erreur
 		if($error>0)
@@ -76,14 +76,14 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		
 		if($edit == 0)
 		{
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, type_compet, date_debut, date_fin, numjourn,tag) VALUES ('', ?, ?, ?, ?,?)";
-			$dbresult = $db->Execute($query, array($type_compet,$date_debut, $date_fin, $numjourn,$tag));
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, idepreuve, date_debut, date_fin, numjourn,tag) VALUES ('', ?, ?, ?, ?,?)";
+			$dbresult = $db->Execute($query, array($idepreuve,$date_debut, $date_fin, $numjourn,$tag));
 			
 		}
 		else
 		{
-			$query = "UPDATE ".cms_db_prefix()."module_ping_calendrier SET type_compet = ?, date_debut =?, date_fin = ?, numjourn = ?,tag = ? WHERE id = ?";
-			$dbresult = $db->Execute($query, array($type_compet,$date_debut, $date_fin, $numjourn,$tag,$record_id));
+			$query = "UPDATE ".cms_db_prefix()."module_ping_calendrier SET idepreuve = ?, date_debut =?, date_fin = ?, numjourn = ?,tag = ? WHERE id = ?";
+			$dbresult = $db->Execute($query, array($idepreuve,$date_debut, $date_fin, $numjourn,$tag,$record_id));
 			
 		}
 		

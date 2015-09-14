@@ -22,7 +22,7 @@ if (FALSE == empty($params['active_tab']))
 	echo $this->SetTabHeader('fftt', 'FFTT' , ('fftt' == $tab)?true:false);
 	echo $this->SetTabHeader('spid', 'SPID' , ('spid' == $tab)?true:false);
 	echo $this->SetTabHeader('compets', 'Compétitions' , ('compet' == $tab)?true:false);
-	
+	//echo $this->SetTabHeader('divisions', 'Divisions', ('divisions' == $tab)?true:false);	
 	echo $this->SetTabHeader('poules', 'Résultats', ('resultats' == $tab)?true:false);
 	echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
 	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('situation' == $tab)?true:false);
@@ -59,7 +59,13 @@ echo $this->StartTabContent();
 
        echo $this->StartTab('compets' , $params);//les types de compétitions
     	include(dirname(__FILE__).'/action.admin_compets_tab.php');
-   	echo $this->EndTab(); 	
+   	echo $this->EndTab(); 
+
+	/*
+	echo $this->StartTab('divisions', $params);//le journal
+    	include(dirname(__FILE__).'/action.admin_divisions_tab.php');
+   	echo $this->EndTab();
+	*/
 
 	echo $this->StartTab('poules' , $params);//résultats des poules
     	include(dirname(__FILE__).'/action.admin_poules_tab2.php');

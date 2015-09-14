@@ -4,7 +4,7 @@
  
 //use Doctrine\Common\Cache\Cache;
  
-class Service
+class Servicen
 {
     private $cache;
     private $logger;
@@ -75,16 +75,32 @@ class Service
 
    public function GetEncryptedTimestamp()
    {
-	$this->code = service::GetPassword();
-	$this->tm = service::GetTimestamp();
+	$this->code = servicen::GetPassword();
+	$this->tm = servicen::GetTimestamp();
 	$this->tmc = hash_hmac("sha1",$this->tm,$this->code);
 	return $this->tmc;
 
    }
-
-    public function setAutoInitialisation($flag)
+    public function initialisationAPI() 
     {
-        $this->autoInitialization = (bool)$flag;
+	$chaine = 'http://www.fftt.com/mobile/pxml/xml_initialisation.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id; 
+	$result = file_get_contents($chaine);
+
+	$dom = new DomDocument();
+	$dom->loadXML($result); 
+	$reponse = $dom->getElementsByTagName('appli')->item(0)->nodeValue;
+	return $reponse;
+    }
+
+    public function GetLink($page,$var = "")
+    {
+        $serie = servicen::GetSerie();
+	$tm = servicen::GetTimestamp();
+	$tmc = servicen::GetEncryptedTimestamp();
+	$id = servicen::GetIdAppli();
+	$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id.'&'.$var; 
+	return file_get_contents($chaine);
+	//return $chaine;
     }
  
     public function initialization()

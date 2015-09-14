@@ -1,7 +1,7 @@
 <?php
 //ce fichier fait des actions de masse, il est appelé depuis l'onglet de récupération des infos sur les joueurs
 if( !isset($gCms) ) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 //var_dump($params['sel']);
 $db =& $this->GetDb();
 if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
@@ -158,22 +158,32 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			break;
 
 	
-			case "masculin" :
-			foreach( $params['sel'] as $licence )
+			
+			case "supp_div" :
+			foreach( $params['sel'] as $record_id )
 	  		{
-	    			ping_admin_ops::masculin( $licence );
+	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_poules WHERE id = ?";
+				$db->Execute($query, array($record_id));
 	  		}
-	
 			$this->RedirectToAdminTab('joueurs');
 			break;
 			
-			case "feminin" :
-			foreach( $params['sel'] as $licence )
-	  		{
-	    			ping_admin_ops::feminin( $licence );
-	  		}
-			$this->RedirectToAdminTab('joueurs');
+			case "dater" :
+				$id_sel = implode("-",$params['sel']);
+				$this->Redirect($id,'dater',$returnid, array("sel"=>$id_sel));
+			
 			break;
+			case "supp_fftt" : 
+			$i = 0;
+			foreach($params['sel'] as $record_id)
+			{
+				$query = "DELETE FROM ".cms_db_prefix()."module_ping_parties WHERE id = ?";
+				$db->Execute($query, array($record_id));
+				$i++;
+			}
+			$message = $i." matches supprimés";
+			$this->SetMessage($message);
+			$this->RedirectToAdminTab('fftt');
 	
       		}//fin du switch
   	}

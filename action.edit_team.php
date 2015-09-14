@@ -107,13 +107,13 @@ else
 
 
 		//on fait le tour des compétitions possibles excepté U pour undefined
-$query2 = "SELECT name, code_compet FROM ".cms_db_prefix()."module_ping_type_competitions";//" WHERE indivs = '0'";
+$query2 = "SELECT name, code_compet, idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions";//" WHERE indivs = '0'";
 $dbresultat = $db->Execute($query2);
 if($dbresultat && $dbresultat->RecordCount()>0)
 {
 	while ($dbresultat && $row = $dbresultat->FetchRow())
 	  {
-	   	$typeCompet[$row['name']] = $row['code_compet'];
+	   	$idepreuve[$row['name']] = $row['idepreuve'];
 	  }
 }
 
@@ -121,9 +121,9 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 $smarty->assign('type_compet',
 		$this->CreateInputDropdown($id,'type_compet',$type_compet,$selectedindex = $index, $selectedvalue=$name));
 */
-$smarty->assign('type_compet',
-		$this->CreateInputDropdown($id, 'type_compet',$typeCompet,
-		(isset($type_compet)?$type_compet:"-1"),(isset($type_compet)?$type_compet:"")));
+$smarty->assign('idepreuve',
+		$this->CreateInputDropdown($id, 'idepreuve',$idepreuve,
+		(isset($idepreuve)?$idepreuve:"-1"),(isset($idepreuve)?$idepreuve:"")));
 	
 $smarty->assign('Ajouter',
 	$this->CreateInputSubmit($id, 'Ajouter', $this->Lang('submitasnew'), 'class="button"'));				
