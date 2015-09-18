@@ -11,7 +11,7 @@
 {$indivs}
 <div class="pageoverflow">
     <p class="pagetext">Compétition :</p>
-    <p class="pageinput">{$type_compet} {*$tooltip*}</p>
+    <p class="pageinput">{$idepreuve} {*$tooltip*}</p>
   </div>
 	<div class="pageoverflow">
     <p class="pagetext">Date début:</p>

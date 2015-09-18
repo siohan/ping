@@ -29,7 +29,7 @@ $edit = 0;
 		$record_id = $params['record_id'];
 		$edit = 1;//on est bien en trai d'éditer un enregistrement
 		//ON VA CHERCHER l'enregistrement en question
-		$query = "SELECT cal.id, tc.id AS index1, tc.idepreuve, tc.name,tc.indivs, cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.type_compet = tc.code_compet AND cal.id = ?";
+		$query = "SELECT cal.id, tc.id AS index1, tc.idepreuve, tc.name,tc.indivs, cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.idepreuve = tc.idepreuve AND cal.id = ?";
 		$dbresult = $db->Execute($query, array($record_id));
 		while ($dbresult && $row = $dbresult->FetchRow())
 			{
@@ -40,14 +40,14 @@ $edit = 0;
 				$name = $row['name'];
 				$indivs = $row['indivs'];
 				$index = $row['index1'] - 1;
-				$idepreuve = $row['idepreuve'];
+				//$idepreuve = $row['idepreuve'];
 				
 				
 				
 			}
 	}
 	//on fait une requete pour completer l'input dropdown du formulaire
-	$query = "SELECT name, idepeuve FROM ".cms_db_prefix()."module_ping_type_competitions";
+	$query = "SELECT name, idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions";
 	$dbresult = $db->Execute($query);
 
 		if($dbresult && $dbresult->RecordCount() >0)
@@ -70,7 +70,7 @@ $edit = 0;
 				$this->CreateInputHidden($id,'record_id',$record_id));
 	}
 	$smarty->assign('idepreuve',
-			$this->CreateInputDropdown($id,'idepreuve',$idepreuve,$selectedindex = $index, $selectedvalue=$name));
+			$this->CreateInputDropdown($id,'idepreuve',$type_compet,$selectedindex = $index, $selectedvalue=$name));
 	$smarty->assign('date_debut',
 			$this->CreateInputDate($id, 'date_debut',$date_debut));
 	$smarty->assign('date_fin',

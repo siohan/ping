@@ -309,9 +309,9 @@ else //epreuve individuelle
 			$forfait = htmlentities($value->forfait);
 			
 			
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_parties (id, idepreuve,iddivision,tableau,tour,rang, nom,clt,club,points, saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_parties (id, idepreuve,iddivision,tableau,tour,libelle, vain,perd,forfait, saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
-			$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$tour,$rang, $nom, $clt, $club, $points,$saison));
+			$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$tour,$libelle, $vain, $perd, $forfait,$saison));
 
 			if(!$dbresult)
 			{

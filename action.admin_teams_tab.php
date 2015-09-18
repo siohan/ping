@@ -81,7 +81,7 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				if($code != 'U')
 				{
 					//$calendrierimage = $themeObject->DisplayImage('icons/system/calendrier.jpg', $this->Lang('download_poule_results'),'','','systemicon');
-					$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres',$returnid,$calendarImage, array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv'], 'type_compet'=>$row['type_compet']));
+					$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres',$returnid,$calendarImage, array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv'], 'idepreuve'=>$row['idepreuve']));
 					$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,$podiumImage, array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['id'], "type_compet"=>$row['code_compet']));
 				}
 				else

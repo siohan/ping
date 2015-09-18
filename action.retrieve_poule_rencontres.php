@@ -2,19 +2,41 @@
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
-$iddiv = $params['iddiv'];
-$idpoule = $params['idpoule'];
+$iddiv = "";
+$idpoule = "";
 $idepreuve = "";
+$message = '';//le message de sortie
+$error = 0; //on instancie le compteur d'erreurs
 if(isset($params['idepreuve']) && $params['idepreuve'] != "")
 {
 	$idepreuve = $params['idepreuve'];
 }
-$message = '';
-if(!isset($iddiv) && empty($iddiv)){
+else
+{
+	$error++;
+}
+if(isset($params['iddiv']) && $params['iddiv'] != "")
+{
+	$iddiv = $params['iddiv'];
+}
+else
+{
+	$error++;
+}
+if(isset($params['idpoule']) && $params['idpoule'] != "")
+{
+	$idpoule = $params['idpoule'];
+}
+else
+{
+	$error++;
+}
+if($error >0)
+{
 	$message.="Paramètres manquants";
 	$this->Setmessage("$message");
 	$this->RedirectToAdminTab('equipes');
-	}
+}
 //Les préférences
 $now = trim($db->DBTimeStamp(time()), "'");
 $nom_equipes = $this->GetPreference('nom_equipes');
@@ -167,16 +189,16 @@ foreach($xml as $cle =>$tab)
 			$tag.="}";
 			//On fait l'inclusion ds la bdd
 			// on vérifie d'abord que l'enregistrement n'est pas déjà en bdd
-			$query = "SELECT numjourn, date_debut, date_fin, type_compet FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND type_compet = ? ";//AND scorea !=0 AND scoreb !=0";
-			$dbresult = $db->Execute($query, array($tour, $date_event, $date_event,$type_compet));
+			$query = "SELECT numjourn, date_debut, date_fin, idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND idepreuve = ? ";//AND scorea !=0 AND scoreb !=0";
+			$dbresult = $db->Execute($query, array($tour, $date_event, $date_event,$idepreuve));
 
 				if ($dbresult->RecordCount()==0)
 				{
 					
 					
 					
-						$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,type_compet, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
-						$dbresult = $db->Execute($query, array($date_event,$date_event,$type_compet,$tour,$tag,$saison));
+						$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,idepreuve, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
+						$dbresult = $db->Execute($query, array($date_event,$date_event,$idepreuve,$tour,$tag,$saison));
 						
 						if($dbresult)
 						{

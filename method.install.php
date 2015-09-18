@@ -255,7 +255,8 @@ $flds = "
 	iddiv I(11),
 	idpoule I(11),
 	numjourn I(11),
-	tag C(255)";
+	tag C(255),
+	idepreuve I(11)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_calendrier",
@@ -388,7 +389,8 @@ $flds = "
 	clt C(255),
 	club C(255),
 	points N(6,3),
-	saison C(255)";
+	saison C(255),
+	uploaded I(1)";
 
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_classement",

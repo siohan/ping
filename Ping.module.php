@@ -118,6 +118,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('type', CLEAN_STRING);
 	$this->SetParameterType('idpoule', CLEAN_INT);
 	$this->SetParameterType('iddiv', CLEAN_INT);
+	$this->SetParameterType('idepreuve', CLEAN_INT);
 	$this->SetParameterType('tableau', CLEAN_INT);
 	$this->SetParameterType('lien', CLEAN_STRING);
 	$this->SetParameterType('message', CLEAN_STRING);

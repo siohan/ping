@@ -415,7 +415,8 @@ case "0.3" :
 			clt C(255),
 			club C(255),
 			points N(6,3),
-			saison C(255)";
+			saison C(255),
+			uploaded I(1)";
 
 		// create it. 
 		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_classement",
@@ -496,6 +497,11 @@ case "0.3" :
 			
 		$dict = NewDataDictionary($db);
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_equipes", "idepreuve C(11)");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//add a new column to calendar
+		$dict = NewDataDictionary($db);
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_calendrier", "idepreuve C(11)");
 		$dict->ExecuteSQLArray( $sqlarray );
 	}
 	
