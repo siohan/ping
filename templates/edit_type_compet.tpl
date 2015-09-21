@@ -12,7 +12,7 @@
 {$formstart}
 {$record_id}
 {$edit}
-{$code_compet}
+{$idepreuve}
 <div class="pageoverflow">
     <p class="pagetext">Type Compétition:</p>
     <p class="pageinput">{$name}</p>

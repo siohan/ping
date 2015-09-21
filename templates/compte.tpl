@@ -17,3 +17,4 @@
 
 </fieldset>
 {$endform}
+{if $serial !=""}<p>Votre numéro de série unique est : {$serial}</p>{/if}

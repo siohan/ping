@@ -25,7 +25,7 @@ $smarty->assign('score', 'Score');
 $smarty->assign('adversaires', 'Adversaires');
 
 $result= array ();
-$query = "SELECT DISTINCT *, eq.id,comp.name, comp.code_compet, eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ? AND comp.code_compet = eq.type_compet";
+$query = "SELECT DISTINCT *, eq.id,comp.name, comp.code_compet, eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ? AND comp.idepreuve = eq.idepreuve";
 if($this->GetPreference('phase_en_cours') =='1' )
 {
 	if($phase ==2)

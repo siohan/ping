@@ -67,9 +67,10 @@ else
 	//paramètres nécessaires 
 	$var="club=".$club_number;
 	$lien = $service->GetLink($page,$var);
-	//echo $lien;//var_dump($lien);
+	echo $lien;
+	var_dump($lien);
 	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-	//var_dump($xml);
+	var_dump($xml);
 	if($xml === FALSE)
 	{
 		$array = 0;
@@ -83,7 +84,9 @@ else
 	//echo "le nb de lignes est : ".$lignes;
 	if($lignes == 0)
 	{
-		
+		$message = "Pas de lignes à récupérer !";
+		$this->SetMessage("$message");
+		//$this->RedirectToAdminTab('joueurs');
 	}
 	else
 	{
@@ -149,7 +152,7 @@ else
 			}// fin du foreach
 	$this->Redirect($id,'retrieve_users',$returnid,$params = array("direction"=>"fftt"));
 	
-	}
+	}//fin du else
 }
 
 	

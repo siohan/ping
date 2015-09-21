@@ -92,7 +92,7 @@ $smarty->assign('mois_suivant',
 $smarty->assign('all_results', 
 		$this->CreateLink($id, 'retrieve_all_poule_rencontres', $returnid, 'Récupérer tous les résultats'));
 //la requete
-$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, cal.type_compet,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.code_compet = cal.type_compet AND MONTH(cal.date_debut) = ? AND cal.saison = ?";
+$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, tc.idepreuve,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.idepreuve = cal.idepreuve AND MONTH(cal.date_debut) = ? AND cal.saison = ?";
 //$parms['date_debut'] = $mois_courant;
 /*
 	if($this->GetPreference('phase_en_cours') =='1' )
@@ -132,7 +132,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$indivs = $row['indivs'];
 		$date_debut = $row['date_debut'];
 		$date_fin = $row['date_fin'];
-		$type_compet = $row['type_compet'];
+		$idepreuve = $row['idepreuve'];
 		$jour_compet = $row['jour_compet'];
 		$coefficient = $row['coefficient'];
 		$compet = $row['name'];
@@ -148,8 +148,8 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$i++;
 			$onerow->valeur = $i;
 			//on refait une requete pour extraire les rencontres
-			$query2 = "SELECT DISTINCT ren.id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv, ren.idpoule,eq.friendlyname,ren.id, ren.club,ren.uploaded,eq.libequipe,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison AND ren.club = '1' AND ren.date_event = ? AND eq.type_compet = ?";//" AND date_event >=Now()";
-			$dbresultat = $db->Execute($query2,array($date_debut, $type_compet));
+			$query2 = "SELECT DISTINCT ren.id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname,ren.id, ren.club,ren.uploaded,eq.libequipe,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison AND ren.club = '1' AND ren.date_event = ? AND eq.idepreuve = ?";//" AND date_event >=Now()";
+			$dbresultat = $db->Execute($query2,array($date_debut, $idepreuve));
 			$nblignes = $dbresultat->RecordCount();
 			//echo "le nb de lignes est : ".$nblignes;
 			if($dbresultat && $dbresultat->RecordCount()>0)
@@ -171,6 +171,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					$uploaded = $row2['uploaded'];
 					$libequipe = $row2['libequipe'];
 					$friendlyname = $row2['friendlyname'];
+					$idepreuve = $row2['idepreuve'];
 					
 					if($affiche ==1)
 					{

@@ -107,10 +107,10 @@ foreach($xml as $cle =>$tab)
 			$row = $dbresult->FetchRow();
 			$record_id = $row['Auto_increment'];
 			$tag = ping_admin_ops::tag_equipe($record_id);
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet, tag) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet, tag, idepreuve) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
 			$compteur++;
-			$dbresultat = $db->Execute($query,array($saison, $phase, $new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet, $tag));
+			$dbresultat = $db->Execute($query,array($saison, $phase, $new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet, $tag, $idepreuve));
 		
 			if(!$dbresultat)
 			{

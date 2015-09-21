@@ -1,6 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 
 	if (!$this->CheckPermission('Ping Manage'))
 	{
@@ -22,10 +22,10 @@ $error = 0;
 			$error++;
 		}
 		
-		$code_compet = '';
-		if (isset($params['code_compet']) && $params['code_compet'] != '')
+		$idepreuve = '';
+		if (isset($params['idepreuve']) && $params['idepreuve'] != '')
 		{
-			$code_compet = $params['code_compet'];
+			$idepreuve = $params['idepreuve'];
 		}
 		else
 		{
@@ -75,7 +75,7 @@ $error = 0;
 				$record_id= $params['record_id'];
 			}
 			//il faut aussi créer un tag
-			$tag = ping_admin_ops::tag($record_id,$code_compet, $indivs);
+			$tag = ping_admin_ops::tag($record_id,$idepreuve, $indivs);
 			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET name = ?, coefficient = ?, indivs = ?,tag = ?,idorga = ? WHERE id = ?";
 			$dbresult = $db->Execute($query, array($name, $coefficient, $indivs,$tag, $idorga,$record_id));
 			$designation.="Compétition modifiée";
@@ -84,7 +84,13 @@ $error = 0;
 		}
 		else
 		{
+			//on créé
 		$code_compet = ping_admin_ops::random(3);
+		$query1 = "SHOW TABLE STATUS LIKE '".cms_db_prefix()."module_ping_type_competitions' ";
+		$dbresult = $db->Execute($query1);
+		$row = $dbresult->FetchRow();
+		$record_id = $row['Auto_increment'];
+		$tag = ping_admin_ops::tag($record_id,$idepreuve,$indivs);
 		$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient, indivs) VALUES ('', ?, ?, ?, ?)";
 		$dbresult = $db->Execute($query, array($name,$code_compet, $coefficient, $indivs));
 		

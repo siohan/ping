@@ -505,6 +505,40 @@ case "0.3" :
 		$dict->ExecuteSQLArray( $sqlarray );
 	}
 	
+case  "0.3.0.1" :
+	{
+		//Création de la table feuille de rencontre
+		$flds = "
+			id I(11) AUTO KEY,
+			fk_id I(11),
+			xja C(255),
+			xca C(255),
+			xjb C(255),
+			xcb C(255)";
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_feuilles_rencontres", $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+
+		//Création de la table parties des rencontres par équipes
+		$flds = "
+			id I(11) AUTO KEY,
+			fk_id I(11),
+			joueurA C(255),
+			scoreA C(255),
+			joueurB C(255),
+			scoreB C(255)";
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		#indexes
+
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
+				    				cms_db_prefix().'module_ping_feuilles_rencontres', 'fk_id');
+		$dict->ExecuteSQLArray($sqlarray);
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
+			    cms_db_prefix().'module_ping_rencontres_parties', 'fk_id');
+			       $dict->ExecuteSQLArray($sqlarray);
+	}
+	
 }
 
 

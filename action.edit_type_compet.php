@@ -50,7 +50,8 @@ $tableau = array("Fédération"=>$fede, "Zone"=>$zone,"Ligue"=>$ligue, "Comité"
 		$code_compet = $dbresult['code_compet'];
 		$coefficient = $dbresult['coefficient'];
 		$indivs = $dbresult['indivs'];
-		$idorga = $dbresult['idorga'];		
+		$idorga = $dbresult['idorga'];	
+		$idepreuve = $dbresult['idepreuve'];	
 	}
 
    
@@ -63,8 +64,8 @@ $smarty->assign('submit',
 $smarty->assign('name',
 		$this->CreateInputText($id,'name',$name,115,200));
 		
-$smarty->assign('code_compet',
-		$this->CreateInputHidden($id,'code_compet',$code_compet,5,10));
+$smarty->assign('idepreuve',
+		$this->CreateInputHidden($id,'idepreuve',$idepreuve,5,10));
 
 $smarty->assign('coefficient',
 		$this->CreateInputText($id, 'coefficient',$coefficient,5,10));

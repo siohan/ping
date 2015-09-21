@@ -164,7 +164,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,comp.indivs,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND cal.saison = ? AND MONTH(cal.date_debut) = ?";
+$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,comp.indivs,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.idepreuve = comp.idepreuve AND cal.saison = ? AND MONTH(cal.date_debut) = ?";
 		$query .=" ORDER BY cal.date_debut ASC";
 		$dbresult= $db->Execute($query, array($saison, $mois_choisi));
 

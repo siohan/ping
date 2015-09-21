@@ -64,6 +64,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$tableau1 = array();
 			$tab2 = array();
 			$compteur = count($array['joueur']);
+			$compteur_parties = count($array['parties']);
 			
 			//on scinde le tableau principal en plusieurs tableaux ?
 			$tab1 = array_slice($array,0,1);
@@ -89,14 +90,18 @@ if($dbresult && $dbresult->RecordCount()>0)
 						$$xjb = $tab2[joueur][$i][xjb];//ex : $xja0 = '';
 						$$xcb = $tab2[joueur][$i][xcb];
 						//on insère le tout dans la bdd
-						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres (id, fk_id, joueurA, cltA, jourB, cltB) VALUES ('', ?, ?, ?, ?)";
+						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres (id, fk_id, joueurA, cltA, joueurB, cltB) VALUES ('', ?, ?, ?, ?, ?)";
 						$dbresult3 = $db->Execute($query3, array($record_id, $$xja,$$xca,$$xjb,$$xcb));
+					}
+					for($i=0;$i<$compteur_parties;$i++)
+					{
+						
 						
 						//on s'occupe maintenant des parties
 						$ja = 'ja'.$i;
-						$scorea = 'scorea'.$i;
+						$scorea = 'scoreA'.$i;
 						$jb = 'jb'.$i;
-						$scoreb = 'scoreb'.$i;
+						$scoreb = 'scoreB'.$i;
 						$$ja = $tab3[partie][$i][ja];
 						$$scorea = $tab3[partie][$i][scorea];
 						$$jb = $tab3[partie][$i][jb];
@@ -104,27 +109,29 @@ if($dbresult && $dbresult->RecordCount()>0)
 						//on insère aussi dans la bdd
 						$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_rencontres_parties (id, fk_id, joueurA, scoreA, joueurB, scoreB) VALUES ('', ?, ?, ?, ?, ?)";
 						$dbresult4 = $db->Execute($query4, array($record_id, $$ja,$$scorea, $$jb, $$scoreb));
-					$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
-					//echo $query2;
-					$dbresult2 = $db->Execute($query2, array($$xjb,$$xja));
 						
-						if($dbresult2 && $dbresult2->RecordCount()>0)
-						{
-							while($row2= $dbresult2->FetchRow())
+						$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
+						//echo $query2;
+						$dbresult2 = $db->Execute($query2, array($$xjb,$$xja));
+						
+							if($dbresult2 && $dbresult2->RecordCount()>0)
 							{
-								$licence = $row2['licence'];
-								$retrieve = $service->retrieve_parties_spid($licence, $record_id);
+								while($row2= $dbresult2->FetchRow())
+								{
+									$serv = new retrieve_ops();
+									$licence = $row2['licence'];
+									$retrieve = $serv->retrieve_parties_spid($licence, $record_id);
 								
 								
+								}
 							}
-						}
-						else
-						{
+							else
+							{
 							
-						}
+							}
 						
-					//on pourrait aussi récupérer ces infos pour les mettre en bdd	
-						//echo $$xja;
+							//on pourrait aussi récupérer ces infos pour les mettre en bdd	
+							//echo $$xja;
 					}
 						
 //on met la valeur uploaded à 1

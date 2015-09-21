@@ -87,10 +87,15 @@ foreach($xml as $cle =>$tab)
 	
 		if($dbresult  && $dbresult->RecordCount() == 0) 
 		{
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, indivs, idepreuve, idorga) VALUES ('', ?, ?, ?, ?)";
+			$query1 = "SHOW TABLE STATUS LIKE '".cms_db_prefix()."module_ping_equipes' ";
+			$dbresult = $db->Execute($query1);
+			$row = $dbresult->FetchRow();
+			$record_id = $row['Auto_increment'];
+			$tag = ping_admin_ops::tag($record_id, $idepreuve, $indivs);
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, indivs, idepreuve,tag, idorga) VALUES ('', ?, ?, ?, ?, ?)";
 			//echo $query;
 			$compteur++;
-			$dbresultat = $db->Execute($query,array($libelle,$indivs,$idepreuve,$idorga));
+			$dbresultat = $db->Execute($query,array($libelle,$indivs,$idepreuve,$tag,$idorga));
 		
 			if(!$dbresultat)
 			{

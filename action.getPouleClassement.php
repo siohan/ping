@@ -36,6 +36,7 @@ $record_id = '';
 	{
 		$error++;
 	}
+/*
 $code_compet = '';
 	if(isset($params['type_compet']) && $params['type_compet'] !='')
 	{
@@ -45,6 +46,7 @@ $code_compet = '';
 	{
 		$error++;
 	}
+*/
 if($error>0)
 {
 	$this->SetMessage('Paramètres manquants');
@@ -79,9 +81,9 @@ foreach($result as $cle =>$tab)
 	$joue = $tab['joue'];
 	$pts = $tab['pts'];
 	
-	$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_classement (id,idequipe, saison, code_compet, iddiv, idpoule, poule, clt, equipe, joue, pts) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_classement (id,idequipe, saison, iddiv, idpoule, poule, clt, equipe, joue, pts) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	//echo $query2;
-	$dbresultat = $db->Execute($query2, array($record_id,$saison_courante,$code_compet, $iddiv, $idpoule,$poule, $clt, $equipe, $joue,$pts));
+	$dbresultat = $db->Execute($query2, array($record_id,$saison_courante, $iddiv, $idpoule,$poule, $clt, $equipe, $joue,$pts));
 	
 	if(!$dbresultat)
 	{

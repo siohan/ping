@@ -442,7 +442,7 @@ $flds = "
 	xca C(255),
 	xjb C(255),
 	xcb C(255)";
-$qslarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_feuilles_rencontres", $flds, $taboptarray);
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_feuilles_rencontres", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
 //Création de la table parties des rencontres par équipes
@@ -450,11 +450,12 @@ $flds = "
 	id I(11) AUTO KEY,
 	fk_id I(11),
 	joueurA C(255),
-	cltA C(255),
+	scoreA I(1),
 	joueurB C(255),
-	cltB C(255)";
-$qslarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
+	scoreB I(1)";
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
+#
 
 //mieux vaut créer un index sur la clé étrangère fk_id
 //$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
