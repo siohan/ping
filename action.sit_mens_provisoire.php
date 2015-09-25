@@ -8,7 +8,7 @@ global $themeObject;
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 $phase = $this->GetPreference('phase_en_cours');
 
-$mois_courant = 5;// date('n');
+$mois_courant = date('n');
 $jour_courant = date('j');
 
 if($jour_courant <=10)
@@ -61,7 +61,7 @@ if ($dbresult && $dbresult->RecordCount()>0)
 			$onerow->clt= $points_ref;
 			$onerow->somme= $somme;
 			$onerow->bilan= $total;
-			$onerow->details= $this->CreateLink($id, 'user_results_prov', $returnid, 'Détails',array('licence'=>$row['licence'],'month'=>$mois_courant));
+			$onerow->details= $this->CreateFrontendLink($id, $returnid,'user_results_prov', $contents='Détails',array('licence'=>$row['licence'],'month'=>$mois_courant));
 			($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 			$rowarray[]= $onerow;
 		}

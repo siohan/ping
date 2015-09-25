@@ -6,7 +6,7 @@
 {foreach from=$items  item=entry}
 
 	
-							<tr><td>{$entry->equa}</td><td>{$entry->scorea}</td><td>{$entry->scoreb}</td><td>{$entry->equb}</td><td>{$entry->details} {*$entry->class*}</td></tr>
+							<tr><td>{$entry->equa}</td><td>{$entry->scorea}</td><td>{$entry->scoreb}</td><td>{$entry->equb}</td><td>{$entry->details} {$entry->class}</td></tr>
 			{/foreach}
 		</table>
 	
@@ -18,7 +18,7 @@
 	<h3>Les résultats du {$entry->date_event|date_format:"%d/%m/%Y"}</h3>
 		<table class="table table-bordered">
 			{foreach from=$prods_{$entry->valeur} item=donnee}
-				<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td><td>{$donnee->details} {*$donnee->class*}</td></tr>
+				<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td><td>{$donnee->details} {$donnee->class}</td></tr>
 			{/foreach}
 		</table>
 	

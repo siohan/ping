@@ -31,6 +31,7 @@ public function retrieve_parties_spid( $licence )
 		$page = "xml_partie";
 		$var = "licence=".$licence;
 		$lien = $service->GetLink($page, $var);
+		//echo "<a href=".$lien.">".$lien."</a>";
 		$xml   = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 		//var_dump($xml);
 		
@@ -44,11 +45,12 @@ public function retrieve_parties_spid( $licence )
 		{
 			$array = json_decode(json_encode((array)$xml), TRUE);
 			$lignes = count($array['resultat']);
-		//	echo "le nb de lignes est  :".$lignes;
+			echo "le nb de lignes est  :".$lignes;
 		}
 
 		//on compte le nb de résultats du spid présent ds la bdd pour le joueur
 		$spid = ping_admin_ops::compte_spid($licence);
+		//echo $spid." lignes dans le spid";
 		
 			if(!is_array($array))
 			{
@@ -85,7 +87,7 @@ public function retrieve_parties_spid( $licence )
 				$error = 0;//le compteur d'erreurs
 				$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
 				$dbresult1 = $db->Execute($query1, array($saison_courante, $licence));
-				foreach($result as $cle =>$tab)
+				foreach($xml as $cle =>$tab)
 				{
 
 					$compteur++;
@@ -671,8 +673,23 @@ public function retrieve_sit_mens($licence)
 						$action = 'mass_action';
 						ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 						//on met la table recup à jour pour le joueur
-						$query3 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
-						$dbresult3 = $db->Execute($query3, array($now, $mois_sit_mens, $licence2));
+						//Attention s'il s'agit d'un ajout !!
+						//on vérifie d'abord l'existence du joueur ds la bdd
+						$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
+						$dbresult4 = $db->Execute($query4, array($licence2));
+						if($dbresult4->RecordCount() == 0)
+						{
+							$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens) VALUES ('', ?, ?, ?, ?)";
+							$dbresult3 = $db->Execute($query3, array($saison,$now, $licence2, $mois_sit_mens));
+							
+						}
+						else
+						{
+							$query3 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
+							$dbresult3 = $db->Execute($query3, array($now, $mois_sit_mens, $licence2));
+						}
+
+						
 					}
 
 

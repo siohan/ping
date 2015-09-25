@@ -507,6 +507,7 @@ case "0.3" :
 	
 case  "0.3.0.1" :
 	{
+		$dict = NewDataDictionary($db);
 		//Création de la table feuille de rencontre
 		$flds = "
 			id I(11) AUTO KEY,
@@ -523,9 +524,9 @@ case  "0.3.0.1" :
 			id I(11) AUTO KEY,
 			fk_id I(11),
 			joueurA C(255),
-			scoreA C(255),
+			scoreA I(1),
 			joueurB C(255),
-			scoreB C(255)";
+			scoreB I(1)";
 		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
 		$dict->ExecuteSQLArray($sqlarray);
 		

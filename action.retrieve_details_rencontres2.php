@@ -64,7 +64,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$tableau1 = array();
 			$tab2 = array();
 			$compteur = count($array['joueur']);
-			$compteur_parties = count($array['parties']);
+			$compteur_parties = count($array['partie']);
 			
 			//on scinde le tableau principal en plusieurs tableaux ?
 			$tab1 = array_slice($array,0,1);
@@ -90,7 +90,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 						$$xjb = $tab2[joueur][$i][xjb];//ex : $xja0 = '';
 						$$xcb = $tab2[joueur][$i][xcb];
 						//on insère le tout dans la bdd
-						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres (id, fk_id, joueurA, cltA, joueurB, cltB) VALUES ('', ?, ?, ?, ?, ?)";
+						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres (id, fk_id, xja, xca, xjb, xcb) VALUES ('', ?, ?, ?, ?, ?)";
 						$dbresult3 = $db->Execute($query3, array($record_id, $$xja,$$xca,$$xjb,$$xcb));
 					}
 					for($i=0;$i<$compteur_parties;$i++)

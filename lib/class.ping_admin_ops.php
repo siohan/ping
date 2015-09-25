@@ -518,7 +518,7 @@ public static function get_name($nom)
 	return $result;	
 //end of function
 }
-// cette fonction recherche la situation mensuelle d'un joueur du club ds la bdd
+// cette fonction recherche les points de la situation mensuelle d'un joueur du club ds la bdd
 public static function get_sit_mens($licence, $mois_event, $saison)
 {
 	global $gCms;

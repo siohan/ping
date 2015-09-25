@@ -39,8 +39,11 @@ $lignes = $dbresult->RecordCount();
 for($i=0;$i<=$lignes;$i++)
 {
 	array_push($lic,$row[$i]['licence']);
-	$licen = substr(implode(", ", $lic), 0, -3);
+	//var_dump( $lic);
+	$licen = substr(implode(", ", $lic), 3, -3);
+	
 }
+var_dump($licen);
 if($lignes ==0)
 {
 	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif=1";

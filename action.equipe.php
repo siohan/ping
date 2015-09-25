@@ -2,15 +2,20 @@
 if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 $db =& $this->GetDb();
-$saison = (isset($params['saison']))?$params['saison']:$this->GetPreference('saison_en_cours');
+$saison_en_cours = $this->GetPreference('saison_en_cours');
+$saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
 $record_id = '';
 if(!isset($params['record_id']) || $params['record_id'] =='')
 {
 	$message = 'Un pb est survenu';
 }
+else
+{
+	$record_id = $params['record_id'];
+}
 
 
-$record_id = $params['record_id'];
+
 //le numéro de l'équipe est ok, on continue
 //on va d'abord récupérer le classement de cette équipe
 $query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,eq.libequipe FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";

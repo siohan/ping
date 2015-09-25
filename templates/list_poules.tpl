@@ -17,6 +17,29 @@
 </fieldset>
 {/if}
 -->
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){
+  $('#selectall').click(function(){
+    var v = $(this).attr('checked');
+    if( v == 'checked' ) {
+      $('.select').attr('checked','checked');
+    } else {
+      $('.select').removeAttr('checked');
+    }
+  });
+  $('.select').click(function(){
+    $('#selectall').removeAttr('checked');
+  });
+  $('#toggle_filter').click(function(){
+    $('#filter_form').toggle();
+  });
+  {if isset($tablesorter)}
+  $('#articlelist').tablesorter({ sortList:{$tablesorter} });
+  {/if}
+});
+//]]>
+</script>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 
 {if $itemcount > 0}
@@ -26,6 +49,7 @@
 	<th>Epreuve</th>
 	<th>Tour</th>
 	<th colspan="3">Actions</th>
+	<th><input type="checkbox" id="selectall" name="selectall"></th>
   </tr>
  </thead>
  <tbody>
@@ -36,6 +60,8 @@
 		<td>{$entry->poule} - {$entry->partie} - {$entry->classement}</td>
 		<td>{$entry->editlink}</td>
 		<td>{$entry->deletelink}</td>
+		<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->tour_id}" class="select"></td>
+		<td>
   </tr>
 {/foreach}
  </tbody>

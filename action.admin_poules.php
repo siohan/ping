@@ -17,7 +17,7 @@ $ligue = $this->GetPreference('ligue');
 $dep = $this->GetPreference('dep');
 
 $result= array ();
-$query = "SELECT *,dv.libelle FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision ORDER BY dv.iddivision,pou.tour ASC";
+$query = "SELECT *,pou.id AS tour_id, dv.libelle FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision ORDER BY dv.iddivision,pou.tour ASC";
 
 $dbresult= $db->Execute($query);
 // the top nav bar
@@ -42,6 +42,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	*/
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
+	$onerow->tour_id = $row['tour_id'];
 	$onerow->idepreuve= $row['idepreuve'];
 	$onerow->iddivision= $row['iddivision'];
 	$onerow->tour= $row['tour'];
