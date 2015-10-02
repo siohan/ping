@@ -106,7 +106,7 @@ foreach($xml as $cle =>$tab)
 		else
 		{
 			//l'épreuve est déjà renseignée, on fait un update
-			if($idorga == $this->GetPreference(''))
+			//if($idorga == $this->GetPreference(''))
 			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET idepreuve = ? WHERE name = ? ";
 			$dbresult = $db->Execute($query, array($idepreuve,$libelle));
 		}//fin du if $dbresult

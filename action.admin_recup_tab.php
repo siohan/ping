@@ -33,7 +33,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
       {
 	$actif = $row['actif'];
 	$licence = $row['licence'];
-	$sit_mens = ping_admin_ops::$row['sit_mens'];
+	//$sit_mens = ping_admin_ops::$row['sit_mens'];
 	
 	$fftt = ping_admin_ops::compte_fftt($licence);
 	$spid = ping_admin_ops::compte_spid($licence);

@@ -370,14 +370,15 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",
 				$flds, 
 				$taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
-//on créé un index sur la table div_poules
+//on créé un index sur la table div_tours
 $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
-	    cms_db_prefix().'module_ping_div_poules', 'idepreuve, iddivision, tableau',$idxoptarray);
+	    cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau',$idxoptarray);
 	       $dict->ExecuteSQLArray($sqlarray);
 #
 # create table div_classement//debut de la création
 // table schema description
+$dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
 	idepreuve I(11),
@@ -399,10 +400,35 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_classement",
 $dict->ExecuteSQLArray($sqlarray);
 #
 #
+#
+# create table div_parties//debut de la création
+// table schema description
+$dict = NewDataDictionary( $db );
+$flds = "
+	id I(11) AUTO KEY,
+	idepreuve I(11),
+	iddivision I(11),
+	tableau I(11),
+	tour I(2),
+	libelle C(255), 
+	vain C(255),
+	perd C(255),
+	forfait I(1), 
+	saison C(255),
+	uploaded I(1)";
+
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_parties",
+				 $flds, 
+				$taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+#
+#
 $dict = NewDataDictionary( $db );
 $flds = "
 	licence I(11),
 	type_compet C(3),
+	idepreuve I(11),
 	date_debut D,
 	date_fin D";
 			
@@ -456,7 +482,13 @@ $flds = "
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 #
-
+# Les indexs
+//on créé un index sur la table div_tours
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'calendrier',
+	    cms_db_prefix().'module_ping_calendrier', 'idepreuve, date_debut',$idxoptarray);
+	       $dict->ExecuteSQLArray($sqlarray);
+#
 //mieux vaut créer un index sur la clé étrangère fk_id
 //$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
 #

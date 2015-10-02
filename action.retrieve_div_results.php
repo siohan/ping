@@ -103,6 +103,10 @@ if($indivs == '0')//on est dans une épreuve par équipes
 			$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_tours (id, idepreuve,iddivision,libelle,  tableau, lien,saison) VALUES ('', ?, ?, ?, ?, ?, ?)";
 			$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle, $tableau,$lien,$saison));
 		}
+		$designation.="Tour(s) inséré(s)";
+		$this->SetMessage("$designation");
+		$this->Redirect($id,'defaultadmin2', $returnid,array('active_tab'=>'tours'));
+		
 	}	
 }
 else //epreuve individuelle
@@ -309,13 +313,18 @@ else //epreuve individuelle
 			$forfait = htmlentities($value->forfait);
 			
 			
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_parties (id, idepreuve,iddivision,tableau,tour,libelle, vain,perd,forfait, saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_parties (id, idepreuve,iddivision,tableau,libelle, vain,perd,forfait, saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
-			$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$tour,$libelle, $vain, $perd, $forfait,$saison));
+			$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$libelle, $vain, $perd, $forfait,$saison));
 
 			if(!$dbresult)
 			{
 				$designation .= $db->ErrorMsg();
+			}
+			else
+			{
+				//la requete a fonctionné, on peut mettre le statut du tour a "uploadé"
+				$query = "UPDATE ".cms_db_prefix()."module_ping_";
 			}
 
 

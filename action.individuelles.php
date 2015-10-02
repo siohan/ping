@@ -16,7 +16,7 @@ $mois_en_cours = date('m');
 $mois_en_cours2 = $mois_en_cours - 1;
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 //on établit la liste des compétitions individuelles du calendrier
-$query1 = "SELECT *,MONTH(cal.date_debut) AS mois_ref FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.type_compet = tc.code_compet AND cal.saison = ?";
+$query1 = "SELECT *,MONTH(cal.date_debut) AS mois_ref FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.idepreuve = tc.idepreuve AND cal.saison = ?";
 //il s'agit de compétitions individuelles ?
 $query1.=" AND tc.indivs = 1 ";
 $parametres = 0;
@@ -42,6 +42,12 @@ if(isset($params['type_compet']) && $params['type_compet'] !='')
 	
 		
 			
+}
+if(isset($params['idepreuve']) && $params['idepreuve'] != '')
+{
+	$idepreuve = $params['idepreuve'];
+	$query1.= " AND tc.idepreuve = ?";
+	$parms['idepreuve'] = $idepreuve;
 }
 if(isset($params['date_debut']) && $params['date_debut'] !='')
 {
@@ -87,7 +93,7 @@ var_dump($array_V);
 			$date_fin = $row1['date_fin'];
 			$numjourn = $row1['numjourn'];
 			$name = $row1['name'];
-			$code = $row1['code_compet'];
+			$idepreuve = $row1['idepreuve'];
 			$mois_ref = $row1['mois_ref'];		
 			
 			//on instancie ce qui va faire les entêtes
@@ -97,7 +103,7 @@ var_dump($array_V);
 			$onerow->date_event = $date_debut;
 			$onerow->valeur = $i;//très important pour les boucles
 			
-			$array = ping_admin_ops::array_code_compet($code,$date_debut,$date_fin);
+			$array = ping_admin_ops::array_code_compet($idepreuve,$date_debut,$date_fin);
 			//var_dump($array);
 			//echo "le mois de référence est : ".$mois_ref;
 			

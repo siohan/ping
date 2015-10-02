@@ -22,7 +22,7 @@ $i=0;
 		//$date_debut = $params['date_debut'];			
 			
 		//la requete maintenant : 
-		$query1 = "SELECT eq.id AS ind1,ren.equa,ren.equb,ren.scorea,ren.scoreb,ren.date_event, eq.friendlyname, ren.id AS ren_id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0)";//"  AND ren.date_event = ?";
+		$query1 = "SELECT eq.id AS ind1,ren.equa,ren.equb,ren.scorea,ren.scoreb,ren.date_event,ren.uploaded, eq.friendlyname, ren.id AS ren_id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0)";//"  AND ren.date_event = ?";
 		//$parms['date_debut'] = $params['date_debut'];
 			
 			if(isset($params['type_compet']) && $params['type_compet'])
@@ -44,7 +44,11 @@ $i=0;
 				$query1.=" AND ren.date_event = ?";
 				$parms['date_debut'] = $date_debut;
 			}
-			$query1.=" AND ren.club = '1'";
+			if($this->GetPreference('affiche_club_uniquement' =='Oui'))
+			{
+				$query1.=" AND ren.club = '1'";
+			}
+			
 			//echo $query;	
 			$dbresult = $db->Execute($query1,$parms);
 			
@@ -65,6 +69,7 @@ $i=0;
 					//$onerow2->id= $row2['id'];
 					$onerow->ind= $row['ind1'];
 					$onerow->ren_id = $row['ren_id'];
+					$onerow->uploaded = $row['uploaded'];
 					$onerow->date_event= $row['date_event'];
 					$onerow->equb = $row['equb'];
 					$onerow->equa = $row['equa'];

@@ -1,6 +1,6 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: Skeleton - a pedantic "starting point" module
+# Module: Ping
 # Version: 1.5, SjG
 # Method: Upgrade
 #-------------------------------------------------------------------------
@@ -539,7 +539,38 @@ case  "0.3.0.1" :
 			    cms_db_prefix().'module_ping_rencontres_parties', 'fk_id');
 			       $dict->ExecuteSQLArray($sqlarray);
 	}
-	
+	case "0.3.0.2" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "
+		id I(11) AUTO KEY,
+		idepreuve I(11),
+		iddivision I(11),
+		tableau I(11),
+		tour I(2),
+		libelle C(255), 
+		vain C(255),
+		perd C(255),
+		forfait I(1), 
+		saison C(255),
+		uploaded I(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_parties",
+				 $flds, 
+				$taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		$dict = NewDataDictionary( $db );
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'calendrier',
+	    cms_db_prefix().'module_ping_calendrier', 'idepreuve, date_debut',$idxoptarray);
+	       $dict->ExecuteSQLArray($sqlarray);
+		#On crée un nouveau champ dans la table participe
+		$dict->NewDataDictionary( $db );
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_participe", "idepreuve C(11)");
+		$dict->ExecuteSQLArray( $sqlarray );
+	}
 }
 
 

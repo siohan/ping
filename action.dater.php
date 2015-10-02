@@ -14,7 +14,7 @@ if( !isset($gCms) ) exit;
     		$this->RedirectToAdminTab('divisions');
     		return;
   	}
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //le formulaire a t-il été soumis ?
 if(isset($params['submit']))
 {
@@ -25,9 +25,25 @@ if(isset($params['submit']))
 	{
 		$sel = $params['sel'];
 		$id_sel = explode('-', $sel);
-
-		$date_debut = $params['date_debut'];
-		$date_fin = $params['date_fin'];
+		$date_debut = '';
+		if(isset($params['date_debut']) && $params['date_debut'] !='')
+		{
+			$date_debut = $params['date_debut'];
+			if(!isset($params['date_fin'])|| empty($params['date_fin']))
+			{
+				$date_fin = $date_debut;
+			}
+			else
+			{
+				$date_fin = $params['date_fin'];
+			}
+		}
+		else
+		{
+			$this->SetMessage('Date(s) manquante(s)');
+			$this->Redirect($id, 'defaultadmin2', $returnid='', array("active_tab"=>"divisions"));
+		}
+		
 		$i = 0;//on instancie un compteur pour rendre compte
 		
 		foreach($id_sel as $valeur)
@@ -43,18 +59,21 @@ if(isset($params['submit']))
 				$row = $dbresult->FetchRow();
 				$idepreuve = $row['idepreuve'];
 				$iddivsion = $row['iddivision'];
-				$tableau = $row['tableau'];
+				//$tableau = $row['tableau'];
 				$libelle = $row['libelle'];
 				$saison = $row['saison'];
 				$indivs = $row['indivs'];
-				
+				//On crée le tag
+				//$service = new ping_admin_ops();
+				$tag = ping_admin_ops::create_tag($idepreuve,$indivs,$date_debut, $date_fin );
 				//on fait la requete d'insertion
-				//$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, )";
-				
+				$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?)";
+				$dbresult1 = $db->Execute($query2, array($saison,$date_debut, $date_fin,$tag, $idepreuve));
 			}
 			//$query = "UPDATE ".cms_db_prefix()."module_ping_divisions SET date_debut = ?, date_fin = ? WHERE id = ?";
 			//$dbresult = $db->Execute($query, array($date_debut,$date_fin,$valeur));
-			
+			$this->SetMessage('Datation réalisée');
+			$this->Redirect($id,'defaultadmin2', $returnid='', array("active_tab"=>"divisions"));
 		}
 	}
 }

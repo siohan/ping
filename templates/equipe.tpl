@@ -29,7 +29,6 @@
 <h3>Résultats du {$entry->date_event|date_format:"%d/%m"}</h3>	
 {if $itemscount_{$entry->valeur} >0 }
   	<table class="table table-bordered">
-		<tr><th>Equipe A</th><th>Score A</th><th>Score B</th><th>Equipe B</th></tr>
 		{foreach from=$prods_{$entry->valeur} item=donnee}
 		{*<pre>{$prods_{$entry->valeur}|var_dump}</pre>*}	<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td></tr>
 		{/foreach}

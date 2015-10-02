@@ -36,15 +36,15 @@ echo $this->StartTabContent();
 	echo $this->StartTab('tours' , $params);//les équipes
     	include(dirname(__FILE__).'/action.admin_poules.php');
    	echo $this->EndTab();
-/*
-	echo $this->StartTab('partie', $params);//Calendrier
-    	include(dirname(__FILE__).'/action.admin_calendar_tab.php');
+
+	echo $this->StartTab('partie', $params);//Div parties
+    	include(dirname(__FILE__).'/action.admin_div_parties.php');
    	echo $this->EndTab();
 
         echo $this->StartTab('classement', $params);//FFTT
-    	include(dirname(__FILE__).'/action.admin_fftt_tab.php');
+    	include(dirname(__FILE__).'/action.admin_div_classement.php');
    	echo $this->EndTab();	
-*/
+
 
 echo $this->EndTabContent();
 ?>

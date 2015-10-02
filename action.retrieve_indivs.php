@@ -12,9 +12,9 @@ $error = 0;
 //on vérifie les variables reçues
 $type_compet = '';
 
-if(isset($params['type_compet']) && $params['type_compet'] !='')
+if(isset($params['idepreuve']) && $params['idepreuve'] !='')
 {
-	$type_compet = $params['type_compet'];
+	$idepreuve = $params['idepreuve'];
 }
 else
 {
@@ -35,8 +35,8 @@ if($error>0)
 	$this->RedirectToAdminTab('calendrier');
 }
 //on fait la requete pour retirer toutes les licences inscrites à cette compet
-$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ?";
-$dbresult = $db->Execute($query, array($type_compet));
+$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE idepreuve = ?";
+$dbresult = $db->Execute($query, array($idepreuve));
 
 if($dbresult && $dbresult->RecordCount()>0)
 {

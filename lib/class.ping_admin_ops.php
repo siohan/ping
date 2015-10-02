@@ -544,14 +544,14 @@ public static function get_sit_mens($licence, $mois_event, $saison)
 //end of function
 }
 
-public static function array_code_compet($code,$date_debut,$date_fin)
+public static function array_code_compet($idepreuve,$date_debut,$date_fin)
 {
 	global $gCms;
 	$db = cmsms()->GetDb();
 	$ping = cms_utils::get_module('Ping');
 	
-		$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ? AND date_debut BETWEEN  ? AND ?";
-		$dbresultat4 = $db->Execute($query4,array($code, $date_debut,$date_fin));
+		$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE idepreuve = ? AND date_debut BETWEEN  ? AND ?";
+		$dbresultat4 = $db->Execute($query4,array($idepreuve, $date_debut,$date_fin));
 	
 	
 	$row4 = $dbresultat4->GetRows();
@@ -669,7 +669,7 @@ function tag($id,$idepreuve,$indivs,$date_debut ='',$date_fin='')
 		
 	
 }
-function create_tag($code_compet,$indivs,$date_debut,$date_fin)
+function create_tag($idepreuve,$indivs,$date_debut,$date_fin)
 {
 	
 			$db  = cmsms()->GetDb();
@@ -683,7 +683,7 @@ function create_tag($code_compet,$indivs,$date_debut,$date_fin)
 			{
 				$tag.="par-equipes'";
 			}
-			$tag.=" type_compet='$code_compet'";
+			$tag.=" idepreuve='$idepreuve'";
 			
 				if(isset($date_debut) && $date_debut !='')
 				{

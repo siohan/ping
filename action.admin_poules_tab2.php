@@ -148,7 +148,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$i++;
 			$onerow->valeur = $i;
 			//on refait une requete pour extraire les rencontres
-			$query2 = "SELECT DISTINCT ren.id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname,ren.id, ren.club,ren.uploaded,eq.libequipe,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison AND ren.club = '1' AND ren.date_event = ? AND eq.idepreuve = ?";//" AND date_event >=Now()";
+			$query2 = "SELECT DISTINCT ren.id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname,ren.id, ren.club,ren.uploaded,eq.libequipe,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison  AND ren.date_event = ? AND eq.idepreuve = ?";//" AND ren.club = '1' AND date_event >=Now()";
 			$dbresultat = $db->Execute($query2,array($date_debut, $idepreuve));
 			$nblignes = $dbresultat->RecordCount();
 			//echo "le nb de lignes est : ".$nblignes;
@@ -247,6 +247,8 @@ if($dbresult && $dbresult->RecordCount()>0)
 					}
 					$onerow2->scorea = $scorea;
 					$onerow2->scoreb = $scoreb;
+					$onerow2->club = $row2['club'];
+					$onerow->ren_id = $id;
 					//$onerow2->valeur = $valeur;
 					$rowarray2[] = $onerow2;
 					
@@ -264,8 +266,9 @@ if($dbresult && $dbresult->RecordCount()>0)
 			//on est sur une compet individuelle
 			$date_event = $row['date_debut'];
 			$name = $row['name'];
-			$onerow->download = $this->CreateLink($id,'retrieve_indivs',$returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('type_compet'=>$row['type_compet'],'coefficient'=>'coefficient'));
-			//$onerow->compet = $name;
+			//$onerow->download = $this->CreateLink($id,'retrieve_indivs',$returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('type_compet'=>$row['type_compet'],'coefficient'=>'coefficient'));
+			$onerow->download = $this->CreateLink($id,'retrieve_indivs',$returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('idepreuve'=>$row['idepreuve'],'coefficient'=>'coefficient'));
+			//$onerow->compet = $name;//$onerow->compet = $name;
 		}
 		$rowarray[]  = $onerow;
 		$smarty->assign('items', $rowarray);
@@ -278,6 +281,15 @@ else
 	$smarty->assign('message', 'Pas de résultats');
 	echo 'pas de résultats';
 }
+$smarty->assign('form2start',
+		$this->CreateFormStart($id,'mass_action',$returnid));
+$smarty->assign('form2end',
+		$this->CreateFormEnd());
+$articles = array("Désactiver"=>"unable","Mettre à masculin"=>"masculin", "Mettre à Féminin"=>"feminin");
+$smarty->assign('actiondemasse',
+		$this->CreateInputDropdown($id,'actiondemasse',$articles));
+$smarty->assign('submit_massaction',
+		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
 echo $this->ProcessTemplate('resultats.tpl');
 #
 #EOF

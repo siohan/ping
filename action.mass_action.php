@@ -162,10 +162,19 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			case "supp_div" :
 			foreach( $params['sel'] as $record_id )
 	  		{
-	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_poules WHERE id = ?";
+	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_tours WHERE id = ?";
 				$db->Execute($query, array($record_id));
 	  		}
 			$this->RedirectToAdminTab('joueurs');
+			break;
+			
+			case "supp_div_parties" :
+			foreach( $params['sel'] as $record_id )
+	  		{
+	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_parties WHERE id = ?";
+				$db->Execute($query, array($record_id));
+	  		}
+				$this->Redirect($id,'defaultadmin2',$returnid, array("active_tab"=>"partie"));
 			break;
 			
 			case "dater" :
@@ -173,6 +182,9 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 				$this->Redirect($id,'dater',$returnid, array("sel"=>$id_sel));
 			
 			break;
+			case "retrieve_tours" : 
+				$id_sel = implode("-",$params['sel']);
+				$this_>Redirect($id, 'retrieve_div_results',$returnid, array("sel"=>$id_sel));
 			case "supp_fftt" : 
 			$i = 0;
 			foreach($params['sel'] as $record_id)

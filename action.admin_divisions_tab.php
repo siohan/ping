@@ -17,7 +17,7 @@ $datelist[$this->Lang('alldates')] = '';
 //$idorgalist[$this->Lang('allplayers')] = 'Toutes';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
-$query1 = "SELECT tc.idepreuve,tc.idorga, tc.name FROM ".cms_db_prefix()."module_ping_type_competitions AS tc, ".cms_db_prefix()."module_ping_div_tours AS dt WHERE tc.idepreuve = dt.idepreuve ORDER BY tc.name ASC ";//" , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY j.nom ASC, pts.date_event ASC";//"";
+$query1 = "SELECT tc.idepreuve,tc.idorga, tc.name FROM ".cms_db_prefix()."module_ping_type_competitions AS tc, ".cms_db_prefix()."module_ping_divisions AS dt WHERE tc.idepreuve = dt.idepreuve ORDER BY tc.name ASC ";//" , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY j.nom ASC, pts.date_event ASC";//"";
 $dbresult = $db->Execute($query1);
 while ($dbresult && $row = $dbresult->FetchRow())
   {
@@ -29,38 +29,16 @@ while ($dbresult && $row = $dbresult->FetchRow())
 
 	if( isset($params['submitfilter']) )
   	{
-    		/*
-if( isset( $params['datelist']) )
-      		{
-			$this->SetPreference('dateChoisi', $params['datelist']);
-      		}
-
-		if( isset( $params['idorgalist']) && $params['idorgalist'] != "Aucun")
-      		{
-			$this->SetPreference('idorgaChoisi', $params['idorgalist']);
-      		}
-*/
     		if( isset( $params['typeCompet']) )
 		{ 
 			$curCompet = $params['typeCompet'];
 		}
 	}
 	
-//$curdate = $this->GetPreference( 'dateChoisi' );
-//$curplayer = $this->GetPreference( 'idorgaChoisi');
-//$curCompet = $this->GetPreference( 'competChoisie');
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
-/*
-$smarty->assign('input_date',
-		$this->CreateInputDropdown($id,'datelist',$datelist,-1,$curdate));
-*/
 $smarty->assign('input_compet',
-		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,(isset($curCompet)?$curCompet:"")));
-/*
-$smarty->assign('input_player',
-		$this->CreateInputDropdown($id,'idorgalist',$idorgalist,-1,$curplayer));
-*/		
+		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,(isset($curCompet)?$curCompet:"")));	
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
@@ -96,7 +74,7 @@ $parms['saison'] = $saison;
 	}
 	else
 	{
-		$query.=" ORDER BY tc.idepreuve, tc.idorga ASC";
+		$query.=" ORDER BY dv.id ASC";
 		
 	}
 	
