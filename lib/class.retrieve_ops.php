@@ -29,7 +29,7 @@ public function retrieve_parties_spid( $licence )
 		$player = $row['player'];
 		$service = new Servicen();
 		$page = "xml_partie";
-		$var = "licence=".$licence;
+		$var = "numlic=".$licence;
 		$lien = $service->GetLink($page, $var);
 		//echo "<a href=".$lien.">".$lien."</a>";
 		$xml   = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -45,7 +45,7 @@ public function retrieve_parties_spid( $licence )
 		{
 			$array = json_decode(json_encode((array)$xml), TRUE);
 			$lignes = count($array['resultat']);
-			echo "le nb de lignes est  :".$lignes;
+			//echo "le nb de lignes est  :".$lignes;
 		}
 
 		//on compte le nb de résultats du spid présent ds la bdd pour le joueur
@@ -87,12 +87,14 @@ public function retrieve_parties_spid( $licence )
 				$error = 0;//le compteur d'erreurs
 				$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
 				$dbresult1 = $db->Execute($query1, array($saison_courante, $licence));
-				foreach($xml as $cle =>$tab)
+			//	foreach($array as $cle =>$tab)
+				foreach($xml as $cle=> $tab)
 				{
-
+					//var_dump($array);
 					$compteur++;
-
-					$dateevent = $tab['date'];
+					
+					$dateevent = (isset($tab->date)?"$tab->date":"");//$tab['date'];
+					//echo "le dateevent est : ".$dateevent;
 					$chgt = explode("/",$dateevent);
 					$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
 					$annee = '20'.$chgt[2];
@@ -107,9 +109,10 @@ public function retrieve_parties_spid( $licence )
 						{
 							$mois_event = $chgt[1];
 						}
+						//echo "le mois est : ".$mois_event;
 					//on va vérifier si on a la situation mensuelle du joueur du club à jour pour le mois en question
 					$retour_sit_mens = ping_admin_ops::get_sit_mens($licence,$mois_event,$saison_courante);
-					
+					/*
 					if($retour_sit_mens==0)
 					{
 						$designation.="Situation du mois ".$mois_event." manquante pour ".$player;
@@ -118,8 +121,9 @@ public function retrieve_parties_spid( $licence )
 					}
 					else
 					{
-						
-						$nom = $tab['nom'];
+					*/	
+						$nom = (isset($tab->nom)?"$tab->nom":"");//$tab['nom'];
+						//echo "le nom est : ".$nom;
 						//on adapte son nom d'abord
 						$nom_global = ping_admin_ops::get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
 						$nom_reel1 = $nom_global[0];
@@ -127,7 +131,7 @@ public function retrieve_parties_spid( $licence )
 						$prenom_reel = $nom_global[1];//le prénom
 						$annee_courante = date('Y');
 					
-						$classement = $tab['classement'];//classement fourni par le spid
+						$classement = (isset($tab->classement)?"$tab->classement":"");//$tab['classement'];//classement fourni par le spid
 						$cla = substr($classement, 0,1);
 							//Avec le nom on va aller chercher la situation mensuelle de l'adversaire
 							//on pourra la stocker pour qu'elle re-serve et l'utiliser pour affiner le calcul des points
@@ -257,9 +261,9 @@ public function retrieve_parties_spid( $licence )
 						//on calcule l'écart selon la grille de points de la FFTT
 						$type_ecart = ping_admin_ops::CalculEcart($ecart_reel);
 					
-						$epreuve = $tab['epreuve'];
+						$epreuve = (isset($tab->epreuve)?"$tab->epreuve":"");//$tab['epreuve'];
 					// le joueur participe à cette compétition ? (pour les epreuves individuelles uniquement)
-						$query_epreuve = "SELECT indivs, code_compet FROM ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE tc.name = ?";
+						$query_epreuve = "SELECT indivs, idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE tc.name = ?";
 						$dbepreuve = $db->Execute($query_epreuve,array($epreuve));
 				
 						if($dbepreuve && $dbepreuve->RecordCount()>0)
@@ -267,38 +271,23 @@ public function retrieve_parties_spid( $licence )
 							$row = $dbepreuve->FetchRow();
 							$indivs = $row['indivs'];
 							$indivs3 = $row['indivs'];
-							$type_compet_temp = $row['code_compet'];
+							//$type_compet_temp = $row['code_compet'];
+							$idepreuve_temp = $row['idepreuve'];
 					
 							if($indivs == 1) //on est bien dans une compet individuelles
 							{
 								//on est bien dans le cadre d'une compet individuelle
-								$query_participe = "SELECT * FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND type_compet = ? AND date_debut = ?";
-								$dbparticipe = $db->Execute($query_participe,array($licence,$type_compet_temp,$date_mysql));
+								$query_participe = "SELECT * FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND idepreuve = ? AND date_debut = ?";
+								$dbparticipe = $db->Execute($query_participe,array($licence,$idepreuve_temp,$date_mysql));
 						
 								if($dbparticipe->RecordCount()==0)//le joueur n'est pas inscrit, on le fait
 								{
-									$query_participe2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence,type_compet,date_debut) VALUES (?, ?, ?)";
-									$dbparticipe2 = $db->Execute($query_participe2, array($licence,$type_compet_temp,$date_mysql));
+									$query_participe2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe (licence,idepreuve,date_debut) VALUES (?, ?, ?)";
+									$dbparticipe2 = $db->Execute($query_participe2, array($licence,$idepreuve_temp,$date_mysql));
 								}
 							}
 						}
-						else //la compet n'existe pas , on l'ajoute au type de compétiton
-						{
-							if($epreuve != 'Critérium fédéral')
-							{
-								//on créé un code compet temporaire
-								$type_compet_temp = ping_admin_ops::random(3);
-								//$coeff[1] = $type_compet_tmp;
-								$coeff_provisoire = '0.00';
-								//on fait qd même l'inclusion d'une nouvelle compet
-								$indivs2 = 1;
-								$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name,code_compet,coefficient,indivs) VALUES ('',?, ?, ?, ?)";
-								$db->Execute($query, array($epreuve,$type_compet_temp,$coeff_provisoire, $indivs2));
-								//echo "coefficient introuvable !";
-							}
-				
-						}
-				
+										
 						// de quelle compétition s'agit-il ? 
 						//On a la date et le type d'épreuve
 						//on peut donc en déduire le tour via le calendrier
@@ -307,21 +296,11 @@ public function retrieve_parties_spid( $licence )
 						$coeff = ping_admin_ops::coeff($epreuve,$licence);// la licence en cas de critérium fédéral(2 coeffs distincts)
 						//var_dump($coeff);
 						$coeff_reel_tmp = $coeff[0];
-						//echo 'le coeff est : '.$coeff_reel_tmp;
-						/*$error_coeff = '';
-							if(isset($coeff[1]))
-							{
-								$code_compet_tmp = $coeff[1];
-							}
-							if($coeff_reel_tmp =='0.00' || !isset($coeff_reel_tmp))
-							{
-								$error_coeff = 1;
-							}
-						*/
+						
 						//2 - on récupére le tour s'il existe
 						//on va fdonc chercher dans la table calendrier
-						$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet = ? AND (date_debut = ? OR date_fin = ?)";
-						$resultat = $db->Execute($query, array($type_compet_temp, $date_mysql,$date_mysql));
+						$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE idepreuve = ? AND (date_debut = ? OR date_fin = ?)";
+						$resultat = $db->Execute($query, array($idepreuve_temp, $date_mysql,$date_mysql));
 
 						if ($resultat && $resultat->RecordCount()>0){
 							$row = $resultat->FetchRow();
@@ -331,18 +310,18 @@ public function retrieve_parties_spid( $licence )
 						{
 							$numjourn = 0;//on insère dans le calendrier ? Ben oui !						
 							//le code existe déjà ou pas ?
-							$type_compet = $type_compet_temp;
+							$idepreuve = $idepreuve_temp;
 							//on oublie pas le tag !
-							$tag = ping_admin_ops::create_tag($type_compet_temp,$indivs, $date_mysql, $date_mysql);
-							$querycal = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,type_compet,date_debut,date_fin,numjourn,tag, saison) VALUES ('', ?, ?, ?, ?, ?, ?)";
-							$req = $db->Execute($querycal,array($type_compet_temp,$date_mysql,$date_mysql,$numjourn,$tag, $saison_courante));							
+							$tag = ping_admin_ops::create_tag($idepreuve_temp,$indivs, $date_mysql, $date_mysql);
+							$querycal = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,idepreuve,date_debut,date_fin,numjourn,tag, saison) VALUES ('', ?, ?, ?, ?, ?, ?)";
+							$req = $db->Execute($querycal,array($idepreuve_temp,$date_mysql,$date_mysql,$numjourn,$tag, $saison_courante));							
 						}
 				
 				
 				
 						//fin du point 2
 
-						$victoire = $tab['victoire'];
+						$victoire = (isset($tab->victoire)?"$tab->victoire":"");//$tab['victoire'];
 
 							if ($victoire =='V')
 							{
@@ -356,7 +335,7 @@ public function retrieve_parties_spid( $licence )
 						//on peut désormais calculer les points 
 						$points1 = ping_admin_ops::CalculPointsIndivs($type_ecart, $victoire);
 						$pointres = $points1*$coeff_reel_tmp;
-						$forfait = $tab['forfait'];
+						$forfait = (isset($tab->forfait)?"$tab->forfait":"");//$tab['forfait'];
 
 				
 						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, saison, datemaj, licence, date_event, epreuve, nom, numjourn,classement, victoire,ecart,type_ecart, coeff, pointres, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -376,7 +355,7 @@ public function retrieve_parties_spid( $licence )
 							//on met à jour la date de maj des résultats SPID
 					
 					
-					}//fin du if si la sit mens du joueur du club est dûment renseignée
+				//	}//fin du if si la sit mens du joueur du club est dûment renseignée
 					//on détruit le nb d'erreur
 					unset($error);
 				}//fin du foreach

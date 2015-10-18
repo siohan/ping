@@ -10,7 +10,7 @@ $db =& $this->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
 
-
+$nom_equipes = $this->GetPreference('nom_equipes');
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin2','', 'post', '',false,'',array('active_tab'=>'divisions')));
 $datelist[$this->Lang('alldates')] = '';	
@@ -64,6 +64,15 @@ if ($dbresult && $dbresult->RecordCount() > 0)
   {
     while ($row= $dbresult->FetchRow())
       {
+	$club = $row['club'];
+	if(substr_count($club,$nom_equipes)>0)
+	{
+		$mon_club = 1;
+	}
+	else
+	{
+		$mon_club = 0;
+	}
 	
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
@@ -75,6 +84,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->rang= $row['rang'];
 	$onerow->nom= $row['nom'];
 	$onerow->clt = $row['clt'];
+	$onerow->mon_club = $mon_club;
 	$onerow->club = $row['club'];
 	
 	//$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poule',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision']));

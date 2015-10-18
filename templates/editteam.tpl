@@ -11,8 +11,8 @@
     <p class="pageinput">{$phase}</p>
   </div> 
 <div class="pageoverflow">
-    <p class="pagetext">Equipe: (Ex : RP FOUESNANT1)</p>
-    <p class="pageinput">{$libequipe} {*$help_libelle_equipe*}{*cms_help key='help_libelle_equipe'*}</p>
+    <p class="pagetext">Equipe: </p>
+    <p class="pageinput">{$libequipe} {$help_libelle_equipe}{*cms_help key='help_libelle_equipe'*}</p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">Division (Ex : Nationale 1 Messieurs Poule C)</p>

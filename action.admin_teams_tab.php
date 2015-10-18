@@ -25,7 +25,7 @@ $smarty->assign('score', 'Score');
 $smarty->assign('adversaires', 'Adversaires');
 
 $result= array ();
-$query = "SELECT DISTINCT *, eq.id,comp.name, comp.code_compet, eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE eq.saison = ? AND comp.idepreuve = eq.idepreuve";
+$query = "SELECT DISTINCT *, eq.id AS eq_id,  eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.saison = ? ";
 if($this->GetPreference('phase_en_cours') =='1' )
 {
 	if($phase ==2)
@@ -62,8 +62,8 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
       			{
 				$onerow= new StdClass();
 				$onerow->rowclass= $rowclass;
-				$code = $row['code_compet'];
-				$onerow->id= $row['id'];
+				$idepreuve = $row['idepreuve'];
+				$onerow->eq_id= $row['eq_id'];
 				$onerow->idpoule = $row['idpoule'];
 				$onerow->iddiv = $row['iddiv'];
 				//$onerow->equipe= $row['equipe'];
@@ -71,27 +71,27 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				$onerow->libdivision= $row['libdivision'];
 				$onerow->friendlyname= $row['friendlyname'];
 				$onerow->name= $row['name'];
-				$onerow->type_compet = $row['code_compet'];
+				$onerow->idepreuve = $row['idepreuve'];
 				$onerow->tag = $row['tag_equipe'];
 				//$onerow->view= $this->createLink($id, 'viewteamresult', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('download_poule_results'), '', '', 'systemicon'),array('cle'=>$row['cle'])) ;
 				
-				$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-				$onerow->addnewlink = $this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addmanually'), '', '', 'systemicon'), array('record_id'=>$row['id']));
+				$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));
+				$onerow->addnewlink = $this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addmanually'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));
 				
-				if($code != 'U')
+				if(!is_null($idepreuve))
 				{
 					//$calendrierimage = $themeObject->DisplayImage('icons/system/calendrier.jpg', $this->Lang('download_poule_results'),'','','systemicon');
 					$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres',$returnid,$calendarImage, array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv'], 'idepreuve'=>$row['idepreuve']));
-					$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,$podiumImage, array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['id'], "type_compet"=>$row['code_compet']));
+					$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,$podiumImage, array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['eq_id'], "idepreuve"=>$row['idepreuve']));
 				}
 				else
 				{
-					$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid,$themeObject->DisplayImage('icons/system/warning.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
+					$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid,$themeObject->DisplayImage('icons/system/warning.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));
 				}
 				
 				if($this->CheckPermission('Ping Delete'))
 				{
-					$onerow->deletelink= $this->CreateLink($id, 'delete', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id'], 'type_compet'=>'teams'), $this->Lang('delete_confirm'));
+					$onerow->deletelink= $this->CreateLink($id, 'delete', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['eq_id'], 'type_compet'=>'teams'), $this->Lang('delete_confirm'));
 				}
 				
 				($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");

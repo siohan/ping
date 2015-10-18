@@ -24,7 +24,9 @@ if(isset($params['submit']))
 	if(isset($params['sel']) && $params['sel'] != '')
 	{
 		$sel = $params['sel'];
+		$id_sel = array();
 		$id_sel = explode('-', $sel);
+		//var_dump($id_sel);
 		$date_debut = '';
 		if(isset($params['date_debut']) && $params['date_debut'] !='')
 		{
@@ -67,14 +69,23 @@ if(isset($params['submit']))
 				//$service = new ping_admin_ops();
 				$tag = ping_admin_ops::create_tag($idepreuve,$indivs,$date_debut, $date_fin );
 				//on fait la requete d'insertion
-				$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?)";
-				$dbresult1 = $db->Execute($query2, array($saison,$date_debut, $date_fin,$tag, $idepreuve));
+				//on va vérifier si la date est déjà ds le calendrier
+				$query1 = "SELECT saison, date_debut, date_fin,idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE saison = ? AND date_debut = ? AND idepreuve = ?";
+				$dbresult1 = $db->Execute($query1, array($saison, $date_debut, $idepreuve));
+				if($dbresult1 && $dbresult1->RecordCount()==0)
+				{
+					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?)";
+					$dbresult2 = $db->Execute($query2, array($saison,$date_debut, $date_fin,$tag, $idepreuve));
+				}
+				
 			}
-			//$query = "UPDATE ".cms_db_prefix()."module_ping_divisions SET date_debut = ?, date_fin = ? WHERE id = ?";
-			//$dbresult = $db->Execute($query, array($date_debut,$date_fin,$valeur));
-			$this->SetMessage('Datation réalisée');
-			$this->Redirect($id,'defaultadmin2', $returnid='', array("active_tab"=>"divisions"));
+			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE id = ?";
+			$dbresult2 = $db->Execute($query2, array($date_debut,$date_fin,$valeur));
+			
+			
 		}
+		$this->SetMessage('Datation réalisée');
+		$this->Redirect($id,'defaultadmin2', $returnid='', array("active_tab"=>"tours"));
 	}
 }
 else

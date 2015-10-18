@@ -566,10 +566,15 @@ case  "0.3.0.1" :
 		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'calendrier',
 	    cms_db_prefix().'module_ping_calendrier', 'idepreuve, date_debut',$idxoptarray);
 	       $dict->ExecuteSQLArray($sqlarray);
-		#On crée un nouveau champ dans la table participe
-		$dict->NewDataDictionary( $db );
+		//On crée un nouveau champ dans la table participe
+		//$dict->NewDataDictionary( $db );
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_participe", "idepreuve C(11)");
 		$dict->ExecuteSQLArray( $sqlarray );
+		//on créé aussi des dates pour les tours
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_div_tours", "date_debut D,date_fin D");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
 	}
 }
 

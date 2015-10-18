@@ -18,7 +18,7 @@
 	<h3>Les résultats du {$entry->date_event|date_format:"%d/%m/%Y"}</h3>
 		<table class="table table-bordered">
 			{foreach from=$prods_{$entry->valeur} item=donnee}
-				<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td><td>{$donnee->details} {$donnee->class}</td></tr>
+				<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td>{if $donnee->uploaded == '1'}<td>{$donnee->details}</td>{/if}</tr>
 			{/foreach}
 		</table>
 	

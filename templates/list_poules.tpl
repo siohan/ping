@@ -43,11 +43,13 @@ $(document).ready(function(){
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 
 {if $itemcount > 0}
+{$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
   <tr>	
 	<th>Epreuve</th>
 	<th>Tour</th>
+	<th>Date</th>
 	<th colspan="3">Actions</th>
 	<th><input type="checkbox" id="selectall" name="selectall"></th>
   </tr>
@@ -57,6 +59,7 @@ $(document).ready(function(){
   <tr class="{$entry->rowclass}">
    		<td>{$entry->libelle}</td>
 		<td>{$entry->tour}</td>
+		<td>{$entry->date_debut}->{$entry->date_fin}</td>
 		<td>{$entry->poule} - {$entry->partie} - {$entry->classement}</td>
 		<td>{$entry->editlink}</td>
 		<td>{$entry->deletelink}</td>
@@ -66,5 +69,10 @@ $(document).ready(function(){
 {/foreach}
  </tbody>
 </table>
+<!-- SELECT DROPDOWN -->
+<div class="pageoptions" style="float: right;">
+<br/>{$actiondemasse}{$submit_massaction}
+  </div>
+{$form2end}
 {/if}
 

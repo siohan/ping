@@ -61,7 +61,8 @@ $(document).ready(function(){
 		<td>{$entry->tableau}</td>
    		<td>{$entry->rang}</td>
 		<td>{$entry->nom}</td>
-		<td>{$entry->club}</td>
+		<td>{$entry->mon_club}</td>
+		{if $entry->mon_club == '1'}<td style="background-color:green">{$entry->club}</td>{else}<td>{$entry->club}</td>{/if}
 		<td>{$entry->editlink}</td>
 		<td>{$entry->deletelink}</td>
 		<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->tour_id}" class="select"></td>

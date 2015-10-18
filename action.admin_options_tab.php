@@ -11,7 +11,9 @@ if(!$this->CheckPermission('Ping Use') && !$this->CheckPermission('Ping Set Pref
 
 $mois_courant = date('m');
 $annee_courante = date('Y');
+$version = $this->GetVersion('Ping');
 
+$smarty->assign('version', $version2);
 if($mois_courant >= 7)
 {
 	$annee_debut = $annee_courante;

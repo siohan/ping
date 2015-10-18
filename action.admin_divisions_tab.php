@@ -49,21 +49,6 @@ $parms['saison'] = $saison;
 
 	if( isset($params['submitfilter'] )){
 		
-	/*
-		if ($curdate !='')
-		{
-			$query .=" AND pts.date_event = ? ";
-			$parms['date_event'] = $curdate;
-		
-		}
-		
-		if ($curplayer !='' || $curplayer != "Aucun")
-		{
-			$query .=" AND dv.scope = ?";
-			$parms['idorga'] = $curplayer;
-		
-		}
-	*/	
 		if ($curCompet !='')
 		{
 			$query.=" AND tc.idepreuve = ?";
@@ -126,10 +111,8 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	{
 		$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poules',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"indivs"=>$row['indivs']));
 	}
-	//$onerow->classement= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Classement',array("direction"=>"classement","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision']));
-	//$onerow->equipe= $this->CreateLink($id, 'create_new_user', $returnid, $row['equipe'], $row);
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-	//$onerow->duplicatelink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/copy.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['id'], 'duplicate'=>'1'));
+	
 	
 	if($this->CheckPermission('Ping Delete'))
 	{

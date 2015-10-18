@@ -48,6 +48,8 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->tour= $row['tour'];
 	$onerow->tableau = $row['tableau'];
 	$onerow->libelle= $row['libelle'];
+	$onerow->date_debut = $row['date_debut'];
+	$onerow->date_fin = $row['date_fin'];
 	//$onerow->indivs= $row['indivs'];
 	//$onerow->orga = $orga;
 	//$onerow->idepreuve = $row['idepreuve'];
@@ -73,12 +75,16 @@ else {
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
-$smarty->assign('createlink', 
-		$this->CreateLink($id, 'add_type_compet', $returnid,
-				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add_compet'), '', '', 'systemicon')).
-		$this->CreateLink($id, 'add_type_compet', $returnid, 
-				  $this->Lang('add_type_compet'), 
-				  array()));
+
+$smarty->assign('form2start',
+		$this->CreateFormStart($id,'mass_action',$returnid));
+$smarty->assign('form2end',
+		$this->CreateFormEnd());
+$articles = array("Supprimer"=>"supp_tours","Dater"=>"dater");
+$smarty->assign('actiondemasse',
+		$this->CreateInputDropdown($id,'actiondemasse',$articles));
+$smarty->assign('submit_massaction',
+		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
 
 echo $this->ProcessTemplate('list_poules.tpl');
 

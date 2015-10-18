@@ -363,7 +363,9 @@ $flds = "
 	tableau I(11),	
 	lien C(255),
 	saison C(255),
-	uploaded I(1)";
+	uploaded I(1),
+	date_debut D,
+	date_fin D";
 
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",

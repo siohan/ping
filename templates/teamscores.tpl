@@ -43,7 +43,6 @@
     <td>{$entry->friendlyname}</td>
 	<td>{$entry->tag}</td>
 	<td>{$entry->editlink}</td>
-	<td>{$entry->addnewlink}</td>
     <td>{$entry->retrieve_poule_rencontres}</td>
 	<td>{$entry->classement}</td>
     <td>{$entry->deletelink}</td>

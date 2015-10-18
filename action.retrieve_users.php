@@ -70,7 +70,7 @@ else
 	//echo $lien;
 	//var_dump($lien);
 	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-	var_dump($xml);
+	//var_dump($xml);
 	if($xml === FALSE)
 	{
 		$array = 0;
@@ -90,7 +90,9 @@ else
 	}
 	else
 	{
-		
+		//on supprime l'existant ? Oui.
+		$query2 = "DELETE FROM ".cms_db_prefix()."module_ping_joueurs";
+		$dbresult2 = $db->Execute($query2);
 	
 	
 			$i =0;//compteur pour les nouvelles inclusions

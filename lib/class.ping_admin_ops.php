@@ -721,16 +721,7 @@ public static function coeff ($typeCompetition,$licence)
 	//même nom d'épreuve mais coeff différent
 	//il faut aussi récupérer la licence 
 	$coeff = array();
-	if($typeCompetition =='Critérium fédéral')
-	{
-		$query4 = "SELECT tp.coefficient FROM ".cms_db_prefix()."module_ping_participe AS p, ".cms_db_prefix()."module_ping_type_competitions AS tp WHERE tp.code_compet = p.type_compet AND p.licence = ?";
-		$dbresultat4 = $db->Execute($query4,array($licence));
-		$row4 = $dbresultat4->FetchRow();
-		$coeff[0] = $row4['coefficient'];
-		return $coeff;
-	}
-	else
-	{
+	
 		
 		$query ="SELECT coefficient FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
 		$dbretour = $db->Execute($query, array($typeCompetition));
@@ -744,23 +735,8 @@ public static function coeff ($typeCompetition,$licence)
 				}
 	
 			}
-			/*
-			elseif($dbretour->RecordCount() == 0)    //la compétiton n'existe pas !
-			{
-				$coeff[0] = '0.00';
-				//on créé un code compet temporaire
-				$code_compet_temp = ping_admin_ops::random(3);
-				$coeff[1] = $code_compet_temp;
-				$coeff_provisoire = '0.00';
-				//on fait qd même l'inclusion d'une nouvelle compet
-				$indivs = 1;
-				$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name,code_compet,coefficient,indivs) VALUES ('',?, ?, ?, ?)";
-				$db->Execute($query, array($typeCompetition,$code_compet_temp,$coeff_provisoire, $indivs));
-				//echo "coefficient introuvable !";
-				return $coeff;
-			}
-			*/
-	}
+			
+	
 }
 
 public function coeff_ops($record_id, $coeff)

@@ -23,7 +23,7 @@ if( isset( $params['record_id'] ) && $params['record_id'] != '')
 
 
     // find the user
-    $query = "SELECT eq.saison, eq.phase,eq.libequipe, eq.libdivision,eq.liendivision,eq.friendlyname,eq.type_compet, eq.iddiv,eq.idpoule,tc.id AS index1,tc.name FROM ".cms_db_prefix()."module_ping_equipes AS eq, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE eq.type_compet = tc.code_compet AND  eq.id = ?";
+    $query = "SELECT eq.saison, eq.phase,eq.libequipe, eq.libdivision,eq.liendivision,eq.friendlyname, eq.iddiv,eq.idpoule,eq.idepreuve FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE  eq.id = ?";
     $dbresult = $db->GetRow($query, array( $record_id ));
     if($dbresult)
       
@@ -36,16 +36,16 @@ if( isset( $params['record_id'] ) && $params['record_id'] != '')
 		$libdivision = $dbresult['libdivision'];
 		$liendivision = $dbresult['liendivision'];
 		$friendlyname = $dbresult['friendlyname'];
-		$type_compet = $dbresult['type_compet'];
+		$idepreuve = $dbresult['idepreuve'];
 		$iddiv = $dbresult['iddiv'];
 		$idpoule = $dbresult['idpoule'];
 		//on va chercher l'organisme qui organise la compet
 		$explode1 = explode("&",$liendivision);
 		$explode2 = explode("=", $explode1[2]);
 		$organisme = $explode2[1];
-		$index = $dbresult['index1'] - 1;
-		$name = $dbresult['name'];
-		$type_compet_selected = $dbresult['type_compet'];
+	//	$index = $dbresult['index1'] - 1;
+	//	$name = $dbresult['name'];
+		$type_compet_selected = $dbresult['idepreuve'];
 		
 		
 		//$organisme = get_organisme($libdivision);
@@ -107,13 +107,13 @@ else
 
 
 		//on fait le tour des compétitions possibles excepté U pour undefined
-$query2 = "SELECT name, code_compet, idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions";//" WHERE indivs = '0'";
+$query2 = "SELECT name, idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions ORDER BY name ASC";//" WHERE indivs = '0'";
 $dbresultat = $db->Execute($query2);
 if($dbresultat && $dbresultat->RecordCount()>0)
 {
 	while ($dbresultat && $row = $dbresultat->FetchRow())
 	  {
-	   	$idepreuve[$row['name']] = $row['idepreuve'];
+	   	$list[$row['name']] = $row['idepreuve'];
 	  }
 }
 
@@ -122,7 +122,7 @@ $smarty->assign('type_compet',
 		$this->CreateInputDropdown($id,'type_compet',$type_compet,$selectedindex = $index, $selectedvalue=$name));
 */
 $smarty->assign('idepreuve',
-		$this->CreateInputDropdown($id, 'idepreuve',$idepreuve,
+		$this->CreateInputDropdown($id, 'idepreuve',$list,
 		(isset($idepreuve)?$idepreuve:"-1"),(isset($idepreuve)?$idepreuve:"")));
 	
 $smarty->assign('Ajouter',

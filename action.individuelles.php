@@ -14,23 +14,15 @@ $parms = array();
 $result= array ();
 $mois_en_cours = date('m');
 $mois_en_cours2 = $mois_en_cours - 1;
+$nom_equipes = $this->GetPreference('nom_equipes');
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 //on établit la liste des compétitions individuelles du calendrier
-$query1 = "SELECT *,MONTH(cal.date_debut) AS mois_ref FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.idepreuve = tc.idepreuve AND cal.saison = ?";
+$query1 = "SELECT cal.date_debut,tc.name,cal.idepreuve AS id_ep,MONTH(cal.date_debut) AS mois_ref FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.idepreuve = tc.idepreuve AND cal.saison = ?";
 //il s'agit de compétitions individuelles ?
 $query1.=" AND tc.indivs = 1 ";
 $parametres = 0;
-/*
-$jour = date('j');
-if($jour < 10)
-{
-	$query1.= " AND MONTH(cal.date_debut) < " .$mois_en_cours2. "";
-}
-else
-{
-	$query1.= " AND MONTH(cal.date_debut) < " .$mois_en_cours. "";
-}
-*/
+$i=0;
+
 $parms['saison'] = $saison_courante;
 if(isset($params['type_compet']) && $params['type_compet'] !='')
 {
@@ -67,20 +59,11 @@ if(isset($params['date_fin']) && $params['date_fin'] !='')
 }
 
 
-$query1.=" ORDER BY cal.date_debut DESC";
-
+$query1.=" ORDER BY cal.date_debut ASC";
+//echo $query1;
 	$result1 = $db->Execute($query1,$parms);
-
-//il faudra ajouter qqch pour différencier les saisons
-//il faudra aussi construire dynamiquement les tableau de licences sous forme d'array
-/*
-$array_I = ping_admin_ops::array_code_compet($type_compet='I');
-$array_J = ping_admin_ops::array_code_compet($type_compet='J');
-$array_V = ping_admin_ops::array_code_compet($type_compet='V');
-echo $array_V;
-var_dump($array_V);
-*/
-
+$lignes = $result1->RecordCount();
+//echo "le nb de lignes est : ".$lignes;
 	if($result1 && $result1->RecordCount()>0)
 	{
 		$rowclass= 'row1';
@@ -89,11 +72,13 @@ var_dump($array_V);
 		while($row1 = $result1->FetchRow())
 		{
 			//on récupère les résultats
+			$i++;
 			$date_debut = $row1['date_debut'];
 			$date_fin = $row1['date_fin'];
 			$numjourn = $row1['numjourn'];
 			$name = $row1['name'];
-			$idepreuve = $row1['idepreuve'];
+			$idepreuve2 = $row1['id_ep'];
+			//echo "le id de epreuve est : ".$idepreuve2;
 			$mois_ref = $row1['mois_ref'];		
 			
 			//on instancie ce qui va faire les entêtes
@@ -101,95 +86,79 @@ var_dump($array_V);
 			$onerow->rowclass= $rowclass;
 			$onerow->name = $name;
 			$onerow->date_event = $date_debut;
+			$onerow->idepreuve = $idepreuve2;
 			$onerow->valeur = $i;//très important pour les boucles
+			//echo "la valeur de i est : ".$i;
 			
-			$array = ping_admin_ops::array_code_compet($idepreuve,$date_debut,$date_fin);
-			//var_dump($array);
-			//echo "le mois de référence est : ".$mois_ref;
-			
-			if(count($array)>0)
-			{
-				
 				//on est dans la FFTT
-				$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(vd) AS vic, count(vd) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
-			//	$tab = 'array'.'_'.$code;
-			//	var_dump($$tab);
-				$query2.=" AND j.licence IN ( '" . implode($array, "', '") . "' )";
-				$query2.=" GROUP BY joueur,j.licence";
-				//echo $query2;
-				$result2 = $db->Execute($query2, array($date_debut, $date_fin));
-				$lignes = $result2->RecordCount();
-				$spid =0;
+				//$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_divisions AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision AND dv.idepreuve = ? AND cla.club LIKE ? ";//AND dv.date_debut = ?";
+				$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_div_tours AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision AND dv.idepreuve = ? AND cla.club LIKE ? AND dv.date_debut = ?";
+				//$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(vd) AS vic, count(vd) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
+				$parms['idepreuve'] = $idepreuve2;
+				$club = "%".$nom_equipes."%";		
+				//$parms['club'] = '%'.$nom_equipes.'%';
 				
-				if($lignes ==0)
-				{
-					//on est dans le spid
-					$spid =1;
-					//$onerow->
-					$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(victoire) AS vic, count(victoire) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
-				//	$tab = 'array'.'_'.$code;
-				//	var_dump($$tab);
-					$query2.=" AND j.licence IN ( '" . implode($array, "', '") . "' )";
-					$query2.=" GROUP BY joueur,j.licence";
-					//echo $query2;
-					$result2 = $db->Execute($query2, array($date_debut, $date_fin));
-				}
-				$onerow->spid = $spid;
+				
+				//echo $query2;
+				$result2 = $db->Execute($query2,array($idepreuve2,$club,$date_debut));
+				$query2.=" ORDER BY dv.libelle,cla.tour ASC";
+				
+				$lignes2 = $result2->RecordCount();	
+				//echo "le nb de lignes2 est : ".$lignes2;
 					if($result2 && $result2->RecordCount()>0)
 					{
-						//$i=0;
-						$rowarray2 = array();
+						$rowclass= 'row1';
+						$rowarray2= array();
 						$compteur = 0;
-					
+						
+						//echo "le compteur est : ".$compteur;
 						while($row2 = $result2->FetchRow())
 						{
-							$licence = $row2['licence'];
-							$onerow2 = new StdClass();
-							$onerow2->joueur = $row2['joueur'];
-							$onerow2->vic = $row2['vic'];
-							$onerow2->sur = $row2['sur'];
-							$onerow2->pts = $row2['pts'];
-						
-							if($spid == 1)
-							{
-								$onerow2->details = $this->CreateLink($id, 'user_results_prov', $returnid, "Détails",array('licence'=>$licence,'date_debut'=>$date_debut, 'date_fin'=>$date_fin)) ;
-							}
-							else
-							{
-								$onerow2->details = $this->CreateLink($id, 'user_results', $returnid, "Détails",array('licence'=>$licence,'date_debut'=>$date_debut, 'date_fin'=>$date_fin, 'saison'=>$saison_courante)) ;
-							}
-						
+							//on récupère les résultats
+							$idepreuve = $row2['idepreuve'];
+							$iddivision = $row2['iddivision'];
+							//nouvelle requete pour extraire le libellé du tableau, plus agréable et plus compréhensible
+							$query3 = "SELECT libelle FROM ".cms_db_prefix()."module_ping_divisions WHERE idepreuve = ? AND iddivision = ?";
+							$dbresult3 = $db->Execute($query3, array($idepreuve, $iddivision));
+							$row3 = $dbresult3->FetchRow();
+							$libelle2 = $row3['libelle'];
+							$onerow2= new StdClass();
+							$onerow2->rowclass= $rowclass;
+							$onerow2->idepreuve = $row2['idepreuve'];
+							$onerow2->libelle = $libelle2;//$row2['libelle'];
+							$onerow2->iddivision = $row2['iddivision'];
+							$onerow2->tableau = $row2['tableau'];
+							$onerow2->rang= $row2['rang'];
+							$onerow2->nom= $row2['nom'];
+							$onerow2->tour= $row2['tour'];
+							//$onerow2->points= $row2['points'];
 							$onerow2->compteur = $compteur;
+							$onerow2->details = $this->CreateFrontendLink($id, $returnid, 'details',$contents='Détails', array('record_id'=>$row2['tableau']));
 							
+							$rowarray2[]  = $onerow2;	
+						}	
+
 						
-						$rowarray2[] = $onerow2;	
-						}//fin du deuxième while
-					
 						$smarty->assign('prods_'.$i,$rowarray2);
 						$smarty->assign('itemscount_'.$i, count($rowarray2));
 						unset($rowarray2);
-						//unset($$tab);
-						$i++;	
-					
-					}//fin du $result2
-				}
-				
-			unset($array);	
+						
+
+					}//fin du if $result1
+
 			$rowarray[]  = $onerow;
-			$smarty->assign('items', $rowarray);
-				
-		}//fin du premier while
-				
+									
+		}
+		$smarty->assign('items', $rowarray);
+		//var_dump($rowarray);
+		$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
+		$smarty->assign('itemcount', count($rowarray));
+		
+	//	$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
+	//	$smarty->assign('itemcount', count($rowarray));		
 		
 	}//fin du if $result1
-$smarty->assign('validation', 'Oui');	
-$smarty->assign('indivs_courant',
-		$this->CreateLink($id,'individuelles_prov',$returnid,'>> compétitions en cours de validation'));
-$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
-$smarty->assign('itemcount', count($rowarray));
-$smarty->assign('items', $rowarray);				
-//faire apparaitre les points totaux et somme victoire en bas ? Ce serait pas mal
-/**/
+
 echo $this->ProcessTemplate('individuelles3.tpl');
 
 

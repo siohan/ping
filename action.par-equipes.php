@@ -1,131 +1,146 @@
 <?php
    if (!isset($gCms)) exit;
-################################################################################
-## Cette page liste les compétitions par équipes                              ##
-################################################################################
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 $nom_equipes = $this->GetPreference('nom_equipes');
-$saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
-//echo 'la saison courantest : '.$saison_courante;
+$saison = $this->GetPreference('saison_en_cours');
 $db =& $this->GetDb();
 global $themeObject;
 $result= array();
 $parms = array();
 $rowarray = array();
-$parameters = 0;//pour implémenter les parametres // 0 = pas de parametres
 //$rowarray1 = array();
 $i=0;
+$query = "SELECT *, ren.id AS ren_id FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_calendrier AS cal  WHERE ren.date_event = cal.date_debut AND cal.date_debut<=NOW()";//GROUP BY date_debut ORDER BY date_debut DESC";
+/*
+$query.=" AND type_compet = ?";
+$parms['type_compet']  = '+';
 
-		
-		$parameters = 1;
-		//$date_debut = $params['date_debut'];			
+$dbresult = $db->Execute($query,$parms);
+*/
+$query.=" GROUP BY ren.date_event ORDER BY ren.date_event DESC";
+$dbresult = $db->Execute($query);
+
+	if($dbresult && $dbresult->RecordCount()>0)
+	{
+		while($row = $dbresult->FetchRow())
+		{
+			$i++;
+			$date_debut = $row['date_event'];
+			//echo "la date début est :".$date_debut;
+			$datearr = explode('-', $date_debut);
+			$datefr = $datearr[2] . '-' . $datearr[1] . '-' . $datearr[0];
+			$ren_id = $row['ren_id'];
+			$onerow = new StdClass();
+			$onerow->rowclass = $rowclass;
+			$onerow->date_event = $datefr;
+			$onerow->valeur = $i;
 			
-		//la requete maintenant : 
-		$query1 = "SELECT eq.id AS ind1,ren.equa,ren.equb,ren.scorea,ren.scoreb,ren.date_event,ren.uploaded, eq.friendlyname, ren.id AS ren_id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison AND (ren.scorea !=0 AND scoreb !=0)";//"  AND ren.date_event = ?";
-		//$parms['date_debut'] = $params['date_debut'];
+			
+			$query2 = "SELECT *,ren.equa,ren.uploaded, ren.equb, ren.id AS ren_id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison  AND ren.date_event = ? AND (ren.scorea !=0 OR scoreb !=0)";
+			$parms['date_event'] = $date_debut;
 			
 			if(isset($params['type_compet']) && $params['type_compet'])
 			{
-				$type_compet = $params['type_compet'];
-				$query1.=" AND eq.type_compet = ?";
-				$parms['type_compet'] = $type_compet;//" AND cal.date_debut = '2014-12-06'";
-				//$smarty->assign('date_event', $date_debut);				
+					$query2.=" AND eq.type_compet = ?";
+					$parms['type_compet'] = $params['type_compet'];
 			}
-			elseif(isset($params['idepreuve']) && $params['idepreuve'])
+			if(isset($params['idepreuve']) && $params['idepreuve'])
 			{
-				$idepreuve = $params['idepreuve'];
-				$query1.=" AND eq.idepreuve = ?";
-				$parms['idepreuve'] = $idepreuve;
-			}
-			if(isset($params['date_debut']) && $params['date_debut'] != '')
-			{
-				$date_debut = $params['date_debut'];
-				$query1.=" AND ren.date_event = ?";
-				$parms['date_debut'] = $date_debut;
-			}
-			if($this->GetPreference('affiche_club_uniquement' =='Oui'))
-			{
-				$query1.=" AND ren.club = '1'";
+					$query2.=" AND eq.idepreuve = ?";
+					$parms['idepreuve'] = $params['idepreuve'];
 			}
 			
-			//echo $query;	
-			$dbresult = $db->Execute($query1,$parms);
-			
-			if($dbresult && $dbresult->RecordCount()>0)
+			//mon club uniquement ?
+			if($this->GetPreference('affiche_club_uniquement') == 'Oui')
 			{
-				while($row = $dbresult->FetchRow())
+				$query2.=" AND ren.club = '1'";
+			}
+			
+			$dbresultat = $db->Execute($query2, $parms);
+			$rowarray2 = array();
+				
+			if($dbresultat && $dbresultat->RecordCount()>0)
+			{
+				
+				$rowclass= 'row1';
+				
+				while($row2 = $dbresultat->FetchRow())
 				{
-					$onerow = new StdClass();
-					$onerow->rowclass = $rowclass;
-					$equa = $row['equa'];
-					$equb = $row['equb'];
-					$scorea = $row['scorea'];
-					$scoreb = $row['scoreb'];
-					$libequipe = $row['libequipe'];
-					$friendlyname = $row['friendlyname'];
-					$onerow = new StdClass();
-					$onerow->rowclass =$rowclass;
-					//$onerow2->id= $row2['id'];
-					$onerow->ind= $row['ind1'];
-					$onerow->ren_id = $row['ren_id'];
-					$onerow->uploaded = $row['uploaded'];
-					$onerow->date_event= $row['date_event'];
-					$onerow->equb = $row['equb'];
-					$onerow->equa = $row['equa'];
-					$onerow->friendlyname = $row['friendlyname'];
-					$onerow->libequipe = $row['libequipe'];
+					
+				
+					$equa = $row2['equa'];
+					$equb = $row2['equb'];
+					$scorea = $row2['scorea'];
+					$scoreb = $row2['scoreb'];
+					$uploaded = $row2['uploaded'];
+					$libequipe = $row2['libequipe'];
+					$friendlyname = $row2['friendlyname'];
+					$onerow2 = new StdClass();
+					$onerow2->rowclass =$rowclass;
+					$onerow2->ren_id= $row2['ren_id'];
+					$onerow2->date_event= $row2['date_event'];
+					$onerow2->equb = $row2['equb'];
+					$onerow2->equa = $row2['equa'];
+					$onerow2->friendlyname = $row2['friendlyname'];
+					$onerow2->libequipe = $row2['libequipe'];
+					$onerow2->uploaded = $uploaded;
 					//echo "equipe B est : ".$equb;
 
 					//$onerow->equipe= $row['equipe'];
-					//$onerow2->libelle=  $row2['libelle'] ;
+					$onerow2->libelle=  $row2['libelle'] ;
 					
 					if(isset($friendlyname) && $friendlyname !='')
 					{
-						if ($libequipe == $equa)
+						if (rtrim($libequipe) == $equa)
 						{
-							$onerow->equa= $row['friendlyname'];
+							$onerow2->equa= $row2['friendlyname'];
 						}
 
 						else{
-							$onerow->equa= $row['equa'];
+							$onerow2->equa= $row2['equa'];
 						}
 
 					}
-					else
-					{
-						$onerow->equa= $row['equa'];
+					else{
+						$onerow2->equa= $row2['equa'];
 					}
-					$onerow->scorea= $row['scorea'];
-					$onerow->scoreb= $row['scoreb'];
+					$onerow2->scorea= $row2['scorea'];
+					$onerow2->scoreb= $row2['scoreb'];
 					
 					if(isset($friendlyname) && $friendlyname !='')
 					{
-						if ($libequipe == $equb)
+						if (rtrim($libequipe) == $equb)
 						{
-							$onerow->equb= $row['friendlyname'];
+							$onerow2->equb= $row2['friendlyname'];
 						}
 
 						else{
-							$onerow->equb= $row['equb'];
+							$onerow2->equb= $row2['equb'];
 						}
 
 					}
-					else
-					{ 
-						$onerow->equb= $row['equb'];
+					else{ 
+						$onerow2->equb= $row2['equb'];
 					}
-					//$onerow->details= $this->CreateLink($id, 'retrieve_details_rencontres', $returnid, 'Détails', array('record_id'=>$row['id'], 'template'=>'1'));
-					//$onerow->class= $this->CreateLink($id, 'details', $returnid, 'Détails', array('record_id'=>$row['ren_id']));
-					$onerow->class= $this->CreateFrontendLink($id, $returnid, 'details', $contents='Détails', array('record_id'=>$row['ren_id']));
-					$rowarray[] = $onerow;
+					//$onerow2->details= $this->CreateLink($id, 'retrieve_details_rencontres', $returnid, 'Détails', array('record_id'=>$row2['id'], 'template'=>'1'));
+					$onerow2->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row2['ren_id'], 'template'=>'1'));
+					$rowarray2[] = $onerow2;
 					
-				}
+					
+				}//fin du deuxième while
+				$smarty->assign('prods_'.$i,$rowarray2);
+				unset($rowarray2);
+				unset($idepreuve2);
 				
-				
-			}
-			$smarty->assign('items', $rowarray);
-			$smarty->assign('parameters', $parameters);	
+				$rowarray[]  = $onerow;
+				$smarty->assign('items', $rowarray);
+			}// fin du if $dbresultat
+			
+			
+		}//fin du premier while
+		
+	}//fin du premier if dbresult
 
 echo $this->ProcessTemplate('details_rencontre.tpl');
 

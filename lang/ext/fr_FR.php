@@ -176,32 +176,30 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 <p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (Voir feuille de route plus bas).</p>
 <h3>Comment l\'utiliser ?</h3>
 <h2>Première utilisation</h2>
-<ol><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
+<ol><li>Dans l\'onglet "Compte", renseignez les identifiants fournis par la FFTT.</li><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
 <li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
-Un lien pour les équipes du championnat de France par équipes, l\'autre pour les autres compétitions et indiquez le type de compétitions auxquelles elles participent.
-<br /><br />Pour une récupération manuelle, rendez-vous sur le site FFTT.com sur la page de résultats de vos équipes. En mettant votre souris sur la poule vous obtiendrez en bas à gauche l\'url complete sous cette forme : www.fftt.com/sportif/chpt_equipe/chp_div.php?organisme_pere=X1&cx_poule=X2&D1=X3.<br />X1 représente l\'organisme dont dépend la compétition (100001 pour national, 10 + n° de la ligue ex : 1007 pour la bretagne pour le niveau régional et départemental ex 29 pour le finistère)<br />X2 pour le  N° de poule et X3 pour le N° de division </li>
-<li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom. Désactivez les joueurs ne faisant pas l\'objet d\'une situation mensuelle</li>
+Un lien pour les équipes du championnat de France par équipes masculin, un autre pour les féminines et le dernier pour toutes les autres équipes, indiquez le type de compétitions auxquelles elles participent.</li>
+<li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom.</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
 <h3>Spid</h3>
 <p>Récupérez les résultats du spid de différentes manières. La récupération de tous les résultats en une seule fois peut s\'avérer très longue (plusieurs minutes).<br />
 Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensuelle du mois concerné n\'est pas renseignée.</p>
 <h3>Situation mensuelle</h3>
 <p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer la situation mensuelle en cours de tous les joueurs de votre club</p>
-<p>ATTENTION !! La FFTT limite la situation mensuelle à 100 accès par jour et par IP.</p>
 <h2>Implémentation sur les pages de votre site</h2>
-<p>Utilisez la balise suivante : {cms_module module=\'Ping\'}. Ceci affichera par défaut les résultats des équipes.</p>
+<p>Utilisez la balise suivante : {Ping}. Ceci affichera par défaut les résultats des équipes.</p>
 <h4>Paramètres disponibles : </h4>
 <ul>
 <li>action - Indique l\'action a afficher
 <ul>
-<li>par-equipes - Indique toutes les compétitions par équipes ex :{cms_module module=\'Ping\' action=\'par-equipes\'}</li>
+<li>par-equipes - Indique toutes les compétitions par équipes ex :{Ping action=\'par-equipes\'}</li>
 <li>individuelles - les compétitions individuelles</li>
 <li>sit_mens - pour la situation mensuelle officielle</li>
 <li>sit_mens_provisoire - pour une situation mensuelle réévaluée après chaque compétition récupérée.</li>
 </ul>
 </li>
-<li>"type_compet" - le type de compétition à afficher ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\'} (disponibles ds l\'onglet "Compétitions")</li>
-<li>"tour" - Indique le N° de journée officiel ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\' tour=\'1\'}</li></ul>
+<li>"idepreuve" - le type de compétition à afficher ex : {Ping action=\'par-equipes\' idepreuve=\'1072\'} (disponibles ds l\'onglet "Compétitions")</li>
+</ul>
 <h3>Feuille de route</h3>
 <ul>
 <li>Un front-office avec des graphiques dynamiques.</li>
