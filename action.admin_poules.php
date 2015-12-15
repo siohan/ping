@@ -8,20 +8,44 @@
 if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 //créations de liens de récupération des compétitions
 //on récupère d'abord les préférences de zones, ligues et département
 $fede = '100001';
 $zone = $this->GetPreference('zone');
 $ligue = $this->GetPreference('ligue');
 $dep = $this->GetPreference('dep');
-
+$parms = array();
+$idepreuve = '';
+$iddivision = '';
 $result= array ();
-$query = "SELECT *,pou.id AS tour_id, dv.libelle FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision ORDER BY dv.iddivision,pou.tour ASC";
+$query = "SELECT pou.id AS tour_id, dv.libelle,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision";//" ORDER BY dv.iddivision,pou.tour ASC";
 
-$dbresult= $db->Execute($query);
+	
+	if (isset($params['idepreuve']) && $params['idepreuve'] !='')
+	{
+		$idepreuve = $params['idepreuve'];
+		$query.=" AND pou.idepreuve = ?";
+		$parms['idepreuve'] = $idepreuve;
+	}
+	if(isset($params['iddivision']) && $params['iddivision'] != '')
+	{
+		$iddivision = $params['iddivision'];
+		$query.=" AND pou.iddivision = ?";
+		$parms['iddivision'] = $iddivision;
+	}
+	if(isset($params['idorga']) && $params['idorga'] != '')
+	{
+		$idorga = $params['idorga'];
+	}
+	
+	
+	$dbresult= $db->Execute($query, $parms);
+	
+$smarty->assign('recup_tours',
+		$this->CreateLink($id, 'retrieve_div_results',$returnid, $contents="Récupération", array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision)));
 // the top nav bar
-//$smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions")));
+$smarty->assign('returnlink', $this->CreateLink($id,'admin_divisions_tab',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"idorga"=>$params['idorga'])));
 //$this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/topfiles/template.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
 
 $rowclass = '';
@@ -40,6 +64,8 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	if($idorga == $ligue){$orga = 'Ligue';}
 	if($idorga == $dep){$orga = 'Comité';}
 	*/
+	$uploaded_parties = $row['uploaded_parties'];
+	$uploaded_classement = $row['uploaded_classement'];
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->tour_id = $row['tour_id'];
@@ -50,28 +76,39 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->libelle= $row['libelle'];
 	$onerow->date_debut = $row['date_debut'];
 	$onerow->date_fin = $row['date_fin'];
+	//$onerow->uploaded_parties= $row['uploaded_parties'];
 	//$onerow->indivs= $row['indivs'];
 	//$onerow->orga = $orga;
 	//$onerow->idepreuve = $row['idepreuve'];
 	
 	//$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poule',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision']));
-	$onerow->classement= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Classement',array("direction"=>"classement","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"tableau"=>$row['tableau'],"tour"=>$row['tour']));
-	$onerow->partie= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Parties',array("direction"=>"partie","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"tableau"=>$row['tableau'],"tour"=>$row['tour']));
+	$onerow->classement= $this->CreateLink($id, 'admin_div_classement', $returnid, 'Classement',array("idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"tableau"=>$row['tableau'],"tour"=>$row['tour'],"idorga"=>$idorga));
+	if($uploaded_parties ==1)
+	{
+		$onerow->uploaded_parties= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('already_downloaded'), '', '', 'systemicon');
+	}
+	if($uploaded_classement ==1)
+	{
+		$onerow->uploaded_classement= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('already_downloaded'), '', '', 'systemicon');
+	}
+	$onerow->partie= $this->CreateLink($id, 'admin_div_parties', $returnid, 'Parties',array("direction"=>"partie","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"tableau"=>$row['tableau'],"tour"=>$row['tour'],"idorga"=>$idorga));
 	
 	//$onerow->editlink = $this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
 	
 	if($this->CheckPermission('Ping Delete'))
 	{
-		$onerow->deletelink = $this->CreateLink($id, 'delete', $returnid,$themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'),array("record_id"=>$row['id'], "type_compet"=>"type_compet"));
+		$onerow->deletelink = $this->CreateLink($id, 'delete', $returnid,$themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'),array("record_id"=>$row['tour_id'], "type_compet"=>"type_compet"));
 	}
 	
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }
   }
-else {
-	echo "<p>Aucun résultats !</p>";
+else
+{
+	$this->Redirect($id, 'retrieve_div_results',$returnid,array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision));
 }
+
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
@@ -80,7 +117,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Supprimer"=>"supp_tours","Dater"=>"dater");
+$articles = array("Supprimer"=>"supp_tours","Dater"=>"dater","Récupérer les parties"=>"retrieve_div_parties", "Récupérer les classements"=>"retrieve_div_classement");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

@@ -6,7 +6,7 @@
 
 
 if( !isset($gCms) ) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 
 $club_number = $this->GetPreference('club_number');
@@ -27,40 +27,80 @@ $now = trim($db->DBTimeStamp(time()), "'");
 $error = 0;//on instancie une variable d'erreur
 //on vérifie que tous les paramètres nécessaires sont renseignés (idorga et type et idepreuve)
 /**/
-if(isset($params['idorga']) && $params['idorga'] !='')
+if(isset($params['all']) && $params['all'] !==FALSE)
 {
-	$idorga = $params['idorga'];
+	//on fait donc une requete générale pour retrouver toutes les divisions possibles des compets déjà enregistrées
+	$query = "SELECT name,idepreuve,idorga FROM ".cms_db_prefix()."module_ping_type_competitions WHERE indivs = '1'";
+	$dbresult = $db->Execute($query);
+	//on récupère le tableau des fédé, zone, ligue et comité
+	$fede = 100001;
+	$zone = $this->GetPreference('zone');
+	$ligue = $this->GetPreference('ligue');
+	$dep = $this->GetPreference('dep');
 	
-}
-else
-{
-	$error++;
-}
-/**/
-if(isset($params['type']) && $params['type'] !='')
-{
-	$type = $params['type'];
-	if($type == 'E')
+	if($dbresult && $dbresult->RecordCount()>0)
 	{
-		$indivs = 0;
+		//Ok on a des résultats, on continue
+		//on instancie la classe
+		$service = new retrieve_ops();
+		while($row = $dbresult->FetchRow())
+		{
+			$name = $row['name'];
+			$idepreuve = $row['idepreuve'];
+			$idorga = $row['idorga'];
+			
+			$retrieve_divisions = $service->retrieve_divisions($idorga,$idepreuve,$type='');	
+		}
+		//on redirige et on donne une info
+		$this->RedirectToAdminTab('indivs');
 	}
 	else
 	{
-		$indivs = 1;
+		//pas de résultats, on fait quoi ?
 	}
 }
 else
 {
-	$type == 'E';
+	if(isset($params['idorga']) && $params['idorga'] !='')
+	{
+		$idorga = $params['idorga'];
+
+	}
+	else
+	{
+		$error++;
+	}
+	/**/
+	if(isset($params['type']) && $params['type'] !='')
+	{
+		$type = $params['type'];
+		if($type == 'E')
+		{
+			$indivs = 0;
+		}
+		else
+		{
+			$indivs = 1;
+		}
+	}
+	else
+	{
+		$type == 'E';
+	}
+	if(isset($params['idepreuve']) && $params['idepreuve'] !='')
+	{
+		$idepreuve = $params['idepreuve'];
+	}
+	else
+	{
+		$error++;
+	}
+	$service = new retrieve_ops();
+	$retrieve_divisions = $service->retrieve_divisions($idorga,$idepreuve,$type='');
+	$this->Redirect($id, 'admin_divisions_tab',$returnid, array("idepreuve"=>$idepreuve,"idorga"=>$idorga,"essai"=>"1"));
+	
 }
-if(isset($params['idepreuve']) && $params['idepreuve'] !='')
-{
-	$idepreuve = $params['idepreuve'];
-}
-else
-{
-	$error++;
-}
+/**
 $page="xml_division";
 //on instancie la classe service
 $service = new Servicen();
@@ -115,14 +155,7 @@ $service = new Servicen();
 					}
 
 				}
-				/*
-				else
-				{
-					//l'épreuve est déjà renseignée, on fait un update
-					$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET idepreuve = ?, idorga = ? WHERE name = ? ";
-					$dbresult = $db->Execute($query, array($idepreuve,$idorga,$libelle));
-				}//fin du if $dbresult
-				*/
+				
 
 		}// fin du foreach
 		unset($scope);
@@ -136,9 +169,9 @@ $service = new Servicen();
 	//ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
 
 		$this->SetMessage("$designation");
-		$this->RedirectToAdminTab('compets');
+		$this->Redirect($id,'admin_divisions_tabToAdminTab('compets');
 
-
+*/
 #
 # EOF
 #

@@ -8,7 +8,8 @@
 	
 
 //on instancie les onglets
-
+$version = $this->GetVersion('Ping');
+echo "la version est : ".$version;
 echo $this->StartTabheaders();
 if (FALSE == empty($params['active_tab']))
   {
@@ -17,11 +18,13 @@ if (FALSE == empty($params['active_tab']))
   $tab = 'rencontres';
  }	
 	echo $this->SetTabHeader('joueurs', 'Joueurs', ('joueurs' == $tab)?true:false);
-	echo $this->SetTabHeader('equipes', 'Equipes', ('equipes' == $tab)?true:false);
+	echo $this->SetTabHeader('equipes', 'Par Equipes', ('equipes' == $tab)?true:false);
+	echo $this->SetTabHeader('indivs', 'Individuelles' , ('indivs' == $tab)?true:false);
+	echo $this->SetTabHeader('compets', 'Type compet' , ('compets' == $tab)?true:false);
 	echo $this->SetTabHeader('calendrier', 'Calendrier', ('calendrier' == $tab)?true:false);
 	echo $this->SetTabHeader('fftt', 'FFTT' , ('fftt' == $tab)?true:false);
 	echo $this->SetTabHeader('spid', 'SPID' , ('spid' == $tab)?true:false);
-	echo $this->SetTabHeader('compets', 'Compétitions' , ('compet' == $tab)?true:false);
+	
 	//echo $this->SetTabHeader('divisions', 'Divisions', ('divisions' == $tab)?true:false);	
 	echo $this->SetTabHeader('poules', 'Résultats', ('resultats' == $tab)?true:false);
 	echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
@@ -44,7 +47,15 @@ echo $this->StartTabContent();
 	echo $this->StartTab('equipes' , $params);//les équipes
     	include(dirname(__FILE__).'/action.admin_teams_tab.php');
    	echo $this->EndTab();
-
+	
+	echo $this->StartTab('indivs' , $params);//les types de compétitions
+	include(dirname(__FILE__).'/action.admin_compets_indivs_tab.php');
+	echo $this->EndTab();
+	
+	echo $this->StartTab('compets' , $params);//les types de compétitions
+	include(dirname(__FILE__).'/action.admin_compets_tab.php');
+	echo $this->EndTab();
+	
 	echo $this->StartTab('calendrier', $params);//Calendrier
     	include(dirname(__FILE__).'/action.admin_calendar_tab.php');
    	echo $this->EndTab();
@@ -57,9 +68,7 @@ echo $this->StartTabContent();
     	include(dirname(__FILE__).'/action.admin_spid_tab.php');
    	echo $this->EndTab();
 
-       echo $this->StartTab('compets' , $params);//les types de compétitions
-    	include(dirname(__FILE__).'/action.admin_compets_tab.php');
-   	echo $this->EndTab(); 
+       
 
 	/*
 	echo $this->StartTab('divisions', $params);//le journal

@@ -79,6 +79,28 @@ $dict->ExecuteSQLArray($sqlarray);
 
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_classement" );
 $dict->ExecuteSQLArray($sqlarray);
+#
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_divisions" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_div_classement" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_div_parties" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_div_tours" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_feuilles_rencontres" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_organismes" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_rencontres_parties" );
+$dict->ExecuteSQLArray($sqlarray);
+
 
 
 // remove the sequence

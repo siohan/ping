@@ -93,7 +93,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$this->SetMessage("$designation");
 			ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
 			$this->SetMessage("$designation");
-			$this->RedirectToAdminTab('equipes');
+			$this->Redirect($id, 'admin_poules_tab3',$returnid, array("record_id"=>$record_id));
 		}
 		
 	}

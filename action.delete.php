@@ -107,7 +107,7 @@ $designation = '';
 				break;
 				
 				case "division" :
-					$query = "DELETE FROM ".cms_db_prefix()."module_ping_divisions WHERE id = ?";
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision = ?";
 					$db->Execute($query, array($record_id));
 					
 					//on supprime aussi les autres tours , parties, et classement affiliés

@@ -120,6 +120,7 @@ $lang['user_deleted'] = 'Utilisateur supprimé';
 $lang['user_updated'] = 'Utilisateur modifi&eacute;';
 $lang['vic_def'] = 'Victoire ou défaite';
 $lang['view_contacts'] = 'Voir les contacts';
+$lang['view_results'] = 'Voir les résulats';
 $lang['yes'] = 'Oui';
 $lang['help_tour'] = 'Utilez le N° de journée pour obtenir ses résultats uniquement';
 $lang['help_libelle_equipe'] = 'Ex : RP FOUESNANT 1';

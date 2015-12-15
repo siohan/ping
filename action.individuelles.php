@@ -92,7 +92,7 @@ $lignes = $result1->RecordCount();
 			
 				//on est dans la FFTT
 				//$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_divisions AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision AND dv.idepreuve = ? AND cla.club LIKE ? ";//AND dv.date_debut = ?";
-				$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_div_tours AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision AND dv.idepreuve = ? AND cla.club LIKE ? AND dv.date_debut = ?";
+				$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_div_tours AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision AND dv.tableau = cla.tableau AND dv.idepreuve = ? AND cla.club LIKE ? AND dv.date_debut = ?";
 				//$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(vd) AS vic, count(vd) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
 				$parms['idepreuve'] = $idepreuve2;
 				$club = "%".$nom_equipes."%";		

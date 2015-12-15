@@ -38,6 +38,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			//le service est coupé
 			$array = 0;
 			$lignes = 0;
+			$this->RedirectToAdminTab('poules');
 		}
 		else
 		{
@@ -50,11 +51,11 @@ if($dbresult && $dbresult->RecordCount()>0)
 
 		//var_dump($xml);//print_r($result);
 		
-			if(!is_array($array))
+			if(!is_array($array)|| $lignes >0 || $lignes_joueurs >0)
 			{ 
 
 				//le tableau est vide, il faut envoyer un message pour le signaler
-				$designation.= "le service est coupé";
+				$designation.= "Les résultats ne sont pas encore disponibles";
 				$this->SetMessage("$designation");
 				$this->RedirectToAdminTab('poules');
 			}   
@@ -120,7 +121,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 								{
 									$serv = new retrieve_ops();
 									$licence = $row2['licence'];
-									$retrieve = $serv->retrieve_parties_spid($licence, $record_id);
+									$retrieve = $serv->retrieve_parties_spid($licence);
 								
 								
 								}

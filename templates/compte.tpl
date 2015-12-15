@@ -11,6 +11,10 @@
 		<p class="pageinput">{$motdepasse}</p>
 	</div>
 	<div class="pageoverflow">
+		<p class="pagetext">N° de série : (Laissez vide si première installation)</p>
+		<p class="pageinput">{$serie}</p>
+	</div>
+	<div class="pageoverflow">
 			<p class="pagetext">&nbsp;</p>
 			<p class="pageinput">{$submit}</p>
 		</div>

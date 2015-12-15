@@ -7,30 +7,47 @@ $idpoule = "";
 $idepreuve = "";
 $message = '';//le message de sortie
 $error = 0; //on instancie le compteur d'erreurs
-if(isset($params['idepreuve']) && $params['idepreuve'] != "")
+if(isset($params['record_id']) && $params['record_id'] != '')
 {
-	$idepreuve = $params['idepreuve'];
+	$record_id = $params['record_id'];
+	$query = "SELECT * FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ?";
+	$dbresult = $db->Execute($query, array($record_id));
+	if($dbresult && $dbresult->RecordCount()>0)
+	{
+		$row = $dbresult->FetchRow();
+		$idepreuve = $row['idepreuve'];
+		$iddiv = $row['iddiv'];
+		$idpoule = $row['idpoule'];
+	}
 }
 else
 {
-	$error++;
+	if(isset($params['idepreuve']) && $params['idepreuve'] != "")
+	{
+		$idepreuve = $params['idepreuve'];
+	}
+	else
+	{
+		$error++;
+	}
+	if(isset($params['iddiv']) && $params['iddiv'] != "")
+	{
+		$iddiv = $params['iddiv'];
+	}
+	else
+	{
+		$error++;
+	}
+	if(isset($params['idpoule']) && $params['idpoule'] != "")
+	{
+		$idpoule = $params['idpoule'];
+	}
+	else
+	{
+		$error++;
+	}
 }
-if(isset($params['iddiv']) && $params['iddiv'] != "")
-{
-	$iddiv = $params['iddiv'];
-}
-else
-{
-	$error++;
-}
-if(isset($params['idpoule']) && $params['idpoule'] != "")
-{
-	$idpoule = $params['idpoule'];
-}
-else
-{
-	$error++;
-}
+
 if($error >0)
 {
 	$message.="Paramètres manquants";
@@ -224,7 +241,7 @@ if(!$dbresult)
 }
 	
 	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('poules');
+	$this->Redirect($id, 'admin_poules_tab3',$returnid,array("record_id"=>$record_id));
 /*	*/
 #
 # EOF

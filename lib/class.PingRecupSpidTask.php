@@ -62,7 +62,7 @@ class PingRecupSpidTask implements CmsRegularTask
 	{
 
 		//on instancie la classe et on va commencer à boucler
-		$service = new Service();
+		$service = new retrieve_ops();
 
 		while ($row= $dbresult->FetchRow())
 		{
@@ -70,7 +70,7 @@ class PingRecupSpidTask implements CmsRegularTask
 			//$player = $row['player'];
 
 
-			retrieve_ops::retrieve_parties_spid($licence);
+			$retrieve_ops = $service->retrieve_parties_spid($licence);
 
 
 		}//fin du while

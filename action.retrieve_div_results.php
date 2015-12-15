@@ -45,6 +45,10 @@ else
 {
 	$error++;
 }
+if(isset($params['idorga']) && $params['idorga'] != '')
+{
+	$idorga = $params['idorga'];
+}
 /*
 if(isset($params['indivs']) && $params['indivs'] != '')
 {
@@ -59,58 +63,11 @@ if($error >0)
 {
 	$designation.= "Paramètres manquants";
 	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('divisions');
+	$this->RedirectToAdminTab('indivs');
 }
 //on instancie la classe servicen
 $service = new Servicen();
-if($indivs == '0')//on est dans une épreuve par équipes
-{
-	$page = "xml_result_equ";
-	$var = "auto=1&D1=".$iddivision;
-	
-	
-	if($direction == 'tour')
-	{
-		$var.="&action=poule";
 
-		$lien = $service->GetLink($page, $var);
-		$xml = simplexml_load_string($lien);
-		
-		if($xml === FALSE)
-		{
-			//Le service est coupé
-			$array = 0;
-			$lignes = 0;
-		}
-		else
-		{
-			$array = json_decode(json_encode((array)$xml), TRUE);
-			$lignes = count($array['tour']);
-		}
-		//var_dump($xml);
-		
-		foreach($xml as $value)
-		{
-			//$libelle = $tab['libelle'];
-			//$lien = $tab['lien'];
-			$libelle = htmlentities($value->libelle);
-			//on va extraire le tour
-
-			$lien = htmlentities($value->lien);
-			$tab1 = explode("&",$value->lien);
-
-			$tableau = trim($tab1[0], 'cx_poule=');
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_tours (id, idepreuve,iddivision,libelle,  tableau, lien,saison) VALUES ('', ?, ?, ?, ?, ?, ?)";
-			$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle, $tableau,$lien,$saison));
-		}
-		$designation.="Tour(s) inséré(s)";
-		$this->SetMessage("$designation");
-		$this->Redirect($id,'defaultadmin2', $returnid,array('active_tab'=>'tours'));
-		
-	}	
-}
-else //epreuve individuelle
-{
 	$page = "xml_result_indiv";
 	$var ="epr=".$idepreuve."&res_division=".$iddivision;
 	
@@ -188,21 +145,20 @@ else //epreuve individuelle
 		if(isset($params['tableau']) && $params['tableau'] != '')
 		{
 			$tableau = $params['tableau'];
+			$var.="&cx_tableau=".$tableau;
+			//echo $var;
 		}
 		else
 		{
 			$error++;
 		}
-		echo "le tableau est : ".$tableau;
+		//echo "le tableau est : ".$tableau;
 		$tour = '';
 		if(isset($params['tour']) && $params['tour'] != '')
 		{
 			$tour = $params['tour'];
 		}
-		else
-		{
-			$error++;
-		}
+		
 
 		$lien = $service->GetLink($page,$var);
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -212,7 +168,8 @@ else //epreuve individuelle
 		{
 			$designation.="Pas encore de résultats disponibles";
 			$this->SetMessage("$designation");
-			$this->RedirectToAdminTab('divisions');
+			//$this->RedirectToAdminTab('divisions');
+			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
 		}
 		
 			$array = json_decode(json_encode((array)$xml), TRUE);
@@ -222,7 +179,8 @@ else //epreuve individuelle
 		{
 			$designation.="Pas encore de résultats disponibles";
 			$this->SetMessage("$designation");
-			$this->Redirect($id,'defaultadmin2',$returnid);
+			//$this->Redirect($id,'defaultadmin2',$returnid);
+			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
 		}
 		
 		
@@ -258,12 +216,18 @@ else //epreuve individuelle
 			{
 				$designation .= $db->ErrorMsg();
 			}
+			else
+			{
+				//la requete a fonctionné. On met le classement comme uploadé
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded_classement = '1' WHERE idepreuve = ? AND iddivision = ? AND tableau = ?";
+				$dbresult2 = $db->Execute($query, array($idepreuve,$iddivision,$tableau));
+			}
 
 
 		}
 		$designation.="Classement(s) inséré(s)";
 		$this->SetMessage("$designation");
-		$this->Redirect($id,'defaultadmin2',$returnid);
+		$this->Redirect($id,'admin_div_classement',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga,"essai"=>"1"));
 
 	}
 	elseif($direction == 'partie')
@@ -275,12 +239,18 @@ else //epreuve individuelle
 		if(isset($params['tableau']) && $params['tableau'] != '')
 		{
 			$tableau = $params['tableau'];
+			$var.="&cx_tableau=".$tableau;
 		}
 		else
 		{
 			$error++;
 		}
-		
+		$tour = '';
+		if(isset($params['tour']) && $params['tour'] != '')
+		{
+			$tour = $params['tour'];
+		}
+		//echo $var;
 		$lien = $service->GetLink($page,$var);
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 		//echo "<pre>".var_dump($data)."</pre>";
@@ -289,7 +259,7 @@ else //epreuve individuelle
 		{
 			$designation.="Pas encore de parties disponibles";
 			$this->SetMessage("$designation");
-			$this->RedirectToAdminTab('divisions');
+			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
 		}
 		
 			$array = json_decode(json_encode((array)$xml), TRUE);
@@ -299,7 +269,8 @@ else //epreuve individuelle
 		{
 			$designation.="Pas encore de parties disponibles";
 			$this->SetMessage("$designation");
-			$this->Redirect($id,'defaultadmin2',$returnid);
+			//$this->Redirect($id,'defaultadmin2',$returnid);
+			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
 		}
 		
 		
@@ -324,17 +295,19 @@ else //epreuve individuelle
 			else
 			{
 				//la requete a fonctionné, on peut mettre le statut du tour a "uploadé"
-				$query = "UPDATE ".cms_db_prefix()."module_ping_";
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded = 1 WHERE tableau = ?";
+				$dbresult2 = $db->Execute($query2,array($tableau));
 			}
 
 
 		}
 		$designation.="Partie(s) insérée(s)";
 		$this->SetMessage("$designation");
-		$this->Redirect($id,'defaultadmin2',$returnid);
+		//$this->Redirect($id,'defaultadmin2',$returnid);
+		$this->Redirect($id,'admin_div_parties',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
 	}
 	//on va utiliser cette variable (record_id) comme clé secondaire dans la nouvelle table
-}
+
 
 
 //en fonction de la valeur de la variable action on définit différnets scénarii.

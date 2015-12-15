@@ -365,7 +365,9 @@ $flds = "
 	saison C(255),
 	uploaded I(1),
 	date_debut D,
-	date_fin D";
+	date_fin D,
+	uploaded_parties I(1),
+	uploaded_classement I(1)";
 
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",

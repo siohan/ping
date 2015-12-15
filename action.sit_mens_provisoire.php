@@ -11,7 +11,7 @@ $phase = $this->GetPreference('phase_en_cours');
 $mois_courant = date('n');
 $jour_courant = date('j');
 
-if($jour_courant <=10)
+if($jour_courant < 10)
 {
 	$mois_courant = $mois_courant-1;
 }

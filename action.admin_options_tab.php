@@ -56,13 +56,8 @@ foreach($tableau as $valeur)
 	
 }
 
-$listeligues = array("Bretagne"=>"1007", "Champagne"=>"1008");
-$smarty->assign('input_ligue',$this->CreateInputDropdown($id, 'ligue', $listorga_L,-1,$this->GetPreference('ligue'),50,255));
-
-$listezones = array("Bretagne"=>"1007", "Champagne"=>"1008");
-$listedeps = array("Finistère"=>"29", "Morbihan"=>"56");
 $smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listorga_Z,-1,$this->GetPreference('zone'),50,255));
-$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listorga_D,-1,$this->GetPreference('dep'),50,255));
+//$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listorga_D,-1,$this->GetPreference('dep'),50,255));
 $saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
 //$smarty->assign('title_formsubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
 $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));
@@ -77,8 +72,10 @@ $saisondropdown['2014-2015'] = '2014-2015';
 $saisondropdown['2015-2016'] = '2015-2016';
 
 $smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
+$nom_equipes = $this->GetPreference('nom_equipes');
 $smarty->assign('input_nom_equipes', 
 		$this->CreateInputText($id, 'nom_equipes', $this->GetPreference('nom_equipes', ''), 50,250));
+
 $smarty->assign('jour_sit_mens',
 		$this->CreateInputText($id,'jour_sit_mens', $this->GetPreference('jour_sit_mens', ''), 5, 7));
 $smarty->assign('input_populate_calendar',$this->CreateInputDropdown($id,'populate_calendar',$items,-1,$this->GetPreference('populate_calendar'),50,255));
@@ -94,10 +91,6 @@ $smarty->assign('input_fftt_interval',
 		$this->CreateInputDropdown($id, 'fftt_interval',$valeurs_interval,-1,$this->GetPreference('fftt_interval')));
 $smarty->assign('input_fftt_nombres',
 		$this->CreateInputDropdown($id,'fftt_nombres',$valeurs_nombres_fftt,-1,$this->GetPreference('fftt_nombres')));
-/*
-$smarty->assign('sitmens_ok_only',
-		$this->CreateInputDropdown($id,'sitmens_ok_only', $items,-1,$this->GetPreference('sitmens_ok_only'),50,255));
-*/
 $smarty->assign('submit', $this->CreateInputSubmit ($id, 'optionssubmitbutton', $this->Lang('submit')));
 
 // Display the populated template

@@ -20,107 +20,47 @@ if(!isset($club_number) && $club_number =='')
 }
 $now = trim($db->DBTimeStamp(time()), "'");
 
-//on vérifie que tous les paramètres nécessaires sont renseignés (idorga et type)
+//première possibilité
+//un organisateur a été soumis
+$service = new retrieve_ops();
+
 if(isset($params['idorga']) && $params['idorga'] !='')
 {
 	$idorga = $params['idorga'];
-}
-if(isset($params['type']) && $params['type'] !='')
-{
-	$type = $params['type'];
-	if($type == 'E')
+	
+	if(isset($params['type']) && $params['type'] !='')
 	{
-		$indivs = 0;
+		$type = $params['type'];
+		
 	}
 	else
 	{
-		$indivs = 1;
+		$type = 'E';
 	}
+	$recup = $service->retrieve_compets($idorga,$type);
 }
-else
+else //deuxième possibilité, rien n'est défini...
 {
-	$type = 'E';
-}
-//on instancie la classe service
-$service = new Servicen();
-
-$result = '';
-$page = "xml_epreuve";
-$var = "organisme=".$idorga."&type=".$type;
-$lien = $service->GetLink($page, $var);
-$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-
-if($xml === FALSE)
-{
-	// Le service est coupé
-	$array = 0;
-}
-else
-{
-	$array = json_decode(json_encode((array)$xml), TRUE);
-	$lignes = count($array['epreuve']);
-}
-
-//var_dump($result);
-/**/
-//on va tester si la variable est bien un tableau   
-	if(!is_array($array) || $lignes == 0)  {
-		
-		$this->SetMessage("Le service est coupé ou il n'y a pas encore de résultats");
-		$this->RedirectToAdminTab('epreuves');
-	}
-
-///on initialise un compteur général $i
-$i=0;
-//on initialise un deuxième compteur
-$compteur=0;
-foreach($xml as $cle =>$tab)
-{
-	
-	$i++;
-	$idepreuve = (isset($tab->idepreuve)?"$tab->idepreuve":"");
-	$idorga  = (isset($tab->idorga)?"$tab->idorga":"");
-	$libelle = (isset($tab->libelle)?"$tab->libelle":"");
-	// 1- on vérifie si cette épreuve est déjà dans la base
-	$query = "SELECT name FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
-	$dbresult = $db->Execute($query, array($libelle));
-	
-		if($dbresult  && $dbresult->RecordCount() == 0) 
+	//on fait un tableau qui récapitule toutes les possibilités (F, Z etc...)
+	//on récupère les préférences...
+	$fede = '100001';
+	$ligue = $this->GetPreference('ligue');
+	$zone = $this->GetPreference('zone');
+	$dep = $this->GetPreference('dep');
+	$tableau = array($fede,$ligue,$zone,$dep);//fédé, zone, ligue et département
+	$tableau_type_epreuves = array('I');//par equipes ou individuelles
+	foreach($tableau as $valeur)
+	{
+		echo "l'organisateur est : ".$valeur;
+		foreach($tableau_type_epreuves as $valeur2)
 		{
-			$query1 = "SHOW TABLE STATUS LIKE '".cms_db_prefix()."module_ping_equipes' ";
-			$dbresult = $db->Execute($query1);
-			$row = $dbresult->FetchRow();
-			$record_id = $row['Auto_increment'];
-			$tag = ping_admin_ops::tag($record_id, $idepreuve, $indivs);
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, indivs, idepreuve,tag, idorga) VALUES ('', ?, ?, ?, ?, ?)";
-			//echo $query;
-			$compteur++;
-			$dbresultat = $db->Execute($query,array($libelle,$indivs,$idepreuve,$tag,$idorga));
-		
-			if(!$dbresultat)
-			{
-				$designation .= $db->ErrorMsg();			
-			}
-
+			echo "le type de compétition est : ".$valeur2;
+			$recup = $service->retrieve_compets($idorga = $valeur,$type = $valeur2);
 		}
-		else
-		{
-			//l'épreuve est déjà renseignée, on fait un update
-			//if($idorga == $this->GetPreference(''))
-			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET idepreuve = ? WHERE name = ? ";
-			$dbresult = $db->Execute($query, array($idepreuve,$libelle));
-		}//fin du if $dbresult
-	
-	
-}// fin du foreach
+		//unset($valeur2);
+	}
+}
 
-$designation .= "Récupération de ".$compteur." épreuves";
-
-	
-	
-$status = 'Ok';
-$action = 'retrieve_teams';
-//ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
 	
 	$this->SetMessage("$designation");
 	$this->RedirectToAdminTab('compets');

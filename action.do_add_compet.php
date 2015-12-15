@@ -12,7 +12,7 @@ debug_display($params, 'Parameters');
 //pour l'instant pas d'erreur
 $error = 0;
 $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
-		
+		$saison = $this->GetPreference('saison_en_cours');
 		$idepreuve = '';
 		if (isset($params['idepreuve']) && $params['idepreuve'] != '')
 		{
@@ -54,10 +54,7 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		{
 			$indivs = $params['indivs'];
 		}
-		else
-		{
-			$error++;
-		}
+		
 		//s'agit-il d'une édition ou d'un ajout ?
 		$record_id = '';
 		if(isset($params['record_id']) && $params['record_id'] !='')
@@ -76,8 +73,8 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		
 		if($edit == 0)
 		{
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, idepreuve, date_debut, date_fin, numjourn,tag) VALUES ('', ?, ?, ?, ?,?)";
-			$dbresult = $db->Execute($query, array($idepreuve,$date_debut, $date_fin, $numjourn,$tag));
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,saison, idepreuve, date_debut, date_fin, numjourn,tag) VALUES ('',?,?, ?, ?, ?,?)";
+			$dbresult = $db->Execute($query, array($saison,$idepreuve,$date_debut, $date_fin, $numjourn,$tag));
 			
 		}
 		else

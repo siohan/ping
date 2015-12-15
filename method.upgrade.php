@@ -540,6 +540,7 @@ case  "0.3.0.1" :
 			       $dict->ExecuteSQLArray($sqlarray);
 	}
 	case "0.3.0.2" :
+	case "0.3.0.3" :
 	{
 		$dict = NewDataDictionary( $db );
 		$flds = "
@@ -575,6 +576,20 @@ case  "0.3.0.1" :
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_div_tours", "date_debut D,date_fin D");
 		$dict->ExecuteSQLArray( $sqlarray );
 		
+	}
+	case "0.3.1" : 
+	{
+		$dict->ExecuteSQLArray($sqlarray);
+		//On crée un nouveau champ dans la table participe
+		//$dict->NewDataDictionary( $db );
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_div_tours", "uploaded_parties I(1), uploaded_classement I(1)");
+		$dict->ExecuteSQLArray( $sqlarray );
+		//un nouvel index
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_class',
+			    cms_db_prefix().'module_ping_div_classement', 'tableau, nom, saison',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		//
 	}
 }
 

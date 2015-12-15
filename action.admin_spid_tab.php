@@ -4,6 +4,7 @@ if( !isset($gCms) ) exit;
 #              SPID                                          #
 ##############################################################
 //	debug_display($params, 'Parameters');
+
 require_once(dirname(__FILE__).'/function.calculs.php');
 $saison = $this->GetPreference('saison_en_cours');
 
@@ -14,7 +15,10 @@ global $themeObject;
 $smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'spid')));
 //$smarty->assign('formstart',$this->CreateFormStart($id,'admin_spid_tab'));
 $error_only = '';
-$datelist[$this->Lang('alltours')] = '';
+$dateList = array();
+$dateList = array("Tous les mois"=>"","Septembre"=>"9","Octobre"=>"10","Novembre"=>"11", "Décembre"=>"12","Janvier"=>"1","Février"=>"2","Mars"=>"3","Avril"=>"4","Mai"=>5,"Juin"=>"6");
+//$datelist[$this->Lang('alltours')] = '';
+//$datelist[]
 $equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
@@ -24,11 +28,11 @@ $query = "SELECT pts.epreuve, pts.date_event, j.licence,pts.numjourn , CONCAT_WS
 $dbresult = $db->Execute($query, array($saison));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
-    	$datelist[$row['date_event']] = $row['date_event'];
+    	//$datelist[$row['date_event']] = $row['date_event'];
     	$playerslist[$row['player']] = $row['licence'];
 	$typeCompet[$row['epreuve']] = $row['epreuve'];
   }
-
+/*
 if( isset($params['submitfilter']) )
   {
     	if( isset( $params['datelist']) )
@@ -47,33 +51,33 @@ if( isset($params['submitfilter']) )
 $curdate = $this->GetPreference( 'dateChoisi' );
 $curplayer = $this->GetPreference( 'playerChoisi');
 $curCompet = $this->GetPreference( 'competChoisie');
-
+*/
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_date',
-		$this->CreateInputDropdown($id,'datelist',$datelist,-1,$curdate));		
+		$this->CreateInputDropdown($id,'dateList',$dateList,-1,(!empty($params['dateList'])?$params['dateList']:"")));		
 $smarty->assign('input_compet',
-		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
+		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,(!empty($params['typeCompet'])?$params['typeCompet']:"")));
 $smarty->assign('input_player',
 		$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
 $smarty->assign('input_error_only',
-		$this->CreateInputCheckbox($id,'error_only',1,1));
+		$this->CreateInputCheckbox($id,'error_only',1,0));
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
 
 $result= array ();
-
+$parms = array();
 $query2 = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
 
 $parms['saison'] = $saison;
 
 if( isset($params['submitfilter'] ))
 {
-	if ($curdate !='')
+	if (isset( $params['dateList']) && $params['dateList'] !='')
 	{
-		$query2.=" AND sp.date_event = ? ";
-		$parms['date_event'] = $curdate;
+		$query2.=" AND MONTH(sp.date_event) = ? ";
+		$parms['date_event'] = $params['dateList'];
 		
 	}
 
@@ -83,12 +87,19 @@ if( isset($params['submitfilter'] ))
 		$parms['licence'] = $curplayer;
 		
 	}
-	
+	if( isset( $params['typeCompet']) && $params['typeCompet'] !='' )
+	{ 
+		//$this->SetPreference ( 'competChoisie', $params['typeCompet']);
+		$query2.=" AND sp.epreuve LIKE ?";
+		$parms['epreuve'] = $params['typeCompet'];
+	}
+	/*
 	if ($curCompet !='')
 	{
 		$query2.=" AND sp.epreuve = ?";
 		$parms['epreuve'] = $curCompet;
 	}
+	*/
 	if(isset($params['error_only']) && $params['error_only'] !='')
 	{
 		$query2.=" AND sp.classement = -sp.ecart ";

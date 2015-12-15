@@ -69,9 +69,7 @@ $(document).ready(function(){
 	<td>{$entry->name}</td>
 	<td>{$entry->date_debut|date_format:"%d-%m-%Y"}->{$entry->date_fin|date_format:"%d-%m-%Y"}</td>
 	<td>{$entry->numjourn}</td>
-	<td>{$entry->tag}
-	{if $entry->indivs == 1}
-	| {$entry->participe}{/if}</td>
+	<td>{$entry->tag}</td>
 	<td>{$entry->retrievelink}</td>
     <td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>

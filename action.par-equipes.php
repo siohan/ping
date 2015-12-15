@@ -37,7 +37,7 @@ $dbresult = $db->Execute($query);
 			$onerow->valeur = $i;
 			
 			
-			$query2 = "SELECT *,ren.equa,ren.uploaded, ren.equb, ren.id AS ren_id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison  AND ren.date_event = ? AND (ren.scorea !=0 OR scoreb !=0)";
+			$query2 = "SELECT *,ren.equa,ren.uploaded, ren.equb, eq.id as eq_id,ren.id AS ren_id, eq.libequipe FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule  AND ren.saison = eq.saison  AND ren.date_event = ? AND (ren.scorea !=0 OR scoreb !=0)";
 			$parms['date_event'] = $date_debut;
 			
 			if(isset($params['type_compet']) && $params['type_compet'])
@@ -54,7 +54,7 @@ $dbresult = $db->Execute($query);
 			//mon club uniquement ?
 			if($this->GetPreference('affiche_club_uniquement') == 'Oui')
 			{
-				$query2.=" AND ren.club = '1'";
+				$query2.=" AND (ren.club = '1' OR ren.affiche = '1')";
 			}
 			
 			$dbresultat = $db->Execute($query2, $parms);
@@ -73,6 +73,7 @@ $dbresult = $db->Execute($query);
 					$equb = $row2['equb'];
 					$scorea = $row2['scorea'];
 					$scoreb = $row2['scoreb'];
+					$eq_id = $row2['eq_id'];
 					$uploaded = $row2['uploaded'];
 					$libequipe = $row2['libequipe'];
 					$friendlyname = $row2['friendlyname'];
@@ -94,10 +95,12 @@ $dbresult = $db->Execute($query);
 					{
 						if (rtrim($libequipe) == $equa)
 						{
-							$onerow2->equa= $row2['friendlyname'];
+							//$onerow2->equa= $row2['friendlyname'];
+							$onerow2->equa= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
 						}
 
-						else{
+						else
+						{
 							$onerow2->equa= $row2['equa'];
 						}
 
@@ -112,10 +115,12 @@ $dbresult = $db->Execute($query);
 					{
 						if (rtrim($libequipe) == $equb)
 						{
-							$onerow2->equb= $row2['friendlyname'];
+							//$onerow2->equa= $row2['friendlyname'];
+							$onerow2->equb= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
 						}
 
-						else{
+						else
+						{
 							$onerow2->equb= $row2['equb'];
 						}
 

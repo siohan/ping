@@ -14,7 +14,7 @@ if( !isset($gCms) ) exit;
     		$this->RedirectToAdminTab('divisions');
     		return;
   	}
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 //le formulaire a t-il été soumis ?
 if(isset($params['submit']))
 {
@@ -24,9 +24,13 @@ if(isset($params['submit']))
 	if(isset($params['sel']) && $params['sel'] != '')
 	{
 		$sel = $params['sel'];
-		$id_sel = array();
-		$id_sel = explode('-', $sel);
-		//var_dump($id_sel);
+		$tab = explode('-', $sel);
+		$a = array();
+		foreach($tab as $value)
+		{
+			array_push($a,$value);
+		}
+		var_dump($a);
 		$date_debut = '';
 		if(isset($params['date_debut']) && $params['date_debut'] !='')
 		{
@@ -43,16 +47,16 @@ if(isset($params['submit']))
 		else
 		{
 			$this->SetMessage('Date(s) manquante(s)');
-			$this->Redirect($id, 'defaultadmin2', $returnid='', array("active_tab"=>"divisions"));
+			$this->Redirect($id, 'defaultadmin', $returnid='', array("active_tab"=>"divisions"));
 		}
 		
 		$i = 0;//on instancie un compteur pour rendre compte
 		
-		foreach($id_sel as $valeur)
+		foreach($a as $valeur)
 		{
 			
 			//on va chercher les infos : idepreuve, iddivision etc..
-			$query = "SELECT * FROM ".cms_db_prefix()."module_ping_divisions WHERE id = ? ";
+			$query = "SELECT * FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS tours WHERE tours.id = ? ";
 			$dbresult = $db->Execute($query, array($valeur));
 			
 			if($dbresult && $dbresult->RecordCount()>0)

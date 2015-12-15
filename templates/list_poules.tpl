@@ -40,6 +40,22 @@ $(document).ready(function(){
 });
 //]]>
 </script>
+{if isset($formstart) }
+<fieldset>
+  <legend>Filtres</legend>
+  {$formstart}
+  <div class="pageoverflow">
+	<p class="pagetext">Tour:</p>
+    <p class="pageinput">{$input_tour} </p>
+	<p class="pagetext">Mois:</p>
+    <p class="pageinput">{$input_mois} </p>
+
+    <p class="pageinput">{$submitfilter}{$hidden|default:''}</p>
+  </div>
+  {$formend}
+</fieldset>
+{/if}
+{$returnlink}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 
 {if $itemcount > 0}
@@ -47,7 +63,8 @@ $(document).ready(function(){
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
   <tr>	
-	<th>Epreuve</th>
+	<th>Epreuve (division)</th>
+	<th>Tableau</th>
 	<th>Tour</th>
 	<th>Date</th>
 	<th colspan="3">Actions</th>
@@ -57,10 +74,11 @@ $(document).ready(function(){
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
-   		<td>{$entry->libelle}</td>
+   		<td>{$entry->libelle}  ({$entry->iddivision})</td>
+		<td>{$entry->tableau}</td>
 		<td>{$entry->tour}</td>
 		<td>{$entry->date_debut}->{$entry->date_fin}</td>
-		<td>{$entry->poule} - {$entry->partie} - {$entry->classement}</td>
+		<td>{$entry->uploaded_parties}{$entry->partie} - {$entry->uploaded_classement}{$entry->classement}</td>
 		<td>{$entry->editlink}</td>
 		<td>{$entry->deletelink}</td>
 		<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->tour_id}" class="select"></td>
@@ -74,5 +92,7 @@ $(document).ready(function(){
 <br/>{$actiondemasse}{$submit_massaction}
   </div>
 {$form2end}
+{else}
+<p class="warning">Récupérer les tours ? {$recup_tours}</p>
 {/if}
 

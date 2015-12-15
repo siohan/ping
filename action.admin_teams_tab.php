@@ -12,18 +12,14 @@ global $themeObject;
 //debug_display($params, 'Parameters');
 $saison_courante = $this->GetPreference('saison_en_cours');
 $phase_courante = $this->GetPreference('phase_en_cours');
+$smarty->assign('retrieve_all',
+		$this->CreateLink($id, 'retrieve_all_poule_rencontres', $returnid,$contents='Récupérer toutes les rencontres'));
 $phase = (isset($params['phase']))?$params['phase']:$phase_courante;
 $smarty->assign('phase2',
 		$this->CreateLink($id,'defaultadmin',$returnid, 'Phase 2', array("active_tab"=>"equipes","phase"=>"2") ));
 $smarty->assign('phase1',
 		$this->CreateLink($id,'defaultadmin',$returnid, 'Phase 1', array("active_tab"=>"equipes","phase"=>"1") ));
 //la requete
-$smarty->assign('id', $this->Lang('id'));
-$smarty->assign('equipe', 'Equipes');
-$smarty->assign('tour', 'Tour');
-$smarty->assign('score', 'Score');
-$smarty->assign('adversaires', 'Adversaires');
-
 $result= array ();
 $query = "SELECT DISTINCT *, eq.id AS eq_id,  eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.saison = ? ";
 if($this->GetPreference('phase_en_cours') =='1' )
@@ -54,7 +50,7 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 	$calendarImage = "<img title=\"Récupérer le calendrier\" src=\"{$module_dir}/images/calendrier.jpg\" class=\"systemicon\" alt=\"Récupérer le calendrier\" />";
 	$podiumImage = "<img title=\"Récupérer le classement de la poule\" src=\"{$module_dir}/images/podium.jpg\" class=\"systemicon\" width=\"16\" height =\"12\" alt=\"Récupérer le classement\" />";
 	//echo $query;
-	$rowarray= array ();
+	$rowarray= array();
 	
 		if ($dbresult && $dbresult->RecordCount() > 0)
   		{
@@ -73,7 +69,7 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				$onerow->name= $row['name'];
 				$onerow->idepreuve = $row['idepreuve'];
 				$onerow->tag = $row['tag_equipe'];
-				//$onerow->view= $this->createLink($id, 'viewteamresult', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('download_poule_results'), '', '', 'systemicon'),array('cle'=>$row['cle'])) ;
+				$onerow->view= $this->createLink($id, 'admin_poules_tab3', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('view_results'), '', '', 'systemicon'),array('libequipe'=>$row['libequipe'],"record_id"=>$row['eq_id'],"idepreuve"=>$row['idepreuve'])) ;
 				
 				$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));
 				$onerow->addnewlink = $this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addmanually'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));

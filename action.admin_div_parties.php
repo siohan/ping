@@ -11,22 +11,68 @@ global $themeObject;
 //debug_display($params, 'Parameters');
 //créations de liens de récupération des compétitions
 //on récupère d'abord les préférences de zones, ligues et département
-$fede = '100001';
-$zone = $this->GetPreference('zone');
-$ligue = $this->GetPreference('ligue');
-$dep = $this->GetPreference('dep');
+$idepreuve = '';
+$iddivision = '';
+$tableau = '';
+$tour = 0;
+$error = 0; //on instancie un compteur d'erreurs
+if(isset($params['idepreuve']) && $params['idepreuve'] != '')
+{
+	$idepreuve = $params['idepreuve'];
+	
+}
+else
+{
+	$error++;
+}
+if(isset($params['iddivision']) && $params['iddivision'] != '')
+{
+	$iddivision = $params['iddivision'];
+	
+}
+else
+{
+	$error++;
+}
+if(isset($params['tableau']) && $params['tableau'] != '')
+{
+	$tableau = $params['tableau'];
 
+}
+else
+{
+	$error++;
+}
+if(isset($params['tour']) && $params['tour'] != '')
+{
+	$tour = $params['tour'];
+
+}
+else
+{
+	$error++;
+}
+if(isset($params['idorga']) && $params['idorga'] != '')
+{
+	$idorga = $params['idorga'];
+
+}
+//on construit un lie de récupération des résultats
+$smarty->assign('lien_retour',
+		$this->CreateReturnLink($id, $returnid,$contents='Retour'));
+$smarty->assign('recup_parties',
+		$this->CreateLink($id,'retrieve_div_results', $returnid, $contents='Récupérer les parties', array("direction"=>"partie","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga)));
 $result= array ();
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_div_parties";
+$query = "SELECT * FROM ".cms_db_prefix()."module_ping_div_parties WHERE tableau = ?";
 
-$dbresult= $db->Execute($query);
+$dbresult= $db->Execute($query,array($tableau));
 // the top nav bar
 //$smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions")));
 //$this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/topfiles/template.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
 
 $rowclass = '';
 //echo $query;
-$rowarray= array ();
+$rowarray= array();
 if ($dbresult && $dbresult->RecordCount() > 0)
   {
     while ($row= $dbresult->FetchRow())
@@ -59,9 +105,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$rowarray[]= $onerow;
       }
   }
-else {
-	echo "<p>Aucun résultats !</p>";
-}
+
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

@@ -27,7 +27,7 @@ $mois_sit_mens = $mois_sm." ".$annee_courante;
 $message = '';
 //je sélectionne toutes les licences du mois en question donc déjà renseignées
 // afin de ne récupérer que celles manquantes
-$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_sit_mens WHERE mois = ? AND annee = ?";
+$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_sit_mens WHERE mois = ? AND annee = ? AND licence IS NOT NULL";
 //je les mets ensuite dans un tableau pour faire le NOT IN	
 
 $dbresult = $db->Execute($query, array($mois_courant, $annee_courante));
@@ -43,7 +43,7 @@ for($i=0;$i<=$lignes;$i++)
 	$licen = substr(implode(", ", $lic), 3, -3);
 	
 }
-var_dump($licen);
+//var_dump($licen);
 if($lignes ==0)
 {
 	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif=1";
@@ -52,7 +52,7 @@ else
 {
 	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif=1 AND licence NOT IN ($licen)";
 }
-//echo $query2;
+echo $query2;
 $dbresult = $db->Execute($query2);
 
 if ($dbresult && $dbresult->RecordCount() > 0)
@@ -69,11 +69,11 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		
         }//fin du while
 
-	$this->SetMessage('Consultez le journal');
-	$this->RedirectToAdminTab('situation');
+	
 
   }
-  
+	$this->SetMessage('Consultez le journal');
+	$this->RedirectToAdminTab('situation');  
 
 #
 # EOF

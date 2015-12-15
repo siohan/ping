@@ -12,47 +12,75 @@ global $themeObject;
 
 $nom_equipes = $this->GetPreference('nom_equipes');
 /* on fait un formulaire de filtrage des résultats*/
-$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin2','', 'post', '',false,'',array('active_tab'=>'divisions')));
-$datelist[$this->Lang('alldates')] = '';	
-//$idorgalist[$this->Lang('allplayers')] = 'Toutes';
-$typeCompet = array();
-$typeCompet[$this->Lang('allcompet')] = '';
-$query1 = "SELECT tc.idepreuve,tc.idorga, tc.name FROM ".cms_db_prefix()."module_ping_type_competitions AS tc, ".cms_db_prefix()."module_ping_div_tours AS dt WHERE tc.idepreuve = dt.idepreuve ORDER BY tc.name ASC ";//" , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY j.nom ASC, pts.date_event ASC";//"";
-$dbresult = $db->Execute($query1);
-while ($dbresult && $row = $dbresult->FetchRow())
-  {
-    //$datelist[$row['date_event']] = $row['date_event'];
-    //$playerslist[$row['player']] = $row['licence'];
-    //$idorgalist =  array("Aucun"=>"Aucun","National"=>"F","Zone"=>"Z", "Régional"=>"L","Départemental"=>"D");//$idorgalist[$row['idorga']] = $row['name'];
-    $typeCompet[$row['name']] = $row['idepreuve'];
-  }
-
-	if( isset($params['submitfilter']) )
-  	{
-    		if( isset( $params['typeCompet']) )
-		{ 
-			$curCompet = $params['typeCompet'];
-		}
-	}
-	
-$smarty->assign('prompt_tour',
-		$this->Lang('tour'));
-$smarty->assign('input_compet',
-		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,(isset($curCompet)?$curCompet:"")));	
-$smarty->assign('submitfilter',
-		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
-$smarty->assign('formend',$this->CreateFormEnd());
 //créations de liens de récupération des compétitions
 //on récupère d'abord les préférences de zones, ligues et département
 $fede = '100001';
 $zone = $this->GetPreference('zone');
 $ligue = $this->GetPreference('ligue');
 $dep = $this->GetPreference('dep');
+// On récupère les paramètres transmis
+$idepreuve = '';
+$iddivision = '';
+$tableau = '';
+$tour = 0;
+$error = 0; //on instancie un compteur d'erreurs
+if(isset($params['essai']) && $params['essai'] !='0')
+{
+	$essai = $params['essai'];
+}
+else
+{
+	$essai = 0;//Par défaut 0, si pas de résultats en bdd, recherche automatique
+}
+if(isset($params['idepreuve']) && $params['idepreuve'] != '')
+{
+	$idepreuve = $params['idepreuve'];
+	
+}
+else
+{
+	$error++;
+}
+if(isset($params['iddivision']) && $params['iddivision'] != '')
+{
+	$iddivision = $params['iddivision'];
+	
+}
+else
+{
+	$error++;
+}
+if(isset($params['tableau']) && $params['tableau'] != '')
+{
+	$tableau = $params['tableau'];
 
+}
+else
+{
+	$error++;
+}
+if(isset($params['tour']) && $params['tour'] != '')
+{
+	$tour = $params['tour'];
+
+}
+else
+{
+	$error++;
+}
+if(isset($params['idorga']) && $params['idorga'] != '')
+{
+	$idorga = $params['idorga'];
+
+}
+$smarty->assign('returnlink', $this->CreateLink($id,'admin_poules',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"idorga"=>$params['idorga'])));
+//on construit un lie de récupération des résultats
+$smarty->assign('recup_classement',
+		$this->CreateLink($id,'retrieve_div_results', $returnid, $contents='Récupérer le classement', array("direction"=>"classement","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga)));
 $result= array ();
-$query = "SELECT id, idepreuve,iddivision,tableau,tour,rang, nom,clt,club,points, saison FROM ".cms_db_prefix()."module_ping_div_classement";
+$query = "SELECT id, idepreuve,iddivision,tableau,tour,rang, nom,clt,club,points, saison FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND iddivision = ? AND tableau = ? ORDER BY id ASC";
 
-$dbresult= $db->Execute($query);
+$dbresult= $db->Execute($query,array($idepreuve,$iddivision, $tableau));
 // the top nav bar
 //$smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions")));
 //$this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/topfiles/template.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
@@ -102,8 +130,14 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$rowarray[]= $onerow;
       }
   }
-else {
-	echo "<p>Aucun résultats !</p>";
+else
+{
+	//pas de résultats, on va les chercher automatiquement ?
+	//on regarde si l'essai est à 0 ou non
+	if($essai == '0')
+	{
+		$this->Redirect($id,'retrieve_div_results',$returnid, array("direction"=>"classement","idepreuve"=>$idepreuve, "iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
+	}
 }
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));
 $smarty->assign('itemcount', count($rowarray));

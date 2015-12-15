@@ -15,13 +15,13 @@ require_once(dirname(__FILE__).'/function.calculs.php');
 $db = $this->GetDb();
 $designation = '';
 $now = trim($db->DBTimeStamp(time()), "'");
-$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1' LIMIT 2";
+$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1'";
 $dbresult = $db->Execute($query);
 if($dbresult && $dbresult->RecordCount() > 0)
 {
 	 
 	//on instancie la classe et on va commencer à boucler
-	$service = new Servicen();
+	$service = new retrieve_ops();
 	
 	while ($row= $dbresult->FetchRow())
 	{

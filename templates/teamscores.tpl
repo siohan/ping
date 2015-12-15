@@ -17,7 +17,8 @@
 </fieldset>
 {/if}
 *}
-<div class="pageoptions"><p class="pageoptions">{$retrieve_teams} |{$retrieve_teams_fem} | {$retrieve_teams_autres} | {$edit_team}</p></div>
+{*$classement*}
+<div class="pageoptions<"><p><span class="pageoptions"> {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres} </span><span class="warning" style="text-align:right;">{$retrieve_all}</span></p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <p class="pageoptions">{$phase1} | {$phase2}</p>
@@ -42,9 +43,8 @@
 	<td>{$entry->name}</td>
     <td>{$entry->friendlyname}</td>
 	<td>{$entry->tag}</td>
+	<td>{$entry->view}</td>
 	<td>{$entry->editlink}</td>
-    <td>{$entry->retrieve_poule_rencontres}</td>
-	<td>{$entry->classement}</td>
     <td>{$entry->deletelink}</td>
   </tr>
 {/foreach}

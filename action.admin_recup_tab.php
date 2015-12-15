@@ -37,13 +37,15 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	
 	$fftt = ping_admin_ops::compte_fftt($licence);
 	$spid = ping_admin_ops::compte_spid($licence);
+	$sit_mens = ping_admin_ops::sit_mens($licence);
+	//var_dump($sit_mens);
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->id= $row['id'];
 	$onerow->joueur= $row['joueur'];
 	$onerow->licence= $row['licence'];
 	//$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
-	$onerow->sit_mens= $row['sit_mens'];
+	$onerow->sit_mens= $sit_mens;//$row['sit_mens'];
 	$onerow->fftt= $fftt;
 	//$onerow->fftt= $row['fftt'];
 	$onerow->maj_fftt= $row['maj_fftt'];

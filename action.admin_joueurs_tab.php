@@ -89,8 +89,7 @@ if(isset($params['message']) && $params['message'] !='')
 }
 
 
-$smarty->assign('delete_all',
-		$this->CreateLink($id,'delete_all',$returnid,'Finaliser l\installation'));
+
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

@@ -40,6 +40,7 @@ $(document).ready(function(){
 });
 //]]>
 </script>
+<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 
 {if $itemcount > 0}
@@ -76,6 +77,8 @@ $(document).ready(function(){
 <br/>{$actiondemasse}{$submit_massaction}
   </div>
 {$form2end}
+{else}
+{$recup_classement}
 {/if}
 
 

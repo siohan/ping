@@ -30,7 +30,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			foreach( $params['sel'] as $licence )
 	  		{
 	
-	    			ping_admin_ops::retrieve_sit_mens( $licence );
+	    			retrieve_ops::retrieve_sit_mens( $licence );
 	  		}
 			//$message.='</ul>';
 			$this->SetMessage("$message");
@@ -86,9 +86,10 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			case "spid" :
 			//$saison_courante = $this->GetPreference('saison_en_cours');
 			$message='Retrouvez toutes les infos dans le journal';
+			$service = new retrieve_ops();
 			foreach( $params['sel'] as $licence )
 	  		{
-	    			retrieve_ops::retrieve_parties_spid( $licence );
+	    			$retrieve = $service->retrieve_parties_spid( $licence );
 	  		}
 			$this->SetMessage("$message");
 			$this->RedirectToAdminTab("recup");
@@ -162,10 +163,28 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			case "supp_div" :
 			foreach( $params['sel'] as $record_id )
 	  		{
+	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision = ?";
+				$db->Execute($query, array($record_id));
+				//prévoir une suppression en cascade
+				$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_tours WHERE iddivision = ?";
+				$db->Execute($query, array($record_id));
+				//on continue par les parties
+				$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_parties WHERE iddivision = ?";
+				$db->Execute($query, array($record_id));
+				//enfin les classements
+				$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_classement WHERE iddivision = ?";
+				$db->Execute($query, array($record_id));
+	  		}
+			$this->Redirect($id,'defaultadmin2', $returnid,$contents='Retour',array('active_tab'=>'tours'));
+			break;
+			
+			case "supp_div_tours" :
+			foreach( $params['sel'] as $record_id )
+	  		{
 	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_tours WHERE id = ?";
 				$db->Execute($query, array($record_id));
 	  		}
-			$this->RedirectToAdminTab('joueurs');
+			$this->Redirect($id,'defaultadmin2', $returnid,$contents='Retour',array('active_tab'=>'tours'));
 			break;
 			
 			case "supp_div_parties" :
@@ -182,9 +201,53 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 				$this->Redirect($id,'dater',$returnid, array("sel"=>$id_sel));
 			
 			break;
-			case "retrieve_tours" : 
-				$id_sel = implode("-",$params['sel']);
-				$this_>Redirect($id, 'retrieve_div_results',$returnid, array("sel"=>$id_sel));
+			case "retrieve_div_tours" : 
+				
+				foreach( $params['sel'] as $valeur )
+				{
+					
+					$query = "SELECT idepreuve, iddivision FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision= ?";
+					$dbresult = $db->Execute($query, array($valeur));
+					$row = $dbresult->FetchRow();
+					$idepreuve = $row['idepreuve'];
+					$service = new retrieve_ops();
+					$retrieve_ops = $service->retrieve_div_tours($idepreuve, $valeur);
+					
+				}
+				$this->Redirect($id, 'defaultadmin2',$returnid, array("active_tab"=>'tours'));
+			break;
+				
+			case "retrieve_div_parties" : 
+
+			foreach( $params['sel'] as $valeur )
+			{
+
+				$query = "SELECT idepreuve, iddivision,tableau FROM ".cms_db_prefix()."module_ping_div_tours WHERE id = ?";
+				$dbresult = $db->Execute($query, array($valeur));
+				$row = $dbresult->FetchRow();
+				$idepreuve = $row['idepreuve'];
+				$iddivision = $row['iddivision'];
+				$tableau = $row['tableau'];
+				$service = new retrieve_ops();
+				$retrieve_ops = $service->retrieve_div_parties($idepreuve, $iddivision,$tableau,$valeur);
+
+			}
+			$this->Redirect($id, 'defaultadmin2',$returnid, array("active_tab"=>'tours'));
+			break;
+			
+			case "retrieve_div_classement" : 
+
+			foreach( $params['sel'] as $valeur )
+			{
+
+
+				$service = new retrieve_ops();
+				$retrieve_ops = $service->retrieve_div_classement($valeur);
+
+			}
+			$this->Redirect($id, 'defaultadmin',$returnid, array("active_tab"=>'indivs'));
+			break;
+			
 			case "supp_fftt" : 
 			$i = 0;
 			foreach($params['sel'] as $record_id)

@@ -5,7 +5,7 @@ if(!$this->CheckPermission('Ping Set Prefs'))
 	$this->SetMessage($this->Lang('needpermission'));
 	$this->RedirectToAdminTab('joueurs');
 }
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 $idAppli = '';
 $motdepasse = '';
 $tm = '';//le timestamp non crypté
@@ -35,27 +35,41 @@ else
 	$designation.=" Votre mot de passe est manquant.";
 	
 }
+if(!isset($params['serie']) && $params['serie'] =='')
+{
+	//le formulaire n'a pas transmis de numéro de série : 
+	//on va vérifier s'il existe déjà une préférence à ce niveau
+	$serie = $this->GetPreference('serie');
+	if($serie =='')//il n'y a pas de numéro de série définit, on en créé un
+	{
+		$serie = ping_admin_ops::random_serie(15);
+		//et on l'envoie
+		$this->SetPreference('serie', $serie);
+	}
+	
+		
+}
+else
+{
+	
+	$serie = $params['serie'];
+	//on change la preference
+	$this->SetPreference('serie', $serie);
+	
+	
+}
 $serie = $this->GetPreference('serie');
 if(!isset($serie) || $serie =='')
 {
 	//on crée la préférence unique
-	$serie = ping_admin_ops::random_serie(15);
-	//et on l'envoie
-	$this->SetPreference('serie', $serie);
 	
-}
-/*
-if(isset($params['tm']) && $params['tm'] !='' && strlen($params['tm']) == 17)
-{
-	$timestamp = $params['tm'];
-	$tmc = hash_hmac("sha1", $timestamp,$ccle);
+	
 }
 else
 {
-	$error++;
-	$designation.=" Le timestamp est manquant ou ne fait pas les 17 caractères.";
+	$serie = $this->GetPreference('serie');
 }
-*/
+
 if($error>0)
 {
 	$this->SetMessage($designation);
@@ -67,7 +81,7 @@ else
 	//on met l'id de l'application et le mot de passe en préférence
 	$this->SetPreference('idAppli',$idAppli);
 	$this->SetPreference('motdepasse',$cde);
-	$this->RedirectToAdminTab('configuration');
+	$this->Redirect($id, 'getInitialisation', $returnid);
 	
 }
 #

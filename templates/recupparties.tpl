@@ -22,8 +22,6 @@ $(document).ready(function(){
 //]]>
 </script>
 <h2>Etat des récupérations des joueurs actifs</h2>
-<p>Légende : <br />
-	{$attention_img} : Parties non récupérées par situation(s) mensuelle(s) manquante(s)</p>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  {*$barcharts*}</p></div>
 {if $itemcount > 0}
 {$form2start}
@@ -46,7 +44,7 @@ $(document).ready(function(){
 	<td>{$entry->joueur} ({$entry->licence})</td>
 	<td>{if $entry->sit_mens ==''}{$entry->push_player}{else}{$entry->sit_mens}{/if}</td>
 	<td>{$entry->fftt}<br />(maj le {$entry->maj_fftt|date_format:"%A %e %B"})</td>
-	<td>{$entry->spid}/{$entry->spid_total}{if $entry->spid != $entry->spid_total}{$attention_img}{$entry->correction}{/if}<br />(maj le {$entry->maj_spid|date_format:"%A %e %B"})</td>
+	<td>{$entry->spid}/{$entry->spid_total}{if $entry->spid != $entry->spid_total}{$attention_img}{/if}<br />(maj le {$entry->maj_spid|date_format:"%A %e %B"})</td>
     <td>{$entry->sitmenslink}</td>
 	<td>{$entry->getpartieslink}</td>
 	<td>{$entry->getpartiesspid}</td>

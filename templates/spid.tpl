@@ -42,7 +42,7 @@ $(document).ready(function(){
   {$formend}
 </fieldset>
 {/if}
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieve_all}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -59,7 +59,7 @@ $(document).ready(function(){
 		<th>Coeff</th>
 		<th>Points</th>
 		<th>Forfait</th>
-		<th colspan="3">Actions</th>
+		<th colspan="2">Actions</th>
 		<th><input type="checkbox" id="selectall" name="selectall"></th>
   </tr>
  </thead>
@@ -78,7 +78,6 @@ $(document).ready(function(){
 	<td>{$entry->pointres}</td>
 	<td>{$entry->forfait}</td>
 	<td>{$entry->editlink}</td>
-	<td>{$entry->duplicatelink}</td>
 	<td>{$entry->deletelink}</td>
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->record_id}" class="select"></td>
   </tr>

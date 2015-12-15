@@ -1,5 +1,5 @@
 <div class="alert  alert-info">
-    <p class="alert-info">Les organismes n'appraissent pas ?( Ligues, Zones, dép) {$recup_orga}</p>
+    <p class="alert-info">La Zone n'apparait pas ? {$recup_orga}</p>
 </div>
 {$startform}
 <fieldset>
@@ -12,15 +12,6 @@
 		<p class="pagetext">Votre zone</p>
 		<p class="pageinput">{$input_zone}</p>
 	</div>
-	<div class="pageoverflow">
-		<p class="pagetext">Votre ligue</p>
-		<p class="pageinput">{$input_ligue}</p>
-	</div>
-	<div class="pageoverflow">
-		<p class="pagetext">Votre département</p>
-		<p class="pageinput">{$input_dep}</p>
-	</div>
-
 	<div class="pageoverflow">
 		<p class="pagetext">Phase en cours:</p>
 		<p class="pageinput">{$input_phase}</p>

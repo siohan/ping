@@ -35,6 +35,7 @@ $(document).ready(function(){
   {$formend}
 </fieldset>
 {/if}
+{$retourlien} <p class="warning">{$alert_message}</p>{*$recup_div*}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 {$form2start}
@@ -58,9 +59,9 @@ $(document).ready(function(){
 	<!--<td>{$entry->date_event|date_format:"%d/%m"}</td>-->
     <td>{$entry->libelle} ({$entry->iddivision})</td>
  	<td>{$entry->uploaded}</td>
-	<td> {$entry->poule} </td>
+	<td>{$entry->poule}</td>
     <td>{$entry->deletelink}</td>
-	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" class="select"></td>
+	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->iddivision}" class="select"></td>
   </tr>
 {/foreach}
  </tbody>
@@ -70,4 +71,6 @@ $(document).ready(function(){
 <br/>{$actiondemasse}{$submit_massaction}
   </div>
 {$form2end}
+{else}
+<p>Récupérer les divisions ?{$recup_div}</p>
 {/if}

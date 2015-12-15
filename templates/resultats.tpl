@@ -22,15 +22,57 @@ $(document).ready(function(){
 });
 //]]>
 </script>
+<p style="width: 100%"><span style="text-align: left">{$retour}</span>{*<span style="float:right">{$refresh_class} - {$all_results}</span>*}</p>
+{if $itemcount3>0}
+<table>
+	<tbody>
+		<tr>
+			{foreach from=$items3 item=entry}
+				<td>{$entry->lien_nav} - </td>
+			{/foreach}
+		</tr>
+	</tbody>
+</table>
+{/if}
 {assign var=compteur value = 0}
-<p style="width: 100%"><span style="text-align: left">{if $phase ==1}{$Sep} | {$Oct} | {$Nov} | {$Dec} {$mois_suivant}{else}{$mois_precedent}  {$Jan} | {$Fev} | {$Mar} | {$Avr} | {$Mai} | {$Juin} | {$Juil}{/if}</span><span style="float:right">{$all_results}</span></p>
 
+<p style="width: 100%"><span style="text-align: left"></span><span style="float:right">{$refresh_class} - {$all_results}</span></p>
+{if $itemcount2 > 0}
+<h3>Classement général {if isset($libequipe)} en {$libequipe}{/if}</h3>
+
+<table border="0" cellspacing="0" cellpadding="0" class="table pagetable">
+ <thead>
+	<tr>
+		<th>Clt</th>
+		<th>Equipe</th>
+		<th>Joue</th>
+		<th>Pts</th>
+	</tr>
+ </thead>
+ <tbody>
+{foreach from=$items2 item=entry}
+  <tr class="{$entry->rowclass}">
+	<td>{$entry->clt}</td>
+    <td>{$entry->equipe}</td>
+    <td>{$entry->joue}</td>
+	<td>{$entry->pts}</td>
+    
+  </tr>
+{/foreach}
+ </tbody>
+</table>
+{else}
+<p class="warning">Récupérer le classement ?</p>
+{/if}
+{if $itemcount>0}
+<h3>Les rencontres</h3>
 {foreach from=$items item=entry}
 {*<p><pre>{$prods_{$compteur++}|var_dump}</pre></p>*}
 
 	
-	{if $entry->indivs==0}
-	<h3>{$entry->date|date_format:"%d/%m/%Y"} {$entry->compet}</h3>
+	
+	{$form2start}
+	<h4>{$entry->date|date_format:"%d/%m/%Y"} {$entry->compet}</h4>
 	
 	
 		<table border="0" cellspacing="0" cellpadding="0" class="pagetable table">
@@ -41,7 +83,7 @@ $(document).ready(function(){
 				<th>Score B</th>
 				<th>Affichage</th>
 				<th colspan="3">Actions</th>
-				<!--<th><input type="checkbox" id="selectall" name="selectall"></th>-->
+				<th><input type="checkbox" id="selectall" name="selectall"></th>
 			</thead>
 			<tbody>
 			{foreach from=$prods_{$entry->valeur} item=donnee}
@@ -58,14 +100,17 @@ $(document).ready(function(){
 					<td>{$donnee->retrieve_poule_rencontres}</td>
 					<td>{$donnee->retrieve_details}</td>
 					<td>{$donnee->deletelink}</td>
-					<!--<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->ren_id}" class="select"></td>-->
+					<td><input type="checkbox" name="{$actionid}sel[]" value="{$donnee->ren_id}" class="select"></td>
 				</tr>
 			{/foreach}
 		</table>
 		<!-- SELECT DROPDOWN -->
 <div class="pageoptions" style="float: right;">
-<br/>{*$actiondemasse*}{*$submit_massaction*}
+<br/>{$actiondemasse}{$submit_massaction}
   </div>
 {$form2end}
-	{/if}
+
 {/foreach}
+{else}
+<p class="warning">Récupérer les rencontres de cette poule ? {$recup_calendrier} </p>
+	{/if}

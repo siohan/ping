@@ -1,0 +1,48 @@
+@media print {
+
+  /* Hide blocks on the print output */
+  #header,
+  #navigation,
+  #footer,
+  .visuallyhidden,
+ .pageoptions,
+ .row header,
+  .sidebar,
+ .content-top cf,
+  h1,
+  .btn,
+  .video,
+  .noprint {
+    display: none; 
+  }
+
+  /* Change template and content styling suitable for printing on plain paper */
+  body {
+    height: auto;
+    background: #fff;
+    color: #333;
+  }
+  a:link, a:visited, a:active {
+    color: #333;
+    text-decoration: none;
+  }
+  h2, h3 {
+    padding-bottom: 1px;
+    border-bottom: 1px solid #000;
+    color: #000;
+  }
+  h4, h5, h6 { color: #000 }
+
+table
+{
+  width:100%;
+  text-align:left;
+  font-size: 80%;
+}
+table, th, td
+{
+  border-collapse:collapse;
+  border: 1px solid black;
+  
+}
+}
