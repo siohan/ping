@@ -105,6 +105,7 @@ $dbresult1 = $db->Execute($query1, array($saison,$phase));
 							$update = 0;		
 						}
 						//on vérifie si l'enregistrement est déjà là
+						//mettre des conditions pour les rencontres passées uniquement. < aujourd'hui
 						$query2 = "SELECT id,lien,scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv =? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
 						$dbresult2 = $db->Execute($query2, array($iddiv,$idpoule,$date_event,$equa,$equb));
 				

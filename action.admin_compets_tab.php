@@ -10,26 +10,60 @@ $fede = '100001';
 $zone = $this->GetPreference('zone');
 $ligue = $this->GetPreference('ligue');
 $dep = $this->GetPreference('dep');
+$typeCompet = array("Toutes"=>0,"Nationales"=>$fede,"Zone"=>$zone,"Régionales"=>$ligue, "Départementales"=>$dep);
+$indivOrNot = array("Indifférent"=>10,"Par équipes"=>0,"Individuelles"=>1);
+$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'', array('active_tab'=>'compets')));
+$smarty->assign('input_compet',
+		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,(!empty($params['typeCompet'])?$params['typeCompet']:"")));
+$smarty->assign('input_indivs',
+		$this->CreateInputDropdown($id,'indivOrNot',$indivOrNot,-1,(!empty($params['indivOrNot'])?$params['indivOrNot']:"")));
+		$smarty->assign('submitfilter',
+		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
+$smarty->assign('formend',$this->CreateFormEnd());
 
-$smarty->assign('divisions', $this->CreateLink($id, 'defaultadmin2',$returnid, '=> Accédez aux divisions'));
 $smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Zone indivs', array("idorga"=>$zone,"type"=>"I")));
-//$smarty->assign('zone_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Zone Equipes', array("idorga"=>$zone,"type"=>"E")));
+$smarty->assign('zone_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Zone Equipes', array("idorga"=>$zone,"type"=>"E")));
 $smarty->assign('Nat_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'National indivs', array("idorga"=>$fede,"type"=>"I")));
-//$smarty->assign('Nat_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'National Equipes', array("idorga"=>$fede,"type"=>"E")));
+$smarty->assign('Nat_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'National Equipes', array("idorga"=>$fede,"type"=>"E")));
 $smarty->assign('ligue_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Ligue indivs', array("idorga"=>$ligue,"type"=>"I")));
-//$smarty->assign('ligue_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Ligue Equipes', array("idorga"=>$ligue,"type"=>"E")));
+$smarty->assign('ligue_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Ligue Equipes', array("idorga"=>$ligue,"type"=>"E")));
 $smarty->assign('dep_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Dép indivs', array("idorga"=>$dep,"type"=>"I")));
-//$smarty->assign('dep_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Dép Equipes', array("idorga"=>$dep,"type"=>"E")));
-$result= array ();
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions ORDER BY name ASC";
+$smarty->assign('dep_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Dép Equipes', array("idorga"=>$dep,"type"=>"E")));
 
-$dbresult= $db->Execute($query);
+$result= array ();
+$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE id > ?";
+$parms['id'] = 0;
+if( isset($params['submitfilter'] ))
+{
+	if (isset( $params['typeCompet']) && $params['typeCompet'] !='' && $params['typeCompet'] != 0)
+	{
+		$query.=" AND idorga = ? ";
+		$parms['typeCompet'] = $params['typeCompet'];
+		
+	}
+	if(isset( $params['indivOrNot']) && $params['indivOrNot'] !='' && $params['indivOrNot'] != 10)
+	{
+		$query.=" AND indivs = ?";
+		$parms['indivOrNot'] = $params['indivOrNot'];
+	}
+	
+
+}
+
+	$query.=" ORDER BY name ASC";
+//echo $query;
+	$dbresult= $db->Execute($query,$parms);
+
+
+
+
+
 
 
 //echo $query;
 $rowarray= array ();
 if ($dbresult && $dbresult->RecordCount() > 0)
-  {
+{
     while ($row= $dbresult->FetchRow())
       {
 	$indivs = $row['indivs'];
@@ -97,10 +131,12 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }
-  }
-else {
-	echo "<p>Aucun résultats !</p>";
 }
+else
+{
+	//il n'y a pas de résultats, on fait quoi ?
+}
+
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

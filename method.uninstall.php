@@ -100,6 +100,8 @@ $dict->ExecuteSQLArray($sqlarray);
 
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_rencontres_parties" );
 $dict->ExecuteSQLArray($sqlarray);
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_control_panel" );
+$dict->ExecuteSQLArray($sqlarray);
 
 
 

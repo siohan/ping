@@ -22,7 +22,7 @@
 	<th>Indivs</th>
 	<th>Echelon</th>
 	<th>Tag pour affichage</th>
-	<th colspan="3">Récupérer les divisions</th>
+	<th colspan="3">Accéder aux divisions</th>
   </tr>
  </thead>
  <tbody>
@@ -41,7 +41,5 @@
 {/foreach}
  </tbody>
 </table>
-{else}
-	<div class="pageoptions"><p class="pageoptions alert">{$zone_indivs} - {$zone_equipes} - {$ligue_indivs} - {$ligue_equipes} - {$dep_indivs} - {$dep_equipes}{*$createlink*}</p></div>
 {/if}
-<div class="pageoptions"><p class="pageoptions">{*$createlink*}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>

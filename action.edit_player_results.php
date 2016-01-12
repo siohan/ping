@@ -1,7 +1,7 @@
 <?php
 
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 if (!$this->CheckPermission('Ping Manage'))
   {
     echo $this->ShowErrors($this->Lang('needpermission'));
@@ -40,12 +40,13 @@ else
     // find the user
     $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid AS s, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE s.epreuve = tc.name AND s.id = ?";
     $dbresult = $db->GetRow($query, array( $params['record_id'] ));
-    if( !$dbresult)
-      {
-	$this->SetMessage($this->Lang('error_resultnotfound'));
-	$this->RedirectToAdminTab('results');
-	return;
-      }
+
+    	if( !$dbresult)
+      	{
+		$this->SetMessage($this->Lang('error_resultnotfound'));
+		$this->RedirectToAdminTab('results');
+		return;
+      	}
 	else
 	{
 		$epreuve = $dbresult['epreuve'];
@@ -56,7 +57,7 @@ else
 		$ecart = $dbresult['ecart'];
 		$coeff = $dbresult['coeff'];
 		$victoire = $dbresult['victoire'];
-		$points = $dbresult['points'];
+		$points = $dbresult['pointres'];
 		$forfait = $dbresult['forfait'];
 		
 			if($victoire ==1)
@@ -104,9 +105,9 @@ $smarty->assign('ecart',
 $smarty->assign('prompt_adversaire',
 		$this->Lang('adversaire'));
 $smarty->assign('adversaire',
-		$this->CreateInputText($id, 'adversaire',$adversaire,80,150));
-		$smarty->assign('pts_adversaire',
-				$this->CreateInputText($id, 'pts_adversaire',$pts_adversaire,10,150));
+		$this->CreateInputText($id, 'adversaire',$nom,80,150));
+$smarty->assign('pts_adversaire',
+		$this->CreateInputText($id, 'pts_adversaire',$pts_adversaire,10,150));
 					
 $smarty->assign('prompt_victoire_defaite',
 		$this->Lang('vic_def'));

@@ -70,7 +70,7 @@ $(document).ready(function(){
 	<td>{$entry->date_debut|date_format:"%d-%m-%Y"}->{$entry->date_fin|date_format:"%d-%m-%Y"}</td>
 	<td>{$entry->numjourn}</td>
 	<td>{$entry->tag}</td>
-	<td>{$entry->retrievelink}</td>
+<!--	<td>{$entry->retrievelink}</td>-->
     <td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>
 	</tr>

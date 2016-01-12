@@ -196,6 +196,7 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 				$rowarray[]= $onerow;
 		      	}
 		}
+		/*
 		elseif($saison_courante != $this->GetPreference('saison_en_cours')) // il n'y a pas de résultats on redirige vers les résultats génériques de cette personne
 		{
 			$this->RedirectForFrontEnd($id, $returnid, 'user_results', array('licence'=>$licence,'saison'=>$saison_courante));
@@ -204,7 +205,7 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 		{
 			$this->RedirectForFrontEnd($id, $returnid, 'user_results', array('licence'=>$licence));
 		}
-		
+		*/
 		$smarty->assign('resultats',
 				$this->CreateLink($id,'user_results',$returnid,$contents = 'Tous ses résultats', array('licence'=>$licence,'saison'=>$saison_courante)));
 	}//fin du else (if $licence isset)

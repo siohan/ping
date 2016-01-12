@@ -93,13 +93,14 @@ $parms['saison'] = $saison;
 
 $dbresult= $db->Execute($query,$parms);
 //echo $query;
+/*
 if (!$dbresult)
 {
 
 		die('FATAL SQL ERROR: '.$db->ErrorMsg().'<br/>QUERY2: '.$db->sql);
 
 }
-
+*/
 $rowarray= array ();
 if ($dbresult && $dbresult->RecordCount() > 0)
   {

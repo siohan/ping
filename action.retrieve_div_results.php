@@ -130,7 +130,7 @@ $service = new Servicen();
 		}
 		$designation.="Tour(s) inséré(s)";
 		$this->SetMessage("$designation");
-		$this->Redirect($id,'defaultadmin2', $returnid);
+		$this->Redirect($id,'admin_divisions_tab', $returnid, array("idepreuve"=>$idepreuve, "idorga"=>$idorga));
 
 
 

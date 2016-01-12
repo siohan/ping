@@ -40,7 +40,7 @@
   </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
-    <p class="pageinput">{$Ajouter}{$submit}{$cancel}{$back}</p>
+    <p class="pageinput">{$submit}{$cancel}{$back}</p>
   </div>
 {$formend}
 </div>

@@ -102,7 +102,7 @@ $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 
 
-echo $this->ProcessTemplate('list_compet.tpl');
+echo $this->ProcessTemplate('list_compet_indivs.tpl');
 
 
 #

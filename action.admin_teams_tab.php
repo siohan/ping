@@ -51,6 +51,7 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 	$podiumImage = "<img title=\"Récupérer le classement de la poule\" src=\"{$module_dir}/images/podium.jpg\" class=\"systemicon\" width=\"16\" height =\"12\" alt=\"Récupérer le classement\" />";
 	//echo $query;
 	$rowarray= array();
+	$rowclass = '';
 	
 		if ($dbresult && $dbresult->RecordCount() > 0)
   		{
@@ -66,10 +67,10 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				$onerow->libequipe=  $row['libequipe'];
 				$onerow->libdivision= $row['libdivision'];
 				$onerow->friendlyname= $row['friendlyname'];
-				$onerow->name= $row['name'];
+				//$onerow->name= $row['name'];
 				$onerow->idepreuve = $row['idepreuve'];
 				$onerow->tag = $row['tag_equipe'];
-				$onerow->view= $this->createLink($id, 'admin_poules_tab3', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('view_results'), '', '', 'systemicon'),array('libequipe'=>$row['libequipe'],"record_id"=>$row['eq_id'],"idepreuve"=>$row['idepreuve'])) ;
+				$onerow->view= $this->createLink($id, 'admin_poules_tab3', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('view_results'), '', '', 'systemicon'),array('active_tab'=>'equipes','libequipe'=>$row['libequipe'],"record_id"=>$row['eq_id'],"idepreuve"=>$row['idepreuve'])) ;
 				
 				$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));
 				$onerow->addnewlink = $this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addmanually'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));
@@ -98,10 +99,11 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 		$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('items', $rowarray);
+		
 		$smarty->assign('retrieve_teams',
-		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes masculines", array('type'=>'M')));
+			$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes masculines", array('type'=>'M')));
 		$smarty->assign('retrieve_teams_fem',
-		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes féminines", array('type'=>'F')));
+			$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes féminines", array('type'=>'F')));
 		$smarty->assign('retrieve_teams_autres',
 				$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Autres équipes"));
 		$smarty->assign('edit_team',

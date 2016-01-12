@@ -19,7 +19,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.3.0.2'; }  
+  function GetVersion() { return '0.4'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -103,7 +103,6 @@ class Ping extends CMSModule
 	$this->SetParameterType('monthslist',CLEAN_INT);
 	$this->SetParameterType('annee', CLEAN_INT);
 	$this->SetParameterType('phase', CLEAN_INT);
-	$this->SetParameterType('annee', CLEAN_INT);
 	$this->SetParameterType('nom', CLEAN_STRING);
 	$this->SetParameterType('prenom', CLEAN_STRING);
 	$this->SetParameterType('actif', CLEAN_INT);
@@ -122,6 +121,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('tableau', CLEAN_INT);
 	$this->SetParameterType('lien', CLEAN_STRING);
 	$this->SetParameterType('message', CLEAN_STRING);
+	$this->SetParameterType('stall', CLEAN_INT);
 
 }
 

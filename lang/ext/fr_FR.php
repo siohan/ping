@@ -5,6 +5,7 @@ $lang['add_user'] = 'Ajouter un joueur(euse)';
 $lang['add-manually'] = 'Ajouter manuellement';
 $lang['add'] = "Ajouter";
 $lang['adresse'] = 'Adresse';
+$lang['already_downloaded'] = 'Déjà téléchargé';
 $lang['allseasons'] = 'Toutes les saisons';
 $lang['allstatus'] = "Tous les statuts";
 $lang['alldates'] = "Toutes les dates";
@@ -71,6 +72,7 @@ $lang['needpermission'] = 'Vous n\'avez pas la permission d\'accéder';
 $lang['no'] = 'Non';
 $lang['no_family_name'] = 'Vous devez saisir votre nom de famille';
 $lang['no_adresse'] = 'Vous devez saisir votre adresse';
+$lang['not_already_downloaded'] = 'A télécharger !';
 $lang['options'] = 'Options';
 $lang['prefsupdated'] = 'Pr&eacute;ferences du module mise &agrave; jour.';
 $lang['points'] = 'Points';
@@ -177,8 +179,8 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 <p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (Voir feuille de route plus bas).</p>
 <h3>Comment l\'utiliser ?</h3>
 <h2>Première utilisation</h2>
-<ol><li>Dans l\'onglet "Compte", renseignez les identifiants fournis par la FFTT.</li><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
-<li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
+<ol><li>Dans l\'onglet "Compte", renseignez les identifiants fournis par la FFTT.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
+<li>Dans l\'onglet "Compétitions", récupérez les compétitions de zone, ligue et comité (les nationales sont installées par défaut)</li><li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
 Un lien pour les équipes du championnat de France par équipes masculin, un autre pour les féminines et le dernier pour toutes les autres équipes, indiquez le type de compétitions auxquelles elles participent.</li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom.</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
@@ -201,6 +203,9 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 </li>
 <li>"idepreuve" - le type de compétition à afficher ex : {Ping action=\'par-equipes\' idepreuve=\'1072\'} (disponibles ds l\'onglet "Compétitions")</li>
 </ul>
+<h3>CSS et Javascript</h3>
+<p>Une css est disponible dans le répertoire du même nom dans le module. Elle améliore le rendu visuel. Pour l\'utiliser, vous devez l\'inclure dans le design que vous utilisez par ailleurs.<br />Pour le javascript, idem un répertoire dédié et un script qui permet de modifier l\'ordre des tableaux en cliquant sur les entêtes de colonnes. Pour ce faire, en bas du gabarit utilisé (ex : simplex), vous avez ceci par défaut : <br /> {cms_jquery exclude=\'ui,nestedSortable,json,migrate\' append=\'uploads/simplex/js/jquery.sequence-min.js,uploads/simplex/js/functions.min.js\'}<br />
+Au final, vous devrez avoir ceci : <br />{cms_jquery exclude=\'ui,nestedSortable,json,migrate\' append=\'uploads/simplex/js/jquery.sequence-min.js,uploads/simplex/js/functions.min.js,modules/ping/js/jquery.tablesorter.min.js\'} </p>
 <h3>Feuille de route</h3>
 <ul>
 <li>Un front-office avec des graphiques dynamiques.</li>

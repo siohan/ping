@@ -51,7 +51,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 
 		//var_dump($xml);//print_r($result);
 		
-			if(!is_array($array)|| $lignes >0 || $lignes_joueurs >0)
+			if(!is_array($array) || $lignes == 0 || $lignes_joueurs == 0)
 			{ 
 
 				//le tableau est vide, il faut envoyer un message pour le signaler

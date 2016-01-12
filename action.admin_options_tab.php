@@ -8,7 +8,7 @@ if(!$this->CheckPermission('Ping Use') && !$this->CheckPermission('Ping Set Pref
 }
   // CreateFormStart sets up a proper form tag that will cause the submit to
   // return control to this module for processing.
-
+//debug_display($params, 'Parameters');
 $mois_courant = date('m');
 $annee_courante = date('Y');
 $version = $this->GetVersion('Ping');
@@ -24,10 +24,20 @@ else
 	$annee_debut = $annee_courante -1;
 	$annee_fin = $annee_courante;
 }
-$smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve_organismes',$returnid,'Récupérer les organismes'));
+
+//$smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve_organismes',$returnid,'Récupérer les organismes'));
 $saison_actuelle = $annee_debut.'-'.$annee_fin;
 //$saisondropdown['.$saison_actuelle.'] = $saison_actuelle;
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));
+if(isset($params['stall']) && $params['stall'] =="1" )
+{
+	$stall = $params['stall'];	
+}
+else
+{
+	$stall = '0';
+}
+$smarty->assign('stall', $this->CreateInputHidden($id,'stall',$value=$stall));
 $smarty->assign('endform', $this->CreateFormEnd ());
 $smarty->assign('title_club_number',$this->Lang('title_club_number'));
 $smarty->assign('input_club_number',$this->CreateInputText($id,'club_number',$this->GetPreference('club_number',''),50,255));
@@ -56,8 +66,9 @@ foreach($tableau as $valeur)
 	
 }
 
+$smarty->assign('input_ligue',$this->CreateInputDropdown($id, 'ligue', $listorga_L,-1,$this->GetPreference('ligue'),50,255));
 $smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listorga_Z,-1,$this->GetPreference('zone'),50,255));
-//$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listorga_D,-1,$this->GetPreference('dep'),50,255));
+$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listorga_D,-1,$this->GetPreference('dep'),50,255));
 $saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
 //$smarty->assign('title_formsubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
 $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));
@@ -67,15 +78,11 @@ $items['Oui'] = 'Oui';
 $items['Non'] = 'Non';
 $saisondropdown = array();
 
-$saisondropdown['2013-2014'] = '2013-2014';
-$saisondropdown['2014-2015'] = '2014-2015';
 $saisondropdown['2015-2016'] = '2015-2016';
 
 $smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
-$nom_equipes = $this->GetPreference('nom_equipes');
 $smarty->assign('input_nom_equipes', 
 		$this->CreateInputText($id, 'nom_equipes', $this->GetPreference('nom_equipes', ''), 50,250));
-
 $smarty->assign('jour_sit_mens',
 		$this->CreateInputText($id,'jour_sit_mens', $this->GetPreference('jour_sit_mens', ''), 5, 7));
 $smarty->assign('input_populate_calendar',$this->CreateInputDropdown($id,'populate_calendar',$items,-1,$this->GetPreference('populate_calendar'),50,255));
@@ -91,6 +98,10 @@ $smarty->assign('input_fftt_interval',
 		$this->CreateInputDropdown($id, 'fftt_interval',$valeurs_interval,-1,$this->GetPreference('fftt_interval')));
 $smarty->assign('input_fftt_nombres',
 		$this->CreateInputDropdown($id,'fftt_nombres',$valeurs_nombres_fftt,-1,$this->GetPreference('fftt_nombres')));
+/*
+$smarty->assign('sitmens_ok_only',
+		$this->CreateInputDropdown($id,'sitmens_ok_only', $items,-1,$this->GetPreference('sitmens_ok_only'),50,255));
+*/
 $smarty->assign('submit', $this->CreateInputSubmit ($id, 'optionssubmitbutton', $this->Lang('submit')));
 
 // Display the populated template

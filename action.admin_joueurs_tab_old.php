@@ -15,7 +15,7 @@ global $themeObject;
 $error_compte = 0;
 $idAppli = $this->GetPreference('idAppli');
 $motdepasse = $this->GetPreference('motdepasse');
-
+$serie = $this->GetPreference('serie');
 $rowclass='';
 if($idAppli =='')
 {
@@ -25,8 +25,11 @@ if($motdepasse == '')
 {
 	$error_compte++;
 }
-
-//echo $error_compte;
+if($serie =='')
+{
+	$error_compte++;
+}
+echo $error_compte;
 $error_config = 0;
 $club_number = $this->GetPreference('club_number');
 $ligue = $this->GetPreference('ligue');
@@ -48,7 +51,7 @@ if($dep =='')
 {
 	$error_config++;
 }
-//echo $error_config;
+echo $error_config;
 $smarty->assign('alertConfig', $error_config);
 $smarty->assign('alertCompte', $error_compte);
 $smarty->assign('saison_en_cours', $saison_en_cours);
@@ -74,7 +77,7 @@ if ($dbresult && $dbresult->RecordCount() == 0)
 	
     while ($row= $dbresult->FetchRow())
       {
-	//echo $row['idorga'];
+	echo $row['idorga'];
 	if($row['idorga'] == $dep && $row['nombre'] == 0)
 	{
 		$smarty->assign('compet_dep', $this->CreateLink($id, 'retrieve_compet', $returnid, $contents='Récupérer les compétitons départementales',array('idorga'=>$row['idorga'])));
@@ -131,7 +134,12 @@ $smarty->assign('retrieve_users',
 $this->CreateLink($id, 'retrieve_users', $returnid, 
 		  $this->Lang('retrieve_users'), 
 		  array()));
-
+$smarty->assign('createlink', 
+		$this->CreateLink($id, 'add_joueur', $returnid,
+				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add_user'), '', '', 'systemicon')).
+		$this->CreateLink($id, 'add_joueur', $returnid, 
+				  $this->Lang('add_user'),  
+				  array()));
 $msg = '';
 if(isset($params['message']) && $params['message'] !='')
 {

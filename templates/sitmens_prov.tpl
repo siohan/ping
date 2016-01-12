@@ -28,7 +28,7 @@ $(document).ready(function() {
 	<td>{$entry->clt}</td>
 	<td>{$entry->somme}</td>
 	<td>{$entry->bilan}</td>
-	<td class="visuallyhidden">{$entry->details}</td>
+	<td>{$entry->details}</td>
   </tr>
 {/foreach}
  </tbody>

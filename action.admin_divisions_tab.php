@@ -78,12 +78,16 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	{
 		$onerow->uploaded= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('already_downloaded'), '', '', 'systemicon');
 	}
+	else
+	{
+		$onerow->uploaded= $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('not_already_downloaded'), '', '', 'systemicon');
+	}
 	
 	
 	
 	
 	//$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poules',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"indivs"=>$row['indivs']));
-	$onerow->poule= $this->CreateLink($id, 'admin_poules', $returnid, 'Poules',array("idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"idorga"=>$params['idorga']));
+	$onerow->poule= $this->CreateLink($id, 'admin_poules', $returnid, 'Accès aux poules',array("idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"idorga"=>$params['idorga']));
 	
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 	

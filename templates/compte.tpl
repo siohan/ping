@@ -10,15 +10,11 @@
 		<p class="pagetext">Mot de passe:</p>
 		<p class="pageinput">{$motdepasse}</p>
 	</div>
-	<div class="pageoverflow">
-		<p class="pagetext">N° de série : (Laissez vide si première installation)</p>
-		<p class="pageinput">{$serie}</p>
-	</div>
+	</fieldset>
 	<div class="pageoverflow">
 			<p class="pagetext">&nbsp;</p>
 			<p class="pageinput">{$submit}</p>
 		</div>
 
-</fieldset>
+
 {$endform}
-{if $serial !=""}<p>Votre numéro de série unique est : {$serial}</p>{/if}

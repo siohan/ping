@@ -206,15 +206,16 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 				foreach( $params['sel'] as $valeur )
 				{
 					
-					$query = "SELECT idepreuve, iddivision FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision= ?";
+					$query = "SELECT idepreuve, iddivision,idorga FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision= ?";
 					$dbresult = $db->Execute($query, array($valeur));
 					$row = $dbresult->FetchRow();
 					$idepreuve = $row['idepreuve'];
+					$idorga = $row['idorga'];
 					$service = new retrieve_ops();
 					$retrieve_ops = $service->retrieve_div_tours($idepreuve, $valeur);
 					
 				}
-				$this->Redirect($id, 'defaultadmin2',$returnid, array("active_tab"=>'tours'));
+				$this->Redirect($id, 'admin_divisions_tab',$returnid, array("active_tab"=>"indivs","idepreuve"=>$idepreuve,"idorga"=>$idorga));
 			break;
 				
 			case "retrieve_div_parties" : 

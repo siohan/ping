@@ -22,7 +22,7 @@ $(document).ready(function(){
 });
 //]]>
 </script>
-<p style="width: 100%"><span style="text-align: left">{$retour}</span>{*<span style="float:right">{$refresh_class} - {$all_results}</span>*}</p>
+<div class="pageoptions"><p style="width: 100%"><span style="text-align: left">{$returnlink}</span>{*<span style="float:right"> - {$all_results}</span>*}</p></div>
 {if $itemcount3>0}
 <table>
 	<tbody>
@@ -62,7 +62,7 @@ $(document).ready(function(){
  </tbody>
 </table>
 {else}
-<p class="warning">Récupérer le classement ?</p>
+<p class="warning">{$refresh_class}</p>
 {/if}
 {if $itemcount>0}
 <h3>Les rencontres</h3>
@@ -112,5 +112,5 @@ $(document).ready(function(){
 
 {/foreach}
 {else}
-<p class="warning">Récupérer les rencontres de cette poule ? {$recup_calendrier} </p>
+<p class="warning">Récupérer les rencontres de cette poule ? {$all_results} </p>
 	{/if}

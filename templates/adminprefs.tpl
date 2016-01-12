@@ -1,7 +1,8 @@
-<div class="alert  alert-info">
+{*<div class="alert  alert-info">
     <p class="alert-info">La Zone n'apparait pas ? {$recup_orga}</p>
-</div>
+</div>*}
 {$startform}
+{$stall}
 <fieldset>
 <legend>Configuration principale</legend>
 	<div class="pageoverflow">
@@ -11,6 +12,14 @@
 	<div class="pageoverflow">
 		<p class="pagetext">Votre zone</p>
 		<p class="pageinput">{$input_zone}</p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Votre ligue :</p>
+		<p class="pageinput">{$input_ligue}</p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Votre département :</p>
+		<p class="pageinput">{$input_dep}</p>
 	</div>
 	<div class="pageoverflow">
 		<p class="pagetext">Phase en cours:</p>

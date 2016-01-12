@@ -314,8 +314,36 @@ $flds = "
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",
 				   $flds, 
 				   $taboptarray);
-//créé un index sur la table
 $dict->ExecuteSQLArray($sqlarray);
+#On insère les données au niveau national
+$insert_sql = "INSERT INTO `demo_module_ping_type_competitions` (`id`, `name`, `code_compet`, `coefficient`, `indivs`, `tag`, `idepreuve`, `idorga`) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
+//$db->execute($insert_sql, array( 'Tournoi National et Internat.', NULL, '0.75', 1, '{Ping action=\'individuelles\' idepreuve=\'3064\'}', 3064, 100001));
+//$db->execute($insert_sql, array( 'CHAMPIONNAT POLICE', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3917\'}', 3917, 100001));
+$db->execute($insert_sql, array( 'Tournoi OPEN', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'4537\'}', 4537, 100001));
+$db->execute($insert_sql, array( 'Coupe Dom-Tom', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'4312\'}', 4312, 100001));
+$db->execute($insert_sql, array( 'Finales par classement', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3001\'}', 3001, 100001));
+$db->execute($insert_sql, array( 'Championnat FSGT', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3907\'}', 3907, 100001));
+$db->execute($insert_sql, array( 'Championnat de France Seniors', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3058\'}', 3058, 100001));
+$db->execute($insert_sql, array( 'Engagements Critérium Fédéral', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'4480\'}', 4480, 100001));
+$db->execute($insert_sql, array( 'Championnats de France Corpo.', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3062\'}', 3062, 100001));
+$db->execute($insert_sql, array( 'Championnats de France Jeunes', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3060\'}', 3060, 100001));
+$db->execute($insert_sql, array( 'Challenge Bernard Jeu', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3070\'}', 3070, 100001));
+$db->execute($insert_sql, array( 'Finales Individuelles', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3065\'}', 3065, 100001));
+$db->execute($insert_sql, array( 'Critérium fédéral', NULL, '1.00', 1, '{Ping action=\'individuelles\' idepreuve=\'1072\'}', 1072, 100001));
+$db->execute($insert_sql, array( 'Championnat des Jeunes FFTT', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'5721\'}', 5721, 100001));
+$db->execute($insert_sql, array( 'Championnat par équipes corpo', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'4544\'}', 4544, 100001));
+$db->execute($insert_sql, array( 'Changement de type', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'4972\'}', 4972, 100001));
+$db->execute($insert_sql, array( 'Interclubs Jeunes', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'3057\'}', 3057, 100001));
+$db->execute($insert_sql, array( 'Championnat France des Régions', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'3000\'}', 3000, 100001));
+$db->execute($insert_sql, array( 'Coupe Nationale Vétérans', NULL, '0.75', 0, '{Ping action=\'par-equipes\' idepreuve=\'3055\'}', 3055, 100001));
+$db->execute($insert_sql, array( 'Coupe de France des Clubs', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'5602\'}', 5602, 100001));
+$db->execute($insert_sql, array( 'Coupe Nationale Corporative', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'3056\'}', 3056, 100001));
+$db->execute($insert_sql, array( 'Chpt France par équipes féminin', NULL, '1.00', 0, '{Ping action=\'par-equipes\' idepreuve=\'2012\'}', 2012, 100001));
+$db->execute($insert_sql, array( 'Chpt France par équipes masculin', NULL, '1.00', 0, '{Ping action=\'par-equipes\' idepreuve=\'1073\'}', 1073, 100001));
+$db->execute($insert_sql, array( 'Championnat de France FFSU/UNSS', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3874\'}', 3874, 100001));
+$db->execute($insert_sql, array( 'Challenge USCF', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3884\'}', 3884, 100001));
+$db->execute($insert_sql, array( 'Championnats de France Vétérans', NULL, '1.00', 1, '{Ping action=\'individuelles\' idepreuve=\'3061\'}', 3061, 100001));
+
 #
 $dict = NewDataDictionary( $db );
 
@@ -332,6 +360,151 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_organismes",
 				   $flds, 
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
+#On insère les valeurs dans la table
+$insert_sql = "INSERT INTO `demo_module_ping_organismes` (`id`, `libelle`, `idorga`, `code`, `scope`) VALUES ('', ?, ?, ?, ?)";
+$db->execute($insert_sql, array( 'FFTT', 100001, 'FEDE', 'F'));
+$db->execute($insert_sql, array( 'ZONE 1 (CE-IDF)', 10001, 'Z01', 'Z'));
+$db->execute($insert_sql, array( 'ZONE 2 (BR-PDL)', 10002, 'Z02', 'Z'));
+$db->execute($insert_sql, array( 'ZONE 3 (AQ-LI-MP-PC)', 10003, 'Z03', 'Z'));
+$db->execute($insert_sql, array( 'ZONE 4 (AU-CO-CA-LR-PR-RA)', 10004, 'Z04', 'Z'));
+$db->execute($insert_sql, array( 'ZONE 5 (AL-BO-CHA-FC-LO)', 10005, 'Z05', 'Z'));
+$db->execute($insert_sql, array( 'ZONE 6 (BN-HN-NPC-PI)', 10006, 'Z06', 'Z'));
+$db->execute($insert_sql, array( 'ZONE 7 (DOM-TOM)', 10007, 'Z07', 'Z'));
+$db->execute($insert_sql, array( 'RHONE ALPES', 1001, 'L01', 'L'));
+$db->execute($insert_sql, array( 'ALSACE ', 1002, 'L02', 'L'));
+$db->execute($insert_sql, array( 'AQUITAINE', 1003, 'L03', 'L'));
+$db->execute($insert_sql, array( 'PAYS DE LA LOIRE', 1004, 'L04', 'L'));
+$db->execute($insert_sql, array( 'AUVERGNE', 1005, 'L05', 'L'));
+$db->execute($insert_sql, array( 'BOURGOGNE', 1006, 'L06', 'L'));
+$db->execute($insert_sql, array( 'BRETAGNE', 1007, 'L07', 'L'));
+$db->execute($insert_sql, array( 'CHAMPAGNE - ARDENNE', 1008, 'L08', 'L'));
+$db->execute($insert_sql, array( 'PACA', 1009, 'L09', 'L'));
+$db->execute($insert_sql, array( 'NORD/PAS-DE-CALAIS', 1010, 'L10', 'L'));
+$db->execute($insert_sql, array( 'FRANCHE COMTE', 1011, 'L11', 'L'));
+$db->execute($insert_sql, array( 'ILE DE FRANCE', 1012, 'L12', 'L'));
+$db->execute($insert_sql, array( 'LANGUEDOC ROUSSILLON', 1013, 'L13', 'L'));
+$db->execute($insert_sql, array( 'LIMOUSIN', 1014, 'L14', 'L'));
+$db->execute($insert_sql, array( 'LORRAINE', 1015, 'L15', 'L'));
+$db->execute($insert_sql, array( 'BASSE NORMANDIE', 1017, 'L17', 'L'));
+$db->execute($insert_sql, array( 'HAUTE NORMANDIE', 1018, 'L18', 'L'));
+$db->execute($insert_sql, array( 'PICARDIE', 1019, 'L19', 'L'));
+$db->execute($insert_sql, array( 'POITOU CHARENTES', 1020, 'L20', 'L'));
+$db->execute($insert_sql, array( 'PROVENCE', 1021, 'L21', 'L'));
+$db->execute($insert_sql, array( 'MIDI-PYRENEES', 1022, 'L22', 'L'));
+$db->execute($insert_sql, array( 'CENTRE', 1023, 'L23', 'L'));
+$db->execute($insert_sql, array( 'LIGUE CORSE DE TENNIS DE TABLE', 1024, 'L24', 'L'));
+$db->execute($insert_sql, array( 'GUYANE.L', 1030, 'L30', 'L'));
+$db->execute($insert_sql, array( 'REUNION.L', 1031, 'L31', 'L'));
+$db->execute($insert_sql, array( 'NOUVELLE CALEDONIE', 1032, 'L32', 'L'));
+$db->execute($insert_sql, array( 'GUADELOUPE.L', 1033, 'L33', 'L'));
+$db->execute($insert_sql, array( 'LIGUE MARTINIQUE', 1034, 'L34', 'L'));
+$db->execute($insert_sql, array( 'MAYOTTE.L', 1036, 'L36', 'L'));
+$db->execute($insert_sql, array( 'TAHITI', 1037, 'L37', 'L'));
+$db->execute($insert_sql, array( 'WALLIS ET FUTUNA L', 1038, 'L38', 'L'));
+$db->execute($insert_sql, array( 'AIN', 1, 'D01', 'D'));
+$db->execute($insert_sql, array( 'AISNE', 2, 'D02', 'D'));
+$db->execute($insert_sql, array( 'ALLIER', 3, 'D03', 'D'));
+$db->execute($insert_sql, array( 'ALPES HTE PROVENCE', 4, 'D04', 'D'));
+$db->execute($insert_sql, array( 'HAUTES ALPES', 5, 'D05', 'D'));
+$db->execute($insert_sql, array( 'ALPES MARITIMES', 6, 'D06', 'D'));
+$db->execute($insert_sql, array( 'ARDENNES', 8, 'D08', 'D'));
+$db->execute($insert_sql, array( 'ARIEGE', 9, 'D09', 'D'));
+$db->execute($insert_sql, array( 'AUBE', 10, 'D10', 'D'));
+$db->execute($insert_sql, array( 'AUDE', 11, 'D11', 'D'));
+$db->execute($insert_sql, array( 'AVEYRON', 12, 'D12', 'D'));
+$db->execute($insert_sql, array( 'BOUCHES DU RHONE', 13, 'D13', 'D'));
+$db->execute($insert_sql, array( 'CALVADOS', 14, 'D14', 'D'));
+$db->execute($insert_sql, array( 'CANTAL', 15, 'D15', 'D'));
+$db->execute($insert_sql, array( 'CHARENTE', 16, 'D16', 'D'));
+$db->execute($insert_sql, array( 'CHARENTE MARITIME', 17, 'D17', 'D'));
+$db->execute($insert_sql, array( 'CHER', 18, 'D18', 'D'));
+$db->execute($insert_sql, array( 'CORREZE', 19, 'D19', 'D'));
+$db->execute($insert_sql, array( 'COTE D\'OR', 21, 'D21', 'D'));
+$db->execute($insert_sql, array( 'CÔTES D ARMOR', 22, 'D22', 'D'));
+$db->execute($insert_sql, array( 'CREUSE', 23, 'D23', 'D'));
+$db->execute($insert_sql, array( 'DORDOGNE', 24, 'D24', 'D'));
+$db->execute($insert_sql, array( 'DOUBS', 25, 'D25', 'D'));
+$db->execute($insert_sql, array( 'DROME/ARDECHE', 26, 'D26', 'D'));
+$db->execute($insert_sql, array( 'EURE', 27, 'D27', 'D'));
+$db->execute($insert_sql, array( 'EURE ET LOIR', 28, 'D28', 'D'));
+$db->execute($insert_sql, array( 'FINISTERE', 29, 'D29', 'D'));
+$db->execute($insert_sql, array( 'GARD', 30, 'D30', 'D'));
+$db->execute($insert_sql, array( 'HAUTE GARONNE', 31, 'D31', 'D'));
+$db->execute($insert_sql, array( 'GERS', 32, 'D32', 'D'));
+$db->execute($insert_sql, array( 'GIRONDE', 33, 'D33', 'D'));
+$db->execute($insert_sql, array( 'HERAULT', 34, 'D34', 'D'));
+$db->execute($insert_sql, array( 'ILLE ET VILAINE', 35, 'D35', 'D'));
+$db->execute($insert_sql, array( 'INDRE', 36, 'D36', 'D'));
+$db->execute($insert_sql, array( 'INDRE ET LOIRE', 37, 'D37', 'D'));
+$db->execute($insert_sql, array( 'ISERE', 38, 'D38', 'D'));
+$db->execute($insert_sql, array( 'JURA', 39, 'D39', 'D'));
+$db->execute($insert_sql, array( 'LANDES', 40, 'D40', 'D'));
+$db->execute($insert_sql, array( 'LOIR ET CHER', 41, 'D41', 'D'));
+$db->execute($insert_sql, array( 'LOIRE', 42, 'D42', 'D'));
+$db->execute($insert_sql, array( 'HAUTE LOIRE', 43, 'D43', 'D'));
+$db->execute($insert_sql, array( 'LOIRE ATLANTIQUE', 44, 'D44', 'D'));
+$db->execute($insert_sql, array( 'LOIRET', 45, 'D45', 'D'));
+$db->execute($insert_sql, array( 'LOT', 46, 'D46', 'D'));
+$db->execute($insert_sql, array( 'LOT ET GARONNE', 47, 'D47', 'D'));
+$db->execute($insert_sql, array( 'LOZERE', 48, 'D48', 'D'));
+$db->execute($insert_sql, array( 'MAINE ET LOIRE', 49, 'D49', 'D'));
+$db->execute($insert_sql, array( 'MANCHE', 50, 'D50', 'D'));
+$db->execute($insert_sql, array( 'MARNE', 51, 'D51', 'D'));
+$db->execute($insert_sql, array( 'HAUTE-MARNE', 52, 'D52', 'D'));
+$db->execute($insert_sql, array( 'MAYENNE', 53, 'D53', 'D'));
+$db->execute($insert_sql, array( 'MEURTHE ET MOSELLE', 54, 'D54', 'D'));
+$db->execute($insert_sql, array( 'MEUSE', 55, 'D55', 'D'));
+$db->execute($insert_sql, array( 'MORBIHAN', 56, 'D56', 'D'));
+$db->execute($insert_sql, array( 'MOSELLE', 57, 'D57', 'D'));
+$db->execute($insert_sql, array( 'NIEVRE', 58, 'D58', 'D'));
+$db->execute($insert_sql, array( 'NORD', 59, 'D59', 'D'));
+$db->execute($insert_sql, array( 'OISE', 60, 'D60', 'D'));
+$db->execute($insert_sql, array( 'ORNE', 61, 'D61', 'D'));
+$db->execute($insert_sql, array( 'PAS DE CALAIS', 62, 'D62', 'D'));
+$db->execute($insert_sql, array( 'PUY DE DOME', 63, 'D63', 'D'));
+$db->execute($insert_sql, array( 'PYRENEES ATLANTIQUES', 64, 'D64', 'D'));
+$db->execute($insert_sql, array( 'HAUTES PYRENEES', 65, 'D65', 'D'));
+$db->execute($insert_sql, array( 'PYRENEES ORIENTALES', 66, 'D66', 'D'));
+$db->execute($insert_sql, array( 'BAS RHIN', 67, 'D67', 'D'));
+$db->execute($insert_sql, array( 'HAUT RHIN', 68, 'D68', 'D'));
+$db->execute($insert_sql, array( 'Rhône-Lyon TT', 69, 'D69', 'D'));
+$db->execute($insert_sql, array( 'HAUTE SAONE', 70, 'D70', 'D'));
+$db->execute($insert_sql, array( 'SAONE ET LOIRE', 71, 'D71', 'D'));
+$db->execute($insert_sql, array( 'SARTHE', 72, 'D72', 'D'));
+$db->execute($insert_sql, array( 'SAVOIE', 73, 'D73', 'D'));
+$db->execute($insert_sql, array( 'HAUTE SAVOIE', 74, 'D74', 'D'));
+$db->execute($insert_sql, array( 'PARIS', 75, 'D75', 'D'));
+$db->execute($insert_sql, array( 'SEINE MARITIME', 76, 'D76', 'D'));
+$db->execute($insert_sql, array( 'SEINE ET MARNE', 77, 'D77', 'D'));
+$db->execute($insert_sql, array( 'YVELINES', 78, 'D78', 'D'));
+$db->execute($insert_sql, array( 'DEUX SEVRES', 79, 'D79', 'D'));
+$db->execute($insert_sql, array( 'SOMME', 80, 'D80', 'D'));
+$db->execute($insert_sql, array( 'TARN', 81, 'D81', 'D'));
+$db->execute($insert_sql, array( 'TARN ET GARONNE', 82, 'D82', 'D'));
+$db->execute($insert_sql, array( 'VAR', 83, 'D83', 'D'));
+$db->execute($insert_sql, array( 'VAUCLUSE', 84, 'D84', 'D'));
+$db->execute($insert_sql, array( 'VENDEE', 85, 'D85', 'D'));
+$db->execute($insert_sql, array( 'VIENNE', 86, 'D86', 'D'));
+$db->execute($insert_sql, array( 'HAUTE VIENNE', 87, 'D87', 'D'));
+$db->execute($insert_sql, array( 'VOSGES', 88, 'D88', 'D'));
+$db->execute($insert_sql, array( 'YONNE', 89, 'D89', 'D'));
+$db->execute($insert_sql, array( 'BELFORT', 90, 'D90', 'D'));
+$db->execute($insert_sql, array( 'ESSONNE', 91, 'D91', 'D'));
+$db->execute($insert_sql, array( 'HAUTS DE SEINE', 92, 'D92', 'D'));
+$db->execute($insert_sql, array( 'SEINE-SAINT-DENIS', 93, 'D93', 'D'));
+$db->execute($insert_sql, array( 'VAL DE MARNE', 94, 'D94', 'D'));
+$db->execute($insert_sql, array( 'VAL D OISE', 95, 'D95', 'D'));
+$db->execute($insert_sql, array( 'HAUTE CORSE', 98, 'D98', 'D'));
+$db->execute($insert_sql, array( 'CORSE DU SUD', 99, 'D99', 'D'));
+$db->execute($insert_sql, array( 'GUADELOUPE', 100, 'D9A', 'D'));
+$db->execute($insert_sql, array( 'COMITE MARTINIQUE', 101, 'D9B', 'D'));
+$db->execute($insert_sql, array( 'GUYANE', 102, 'D9C', 'D'));
+$db->execute($insert_sql, array( 'REUNION', 103, 'D9D', 'D'));
+$db->execute($insert_sql, array( 'COMITE PROVINCIAL NORD', 104, 'D9E', 'D'));
+$db->execute($insert_sql, array( 'COMITE PROVINCIAL SUD', 105, 'D9F', 'D'));
+$db->execute($insert_sql, array( 'MAYOTTE', 106, 'D9G', 'D'));
+$db->execute($insert_sql, array( 'TAHITI', 107, 'D9H', 'D'));
+$db->execute($insert_sql, array( 'WALLIS ET FUTUNA', 108, 'D9W', 'D'));
 #
 # create table divisions
 // table schema description
@@ -486,6 +659,23 @@ $flds = "
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 #
+/*
+#On créé une nouvelle table pour le tableau de bord
+#
+$flds = "
+	id I(11) AUTO KEY,
+	rank I(11),
+	name C(255),
+	status I(1),
+	hidden I(1)";
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_control_panel", $flds, $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+# On insère des valeurs
+#On insère les valeurs dans la table
+$insert_sql = "INSERT INTO `demo_module_ping_control_panel` (`id`, `order`, `name`, `status`, `hidden`) VALUES (\', ?, ?, ?, ?)";
+$db->execute($insert_sql, array( '1', 'Compte et test connexion', 0, 0));
+*/
+#
 # Les indexs
 //on créé un index sur la table div_tours
 $idxoptarray = array('UNIQUE');
@@ -521,9 +711,9 @@ $this->SetPreference('vicNormPlus500', '0');
 $this->SetPreference('LastRecupSpid', '');
 $this->SetPreference('LastRecupFftt', '');
 #
-/**
+/*
 * Css
-*/
+
 
 $css_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'css'. DIRECTORY_SEPARATOR .'bootstrap-table.css';
 if (file_exists($css_file))
@@ -533,7 +723,7 @@ if (file_exists($css_file))
  $db->Execute('insert into '.cms_db_prefix().'css (css_id, css_name, css_text, media_type, create_date) values (?,?,?,?,?)',
    array($css_id, 'Ping table', $css, 'screen', date('Y-m-d')));
 }
-
+*/
 
 /* les victoires anormales */
 $this->SetPreference('vicAnorm0_24', '6');

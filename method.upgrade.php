@@ -578,6 +578,7 @@ case  "0.3.0.1" :
 		
 	}
 	case "0.3.1" : 
+	case "0.4" :
 	{
 		$dict->ExecuteSQLArray($sqlarray);
 		//On crée un nouveau champ dans la table participe
@@ -589,7 +590,21 @@ case  "0.3.0.1" :
 		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_class',
 			    cms_db_prefix().'module_ping_div_classement', 'tableau, nom, saison',$idxoptarray);
 		$dict->ExecuteSQLArray($sqlarray);
-		//
+		
+		//Créa table control_panel
+		$dict = NewDataDictionary( $db );
+		$flds = "
+			id I(11) AUTO KEY,
+			rank I(11),
+			name C(255),
+			status I(1),
+			hidden I(1)";
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_control_panel", $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		#On insère les valeurs dans la table
+		$insert_sql = "INSERT INTO `demo_module_ping_control_panel` (`id`, `rank`, `name`, `status`, `hidden`) VALUES ('', ?, ?, ?, ?)";
+		$db->execute($insert_sql, array( 1, 'Compte et test connexion', 0, 0));
+		#
 	}
 }
 

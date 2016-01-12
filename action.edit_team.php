@@ -125,8 +125,7 @@ $smarty->assign('idepreuve',
 		$this->CreateInputDropdown($id, 'idepreuve',$list,
 		(isset($idepreuve)?$idepreuve:"-1"),(isset($idepreuve)?$idepreuve:"")));
 	
-$smarty->assign('Ajouter',
-	$this->CreateInputSubmit($id, 'Ajouter', $this->Lang('submitasnew'), 'class="button"'));				
+				
 $smarty->assign('submit',
 		$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
 $smarty->assign('cancel',

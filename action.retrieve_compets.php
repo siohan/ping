@@ -6,6 +6,10 @@
 
 
 if( !isset($gCms) ) exit;
+if(!$this->CheckPermission('Ping Use'))
+{
+	$this->RedirectToAdminTab('joueurs');
+}
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 

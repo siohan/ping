@@ -32,26 +32,7 @@ while ($dbresult && $row = $dbresult->FetchRow())
     	$playerslist[$row['player']] = $row['licence'];
 	$typeCompet[$row['epreuve']] = $row['epreuve'];
   }
-/*
-if( isset($params['submitfilter']) )
-  {
-    	if( isset( $params['datelist']) )
-      	{
-		$this->SetPreference('dateChoisi', $params['datelist']);
-      	}
-	if( isset( $params['playerslist']) )
-      	{
-		$this->SetPreference('playerChoisi', $params['playerslist']);
-      	}
-        if( isset( $params['typeCompet']) )
-	{ 
-		$this->SetPreference ( 'competChoisie', $params['typeCompet']);
-	}
-}
-$curdate = $this->GetPreference( 'dateChoisi' );
-$curplayer = $this->GetPreference( 'playerChoisi');
-$curCompet = $this->GetPreference( 'competChoisie');
-*/
+
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_date',
@@ -93,13 +74,7 @@ if( isset($params['submitfilter'] ))
 		$query2.=" AND sp.epreuve LIKE ?";
 		$parms['epreuve'] = $params['typeCompet'];
 	}
-	/*
-	if ($curCompet !='')
-	{
-		$query2.=" AND sp.epreuve = ?";
-		$parms['epreuve'] = $curCompet;
-	}
-	*/
+	
 	if(isset($params['error_only']) && $params['error_only'] !='')
 	{
 		$query2.=" AND sp.classement = -sp.ecart ";
@@ -157,21 +132,7 @@ $smarty->assign('verif_spid_fftt',
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
-/*
-$smarty->assign('createlink', 
-		$this->CreateLink($id, 'create_new_user3', $returnid,
-				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addnewsheet'), '', '', 'systemicon')).
-		$this->CreateLink($id, 'create_new_user3', $returnid, 
-				  $this->Lang('addnewsheet'), 
-				  array()));
 
-$smarty->assign('retrieve_all', 
-		$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid,
-				$themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('long_import'), '', '', 'systemicon')).
-				$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid, 
-								  $this->Lang('retrieveallpartiesspid'), 
-								  array()));
-*/
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

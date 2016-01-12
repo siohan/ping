@@ -8,7 +8,7 @@
 if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //créations de liens de récupération des compétitions
 //on récupère d'abord les préférences de zones, ligues et département
 $fede = '100001';

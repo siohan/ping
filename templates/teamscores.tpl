@@ -18,7 +18,7 @@
 {/if}
 *}
 {*$classement*}
-<div class="pageoptions<"><p><span class="pageoptions"> {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres} </span><span class="warning" style="text-align:right;">{$retrieve_all}</span></p></div>
+<div class="pageoptions<"><p><span class="pageoptions warning">Récupérez les {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres} </span>{*<span class="warning" style="text-align:right;">{$retrieve_all}</span>*}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <p class="pageoptions">{$phase1} | {$phase2}</p>
