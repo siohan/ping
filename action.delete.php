@@ -124,6 +124,65 @@ $designation = '';
 					$this->SetMessage('Division supprimée');
 					$this->Redirect('defaultadmin2');
 				break;
+				case "demo" :
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_joueurs";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_participe";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_equipes";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_parties_spid";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_parties";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_recup_parties";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_poules_rencontres";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_sit_mens";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_calendrier";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_comm";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_recup";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_adversaires";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_classement";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_divisions";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_div_classement";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_div_parties";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_div_tours";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_feuilles_rencontres";
+					$db->Execute($query);
+					
+					$query = "TRUNCATE ".cms_db_prefix()."module_ping_rencontres_parties";
+					$db->Execute($query);
+					
+				break;
 				
 			}
 		}

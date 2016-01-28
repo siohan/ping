@@ -43,17 +43,17 @@ $var = "numclu=".$club_number;
 	{
 		
 		$type_compet = '1';
-		$idepreuve = '1073';
 		$var.="&type=M";
 	}
 	elseif($type == 'F')
 	{
 		$var.="&type=F";
 		$type_compet = '1';
-		$idepreuve = '2012';
+		
 	}
 	$lien = $service->GetLink($page,$var);
 	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+	//var_dump($xml);
 	if($xml === FALSE)
 	{
 		$this->SetMessage("Le service est coupé");
@@ -64,7 +64,9 @@ $var = "numclu=".$club_number;
 		$array = json_decode(json_encode((array)$xml), TRUE);
 	}
 //var_dump($xml);
-/**/
+/*
+
+*/
 //on va tester si la variable est bien un tableau   
 	
 
@@ -77,6 +79,7 @@ foreach($xml as $cle =>$tab)
 	
 	$i++;
 	$libequipe = (isset($tab->libequipe)?"$tab->libequipe":"");
+	$idepreuve = (isset($tab->idepr)?"$tab->idepr":"");
 	$newphase = explode ("-",$libequipe);
 	//echo "la phase est ".$newphase[1];
 	$phase = substr($newphase[1], -1);
@@ -89,14 +92,16 @@ foreach($xml as $cle =>$tab)
 	//echo $tableau;
 	$idpoule = $output['cx_poule'];
 	$iddiv = $output['D1'];
+	$idorga = $output['organisme_pere'];
+	
 	
 	
 	
 	//$type_compet = $type;
 	
 	
-	$query = "SELECT phase, saison, liendivision FROM ".cms_db_prefix()."module_ping_equipes WHERE liendivision = ? AND saison = ?";
-	$dbresult = $db->Execute($query, array($liendivision, $saison));
+	$query = "SELECT phase, saison, libequipe, libdivision FROM ".cms_db_prefix()."module_ping_equipes WHERE libequipe = ? AND saison = ? AND phase = ? AND libdivision = ?";
+	$dbresult = $db->Execute($query, array($new_equipe, $saison,$phase, $libdivision));
 	
 		if($dbresult  && $dbresult->RecordCount() == 0) 
 		{

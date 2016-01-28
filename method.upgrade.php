@@ -579,6 +579,7 @@ case  "0.3.0.1" :
 	}
 	case "0.3.1" : 
 	case "0.4" :
+	case "0.4.1" :
 	{
 		$dict->ExecuteSQLArray($sqlarray);
 		//On crée un nouveau champ dans la table participe
@@ -606,6 +607,9 @@ case  "0.3.0.1" :
 		$db->execute($insert_sql, array( 1, 'Compte et test connexion', 0, 0));
 		#
 	}
+	 
+
+	
 }
 
 

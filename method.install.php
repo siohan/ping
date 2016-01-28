@@ -316,7 +316,7 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competition
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 #On insère les données au niveau national
-$insert_sql = "INSERT INTO `demo_module_ping_type_competitions` (`id`, `name`, `code_compet`, `coefficient`, `indivs`, `tag`, `idepreuve`, `idorga`) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
+$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (`id`, `name`, `code_compet`, `coefficient`, `indivs`, `tag`, `idepreuve`, `idorga`) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
 //$db->execute($insert_sql, array( 'Tournoi National et Internat.', NULL, '0.75', 1, '{Ping action=\'individuelles\' idepreuve=\'3064\'}', 3064, 100001));
 //$db->execute($insert_sql, array( 'CHAMPIONNAT POLICE', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3917\'}', 3917, 100001));
 $db->execute($insert_sql, array( 'Tournoi OPEN', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'4537\'}', 4537, 100001));
@@ -361,7 +361,7 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_organismes",
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 #On insère les valeurs dans la table
-$insert_sql = "INSERT INTO `demo_module_ping_organismes` (`id`, `libelle`, `idorga`, `code`, `scope`) VALUES ('', ?, ?, ?, ?)";
+$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_organismes (`id`, `libelle`, `idorga`, `code`, `scope`) VALUES ('', ?, ?, ?, ?)";
 $db->execute($insert_sql, array( 'FFTT', 100001, 'FEDE', 'F'));
 $db->execute($insert_sql, array( 'ZONE 1 (CE-IDF)', 10001, 'Z01', 'Z'));
 $db->execute($insert_sql, array( 'ZONE 2 (BR-PDL)', 10002, 'Z02', 'Z'));

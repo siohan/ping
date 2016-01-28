@@ -98,7 +98,7 @@ $(document).ready(function(){
 					<td>{$donnee->scoreb}</td>
 					<td>{$donnee->display}</td>
 					<td>{$donnee->retrieve_poule_rencontres}</td>
-					<td>{$donnee->retrieve_details}</td>
+					<td>{$donnee->retrieve_details}{$donnee->viewdetails}</td>
 					<td>{$donnee->deletelink}</td>
 					<td><input type="checkbox" name="{$actionid}sel[]" value="{$donnee->ren_id}" class="select"></td>
 				</tr>

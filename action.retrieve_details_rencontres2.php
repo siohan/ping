@@ -18,6 +18,13 @@ else
 	$this->SetMessage("$designation");
 	$$this->RedirectToAdminTab('poules');
 }
+$eq_id = '';//cette variable permet le retour sur la page de l'équipe concernée après traitement
+if(isset($params['eq_id']) && $params['eq_id'] != '')
+{
+	$eq_id = $params['eq_id'];
+}
+
+
 //on va utiliser cette variable (record_id) comme clé secondaire dans la nouvelle table
 
 
@@ -151,7 +158,7 @@ $dbresultat = $db->Execute($query3, array($record_id));
 	}//fin du while
 }//fin du if primaire
 $this->SetMessage('Retrouvez les infos dans le journal');
-$this->RedirectToAdminTab('poules');
+$this->Redirect($id,'admin_poules_tab3',$returnid, array("record_id"=>$eq_id));
 #
 # EOF
 #

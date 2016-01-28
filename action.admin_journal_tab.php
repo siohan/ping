@@ -22,23 +22,6 @@ $db =& $this->GetDb();
 global $themeObject;
 
 $totalcount = $db->GetOne('SELECT COUNT(id) as count FROM ' . cms_db_prefix() . 'module_ping_recup');
-
-//liste des liens pour récupérer les données 
-$smarty->assign('retrieve_users',
-		$this->CreateLink($id, 'retrieve_joueurs_by_club', $returnid, $contents = "Récupération des joueurs", $warn_message = "Etes vous sûr ? Trop d'appels vers la base de données peuvent avoir des conséquences importantes !"));
-$smarty->assign('retrieve_teams',
-		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Récupération des équipes (championnat seniors)", array('type'=>'M')));
-$smarty->assign('retrieve_teams_autres',
-		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Récupération des équipes"));
-$smarty->assign('retrieve_all_parties',
-		$this->CreateLink($id, 'retrieve_all_parties', $returnid, $contents = "Récupération de toutes les parties FFTT"));
-$smarty->assign('recup_joueurs',
-		$this->CreateLink($id, 'recup_joueurs', $returnid));
-$smarty->assign('retrieve_all_spid',
-		$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid, $contents = 'Récupérations de toutes les parties SPID', $warn_message = 'Etes vous sûr ?'));
-$smarty->assign('retrieve_details_rencontres',
-		$this->CreateLink($id, 'retrieve_club', $returnid, $contents = 'Récupérations du détail des rencontres'));
-
 /* on fait un formulaire de filtrage des résultats*/
 //$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'journal')));
 $smarty->assign('formstart', $this->CreateFormStart($id, 'admin_journal_tab'));
@@ -128,36 +111,7 @@ $totalrows = $result->RecordCount();
 	//on instancie des variables pour créer une pagination dans l'onglet journal
 	
 	//fin du if dbresult
-	$dbresult2 = ''; 
-        $page = 1;
-	if (isset($_GET['page']))$page = $_GET['page'];
-
-	$limit = 500;
-	if(isset($params['limit']))
-	$page_string = "";
-	$from = ($page * $limit) - $limit;
-	if($activation=='0')
-	{
-		$dbresult2 = $db->SelectLimit('SELECT id, datecreated, designation, status,action FROM '.cms_db_prefix().'module_ping_recup '.$critere.'', $limit, $from);
-
-	}
 	
-	elseif($activation=='1')
-	{
-		$dbresult2 = $db->SelectLimit('SELECT id, datecreated, designation, status,action FROM '.cms_db_prefix().'module_ping_recup '.$critere.'', $limit, $from, $parms);
-		
-	}
-	//echo $totalrows;
-	
-		/*
-		if (!$dbresult2)
-		{
-
-			die('FATAL SQL ERROR: '.$db->ErrorMsg().'<br/>QUERY: '.$db->sql);
-
-		}
-		*/
-
 
 
 //$dbresult= $db->Execute($query);
@@ -182,19 +136,10 @@ $rowarray= array ();
 			$rowarray[]= $onerow;
       		}
   	}
-$limit = '50';//$this->GetPreference('items_per_page' , 20);
-$page = isset($params['page']) ? $params['page'] : 1;
-$smarty->assign('totalcount', $totalcount);
-$smarty->assign('pagination', $this->CreatePagination($id, 'Ping', '', $page, $totalcount, $limit));
+
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
-$smarty->assign('createlink', 
-		$this->CreateLink($id, 'add_compte', $returnid,
-				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add'), '', '', 'systemicon')).
-		$this->CreateLink($id, 'add_compte', $returnid, 
-				  $this->Lang('addnewsheet'), 
-				  array()));
 $smarty->assign('form2start',$this->CreateFormStart($id,'admin_journal_tab',$returnid));
 $smarty->assign('form2end',$this->CreateFormEnd());
 $smarty->assign('submit_massdelete',

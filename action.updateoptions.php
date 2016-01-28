@@ -31,7 +31,12 @@ $this->SetPreference('fftt_interval', $params['fftt_interval']);
 $this->SetMessage('Vos options ont été mises à jours');
 $this->Audit('', 'Ping',$params['club_number']);
 //$this->RedirectToAdminTab('joueurs');
-
+if(isset$params['demo'] && $params['demo'] === true)
+{
+	//il faut supprimer toutes les données de toutes les tables sauf compétitions genre uninstall
+	//mass_delete demo ?
+	
+}
 if($stall == "1")
 {
 	$this->Redirect($id, 'getInitialisation', $returnid, array("stall"=>$stall, "step"=>"2"));

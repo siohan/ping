@@ -34,6 +34,7 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 			$libequipe1 = trim($libequipe);
 			//var_dump($libequipe1);
 			$libequipe2 = '%'.$libequipe1.'%';
+			$phase = $row['phase'];
 		}
 	}
 	
@@ -138,6 +139,7 @@ $smarty->assign('items2', $rowarray);
 //la requete
 //$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, tc.idepreuve,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.idepreuve = cal.idepreuve AND MONTH(cal.date_debut) = ? AND cal.saison = ?";
 $query = "SELECT DISTINCT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv = ? AND idpoule = ? AND saison = ? ";
+/*
 if($phase == 1)
 {
 	$query.=" AND MONTH(date_event) >7";
@@ -146,6 +148,7 @@ else
 {
 	$query.=" AND MONTH(date_event) < 7";
 }
+*/
 $query.=" AND (equa LIKE ?  OR equb LIKE ?)";
 $query.=" ORDER BY date_event ASC";
 //echo $query;
@@ -187,7 +190,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 				{
 					//$valeur = $i;
 					$onerow2 = new StdClass();
-					//$id = $row2['id'];
+					$eq_id = $row2['id'];
 					$equa = $row2['equa'];
 					$equb = $row2['equb'];
 					$iddiv = $row2['iddiv'];
@@ -236,9 +239,13 @@ if($dbresult && $dbresult->RecordCount()>0)
 						if($date_event <= $date_courante)
 						{
 						
-							$onerow2->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres2', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('record_id'=>$row2['ren_id']));
+							$onerow2->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres2', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('record_id'=>$row2['ren_id'],"eq_id"=>$eq_id));
 						}
 						
+					}
+					else
+					{
+						$onerow2->viewdetails = $this->CreateLink($id, 'details',$returnid,$themeObject->DisplayImage('icons/system/view.gif', $this->Lang('viewdetails'), '', '', 'systemicon'), array('record_id'=>$row2['ren_id'],"eq_id"=>$eq_id));
 					}
 
 					if($this->CheckPermission('Ping Delete'))
