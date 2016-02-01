@@ -22,6 +22,7 @@ foreach($tableau as $valeur)
 	$scope = $valeur;
 	echo "la valeur est : ".$valeur;
 	$lien = $service->GetLink($page,$var);
+	echo $lien;
 	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 	if($xml === FALSE)
 	{

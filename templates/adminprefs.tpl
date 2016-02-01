@@ -1,6 +1,6 @@
-{*<div class="alert  alert-info">
+<div class="alert  alert-info">
     <p class="alert-info">La Zone n'apparait pas ? {$recup_orga}</p>
-</div>*}
+</div>
 {$startform}
 {$stall}
 <fieldset>

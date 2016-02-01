@@ -107,7 +107,7 @@ class Servicen
 	$id = servicen::GetIdAppli();
 	$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id.'&'.$var; 
 	return file_get_contents($chaine);
-	//return $chaine;
+	//return $chaine;//pour tester le lien
     }
  
     public function initialization()

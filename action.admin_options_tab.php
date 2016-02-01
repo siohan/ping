@@ -25,7 +25,7 @@ else
 	$annee_fin = $annee_courante;
 }
 
-//$smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve_organismes',$returnid,'Récupérer les organismes'));
+$smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve_organismes',$returnid,$contents='Récupérer les organismes'));
 $saison_actuelle = $annee_debut.'-'.$annee_fin;
 //$saisondropdown['.$saison_actuelle.'] = $saison_actuelle;
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));

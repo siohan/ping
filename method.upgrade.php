@@ -16,7 +16,7 @@
  * API, and that everything's safe to continue:
 */ 
 if (!isset($gCms)) exit;
-
+$db = $this->GetDb();
 
 /**
  * After this, the code is identical to the code that would otherwise be
@@ -580,10 +580,12 @@ case  "0.3.0.1" :
 	case "0.3.1" : 
 	case "0.4" :
 	case "0.4.1" :
+	case "0.4.2" :
 	{
-		$dict->ExecuteSQLArray($sqlarray);
+		$db = $this->GetDb();
+		//$dict->ExecuteSQLArray($sqlarray);
 		//On crée un nouveau champ dans la table participe
-		//$dict->NewDataDictionary( $db );
+		$dict = NewDataDictionary( $db );
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_div_tours", "uploaded_parties I(1), uploaded_classement I(1)");
 		$dict->ExecuteSQLArray( $sqlarray );
 		//un nouvel index
@@ -605,7 +607,7 @@ case  "0.3.0.1" :
 		#On insère les valeurs dans la table
 		$insert_sql = "INSERT INTO `demo_module_ping_control_panel` (`id`, `rank`, `name`, `status`, `hidden`) VALUES ('', ?, ?, ?, ?)";
 		$db->execute($insert_sql, array( 1, 'Compte et test connexion', 0, 0));
-		#
+		
 	}
 	 
 
