@@ -78,15 +78,14 @@ $parm= array ();
 $critere = '';
 $activation = 0;
 $query2= "SELECT id, datecreated, designation, status,action FROM ".cms_db_prefix()."module_ping_recup";
-$result= $db->Execute($query2);
-$totalrows = $result->RecordCount();
+
 	if( isset($params['submitfilter'] ))
 	{
 
 		if ($curdate !='')
 		{
 			$edit = 1;
-			$critere.=" WHERE datecreated = ? ";
+			$query2.=" WHERE datecreated = ? ";
 			$parms['datecreated'] = $curdate;
 		
 		}
@@ -94,36 +93,43 @@ $totalrows = $result->RecordCount();
 		{
 			if($edit==1)
 			{
-				$critere.=" AND status = ?";
+				$query2.=" AND status = ?";
 				$parms['status'] = $curstatus;
 			}
 			else
 			{
-				$critere.=" WHERE status = ?";
+				$query2.=" WHERE status = ?";
 				$parms['status'] = $curstatus;
 			}
 		}
 		$activation = 1;//permet de différencier les deux requetes
-		
+		$query2.= " ORDER BY datecreated DESC";
+		$result= $db->Execute($query2,$parms);
+	}
+	else
+	{
+		$query2.= " ORDER BY datecreated DESC";
+		$result= $db->Execute($query2);
 	}
 	
-	$critere.= " ORDER BY datecreated DESC";
+	
 	//on instancie des variables pour créer une pagination dans l'onglet journal
 	
 	//fin du if dbresult
 	
-
+	
+	//$totalrows = $result->RecordCount();
 
 //$dbresult= $db->Execute($query);
 $rowclass= 'row1';
 $rowarray= array ();
 
-	if ($dbresult2 && $dbresult2->RecordCount() > 0)
+	if ($result && $result->RecordCount() > 0)
   	{
     		
 		//$page_string = ping_admin_ops::pagination2($page, $totalrows, $limit,$actionid);
 		//$smarty->assign("pagestring",$page_string);
-		while ($row= $dbresult2->FetchRow())
+		while ($row= $result->FetchRow())
       		{
 			$onerow= new StdClass();
 			$onerow->rowclass= $rowclass;

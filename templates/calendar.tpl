@@ -62,15 +62,15 @@ $(document).ready(function(){
  </thead>
  <tbody>
 {foreach from=$items item=entry}
-{*{if $entry->date_fin < $maintenant}<tr class="{$entry->rowclass} past" style="background: grey; font-color: white;">{else}
-  <tr class="{$entry->rowclass}">{/if}*}
-   <tr class="{$entry->rowclass}">
+{if $entry->date_fin < $maintenant}<tr class="{$entry->rowclass} past" style="background: #C8C8C8; font-color: white;">{else}
+  <tr class="{$entry->rowclass}">{/if}
+   
     <td>{$entry->id}</td>
 	<td>{$entry->name}</td>
 	<td>{$entry->date_debut|date_format:"%d-%m-%Y"}->{$entry->date_fin|date_format:"%d-%m-%Y"}</td>
 	<td>{$entry->numjourn}</td>
 	<td>{$entry->tag}</td>
-<!--	<td>{$entry->retrievelink}</td>-->
+	{*{if $entry->date_fin < $maintenant}<td>{$entry->retrievelink}</td>{/if}*}
     <td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>
 	</tr>

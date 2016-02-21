@@ -35,7 +35,7 @@ $(document).ready(function(){
   {$formend}
 </fieldset>
 {/if}
-{$retourlien} <p class="warning">{$alert_message}</p>{*$recup_div*}
+{$retourlien} <p class="warning">{$alert_message}</p>{$recup_div}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 {$form2start}

@@ -16,8 +16,9 @@ $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
 $query1 = "SELECT pts.date_event,pts.codechamp,pts.licence , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY j.nom ASC, pts.date_event ASC";//"";
-$dbresult = $db->Execute($query1, array($saison));
-while ($dbresult && $row = $dbresult->FetchRow())
+$dbresult1 = $db->Execute($query1, array($saison));
+//echo $query1;
+while ($dbresult1 && $row = $dbresult1->FetchRow())
   {
     $datelist[$row['date_event']] = $row['date_event'];
     $playerslist[$row['player']] = $row['licence'];
@@ -26,7 +27,7 @@ while ($dbresult && $row = $dbresult->FetchRow())
 
 	if( isset($params['submitfilter']) )
   	{
-    		if( isset( $params['datelist']) )
+    		if( isset( $params['datelist'])  )
       		{
 			$this->SetPreference('dateChoisi', $params['datelist']);
       		}
@@ -56,11 +57,13 @@ $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
 
-$result= array ();
+$parms= array();
 $query = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, pts.id, pts.vd, pts.numjourn,pts.date_event, pts.advnompre,pts.pointres, pts.advclaof  FROM ".cms_db_prefix()."module_ping_parties AS pts , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence = j.licence AND pts.saison = ?";
 $parms['saison'] = $saison;
+//echo $parms['saison'];
 
-	if( isset($params['submitfilter'] )){
+	if( isset($params['submitfilter'] ))
+	{
 		
 		if ($curdate !='')
 		{
@@ -90,8 +93,8 @@ $parms['saison'] = $saison;
 		
 	}
 	
-
-$dbresult= $db->Execute($query,$parms);
+//echo $query;
+$dbresult= $db->Execute($query,$parms);//array($saison));//$parms);
 //echo $query;
 /*
 if (!$dbresult)

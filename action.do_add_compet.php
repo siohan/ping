@@ -83,7 +83,11 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 			$dbresult = $db->Execute($query, array($idepreuve,$date_debut, $date_fin, $numjourn,$tag,$record_id));
 			
 		}
-		
+		/*
+		//on essaie d'inclure des dates automatiquement
+			$query = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET date_debut = ?, date_fin = ? WHERE idepreuve = ? AND tour = ? AND saison = ?";
+			$dbresult = $db->Execute($query, array($date_debut, $date_fin, $idepreuve,$numjourn, $saison));
+			
 			if(!$dbresult)
 			{
 				$designation = $db->ErrorMsg();
@@ -98,9 +102,9 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 				$action = 'do_add_compet';
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 			}
-		
+		*/
 
-$this->SetMessage('Date enregistrée !');
-$this->RedirectToAdminTab('compets');
+$this->SetMessage('Date enregistrée ! Pensez à récupérer les divisions, poules et tours !');
+$this->RedirectToAdminTab('calendrier');
 
 ?>

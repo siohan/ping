@@ -1,6 +1,10 @@
 <?php
 
 if( !isset($gCms) ) exit;
+#################################################################################################
+##      Cette page date deux tables calendrier et div_tours                                 #####
+##      Le formulaire se retourne sur lui même pour traitement                              #####
+#################################################################################################
 
 	if (!$this->CheckPermission('Ping Manage'))
   	{
@@ -14,7 +18,7 @@ if( !isset($gCms) ) exit;
     		$this->RedirectToAdminTab('divisions');
     		return;
   	}
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //le formulaire a t-il été soumis ?
 if(isset($params['submit']))
 {
@@ -30,7 +34,7 @@ if(isset($params['submit']))
 		{
 			array_push($a,$value);
 		}
-		var_dump($a);
+		//var_dump($a);
 		$date_debut = '';
 		if(isset($params['date_debut']) && $params['date_debut'] !='')
 		{
@@ -83,13 +87,13 @@ if(isset($params['submit']))
 				}
 				
 			}
-			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE id = ?";
+			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE iddivision = ?";
 			$dbresult2 = $db->Execute($query2, array($date_debut,$date_fin,$valeur));
 			
 			
 		}
 		$this->SetMessage('Datation réalisée');
-		$this->Redirect($id,'defaultadmin2', $returnid='', array("active_tab"=>"tours"));
+		$this->Redirect($id,'defaultadmin', $returnid='', array("active_tab"=>"tours"));
 	}
 }
 else
@@ -109,6 +113,8 @@ else
 				$this->CreateInputDate($id, 'date_debut'));
 		$smarty->assign('date_fin',
 				$this->CreateInputDate($id, 'date_fin'));
+		$smarty->assign('numjourn',
+				$this->CreateInputText($id, 'numjourn'));
 	
 		$smarty->assign('submit',
 				$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));

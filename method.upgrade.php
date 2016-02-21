@@ -609,6 +609,13 @@ case  "0.3.0.1" :
 		$db->execute($insert_sql, array( 1, 'Compte et test connexion', 0, 0));
 		
 	}
+	case "0.4.3" : 
+	{
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'sit_mens',
+			    cms_db_prefix().'module_ping_sit_mens', 'mois, annee, licence',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+	}
 	 
 
 	

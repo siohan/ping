@@ -1,4 +1,4 @@
-{if isset($formstart) }
+	<div class="pageoptions"><p class="pageoptions alert">{$Nat_indivs} - {$Nat_equipes} - {$zone_indivs} - {$zone_equipes} - {$ligue_indivs} - {$ligue_equipes} - {$dep_indivs} - {$dep_equipes}{*$createlink*}</p></div>{*}{if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>
   {$formstart}
@@ -11,7 +11,7 @@
   </div>
   {$formend}
 </fieldset>
-{/if}<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
+{/if}*}<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
@@ -41,7 +41,5 @@
 {/foreach}
  </tbody>
 </table>
-{else}
-	<div class="pageoptions"><p class="pageoptions alert">{$zone_indivs} - {$zone_equipes} - {$ligue_indivs} - {$ligue_equipes} - {$dep_indivs} - {$dep_equipes}{*$createlink*}</p></div>
 {/if}
 <div class="pageoptions"><p class="pageoptions">{*$createlink*}</p></div>

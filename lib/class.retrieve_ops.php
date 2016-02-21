@@ -798,6 +798,7 @@ public function retrieve_sit_mens($licence)
 		$dep = $ping->GetPreference('dep');
 		$saison = $ping->GetPreference('saison_en_cours');
 		$indivs = 1; //par défaut car on récupère les épreuves individuelles seulement
+		$type = 'I';
 		$page="xml_division";
 		//on instancie la classe service
 		$service = new Servicen();
@@ -813,7 +814,7 @@ public function retrieve_sit_mens($licence)
 				$lien = $service->GetLink($page,$var);
 				//var_dump($lien);
 				$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-				if($xml === FALSE)
+				if($xml === FALSE || !is_array($xml))
 				{
 					//le service est coupé
 					$array = 0;
@@ -823,39 +824,40 @@ public function retrieve_sit_mens($licence)
 				{
 					$array = json_decode(json_encode((array)$xml), TRUE);
 					$lignes = count($array['division']);
-				}
-				//echo "le nb de lignes est : ".$lignes;
-				$i=0;
-				//on initialise un deuxième compteur
-				$compteur=0;
-				foreach($xml as $value)
-				{
+				
+					//echo "le nb de lignes est : ".$lignes;
+					$i=0;
+					//on initialise un deuxième compteur
+					$compteur=0;
+					foreach($xml as $value)
+					{
 
-					$i++;
-					$iddivision = htmlentities($value->iddivision);
-					$libelle = htmlentities($value->libelle);
+						$i++;
+						$iddivision = htmlentities($value->iddivision);
+						$libelle = htmlentities($value->libelle);
 
-					// 1- on vérifie si cette épreuve est déjà dans la base
-					$query = "SELECT iddivision FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision = ? AND idorga = ? AND saison = ? AND idepreuve = ?";
-					$dbresult = $db->Execute($query, array($iddivision, $idorga,$saison,$idepreuve));
+						// 1- on vérifie si cette épreuve est déjà dans la base
+						$query = "SELECT iddivision FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision = ? AND idorga = ? AND saison = ? AND idepreuve = ?";
+						$dbresult = $db->Execute($query, array($iddivision, $idorga,$saison,$idepreuve));
 
-						if($dbresult  && $dbresult->RecordCount() == 0) 
-						{
-							$query = "INSERT INTO ".cms_db_prefix()."module_ping_divisions (id, idorga, idepreuve,iddivision,libelle,saison,indivs,scope) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
-							//echo $query;
-							$compteur++;
-							$dbresultat = $db->Execute($query,array($idorga,$idepreuve,$iddivision,$libelle,$saison,$indivs,$scope));
-
-							if(!$dbresultat)
+							if($dbresult  && $dbresult->RecordCount() == 0) 
 							{
-								$designation .= $db->ErrorMsg();			
+								$query = "INSERT INTO ".cms_db_prefix()."module_ping_divisions (id, idorga, idepreuve,iddivision,libelle,saison,indivs,scope) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
+								//echo $query;
+								$compteur++;
+								$dbresultat = $db->Execute($query,array($idorga,$idepreuve,$iddivision,$libelle,$saison,$indivs,$scope));
+
+								if(!$dbresultat)
+								{
+									$designation .= $db->ErrorMsg();			
+								}
+
 							}
 
-						}
 
-
-				}// fin du foreach
+					}// fin du foreach
 				unset($scope);
+				}
 			//}//fin du premier foreach
 		
 	}
@@ -1020,7 +1022,7 @@ public function retrieve_sit_mens($licence)
 		
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 		//var_dump($xml);
-		if($xml === FALSE)
+		if($xml === FALSE )
 		{
 			//le service est coupé
 			$array = 0;

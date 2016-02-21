@@ -9,7 +9,8 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
      if( isset($params['sel']) && is_array($params['sel']) &&
 	count($params['sel']) > 0 )
       	{
-        	switch($params['actiondemasse'])
+        	
+		switch($params['actiondemasse'])
 		{
 			case "unable" :
 			foreach( $params['sel'] as $licence )
@@ -25,12 +26,12 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			//que fait-on si elles ne le sont pas en réalité ?
 			//bonne question
 			//on prend les variables nécessaires
-	
+			$service = new retrieve_ops();
 			$message='Retrouvez toutes les infos dans le journal';
 			foreach( $params['sel'] as $licence )
 	  		{
 	
-	    			retrieve_ops::retrieve_sit_mens( $licence );
+	    			$retrieve = $service->retrieve_sit_mens( $licence );
 	  		}
 			//$message.='</ul>';
 			$this->SetMessage("$message");

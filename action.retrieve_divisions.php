@@ -6,7 +6,7 @@
 
 
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 
 $club_number = $this->GetPreference('club_number');
@@ -37,6 +37,7 @@ if(isset($params['all']) && $params['all'] !==FALSE)
 	$zone = $this->GetPreference('zone');
 	$ligue = $this->GetPreference('ligue');
 	$dep = $this->GetPreference('dep');
+	$tableau = array($fede, $zone, $ligue, $dep);
 	
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
@@ -47,9 +48,12 @@ if(isset($params['all']) && $params['all'] !==FALSE)
 		{
 			$name = $row['name'];
 			$idepreuve = $row['idepreuve'];
-			$idorga = $row['idorga'];
+			//$idorga = $row['idorga'];
+			foreach($tableau as $valeur)
+			{
 			
-			$retrieve_divisions = $service->retrieve_divisions($idorga,$idepreuve,$type='');	
+				$retrieve_divisions = $service->retrieve_divisions($valeur,$idepreuve,$type='');
+			}	
 		}
 		//on redirige et on donne une info
 		$this->RedirectToAdminTab('indivs');

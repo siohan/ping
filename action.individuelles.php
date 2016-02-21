@@ -17,7 +17,7 @@ $mois_en_cours2 = $mois_en_cours - 1;
 $nom_equipes = $this->GetPreference('nom_equipes');
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 //on établit la liste des compétitions individuelles du calendrier
-$query1 = "SELECT cal.date_debut,tc.name,cal.idepreuve AS id_ep,MONTH(cal.date_debut) AS mois_ref FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.idepreuve = tc.idepreuve AND cal.saison = ?";
+$query1 = "SELECT cal.date_debut,tc.name,cal.idepreuve AS id_ep,MONTH(cal.date_debut) AS mois_ref, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.idepreuve = tc.idepreuve AND cal.saison = ?";
 //il s'agit de compétitions individuelles ?
 $query1.=" AND tc.indivs = 1 ";
 $parametres = 0;
@@ -57,8 +57,16 @@ if(isset($params['date_fin']) && $params['date_fin'] !='')
 	$query1.=" AND cal.date_fin = ?";
 	$parms['date_fin'] = $date_fin;
 }
-
-
+/*
+if(isset($params['tour']) && $params['tour'] !='')
+{
+	$parametres++;
+	$tour = $params['tour'];
+	
+	$query1.=" AND cal.numjourn = ?";
+	$parms['numjourn'] = $tour;
+}
+*/
 $query1.=" ORDER BY cal.date_debut ASC";
 //echo $query1;
 	$result1 = $db->Execute($query1,$parms);
@@ -102,7 +110,7 @@ $lignes = $result1->RecordCount();
 				//echo $query2;
 				$result2 = $db->Execute($query2,array($idepreuve2,$club,$date_debut));
 				$query2.=" ORDER BY dv.libelle,cla.tour ASC";
-				
+				echo $query2;
 				$lignes2 = $result2->RecordCount();	
 				//echo "le nb de lignes2 est : ".$lignes2;
 					if($result2 && $result2->RecordCount()>0)

@@ -1,4 +1,5 @@
-{if isset($formstart) }
+<div class="pageoptions"><p class="pageoptions">{$divisions_all}</p></div>
+	{if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>
   {$formstart}

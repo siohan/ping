@@ -23,7 +23,7 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_situation_mensuelle_tab')); 
 $saisonslist[$this->lang('allseasons')] ='';
 //$monthslist[$this->Lang('allmonths')] = '';
-$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8");
+$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8", "Septembre"=>"9", "Octobre"=>"10","Novembre"=>"11","Décembre"=>"12", "Janvier"=>"1","Février"=>"2","Mars"=>"3","Avril"=>"4","Mai"=>"5","Juin"=>"6");
 $yearslist = array("2014"=>"2014");
 $tourlist[$this->Lang('alltours')] = '';
 $equipelist[$this->Lang('allequipes')] = '';
@@ -39,7 +39,7 @@ while ($dbresultat && $row = $dbresultat->FetchRow())
   {
     	
     	$playerslist[$row['player']] = $row['licence'];
-	$monthslist[$row['mois']] = $row['mois'];
+	//$monthslist[$row['mois']] = $row['mois'];
 	$nombre = $row['nombre'];
     	
   }

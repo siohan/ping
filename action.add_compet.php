@@ -21,7 +21,7 @@ $record_id = '';
 $type_compet_selected = '';
 $date_debut = '';
 $date_fin = '';
-$numjourn = '';
+$numjourn = '0';
 $edit = 0;
 
 	if(isset($params['record_id']) && $params['record_id'] !="")
@@ -47,7 +47,7 @@ $edit = 0;
 			}
 	}
 	//on fait une requete pour completer l'input dropdown du formulaire
-	$query = "SELECT name, idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions";
+	$query = "SELECT name, idepreuve,indivs FROM ".cms_db_prefix()."module_ping_type_competitions";
 	$dbresult = $db->Execute($query);
 
 		if($dbresult && $dbresult->RecordCount() >0)
@@ -55,6 +55,7 @@ $edit = 0;
 			while($row= $dbresult->FetchRow())
 			{
 				$type_compet[$row['name']] = $row['idepreuve'];
+				$indivs = $row['indivs'];
 			}
 		}
 

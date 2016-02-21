@@ -23,6 +23,7 @@ $mois_choisi = '';
 $phase_choisie = '';
 $phase_en_cours = $this->GetPreference('phase_en_cours');
 $saison = $this->GetPreference('saison_en_cours');
+$dep = $this->GetPreference('dep');
 if(isset($params['phase_choisie']) && $params['phase_choisie'] !='')
 {
 	$phase_choisie = $params['phase_choisie'];
@@ -164,7 +165,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,comp.indivs,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.idepreuve = comp.idepreuve AND cal.saison = ? AND MONTH(cal.date_debut) = ?";
+$query = "SELECT cal.tag,cal.id, comp.coefficient,comp.name,comp.indivs,cal.type_compet,cal.date_debut, cal.date_fin, cal.numjourn,comp.idepreuve FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.idepreuve = comp.idepreuve AND cal.saison = ? AND MONTH(cal.date_debut) = ?";
 		$query .=" ORDER BY cal.date_debut ASC";
 		$dbresult= $db->Execute($query, array($saison, $mois_choisi));
 
@@ -189,6 +190,10 @@ $rowarray= array ();
     		while ($row= $dbresult->FetchRow())
       		{
 			$indivs = $row['indivs'];
+			$idepreuve = $row['idepreuve'];
+			$tour = $row['numjourn'];
+			$date_debut = $row['date_debut'];
+			//echo $tour;
 			$onerow= new StdClass();
 			$onerow->rowclass= $rowclass;
 			$onerow->id= $row['id'];
@@ -200,11 +205,26 @@ $rowarray= array ();
 			$onerow->numjourn= $row['numjourn'];
 			$onerow->tag= $row['tag'];
 			$onerow->indivs = $row['indivs'];
+			//echo $indivs;
+			/*
 			if($indivs =='1')
 			{
+				//la competition est individuelle,on vérifie d'abord la présence de dividions et tours ?
+				//non on estime que l'utilisateur l'a fait !
+				//on démarre une autre requete
+				//on récupère directement le classement !
+				$onerow->retrievelink = $this->CreateLink($id,'retrieve_all_classement', $returnid, $contents='Classement', array("idepreuve"=>$idepreuve,"date_debut"=>$date_debut,"tour"=>$tour,"idorga"=>$idorga));
+				
+				
+				
+				
 				$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('type_compet'=>$row['type_compet'],'date_debut'=>$row['date_debut'],'date_fin'=>$row['date_fin']));
 			}
-			$onerow->retrievelink= $this->CreateLink($id, 'retrieve_indivs', $returnid, 'Récupérer', array("type_compet"=>$row['type_compet'], "coefficient"=>$row['coefficient']));
+			else
+			{
+				$onerow->retrievelink= $this->CreateLink($id, 'retrieve_indivs', $returnid, 'Récupérer', array("type_compet"=>$row['type_compet'], "coefficient"=>$row['coefficient']));
+			}
+			*/
 			$onerow->editlink= $this->CreateLink($id, 'add_compet', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('record_id'=>$row['id']));
 			
 			if($this->CheckPermission('Ping Delete'))

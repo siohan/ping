@@ -83,6 +83,7 @@ if ($dbresult && $dbresult->RecordCount() == 0)
 	
       }
   }
+
 $result= array ();
 //SELECT * FROM ".cms_db_prefix()."module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
 $query= "SELECT id, CONCAT_WS(' ',nom, prenom) AS joueur, licence, actif, sexe, birthday FROM ".cms_db_prefix()."module_ping_joueurs  ORDER BY joueur ASC";

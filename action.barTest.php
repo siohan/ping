@@ -91,12 +91,15 @@ $i = 0;
 
 			
 		}
-		$output[] = array($victoires,$sumpoints);
+		
+		//$output[] = array($victoires,$sumpoints);
 		//$output_points[] = $sumpoints;
 		//echo "<pre>$output_points</pre>";
-		$outputString = json_encode($output);
+		$outputVictoires = json_encode($victoires);
+		$outputSommePoints = json_encode($sumpoints);
 		//$outputPointsString = json_encode($output_points);
-		echo "<pre>$outputString</pre>";
+		echo "<pre>$outputVictoires</pre>";
+		echo "<pre>$outputSommePoints</pre>";
 		
 	}
 
@@ -108,7 +111,8 @@ $smarty->assign('itemcount', count($rowarray));
 //$datadonnees = array('Victoires'=>'12', 'Total'=>'16');
 $smarty->assign('player', $player);
 //$smarty->assign('donnees', array('Victoires'=>'12', 'Total'=>'12'));
-$smarty->assign('datadonnees', $outputString);
+$smarty->assign('outputVictoires', $outputVictoires);
+$smarty->assign('outputSommePoints', $outputSommePoints);
 //$smarty->assign('points', $outputPointsString);
 //echo $this->ProcessTemplate('pie-charts.tpl');
 echo $this->ProcessTemplate('bar-charts2.tpl');

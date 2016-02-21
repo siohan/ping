@@ -17,16 +17,19 @@ $smarty->assign('retourlien',
 $result= array ();
 $query = "SELECT dv.id,tc.name,tc.indivs, tc.idorga, tc.idepreuve, dv.libelle, dv.iddivision,dv.scope, dv.uploaded FROM ".cms_db_prefix()."module_ping_type_competitions AS tc , ".cms_db_prefix()."module_ping_divisions AS dv WHERE  tc.idepreuve = dv.idepreuve AND dv.saison = ? AND tc.indivs = '1' ";
 $parms['saison'] = $saison;
+
 if(isset($params['idepreuve']) && $params['idepreuve'] !='')
 {
 	$query.=" AND tc.idepreuve = ?";
 	$parms['idepreuve'] = $params['idepreuve'];
 }
+/*
 if(isset($params['idorga']) && $params['idorga'] != '')
 {
 	$query.=" AND dv.idorga = ?";
 	$parms['idorga'] = $params['idorga'];
 }
+*/
 if(isset($params['essai']) && $params['essai'] !='0')
 {
 	$essai = $params['essai'];
@@ -120,7 +123,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Supprimer"=>"supp_div","Récupérer les tours"=>"retrieve_div_tours");
+$articles = array("Supprimer"=>"supp_div","Récupérer les tours"=>"retrieve_div_tours", "Dater"=>"dater");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',
