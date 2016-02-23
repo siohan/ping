@@ -110,7 +110,7 @@ $lignes = $result1->RecordCount();
 				//echo $query2;
 				$result2 = $db->Execute($query2,array($idepreuve2,$club,$date_debut));
 				$query2.=" ORDER BY dv.libelle,cla.tour ASC";
-				echo $query2;
+				//echo $query2;
 				$lignes2 = $result2->RecordCount();	
 				//echo "le nb de lignes2 est : ".$lignes2;
 					if($result2 && $result2->RecordCount()>0)

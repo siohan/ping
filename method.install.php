@@ -81,7 +81,9 @@ $idxflds = 'saison, libequipe, liendivision';
 $tabname = cms_db_prefix()."module_ping_equipes";
 $idxname = 'unicite';
 //$idxoptarray = 'Unique';
-
+$dict = NewDataDictionary( $db );
+  $sqlarray = $dict->CreateIndexSQL('unicite', 'demo_module_ping_equipes', 'saison, libequipe, liendivision');//, array('UNIQUE'));
+  $dict->ExecuteSQLArray($sqlarray);
 //une nouvelle table pour les victoires brutes (pas de victoires détaillées pour l'instant)
 $dict = NewDataDictionary( $db );
 
@@ -550,11 +552,6 @@ $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
 	    cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau',$idxoptarray);
 	       $dict->ExecuteSQLArray($sqlarray);
-#
-#
-$dict = NewDataDictionary( $db );
-  $sqlarray = $dict->CreateIndexSQL('unicite', cms_db_prefix().'module_ping_equipes', 'saison, libequipe, liendivision');//, array('UNIQUE'));
-  $dict->ExecuteSQLArray($sqlarray);
 #
 # create table div_classement//debut de la création
 // table schema description
