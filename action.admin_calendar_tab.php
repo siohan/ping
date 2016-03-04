@@ -206,7 +206,7 @@ $rowarray= array ();
 			$onerow->tag= $row['tag'];
 			$onerow->indivs = $row['indivs'];
 			//echo $indivs;
-			/*
+			
 			if($indivs =='1')
 			{
 				//la competition est individuelle,on vérifie d'abord la présence de dividions et tours ?
@@ -218,8 +218,9 @@ $rowarray= array ();
 				
 				
 				
-				$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('type_compet'=>$row['type_compet'],'date_debut'=>$row['date_debut'],'date_fin'=>$row['date_fin']));
+				//$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('type_compet'=>$row['type_compet'],'date_debut'=>$row['date_debut'],'date_fin'=>$row['date_fin']));
 			}
+			/*
 			else
 			{
 				$onerow->retrievelink= $this->CreateLink($id, 'retrieve_indivs', $returnid, 'Récupérer', array("type_compet"=>$row['type_compet'], "coefficient"=>$row['coefficient']));

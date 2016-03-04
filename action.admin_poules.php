@@ -19,7 +19,7 @@ $parms = array();
 $idepreuve = '';
 $iddivision = '';
 $result= array ();
-$query = "SELECT pou.id AS tour_id, dv.libelle,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision";//" ORDER BY dv.iddivision,pou.tour ASC";
+$query = "SELECT pou.id AS tour_id, dv.libelle,dv.idorga,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision";//" ORDER BY dv.iddivision,pou.tour ASC";
 
 	
 	if (isset($params['idepreuve']) && $params['idepreuve'] !='')
@@ -38,7 +38,7 @@ $query = "SELECT pou.id AS tour_id, dv.libelle,pou.idepreuve,pou.iddivision, pou
 	{
 		$idorga = $params['idorga'];
 	}
-	
+$query.=" ORDER BY pou.tour ASC";	
 	
 	$dbresult= $db->Execute($query, $parms);
 	
@@ -47,7 +47,8 @@ $smarty->assign('recup_tours',
 // the top nav bar
 $smarty->assign('returnlink', $this->CreateLink($id,'admin_divisions_tab',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"idorga"=>$params['idorga'])));
 //$this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/topfiles/template.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
-
+$smarty->assign('refresh',
+		$this->CreateLink($id, 'refresh',$returnid, $contents="Maj", array("idepreuve"=>$idepreuve)));
 $rowclass = '';
 //echo $query;
 $rowarray= array ();
@@ -58,7 +59,9 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	/*
 	$indivs = $row['indivs'];
 	if($indivs==1){$type='I';}else{$type='E';}
+	*/
 	$idorga = $row['idorga'];
+	/*
 	if($idorga == $fede){$orga = 'Fédération';}
 	if($idorga == $zone){$orga = 'Zone';}
 	if($idorga == $ligue){$orga = 'Ligue';}
@@ -74,6 +77,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->tour= $row['tour'];
 	$onerow->tableau = $row['tableau'];
 	$onerow->libelle= $row['libelle'];
+	
 	$onerow->date_debut = $row['date_debut'];
 	$onerow->date_fin = $row['date_fin'];
 	//$onerow->uploaded_parties= $row['uploaded_parties'];
@@ -97,7 +101,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	
 	if($this->CheckPermission('Ping Delete'))
 	{
-		$onerow->deletelink = $this->CreateLink($id, 'delete', $returnid,$themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'),array("record_id"=>$row['tour_id'], "type_compet"=>"type_compet"));
+		$onerow->deletelink = $this->CreateLink($id, 'delete', $returnid,$themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'),array("record_id"=>$row['tableau'], "type_compet"=>"classement"));
 	}
 	
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
@@ -117,7 +121,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Supprimer"=>"supp_tours","Dater"=>"dater","Récupérer les parties"=>"retrieve_div_parties", "Récupérer les classements"=>"retrieve_div_classement");
+$articles = array("Dater"=>"dater","Récupérer les parties"=>"retrieve_div_parties", "Récupérer les classements"=>"retrieve_div_classement","Supprimer les tours"=>"supp_tours");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

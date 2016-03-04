@@ -14,12 +14,13 @@
  * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 28 Juil 2015) $
  * @license GPL
  **/
+
 class Ping extends CMSModule
 {
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.4.3'; }  
+  function GetVersion() { return '0.4.4'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -40,7 +41,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-    //return array('NMS'=>'2.9', 'FrontEndUsers'=>'1.24');
+	//return array('CGExtensions'=>'1.51.1');
   }
 
   
@@ -147,6 +148,7 @@ public function get_tasks()
    $obj = array();
 	$obj[0] = new PingRecupFfttTask();
    	$obj[1] = new PingRecupSpidTask();  
+	$obj[2] = new PingRecupRencontresTask();
 return $obj; 
 }
 

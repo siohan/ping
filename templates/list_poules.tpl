@@ -56,7 +56,7 @@ $(document).ready(function(){
 </fieldset>
 {/if}
 {$returnlink}
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p><p>{$refresh}</p></div>
 
 {if $itemcount > 0}
 {$form2start}
@@ -81,7 +81,7 @@ $(document).ready(function(){
 		<td>{$entry->uploaded_parties}{$entry->partie} - {$entry->uploaded_classement}{$entry->classement}</td>
 		<td>{$entry->editlink}</td>
 		<td>{$entry->deletelink}</td>
-		<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->tour_id}" class="select"></td>
+		<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->tableau}" class="select"></td>
 		<td>
   </tr>
 {/foreach}

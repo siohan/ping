@@ -611,6 +611,10 @@ case  "0.3.0.1" :
 	}
 	case "0.4.3" : 
 	{
+		$db = $this->GetDb();
+		//$dict->ExecuteSQLArray($sqlarray);
+		//On crée un nouveau champ dans la table participe
+		$dict = NewDataDictionary( $db );
 		$idxoptarray = array('UNIQUE');
 		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'sit_mens',
 			    cms_db_prefix().'module_ping_sit_mens', 'mois, annee, licence',$idxoptarray);

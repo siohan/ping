@@ -220,7 +220,7 @@ $service = new Servicen();
 			{
 				//la requete a fonctionné. On met le classement comme uploadé
 				$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded_classement = '1' WHERE idepreuve = ? AND iddivision = ? AND tableau = ?";
-				$dbresult2 = $db->Execute($query, array($idepreuve,$iddivision,$tableau));
+				$dbresult2 = $db->Execute($query2, array($idepreuve,$iddivision,$tableau));
 			}
 
 

@@ -11,6 +11,7 @@ global $themeObject;
 require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
 $saison = $this->GetPreference('saison_en_cours');
+
 $smarty->assign('retourlien',
 		$this->CreateLink($id,'defaultadmin',$returnid,$contents="<= Retour",array("active_tab"=>"indivs")));
 //on fait maintenant la requete principale...
@@ -118,7 +119,8 @@ if($essai ==1 && $dbresult->RecordCount() ==0)
 $smarty->assign('itemsfound', $this->Lang('sheetsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
-
+$smarty->assign('tours',
+		$this->CreateLink($id,'admin_poules', $returnid,'Tours', array("idepreuve"=>$params['idepreuve'])));
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

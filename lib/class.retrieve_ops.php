@@ -1012,7 +1012,7 @@ public function retrieve_sit_mens($licence)
 		
 		
 		$page = "xml_result_indiv";
-		$var ="epr=".$idepreuve."&res_division=".$iddivision;
+		$var ="epr=".$idepreuve."&res_division=".$iddivision."&cx_tableau=".$tableau;
 		
 			$var.="&action=classement";
 
@@ -1078,6 +1078,353 @@ public function retrieve_sit_mens($licence)
 		
 		
 	}
+	function retrieve_poule_rencontres( $iddiv,$idpoule,$cal,$idepreuve='' )
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		//echo "la valeur de cal est :".$cal;
+		$ping = cms_utils::get_module('Ping');
+		//require_once(dirname(__FILE__).'/function.calculs.php');
+		//echo "glop2";	
+		$aujourdhui = date('Ymd');
+		$aujourdhui = new DateTime( $aujourdhui );
+		$aujourdhui = $aujourdhui->format('Ymd');
+		//var_dump($aujourdhui);
+		$saison = $ping->GetPreference('saison_en_cours');
+		$service = new Servicen();
+		$page = "xml_result_equ";
+		$var = "auto=1&D1=".$iddiv."&cx_poule=".$idpoule;
+		$lien = $service->GetLink($page, $var);
+		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+		//echo "la valeur de cal est :".$cal;
+		if($xml === FALSE)
+		{
+			//le service est coupé
+			$array = 0;
+			$lignes = 0;
+		}
+		else
+		{
+			$array = json_decode(json_encode((array)$xml), TRUE);
+			$lignes = count($array['tour']);
+		}
+		//echo "le nb de lignes est : ".$lignes;
+		//$result = $service->getPouleRencontres($iddiv,$idpoule);
+
+		$designation = '';
+		//var_dump($result);
+		/**/
+		//on va tester la valeur de la variable $result
+		//cela permet d'éviter de boucler s'il n'y a rien dans le tableau
+		
+		if(!is_array($array))
+		{ 
+
+				//le tableau est vide, il faut envoyer un message pour le signaler
+				$designation.= "le service est coupé";
+				//$this->SetMessage("$designation");
+				//$this->RedirectToAdminTab('poules');
+		}   
+		else
+		{
+		$i=0;
+			foreach($xml as $cle =>$tab)
+			{
+
+				
+				$libelle = (isset($tab->libelle)?"$tab->libelle":"");
+				//echo $libelle;
+				$extraction = substr($libelle,-8);
+				$date_extract = explode('/', $extraction);
+				$annee_date = $date_extract[2] + 2000;
+				$date_event = $annee_date."-".$date_extract[1]."-".$date_extract[0];
+				
+				
+				//var_dump( $date_event);
+				$equa = (isset($tab->equa)?"$tab->equa":"");
+				$equb = (isset($tab->equb)?"$tab->equb":"");
+
+				//on fait quelque transformations des infos recueillies
+				preg_match_all('#[0-9]+#',$libelle,$extract);
+				$tour = $extract[0][0];
+
+
+				$uploaded = 0;
+				$nom_equipes = $ping->GetPreference('nom_equipes');
+				$cluba = strpos($equa,$nom_equipes);
+				$clubb = strpos($equb,$nom_equipes);
+
+					if ($cluba !== false || $clubb !== false)
+					{
+						$club = 1;
+						$affichage = 1;
+					}
+					else
+					{
+						$club = 0;
+					}
+
+				$scorea = (isset($tab->scorea)?"$tab->scorea":"");
+				$scoreb = (isset($tab->scoreb)?"$tab->scoreb":"");
+				$lien = (isset($tab->lien)?"$tab->lien":"");
+
+				//
+				//on vérifie que le score a bien été saisi
+				//si le score est saisi on obtient un string pour les variables scorea et scoreb
+				//sinon il s'agit d'un array	
+
+					if(is_array($scorea) && is_array($scoreb))
+					{
+						//le score n'est pas parvenu ou le match n'a pas été joué
+						//On l'enregistre qd même
+						$scorea = 0;
+						$scoreb = 0;
+						$update = 0;		
+					}
+				
+				
+				if($cal == 'cal')
+				{
+					//on récupère tout sans rien mettre à jour
+					//on vérifie si l'enregistrement est déjà là
+					$query = "SELECT id,lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv =? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
+					$dbresult = $db->Execute($query, array($iddiv,$idpoule, $date_event,$equa,$equb));
+
+					//il n'y a pas d'enregistrement auparavant, on peut continuer
+
+						if($dbresult->RecordCount() == 0) 
+						{
+							$query1 = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							//echo $query;
+							$i++;
+							$uploaded = 0;
+							$dbresultat = $db->Execute($query1,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
+
+								if(!$dbresultat)
+								{
+									$designation.= $db->ErrorMsg();
+
+
+								}
+								
+								//on prépare le tag
+							$indivs = 0;//puisqu'on est dans un contexte d'équipes
+							$tag = "{Ping action='par-equipes'";
+							$tag.=" idepreuve='$idepreuve'";
+
+								if(isset($date_event) && $date_event !='')
+								{
+									$tag.= " date_debut='$date_event'";
+								}
+								if(isset($date_event) && $date_event !='')
+								{
+									$tag.= " date_fin='$date_event'";
+								}
+							$tag.="}";
+							//On fait l'inclusion ds la bdd
+							// on vérifie d'abord que l'enregistrement n'est pas déjà en bdd
+							$query2 = "SELECT numjourn, date_debut, date_fin, idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND idepreuve = ? ";//AND scorea !=0 AND scoreb !=0";
+							$dbresult2 = $db->Execute($query2, array($tour, $date_event, $date_event,$idepreuve));
+
+								if ($dbresult2->RecordCount()==0)
+								{
+
+
+
+										$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,idepreuve, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
+										$dbresult3 = $db->Execute($query3, array($date_event,$date_event,$idepreuve,$tour,$tag,$saison));
+
+										if($dbresult3)
+										{
+											$designation.= $db->ErrorMsg();
+										}
+										// on insert aussi dans CGCalendar ?
+										// Chiche !
+										/*
+										(mysqli): INSERT INTO demo_module_cgcalendar_events
+										           (event_id, event_title, event_summary, event_details,
+										            event_date_start, event_date_end, event_parent_id,
+										             event_recur_period, event_date_recur_end, event_created_by,
+										            event_recur_nevents, event_recur_interval, event_recur_weekdays,
+										            event_recur_monthdays, event_allows_overlap,event_all_day,
+										          event_create_date, event_modified_date)
+										            VALUES (2,'N1 - Charleville-Mézières','','&lt;p&gt;Le match de la mort&lt;/p&gt;','2016-03-12 17:00:00',NULL,-1,'none',NULL,-101,-1,1,'','',1,0,NOW(),NOW())
+										*/
+								}
+						}
+							
+
+				
+				}	
+				if( $cal == 'all')
+				{
+					//on récupère tous les derniers résultats
+					//var_dump($aujourdhui);
+					//echo $date_event
+					$date2 = new DateTime( $date_event );
+					$date2 = $date2->format('Ymd');
+					if($date2 <= $aujourdhui)
+					{
+						//echo "on est dans le passé";
+						$query = "SELECT id,lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv =? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
+						$dbresult = $db->Execute($query, array($iddiv,$idpoule, $date_event,$equa,$equb));
+
+						//il n'y a pas d'enregistrement auparavant, on peut continuer
+
+							if($dbresult->RecordCount() == 0) 
+							{
+								$query1 = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+								//echo $query;
+								$i++;
+								$uploaded = 0;
+								$dbresultat = $db->Execute($query1,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
+
+									if(!$dbresultat)
+									{
+										$designation.= $db->ErrorMsg();
+
+
+									}
+										//on prépare le tag
+									$indivs = 0;//puisqu'on est dans un contexte d'équipes
+									$tag = "{Ping action='par-equipes'";
+									$tag.=" idepreuve='$idepreuve'";
+
+										if(isset($date_event) && $date_event !='')
+										{
+											$tag.= " date_debut='$date_event'";
+										}
+										if(isset($date_event) && $date_event !='')
+										{
+											$tag.= " date_fin='$date_event'";
+										}
+									$tag.="}";
+										//On fait l'inclusion ds la bdd
+										// on vérifie d'abord que l'enregistrement n'est pas déjà en bdd
+										$query8 = "SELECT numjourn, date_debut, date_fin, idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND idepreuve = ? ";//AND scorea !=0 AND scoreb !=0";
+										$dbresult8 = $db->Execute($query8, array($tour, $date_event, $date_event,$idepreuve));
+
+											if ($dbresult8->RecordCount()==0)
+											{
+
+
+
+													$query9 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,idepreuve, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
+													$dbresult9 = $db->Execute($query9, array($date_event,$date_event,$idepreuve,$tour,$tag,$saison));
+
+													if($dbresult9)
+													{
+														$designation.= $db->ErrorMsg();
+													}
+											}
+								
+							}
+							elseif($dbresult->RecordCount() >0)
+							{
+								//il y a déjà un enregistrement, le score est-il à jour ?
+								$update = 1;
+								$row = $dbresult->FetchRow();
+								$id = $row['id'];
+								$scoreA = $row['scorea'];
+								$scoreB = $row['scoreb'];
+
+									if($scoreA ==0 && $scoreB ==0)
+									{
+										$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+										$dbresultA = $db->Execute($query3, array($scorea, $scoreb, $id));
+										$i++;
+										if(!$dbresultA)
+										{
+											$designation.= $db->ErrorMsg();
+										}
+									}
+							}
+					}
+				}
+				else
+				{
+					//pas de valeur pour la variable $cal
+					$query1 = "SELECT id,lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv =? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
+					$dbresult1 = $db->Execute($query1, array($iddiv,$idpoule, $date_event,$equa,$equb));
+					echo "on est dans la merde !";
+					//il n'y a pas d'enregistrement auparavant, on peut continuer
+
+						if($dbresult1->RecordCount() == 0) 
+						{
+							$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							//echo $query;
+							$i++;
+							$uploaded = 0;
+							$dbresultat = $db->Execute($query2,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
+
+								if(!$dbresultat)
+								{
+									$designation.= $db->ErrorMsg();
+
+
+								}
+									//on prépare le tag
+								$indivs = 0;//puisqu'on est dans un contexte d'équipes
+								$tag = "{Ping action='par-equipes'";
+								$tag.=" idepreuve='$idepreuve'";
+
+									if(isset($date_event) && $date_event !='')
+									{
+										$tag.= " date_debut='$date_event'";
+									}
+									if(isset($date_event) && $date_event !='')
+									{
+										$tag.= " date_fin='$date_event'";
+									}
+								$tag.="}";
+								//On fait l'inclusion ds la bdd
+								// on vérifie d'abord que l'enregistrement n'est pas déjà en bdd
+								$query3 = "SELECT numjourn, date_debut, date_fin, idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND idepreuve = ? ";//AND scorea !=0 AND scoreb !=0";
+								$dbresult3 = $db->Execute($query3, array($tour, $date_event, $date_event,$idepreuve));
+
+									if ($dbresult3->RecordCount()==0)
+									{
+
+
+
+											$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,idepreuve, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
+											$dbresult4 = $db->Execute($query4, array($date_event,$date_event,$idepreuve,$tour,$tag,$saison));
+
+											if($dbresult4)
+											{
+												$designation.= $db->ErrorMsg();
+											}
+									}
+						}
+						elseif($dbresult1->RecordCount() >0)
+						{
+								//il y a déjà un enregistrement, le score est-il à jour ?
+								$update = 1;
+								$row = $dbresult1->FetchRow();
+								$id = $row['id'];
+								$scoreA = $row['scorea'];
+								$scoreB = $row['scoreb'];
+
+									if($scoreA ==0 && $scoreB ==0)
+									{
+										$query5 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+										$dbresultA = $db->Execute($query5, array($scorea, $scoreb, $id));
+										$i++;
+										if(!$dbresultA)
+										{
+											$designation.= $db->ErrorMsg();
+										}
+									}
+						}
+				
+				}
+
+				}
+			
+			
+			}//fin du foreach
+		}//fin du if is_array($result)
+		
 	
 } // end of class
 

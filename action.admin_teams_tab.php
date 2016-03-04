@@ -13,7 +13,9 @@ global $themeObject;
 $saison_courante = $this->GetPreference('saison_en_cours');
 $phase_courante = $this->GetPreference('phase_en_cours');
 $smarty->assign('retrieve_all',
-		$this->CreateLink($id, 'retrieve_all_poule_rencontres', $returnid,$contents='Récupérer toutes les rencontres'));
+		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les calendriers', array("cal"=>"cal")));
+$smarty->assign('retrieve_calendriers',
+		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les dernières rencontres', array("cal"=>"all")));
 $phase = (isset($params['phase']))?$params['phase']:$phase_courante;
 $smarty->assign('phase2',
 		$this->CreateLink($id,'defaultadmin',$returnid, 'Phase 2', array("active_tab"=>"equipes","phase"=>"2") ));

@@ -55,7 +55,7 @@ $smarty->assign('input_player',
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
-
+$parms = array();
 $result= array ();
 $query = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, pts.id, pts.vd, pts.numjourn,pts.date_event, pts.advnompre,pts.pointres, pts.advclaof  FROM ".cms_db_prefix()."module_ping_parties AS pts , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence = j.licence AND pts.saison = ?";
 $parms['saison'] = $saison;
@@ -64,14 +64,14 @@ $parms['saison'] = $saison;
 		
 		if ($curdate !='')
 		{
-			$query .=" AND pts.date_event = ? ";
+			$query.=" AND pts.date_event = ? ";
 			$parms['date_event'] = $curdate;
 		
 		}
 		
 		if ($curplayer !='')
 		{
-			$query .=" AND pts.licence = ?";
+			$query.=" AND pts.licence = ?";
 			$parms['licence'] = $curplayer;
 		
 		}
@@ -90,9 +90,9 @@ $parms['saison'] = $saison;
 		
 	}
 	
-
-$dbresult= $db->Execute($query,$parms);
 //echo $query;
+$dbresult= $db->Execute($query,$parms);
+
 /*
 if (!$dbresult)
 {

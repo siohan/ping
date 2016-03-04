@@ -122,8 +122,17 @@ $designation = '';
 					$db->Execute($query, array($record_id));
 					
 					$this->SetMessage('Division supprimée');
-					$this->Redirect('defaultadmin2');
+					$this->Redirect('defaultadmin');
 				break;
+				case "classement" : 
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_classement WHERE tableau = ?";
+					$db->Execute($query, array($record_id));
+					//le classement est effacé, il faut rétablir uploaded_classement à NULL
+					$query = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded_classement = NULL WHERE tableau = ?";
+					$db->Execute($query, array($record_id));
+					$this->SetMessage('Classement supprimé');
+					$this->Redirect('defaultadmin');
+					
 				case "demo" :
 					$query = "TRUNCATE ".cms_db_prefix()."module_ping_joueurs";
 					$db->Execute($query);

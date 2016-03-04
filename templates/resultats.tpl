@@ -45,7 +45,7 @@ $(document).ready(function(){
 	<tr>
 		<th>Clt</th>
 		<th>Equipe</th>
-		<th>Joue</th>
+		<th>Joués</th>
 		<th>Pts</th>
 	</tr>
  </thead>

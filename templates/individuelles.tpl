@@ -1,15 +1,4 @@
-{*debug*}
-{*
-{if isset($message)}
-  {if $error != ''}
-    <p><font color="red">{$message}</font></p>
-  {else}
-    <p>{$message}</p>
-  {/if}
-{/if}
-*}
-
-	<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <table class="pagetable table table-bordered">

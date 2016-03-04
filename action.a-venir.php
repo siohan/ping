@@ -10,7 +10,7 @@ if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 //la requete
-$query = "SELECT cal.date_debut, cal.date_fin, cal.type_compet,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.code_compet = cal.type_compet AND cal.date_debut BETWEEN NOW() ";//AND (NOW() + INTERVAL 7 DAY)";///BETWEEN '2014-12-01' AND ('2014-12-01'+ INTERVAL 7 DAY) ";////
+$query = "SELECT cal.date_debut, cal.date_fin, cal.type_compet,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.idepreuve = cal.idepreuve AND cal.date_debut BETWEEN NOW() ";//AND (NOW() + INTERVAL 7 DAY)";///BETWEEN '2014-12-01' AND ('2014-12-01'+ INTERVAL 7 DAY) ";////
 $temps = 14;
 $query.=" AND (NOW() + INTERVAL ".$temps." DAY)";
 //définir une préférence pour un interval de temps

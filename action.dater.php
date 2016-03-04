@@ -87,7 +87,7 @@ if(isset($params['submit']))
 				}
 				
 			}
-			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE iddivision = ?";
+			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE id = ?";
 			$dbresult2 = $db->Execute($query2, array($date_debut,$date_fin,$valeur));
 			
 			

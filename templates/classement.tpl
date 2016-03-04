@@ -1,33 +1,14 @@
-{*
-	{if isset($formstart) }
-<fieldset>
-  <legend>Filtres</legend>
-  {$formstart}
-  <div class="pageoverflow">
-	<p class="pagetext">Type Compétition:</p>
-    <p class="pageinput">{$input_compet} </p>
-    <p class="pagetext">{$prompt_tour}:</p>
-    <p class="pageinput">{$input_tour} </p>
-	<p class="pagetext">{$prompt_equipe}:</p>
-    <p class="pageinput">{$input_equipe} </p>
-    <p class="pagetext">&nbsp;</p>
-    <p class="pageinput">{$submitfilter}{$hidden|default:''}</p>
-  </div>
-  {$formend}
-</fieldset>
-{/if}
-*}
+{debug}
 {if $itemcount > 0}
-<p class="pageoptions">{$phase1} | {$phase2}</p>
+{*<p class="pageoptions">{$phase1} | {$phase2}</p>*}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
 	<tr>
-		<th>{$id}</th>
-		<th>{$equipe}</th>
+		
+		<th>Equipe</th>
 		<th>Niveau</th>
 		<th>Compétition</th>
 		<th>Nom court</th>
-		<th colspan="4">Actions</th>
 	</tr>
  </thead>
  <tbody>

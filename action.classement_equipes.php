@@ -1,12 +1,13 @@
 <?php
 if( !isset( $gCms() ) exit;
-require_once(dirname(__FILE__).'/include/prefs.php');
+//require_once(dirname(__FILE__).'/include/prefs.php');
 $db =& $this->GetDb();
 //debug_display($params, 'Parameters');
 $saison = $this->GetPreference('saison_en_cours');
 $record_id = '';
+$parms = array();
 $query = "SELECT cl.idequipe,eq.friendlyname,eq.libequipe,cl.poule,cl.clt,cl.equipe,cl.joue,cl.pts FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe AND cl.saison = ?";
-$parms['saison'] = $saison;
+//$parms['saison'] = $saison;
 //en parametres possibles : 
 #le championnat recherché ou non
 #une equipe précise ou non
@@ -24,8 +25,8 @@ $query.= " ORDER BY cl.id ASC";
 
 
 //on effectue la requete
-$dbresult = $db->Execute($query,$parms);
-echo $query;
+$dbresult = $db->Execute($query,array($saison));
+//echo $query;
 $rowarray = array();
 if($dbresult && $dbresult->RecordCount()>0)
 {
@@ -42,12 +43,9 @@ if($dbresult && $dbresult->RecordCount()>0)
 	}
 
 }
-else
-{
-	echo 'Pas de résultats';
-}
-$smarty->assign('items', $rowarray);
 
+$smarty->assign('items', $rowarray);
+$smarty->assign('itemcount', count($rowarray));
 echo $this->ProcessTemplate('classement.tpl');
 #
 #EOF

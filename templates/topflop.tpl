@@ -1,4 +1,5 @@
 {if $itemcount > 0}
+<h1>Les meilleures Perfs</h1>
 <table class="pagetable, table-bordered">
  <thead>
 	<tr>
@@ -15,8 +16,8 @@
     <td>{$entry->pointres}</td>
     </tr>
 {/foreach}
+{if $getmore == 'True'} <tr><td colspan="3">{$more}</td></tr>{/if}  
  </tbody>
+<tfoot>
 </table>
-{else}
-<p>Pas de résultats</p>
 {/if}

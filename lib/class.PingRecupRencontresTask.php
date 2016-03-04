@@ -1,24 +1,64 @@
 <?php
-if( !isset($gCms) ) exit;
-require_once(dirname(__FILE__).'/include/travaux.php');
+class PingRecupRencontresTask implements CmsRegularTask
+{
 
-// les préférences nécessaires
-$saison = $this->GetPreference('saison_en_cours');
-$phase = $this->GetPreference('phase_en_cours');
-$now = trim($db->DBTimeStamp(time()), "'");
-$nom_equipes = $this->GetPreference('nom_equipes');
-$designation = '';
+   public function get_name()
+   {
+      return get_class();
+   }
 
-//on fait une requete pour extraire toutes les infos afin de préparer une boucle
-$query1 = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres` WHERE `date_event` < NOW() AND (scorea = 0 AND scoreb = 0) AND saison = ?";
-$dbresult1 = $db->Execute($query1, array($saison));
+   public function get_description()
+   {
+      return 'Récupération des rencontres de championnat.';
+   }
 
-	if ($dbresult1 && $dbresult1->RecordCount() > 0)
-  	{
-		
-	
-		
-    		while ($dbresult1 && $row = $dbresult1->FetchRow())
+   public function test($time = '')
+   {
+
+      // Instantiation du module
+      $ping = cms_utils::get_module('Ping');
+
+      // Récupération de la dernière date d'exécution de la tâche
+      if (!$time)
+      {
+         $time = time();
+      }
+
+      $last_execute = $ping->GetPreference('LastRecupRencontres');
+      
+      // Définition de la périodicité de la tâche (24h ici)
+      if ( ($time - 30*60 ) >= $last_execute )//toutes les 24 heures  !!
+
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+      
+   }
+
+   public function execute($time = '')
+   {
+
+      if (!$time)
+      {
+         $time = time();
+      }
+
+      $ping = cms_utils::get_module('Ping');
+      
+      // Ce qu'il y a à exécuter ici
+	$db = $ping->GetDb();
+	$saison = $ping->GetPreference('saison_en_cours');
+	$phase = $ping->GetPreference('phase_en_cours');
+	$aujourdhui = date('Y-m-d');
+	$now = trim($db->DBTimeStamp(time()), "'");
+	$query = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres` WHERE `date_event` < ? AND (scorea = 0 AND scoreb = 0) AND saison = ? AND phase = ?";
+	$dbresult = $db->Execute($query, array($aujourdhui,$saison));
+	if($dbresult && $dbresult->RecordCount() > 0)
+	{
+
+		while ($dbresult1 && $row = $dbresult1->FetchRow())
       		{
 			
 			$iddiv = $row['iddiv'];
@@ -115,7 +155,7 @@ $dbresult1 = $db->Execute($query1, array($saison));
 				
 				}//fin du if !is_array vérification du tableau
 			$comptage = $i;
-			$status = 'Poules';
+			$status = 'Cron';
 			$designation = "Mise à jour de ".$comptage." rencontres de la poule ".$idpoule;
 			$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 			$action = "retrieve_poules_rencontres";
@@ -127,21 +167,34 @@ $dbresult1 = $db->Execute($query1, array($saison));
 				}
 			
 		}//fin du while
+
 	}
-	else 
-	{
-		$this->SetMessage('Pas d\'équipes trouvées');
-		$this->RedirectToAdminTab('equipes');
-	}//fin du if dbresult
-
-
-
-
 	
-	$this->SetMessage("Retrouvez les infos dans le journal");
-	$this->RedirectToAdminTab('resultats');
-	
-#
-# EOF
-#
+//echo "coucou";
+      
+      return true; // Ou false si ça plante
+
+   }
+
+   public function on_success($time = '')
+   {
+
+      if (!$time)
+      {
+         $time = time();
+      }
+      
+      $ping = cms_utils::get_module('Ping');
+      $ping->SetPreference('LastRecupRencontres', $time);
+      $ping->Audit('','Ping','Récup Rencontres Ok');
+      //$pong = cms_utils::get_module
+      
+   }
+
+   public function on_failure($time = '')
+   {
+      $ping->Audit('','Ping','Pas de récup SPID');
+   }
+
+}
 ?>

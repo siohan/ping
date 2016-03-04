@@ -1,6 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 
 	if (!$this->CheckPermission('Ping Manage'))
 	{
@@ -83,26 +83,34 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 			$dbresult = $db->Execute($query, array($idepreuve,$date_debut, $date_fin, $numjourn,$tag,$record_id));
 			
 		}
-		/*
+		
 		//on essaie d'inclure des dates automatiquement
-			$query = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET date_debut = ?, date_fin = ? WHERE idepreuve = ? AND tour = ? AND saison = ?";
-			$dbresult = $db->Execute($query, array($date_debut, $date_fin, $idepreuve,$numjourn, $saison));
+		//d'abord s'assurer que la compétitiion en question dsipose de plusieurs tours
+		//si oui on fait la requete
+			$query = "SELECT DISTINCT tour FROM ".cms_db_prefix()."module_ping_div_tours WHERE idepreuve = ?";
+			$dbresult = $db->Execute($query, array($idepreuve));
+			if( $dbresult->RecordCount() >1)
+			{
+				$query = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET date_debut = ?, date_fin = ? WHERE idepreuve = ? AND tour = ? AND saison = ?";
+				$dbresult = $db->Execute($query, array($date_debut, $date_fin, $idepreuve,$numjourn, $saison));
+
+				if(!$dbresult)
+				{
+					$designation = $db->ErrorMsg();
+					$this->SetMessage("$designation");
+					$this->RedirectToAdminTab('calendrier');
+				}
+				else
+				{
+					$now = trim($db->DBTimeStamp(time()), "'");
+					$status = 'Ok';
+					$designation = "Une nouvelle date du calendrier a été entrée";
+					$action = 'do_add_compet';
+					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+				}
+			}
 			
-			if(!$dbresult)
-			{
-				$designation = $db->ErrorMsg();
-				$this->SetMessage("$designation");
-				$this->RedirectToAdminTab('calendrier');
-			}
-			else
-			{
-				$now = trim($db->DBTimeStamp(time()), "'");
-				$status = 'Ok';
-				$designation = "Une nouvelle date du calendrier a été entrée";
-				$action = 'do_add_compet';
-				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
-			}
-		*/
+		
 
 $this->SetMessage('Date enregistrée ! Pensez à récupérer les divisions, poules et tours !');
 $this->RedirectToAdminTab('calendrier');

@@ -70,7 +70,7 @@ $(document).ready(function(){
 	<td>{$entry->date_debut|date_format:"%d-%m-%Y"}->{$entry->date_fin|date_format:"%d-%m-%Y"}</td>
 	<td>{$entry->numjourn}</td>
 	<td>{$entry->tag}</td>
-	{*{if $entry->date_fin < $maintenant}<td>{$entry->retrievelink}</td>{/if}*}
+	{**}{if $entry->date_fin < $maintenant}<td>{$entry->retrievelink}</td>{/if}{**}
     <td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>
 	</tr>

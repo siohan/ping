@@ -716,6 +716,7 @@ $this->SetPreference('vicNormPlus500', '0');
 $this->SetPreference('LastRecupSpid', '');
 $this->SetPreference('LastRecupFftt', '');
 $this->SetPreference('LastRecupResults', '');
+$this->SetPreference('LastRecupRencontres', '');
 #
 /*
 * Css

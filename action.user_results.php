@@ -16,7 +16,7 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 	else
 	{
 		$licence = $params['licence'];
-		
+		$parms = array();
 		//si une date est précisée alors on affiche que les résultats de cette date
 		if(isset($params['date_debut']) && $params['date_debut'] !='')
 		{
@@ -114,13 +114,13 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 			$designation = $db->ErrorMsg();
 			ping_admin_ops::ecrirejournal('','KO',$designation,'');
 		}
-		
+		$parms = array();
 		$row1 = $dbresultat->FetchRow();
 		$joueur = $row1['joueur'];
 		$smarty->assign('joueur', $joueur);
 		$result= array ();
 		$query3= "SELECT advnompre, advclaof,pointres, vd,date_event FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ?";//" AND licence = ?";//" ORDER BY date_event ASC";
-		
+		//echo $query3;
 		$parms['licence'] = $licence;
 		$parms['saison'] = $saison_courante;
 		
@@ -155,7 +155,7 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 			if($ok=='1')
 			{
 				$query3.=" AND MONTH(date_event) = ?";
-				$parms['month'] = $month;
+				$parms['date_event'] = $month;
 				$query3.=" ORDER BY date_event DESC";
 				
 			}
@@ -210,7 +210,7 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 				$this->CreateLink($id,'user_results',$returnid,$contents = 'Tous ses résultats', array('licence'=>$licence,'saison'=>$saison_courante)));
 	}//fin du else (if $licence isset)
 
-$smarty->assign('itemsfound', $this->Lang('resultfoundtext'));
+$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('ok',$ok);
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('retour',

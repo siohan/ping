@@ -30,7 +30,21 @@ $equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
-
+/*
+$query1 = "SELECT * FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif ='1'";
+$dbresult1 = $db->Execute($query1);
+$nb = $dbresult1->RecordCount();
+//echo "le nb est :".$nb;
+$query2 = "SELECT * FROM ".cms_db_prefix()."module_ping_sit_mens WHERE mois = ? AND annee = ?";
+$dbresult2 = $db->Execute($query2, array($mois_courant,$annee_courante));
+$nb2 = $dbresult2->RecordCount();
+//echo "le nb2 est :".$nb2;
+if($nb >$nb2)
+{
+	$smarty->assign('alerte',
+			$this->CreateLink($id, 'retrieve_sit_mens'));
+}
+*/
 $query = "SELECT pts.id, count(*) AS nombre,pts.mois ,j.licence, CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_sit_mens AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND j.actif = '1' AND pts.saison = ? ";//
 
 $query.=" ORDER BY j.nom ASC,pts.id ASC";
