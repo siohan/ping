@@ -6,18 +6,16 @@
 	<tr>
 		
 		<th>Equipe</th>
-		<th>Niveau</th>
-		<th>Compétition</th>
-		<th>Nom court</th>
+		<th>Classement</th>
+		
 	</tr>
  </thead>
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
 	<td>{$entry->friendlyname}</td>
-    <td>{$entry->libequipe}</td>
     <td>{$entry->clt}</td>
-    <td>{$entry->equipe}</td>
+    
 
   </tr>
 {/foreach}

@@ -8,6 +8,7 @@
 <div class="pageoverflow">
 {$formstart}
 {$record_id}
+{$methode}
 
 	<div class="pageoverflow">
     <p class="pagetext">Date début:</p>

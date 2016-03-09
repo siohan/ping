@@ -220,12 +220,10 @@ $rowarray= array ();
 				
 				//$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('type_compet'=>$row['type_compet'],'date_debut'=>$row['date_debut'],'date_fin'=>$row['date_fin']));
 			}
-			/*
 			else
 			{
-				$onerow->retrievelink= $this->CreateLink($id, 'retrieve_indivs', $returnid, 'Récupérer', array("type_compet"=>$row['type_compet'], "coefficient"=>$row['coefficient']));
+				$onerow->retrievelink= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid, 'Récupérer', array("cal"=>"all"));
 			}
-			*/
 			$onerow->editlink= $this->CreateLink($id, 'add_compet', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('record_id'=>$row['id']));
 			
 			if($this->CheckPermission('Ping Delete'))

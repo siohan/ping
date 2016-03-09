@@ -1,7 +1,7 @@
 <?php
 #############################################################
 ##                 DIVISIONS                               ##
-##   Affichage des divisions des épreuves                  ##
+##   Affichage des divisions des épreuves  individuelles   ##
 ##                                                         ##
 #############################################################
 if( !isset($gCms) ) exit;
@@ -24,13 +24,13 @@ if(isset($params['idepreuve']) && $params['idepreuve'] !='')
 	$query.=" AND tc.idepreuve = ?";
 	$parms['idepreuve'] = $params['idepreuve'];
 }
-/*
+
 if(isset($params['idorga']) && $params['idorga'] != '')
 {
 	$query.=" AND dv.idorga = ?";
 	$parms['idorga'] = $params['idorga'];
 }
-*/
+
 if(isset($params['essai']) && $params['essai'] !='0')
 {
 	$essai = $params['essai'];
@@ -86,9 +86,6 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	{
 		$onerow->uploaded= $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('not_already_downloaded'), '', '', 'systemicon');
 	}
-	
-	
-	
 	
 	//$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poules',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"indivs"=>$row['indivs']));
 	$onerow->poule= $this->CreateLink($id, 'admin_poules', $returnid, 'Accès aux poules',array("idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"idorga"=>$params['idorga']));

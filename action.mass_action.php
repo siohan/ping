@@ -202,6 +202,11 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 				$this->Redirect($id,'dater',$returnid, array("sel"=>$id_sel));
 			
 			break;
+			case "dater2" :
+				$id_sel = implode("-",$params['sel']);
+				$this->Redirect($id,'dater',$returnid, array("sel"=>$id_sel,"methode"=>"tableau"));
+			
+			break;
 			case "retrieve_div_tours" : 
 				
 				foreach( $params['sel'] as $valeur )

@@ -57,7 +57,7 @@ $(document).ready(function(){
 		<th>Date</th>
 		<th>N° Tour</th>
 		<th>Tag pour affichage</th>
-		<th colspan="2">Actions</th>
+		<th colspan="3">Actions</th>
     </tr>
  </thead>
  <tbody>
@@ -70,7 +70,7 @@ $(document).ready(function(){
 	<td>{$entry->date_debut|date_format:"%d-%m-%Y"}->{$entry->date_fin|date_format:"%d-%m-%Y"}</td>
 	<td>{$entry->numjourn}</td>
 	<td>{$entry->tag}</td>
-	{**}{if $entry->date_fin < $maintenant}<td>{$entry->retrievelink}</td>{/if}{**}
+	{**}{if $entry->date_debut < $maintenant}<td>{$entry->retrievelink}</td>{else}<td></td>{/if}{**}
     <td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>
 	</tr>

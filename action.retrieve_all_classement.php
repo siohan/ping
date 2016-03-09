@@ -1,7 +1,7 @@
 <?php
 if( !isset($gCms) ) exit;
 require_once(dirname(__FILE__).'/include/travaux.php');
-debug_display($params,'Parameters');
+//debug_display($params,'Parameters');
 // les préférences nécessaires
 $saison = $this->GetPreference('saison_en_cours');
 $phase = $this->GetPreference('phase_en_cours');

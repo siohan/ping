@@ -18,6 +18,7 @@ if( !isset($gCms) ) exit;
     		$this->RedirectToAdminTab('divisions');
     		return;
   	}
+$error = 0; //on instancie un compteur d'erreur
 //debug_display($params, 'Parameters');
 //le formulaire a t-il été soumis ?
 if(isset($params['submit']))
@@ -36,6 +37,7 @@ if(isset($params['submit']))
 		}
 		//var_dump($a);
 		$date_debut = '';
+		
 		if(isset($params['date_debut']) && $params['date_debut'] !='')
 		{
 			$date_debut = $params['date_debut'];
@@ -50,50 +52,84 @@ if(isset($params['submit']))
 		}
 		else
 		{
-			$this->SetMessage('Date(s) manquante(s)');
-			$this->Redirect($id, 'defaultadmin', $returnid='', array("active_tab"=>"divisions"));
+			$error++;
+			
+		}
+		if(isset($params['numjourn']) && $params['numjourn'] !='')
+		{
+			$numjourn = $params['numjourn'];
+		}
+		else
+		{
+			$error++;
 		}
 		
 		$i = 0;//on instancie un compteur pour rendre compte
 		
-		foreach($a as $valeur)
+		if($error == 0)
 		{
-			
-			//on va chercher les infos : idepreuve, iddivision etc..
-			$query = "SELECT * FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS tours WHERE tours.id = ? ";
-			$dbresult = $db->Execute($query, array($valeur));
-			
-			if($dbresult && $dbresult->RecordCount()>0)
+			foreach($a as $valeur)
 			{
-				//
-				$row = $dbresult->FetchRow();
-				$idepreuve = $row['idepreuve'];
-				$iddivsion = $row['iddivision'];
-				//$tableau = $row['tableau'];
-				$libelle = $row['libelle'];
-				$saison = $row['saison'];
-				$indivs = $row['indivs'];
-				//On crée le tag
-				//$service = new ping_admin_ops();
-				$tag = ping_admin_ops::create_tag($idepreuve,$indivs,$date_debut, $date_fin );
-				//on fait la requete d'insertion
-				//on va vérifier si la date est déjà ds le calendrier
-				$query1 = "SELECT saison, date_debut, date_fin,idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE saison = ? AND date_debut = ? AND idepreuve = ?";
-				$dbresult1 = $db->Execute($query1, array($saison, $date_debut, $idepreuve));
-				if($dbresult1 && $dbresult1->RecordCount()==0)
+				//on va chercher les infos : idepreuve, iddivision etc..
+				if(isset($params['methode']) && $params['methode'] == 'tableau')
 				{
-					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?)";
-					$dbresult2 = $db->Execute($query2, array($saison,$date_debut, $date_fin,$tag, $idepreuve));
+					$query = "SELECT * FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS tours WHERE tours.tableau = ? ";
 				}
-				
+				else
+				{
+					$query = "SELECT * FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS tours WHERE tours.iddivision = ? ";
+				}
+				$dbresult = $db->Execute($query, array($valeur));
+
+				if($dbresult && $dbresult->RecordCount()>0)
+				{
+					//
+					$row = $dbresult->FetchRow();
+					$idepreuve = $row['idepreuve'];
+					$iddivsion = $row['iddivision'];
+					//$tableau = $row['tableau'];
+					$libelle = $row['libelle'];
+					$saison = $row['saison'];
+					$indivs = $row['indivs'];
+					//On crée le tag
+					//$service = new ping_admin_ops();
+					$tag = ping_admin_ops::create_tag($idepreuve,$indivs,$date_debut, $date_fin );
+					//on fait la requete d'insertion
+					//on va vérifier si la date est déjà ds le calendrier
+					$query1 = "SELECT saison, date_debut, date_fin,idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE saison = ? AND date_debut = ? AND idepreuve = ?";
+					$dbresult1 = $db->Execute($query1, array($saison, $date_debut, $idepreuve));
+					if($dbresult1 && $dbresult1->RecordCount()==0)
+					{
+						$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin, numjourn,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?)";
+						$dbresult2 = $db->Execute($query2, array($saison,$date_debut, $date_fin,$numjourn,$tag, $idepreuve));
+					}
+
+				}
+				if(isset($params['methode']) && $params['methode'] == 'tableau')
+				{
+					$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE tableau = ?";
+				}
+				else
+				{
+					$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE iddivision = ?";
+				}
+
+				$dbresult2 = $db->Execute($query2, array($date_debut,$date_fin,$valeur));
+
+
 			}
-			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours  SET date_debut = ?, date_fin = ? WHERE id = ?";
-			$dbresult2 = $db->Execute($query2, array($date_debut,$date_fin,$valeur));
-			
-			
+			$this->SetMessage('Datation réalisée');
+			$this->Redirect($id,'defaultadmin', $returnid='', array("active_tab"=>"indivs"));
 		}
-		$this->SetMessage('Datation réalisée');
-		$this->Redirect($id,'defaultadmin', $returnid='', array("active_tab"=>"tours"));
+		else
+		{
+			$this->SetMessage('Date(s) et/ou tour manquant(s)');
+			$this->Redirect($id, 'defaultadmin', $returnid='', array("active_tab"=>"divisions"));
+		}
+		
+		
+		
+		
 	}
 }
 else
@@ -107,7 +143,8 @@ else
 				    $this->CreateFormStart( $id, 'dater', $returnid ) );	
 		$smarty->assign('record_id',
 				$this->CreateInputHidden($id,'sel',$sel));
-	
+		$smarty->assign('methode',
+				$this->CreateInputHidden($id,'methode','tableau'));
 	
 		$smarty->assign('date_debut',
 				$this->CreateInputDate($id, 'date_debut'));

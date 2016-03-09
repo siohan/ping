@@ -433,11 +433,11 @@ public static function retrieve_parties_fftt( $licence )
 		$var = "licence=".$licence;
 		$lien = $service->GetLink($page, $var);
 		$xml = simplexml_load_string($lien,'SimpleXMLElement', LIBXML_NOCDATA);
-		if($xml === FALSE)
+		if($xml === FALSE || !is_array($xml))
 		{
 			$array = 0;
 			$lignes = 0;
-			$message = "Service coupé"; 
+			$message = "Service coupé ou pas de résultats disponibles"; 
 			$status = 'Echec';
 			$designation.= $message;
 			$action = "mass_action";
@@ -814,7 +814,7 @@ public function retrieve_sit_mens($licence)
 				$lien = $service->GetLink($page,$var);
 				//var_dump($lien);
 				$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-				if($xml === FALSE || !is_array($xml))
+				if($xml === FALSE )
 				{
 					//le service est coupé
 					$array = 0;
@@ -1001,6 +1001,8 @@ public function retrieve_sit_mens($licence)
 		$ping = cms_utils::get_module('Ping'); 
 		$db = cmsms()->GetDb();
 		$saison = $ping->GetPreference('saison_en_cours');
+		$now = trim($db->DBTimeStamp(time()), "'");
+		$designation = '';
 		//on fait la requete
 		$query = "SELECT idepreuve, iddivision,tableau,tour FROM ".cms_db_prefix()."module_ping_div_tours WHERE id = ?";
 		$dbresult = $db->Execute($query, array($valeur));
@@ -1047,9 +1049,18 @@ public function retrieve_sit_mens($licence)
 				$club = htmlentities($value->club);
 
 				//on fait une conditionnelle pour récupérer la licence du joueur du club
-				if($club == $ping->GetPreference('nom_equipes'))
+				$nom_equipes = $ping->GetPreference('nom_equipes');
+				//$club2 = stristr($nom_equipes,$club)
+				if(stristr($nom_equipes,$club) === 'true')
 				{
+					
 					//ça match !!
+					$cool = 1;
+					//on ecrit dans le journal
+					$status = 'Ok';
+					$designation.= $nom." finit à la place ".$rang;
+					$action = 'Récup classement';
+					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 				}
 				$points = htmlentities($value->points);
 
@@ -1067,12 +1078,16 @@ public function retrieve_sit_mens($licence)
 				{
 					$designation .= $db->ErrorMsg();
 				}
-
-
+				
+				
 			}
 			//la requete a fonctionné, on peut mettre le statut du tour a "uploadé"
 			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded_classement = 1 WHERE id = ?";
 			$dbresult2 = $db->Execute($query2,array($valeur));
+			$designation.= 'récup tableau '.$tableau.' du tour '.$tour.' de l\'épreuve '.$idepreuve;
+			$status = 'OK';
+			$action = 'div_classement';
+			ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 		}
 		
 		

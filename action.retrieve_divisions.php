@@ -77,8 +77,8 @@ else
 	/**/
 	if(isset($params['type']) && $params['type'] !='')
 	{
-		$type = $params['type'];
-		if($type == 'E')
+		$type2 = $params['type'];
+		if($type2 == 'E')
 		{
 			$indivs = 0;
 		}
@@ -89,7 +89,7 @@ else
 	}
 	else
 	{
-		$type == 'E';
+		$type2 = 'I';
 	}
 	if(isset($params['idepreuve']) && $params['idepreuve'] !='')
 	{
@@ -100,7 +100,7 @@ else
 		$error++;
 	}
 	$service = new retrieve_ops();
-	$retrieve_divisions = $service->retrieve_divisions($idorga,$idepreuve,$type='');
+	$retrieve_divisions = $service->retrieve_divisions($idorga,$idepreuve,$type=$type2);
 	$this->Redirect($id, 'admin_divisions_tab',$returnid, array("idepreuve"=>$idepreuve,"idorga"=>$idorga,"essai"=>"1"));
 	
 }

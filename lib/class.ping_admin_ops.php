@@ -385,27 +385,7 @@ public static function supp_spid($record_id)
 
   }
 
-public static function masculin($licence)
-  {
-    $db = cmsms()->GetDb();
 
-    //Now remove the entry
-    $query = "UPDATE ".cms_db_prefix()."module_ping_joueurs SET sexe ='M'  WHERE licence = ?";
-    $db->Execute($query, array($licence));
-
-
-  }
-
-public static function feminin($licence)
-  {
-    	$db = cmsms()->GetDb();
-   	
-    //Now remove the entry
-    $query = "UPDATE ".cms_db_prefix()."module_ping_joueurs SET sexe ='F'  WHERE licence = ?";
-    $db->Execute($query, array($licence));
-
-
-  }
 public static function compte_spid($licence)
 {
 	global $gCms;
@@ -568,7 +548,7 @@ public static function sit_mens($licence)
 	return $retour_sit_mens;
 //end of function
 }
-
+/*
 public static function array_code_compet($idepreuve,$date_debut,$date_fin)
 {
 	global $gCms;
@@ -602,8 +582,9 @@ public static function array_code_compet($idepreuve,$date_debut,$date_fin)
 		return $lic;
 	}
 //end of function
-}
 
+}
+*/
 public static function delete_teamresult($record_id)
   {
     $db = cmsms()->GetDb();
