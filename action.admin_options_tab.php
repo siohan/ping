@@ -99,8 +99,8 @@ $smarty->assign('input_fftt_interval',
 $smarty->assign('input_fftt_nombres',
 		$this->CreateInputDropdown($id,'fftt_nombres',$valeurs_nombres_fftt,-1,$this->GetPreference('fftt_nombres')));
 /*
-$smarty->assign('sitmens_ok_only',
-		$this->CreateInputDropdown($id,'sitmens_ok_only', $items,-1,$this->GetPreference('sitmens_ok_only'),50,255));
+$smarty->assign('jour_recup',
+		$this->CreateInputText($id,'jour_recup', $items,-1,$this->GetPreference('sitmens_ok_only'),50,255));
 */
 $smarty->assign('submit', $this->CreateInputSubmit ($id, 'optionssubmitbutton', $this->Lang('submit')));
 

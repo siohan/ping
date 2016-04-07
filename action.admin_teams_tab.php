@@ -16,6 +16,8 @@ $smarty->assign('retrieve_all',
 		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les calendriers', array("cal"=>"cal")));
 $smarty->assign('retrieve_calendriers',
 		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les dernières rencontres', array("cal"=>"all")));
+$smarty->assign('classements',
+		$this->CreateLink($id, 'getPouleClassement', $returnid,$contents='Récupérer tous les classements'));
 $phase = (isset($params['phase']))?$params['phase']:$phase_courante;
 $smarty->assign('phase2',
 		$this->CreateLink($id,'defaultadmin',$returnid, 'Phase 2', array("active_tab"=>"equipes","phase"=>"2") ));
@@ -53,7 +55,9 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 	$podiumImage = "<img title=\"Récupérer le classement de la poule\" src=\"{$module_dir}/images/podium.jpg\" class=\"systemicon\" width=\"16\" height =\"12\" alt=\"Récupérer le classement\" />";
 	//echo $query;
 	$rowarray= array();
+	$rowarray2= array();
 	$rowclass = '';
+	$array_chpt = array();
 	
 		if ($dbresult && $dbresult->RecordCount() > 0)
   		{
@@ -61,6 +65,7 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
       			{
 				$onerow= new StdClass();
 				$onerow->rowclass= $rowclass;
+
 				$idepreuve = $row['idepreuve'];
 				$onerow->eq_id= $row['eq_id'];
 				$onerow->idpoule = $row['idpoule'];
@@ -82,6 +87,16 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 					//$calendrierimage = $themeObject->DisplayImage('icons/system/calendrier.jpg', $this->Lang('download_poule_results'),'','','systemicon');
 					$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres',$returnid,$calendarImage, array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv'], 'idepreuve'=>$row['idepreuve']));
 					$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,$podiumImage, array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['eq_id'], "idepreuve"=>$row['idepreuve']));
+					
+					$onerow2= new StdClass();
+					$onerow2->rowclass= $rowclass;
+					
+					if(!in_array($idepreuve, $array_chpt))
+					
+					{
+						array_push($array_chpt,$idepreuve);
+						$onerow2->links_chpt = $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer le calendriers', array("cal"=>"cal", "idepreuve"=>$idepreuve));
+					}
 				}
 				else
 				{
@@ -95,13 +110,27 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				
 				($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 				$rowarray[]= $onerow;
+				$rowarray2[]= $onerow2;
       			}
+			//$tab_chpt = array_unique($array_chpt);
+			print_r($array_chpt);
+			//var_dump($array_chpt);
   		}
 
 		$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('items', $rowarray);
-		
+		$smarty->assign('donnees', $rowarray2);
+		$smarty->assign('tab_chpt', $tab_chpt);
+		foreach($tab_chpt as $value)
+		{
+			$smarty->assign('retrieve_all_'.$value,
+					$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les calendriers', array("cal"=>"cal", "idepreuve"=>$value)));
+		}
+		/*
+		$smarty->assign('retrieve_all',
+				$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les calendriers', array("cal"=>"cal")));
+		*/
 		$smarty->assign('retrieve_teams',
 			$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes masculines", array('type'=>'M')));
 		$smarty->assign('retrieve_teams_fem',

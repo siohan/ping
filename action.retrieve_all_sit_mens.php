@@ -25,6 +25,7 @@ $mois_sm = $mois_francais["$mois_reel"];
 $mois_sit_mens = $mois_sm." ".$annee_courante;
 
 $message = '';
+
 //je sélectionne toutes les licences du mois en question donc déjà renseignées
 // afin de ne récupérer que celles manquantes
 $query = "SELECT licence FROM ".cms_db_prefix()."module_ping_sit_mens WHERE mois = ? AND annee = ? AND licence IS NOT NULL";
@@ -46,13 +47,15 @@ for($i=0;$i<=$lignes;$i++)
 //var_dump($licen);
 if($lignes ==0)
 {
-	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif=1";
+
+	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif=1 ";
 }
 else
 {
 	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif=1 AND licence NOT IN ($licen)";
 }
 echo $query2;
+
 $dbresult = $db->Execute($query2);
 
 if ($dbresult && $dbresult->RecordCount() > 0)
@@ -66,6 +69,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$licence2 = $row['licence'];
 			
 		$result = $service->retrieve_sit_mens("$licence2");
+		sleep(1);
 		
         }//fin du while
 

@@ -1,3 +1,60 @@
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){
+  $('#selectall').click(function(){
+    var v = $(this).attr('checked');
+    if( v == 'checked' ) {
+      $('.select').attr('checked','checked');
+    } else {
+      $('.select').removeAttr('checked');
+    }
+  });
+  $('.select').click(function(){
+    $('#selectall').removeAttr('checked');
+  });
+  $('#toggle_filter2').click(function(){
+    $('#filter_form2').dialog({
+      modal: true,
+      width: 'auto',
+    });
+  });
+  {if isset($tablesorter)}
+  if( typeof($.tablesorter) != 'undefined' ) $('#articlelist').tablesorter({ sortList:{$tablesorter} });
+  {/if}
+});
+//]]>
+</script>
+<div id="filter_form2" style="display: none;" title="Actions globales">
+  <table>
+    <tr>
+      <td style="vertical-align: top;">
+        
+		<div class="pageoverflow">
+          	<h3>Calendriers</h3>
+			<ul>
+			{foreach from=$donnees item=donnee}
+				<li>{$donnee->links_chpt}</li>
+				
+			{/foreach}	
+			</ul>
+        </div>
+		
+		
+		
+		
+        
+      </td>
+
+    </tr>
+  </table>
+ 
+</div>
+
+
+<div class="pageoptions">
+  <a id="toggle_filter2">Actions globales</a>
+</div>
+
 {*
 	{if isset($formstart) }
 <fieldset>
@@ -19,7 +76,7 @@
 *}
 {*$classement*}
 <div class="pageoptions<"><p><span class="pageoptions warning">Récupérez les {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres} </span></p></div>
-<div class="pageoptions<"><p><span class="pageoptions warning">{$retrieve_all} | {$retrieve_calendriers}</span></p></div>
+<div class="pageoptions<"><p><span class="pageoptions warning">{$retrieve_all} | {$retrieve_calendriers} | {$classements}</span></p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <p class="pageoptions">{$phase1} | {$phase2}</p>

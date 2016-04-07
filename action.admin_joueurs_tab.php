@@ -17,6 +17,7 @@ $idAppli = $this->GetPreference('idAppli');
 $motdepasse = $this->GetPreference('motdepasse');
 
 $rowclass='';
+/*
 if($idAppli =='')
 {
 	$error_compte++;
@@ -25,7 +26,8 @@ if($motdepasse == '')
 {
 	$error_compte++;
 }
-
+*/
+$error_compte =1;
 //echo $error_compte;
 $error_config = 0;
 $club_number = $this->GetPreference('club_number');

@@ -199,7 +199,7 @@ $smarty->assign('items', $rowarray);
 $smarty->assign('addallsitmenslink',
 		$this->CreateLink($id,'add_all_sit_mens', $returnid, 'Ajouter manuellement les situations mensuelles'));
 $smarty->assign('retrieveallsitmens',
-		$this->CreateLink($id,'retrieve_all_sit_mens', $returnid, 'Ajouter automatiquement les situations mensuelles'));
+		$this->CreateLink($id,'retrieve_all_sit_mens', $returnid, $contents='Ajouter automatiquement les situations mensuelles','' ,$warn_message='Attention, ce script peut-être long Merci de patienter'));
 $smarty->assign('missing_sit_mens', 
 		$this->CreateLink($id, 'missing_sit_mens', $returnid, 'Les situations manquantes'));
 $smarty->assign('form2start',

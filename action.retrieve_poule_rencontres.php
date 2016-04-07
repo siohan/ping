@@ -9,6 +9,7 @@ $message = '';//le message de sortie
 $error = 0; //on instancie le compteur d'erreurs
 $saison = $this->GetPreference('saison_en_cours');
 $phase = $this->GetPreference('phase_en_cours');
+$designation= '';
 if(isset($params['cal']) && $params['cal'] = 'all')
 {
 	//on récupère le calendrier
@@ -21,12 +22,13 @@ if(isset($params['record_id']) && $params['record_id'] != '')
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
 		$row = $dbresult->FetchRow();
-		$idepreuve = $row['idepreuve'];
+		$idepreuve2 = $row['idepreuve'];
 		$iddiv = $row['iddiv'];
 		$idpoule = $row['idpoule'];
+		$cal =0;
 		//on envoie vres le fichier
 		$service = new retrieve_ops();
-		$retrieve = $service->retrieve_poule_rencontres($iddiv,$idpoule);
+		$retrieve = $service->retrieve_poule_rencontres($iddiv,$idpoule,$cal,$idepreuve2);
 		
 		$this->SetMessage("$designation");
 		$this->Redirect($id, 'admin_poules_tab3',$returnid,array("record_id"=>$record_id));
@@ -69,7 +71,7 @@ elseif(isset($params['cal']) && $params['cal'] = 'all')
 			$iddiv = $row['iddiv'];
 			$idpoule = $row['idpoule'];
 			$service = new retrieve_ops();
-			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$cal);
+			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$cal,$idepreuve);
 			
 		}
 	}

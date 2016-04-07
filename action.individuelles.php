@@ -76,12 +76,14 @@ $lignes = $result1->RecordCount();
 	{
 		$rowclass= 'row1';
 		$rowarray= array ();
+		$parms = array();
 		
 		while($row1 = $result1->FetchRow())
 		{
 			//on récupère les résultats
 			$i++;
 			$date_debut = $row1['date_debut'];
+			$parms['date_debut'] = $date_debut;
 			$date_fin = $row1['date_fin'];
 			$numjourn = $row1['numjourn'];
 			$name = $row1['name'];
@@ -100,15 +102,21 @@ $lignes = $result1->RecordCount();
 			
 				//on est dans la FFTT
 				//$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_divisions AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision AND dv.idepreuve = ? AND cla.club LIKE ? ";//AND dv.date_debut = ?";
-				$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_div_tours AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision AND dv.tableau = cla.tableau AND dv.idepreuve = ? AND cla.club LIKE ? AND dv.date_debut = ?";
+				$query2 = "SELECT cla.idepreuve,cla.iddivision,dv.libelle,cla.tableau,cla.tour, cla.rang,cla.nom, cla.points  FROM ".cms_db_prefix()."module_ping_div_classement AS cla , ".cms_db_prefix()."module_ping_div_tours AS dv WHERE dv.idepreuve = cla.idepreuve AND dv.iddivision = cla.iddivision  AND dv.tableau = cla.tableau AND dv.date_debut = ? AND dv.idepreuve = ? AND cla.club LIKE ? ";
 				//$query2 = "SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence, SUM(vd) AS vic, count(vd) AS sur, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties AS sp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE sp.licence = j.licence AND sp.date_event BETWEEN ? AND ?";
 				$parms['idepreuve'] = $idepreuve2;
-				$club = "%".$nom_equipes."%";		
+				$club = "%".$nom_equipes."%";
+				$parms['club'] = $club;		
 				//$parms['club'] = '%'.$nom_equipes.'%';
-				
+				if(isset($params['tableau']) && $params['tableau'] != '')
+				{
+					$tableau = $params['tableau'];
+					$query2.= "AND cla.tableau = ? ";
+					$parms['tableau'] = $tableau;
+				}
 				
 				//echo $query2;
-				$result2 = $db->Execute($query2,array($idepreuve2,$club,$date_debut));
+				$result2 = $db->Execute($query2,$parms);//array($idepreuve2,$club,$date_debut));
 				$query2.=" ORDER BY dv.libelle,cla.tour ASC";
 				//echo $query2;
 				$lignes2 = $result2->RecordCount();	

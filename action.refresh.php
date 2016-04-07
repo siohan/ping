@@ -53,9 +53,7 @@ $i = 0;//on instancie un compteur pour connaitre le nb de tableau rafraichit
 		
 	}
 
-$message = "MAJ de classements de poules";
-$this->SetMessage($message);
-$this->Redirect($id,'admin_poules',$returnid, array("idepreuve"=>$idepreuve));
+	
 
 
 

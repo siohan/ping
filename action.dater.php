@@ -98,10 +98,33 @@ if(isset($params['submit']))
 					//on va vérifier si la date est déjà ds le calendrier
 					$query1 = "SELECT saison, date_debut, date_fin,idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE saison = ? AND date_debut = ? AND idepreuve = ?";
 					$dbresult1 = $db->Execute($query1, array($saison, $date_debut, $idepreuve));
-					if($dbresult1 && $dbresult1->RecordCount()==0)
+					if($dbresult1->RecordCount()==0)
 					{
-						$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin, numjourn,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?)";
+						$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin, numjourn,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?, ?)";
 						$dbresult2 = $db->Execute($query2, array($saison,$date_debut, $date_fin,$numjourn,$tag, $idepreuve));
+						// on insert aussi dans CGCalendar ?
+						// Chiche !
+						$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+						$dbresult = $db->Execute($query, array($idepreuve));
+						$row = $dbresult->FetchRow();
+						$name = $row['name'];
+						// on récupère id ds différentes tables
+						//Tout d'abord celui de la table events
+						$query1 = "SELECT id FROM ".cms_db_prefix()."module_cgcalendar_events_seq";
+						$dbresult1 = $db->Execute($query1);
+						$row = $dbresult1->FetchRow();
+						$id_event = $row['id']+1;
+						$query_cal = "INSERT INTO demo_module_cgcalendar_events
+						           (event_id, event_title, event_details, event_date_start, event_date_end)
+						            VALUES (?, ?, ? , ?, ?)";
+						$dbresult_cal = $db->Execute($query_cal, array($id_event,$name,$tag,$date_debut,$date_fin));
+						//on insère aussi l'événement dans une categorie par défaut la générale donc 1
+						$cat = 1;
+						$query_cat = "INSERT INTO ".cms_db_prefix()."module_cgcalendar_events_to_categories (category_id, event_id) VALUES (?,?)";
+						$dbresult_cat = $db->Execute($query_cat, array($cat,$id_event));
+						//on modifie le events_seq
+						$query = "UPDATE ".cms_db_prefix()."module_cgcalendar_events_seq SET id = id+1";
+						$dbresult = $db->Execute($query);
 					}
 
 				}

@@ -46,36 +46,42 @@ class PingRecupSpidTask implements CmsRegularTask
       }
 
       $ping = cms_utils::get_module('Ping');
-      
-      // Ce qu'il y a à exécuter ici
-	$db = $ping->GetDb();
-	$saison_courante = $ping->GetPreference('saison_en_cours');
-	$now = trim($db->DBTimeStamp(time()), "'");
-	$query = "SELECT j.licence FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' ";
-	$interval = $ping->GetPreference('spid_interval');
-	$query.=" AND maj_spid < NOW()-INTERVAL ".$interval." DAY AND saison = ? ORDER BY maj_spid DESC ";
-	$limit = $ping->GetPreference('spid_nombres');
-	$query.= "LIMIT ".$limit;
-	//$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1' LIMIT 2";
-	$dbresult = $db->Execute($query,array($saison_courante));
-	if($dbresult && $dbresult->RecordCount() > 0)
+      //on vérifie qu'on peut récupérer les résultats
+      	if(date('j') >= $ping->GetPreference('jour_sit_mens'))
 	{
+		// Ce qu'il y a à exécuter ici
+			$db = $ping->GetDb();
+			$saison_courante = $ping->GetPreference('saison_en_cours');
+			$now = trim($db->DBTimeStamp(time()), "'");
+			$query = "SELECT j.licence FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' AND saison = ? ";
+			$interval = $ping->GetPreference('spid_interval');
+			$query.=" AND maj_spid < NOW()-INTERVAL ".$interval." DAY ";
+			$query.=" OR maj_spid = '000-00-00' ";
+			$query.=" ORDER BY maj_spid DESC ";
+			$limit = $ping->GetPreference('spid_nombres');
+			$query.= "LIMIT ".$limit;
+			//$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1' LIMIT 2";
+			$dbresult = $db->Execute($query,array($saison_courante));
+			if($dbresult && $dbresult->RecordCount() > 0)
+			{
 
-		//on instancie la classe et on va commencer à boucler
-		$service = new retrieve_ops();
+				//on instancie la classe et on va commencer à boucler
+				$service = new retrieve_ops();
 
-		while ($row= $dbresult->FetchRow())
-		{
-			$licence = $row['licence'];		
-			//$player = $row['player'];
-
-
-			$retrieve_ops = $service->retrieve_parties_spid($licence);
+				while ($row= $dbresult->FetchRow())
+				{
+					$licence = $row['licence'];		
+					//$player = $row['player'];
 
 
-		}//fin du while
+					$retrieve_ops = $service->retrieve_parties_spid($licence);
+					sleep(1);
 
+				}//fin du while
+
+			}
 	}
+      
 	
 //echo "coucou";
       

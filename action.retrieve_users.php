@@ -127,12 +127,43 @@ else
 					$dbresultat = $db->Execute($query,array($licence,$nom, $prenom,$actif, $sexe, $type, $certif, $validation, $echelon,$place,$point, $cat));
 					$i++;
 
-					if(!$dbresultat)
+					if($dbresultat)
 					{
-						$designation.= $db->ErrorMsg();
-					}
-					else
-					{
+						
+						//on le pousse dans la table des récupération
+						$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ? AND saison = ?";
+						$dbresult = $db->Execute($query, array($licence, $saison));
+						$count = $dbresult->RecordCount();
+						if($count==0)//on est ok , pas d'enregistrement correspondant
+						{
+							//on fait la totale en récupérant toutes les données ?
+							//où on laisse l'admin le faire ?
+							//pour l'heure on fait le mini
+							$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens,fftt,maj_fftt,spid,maj_spid,maj_total,spid_total) VALUES('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							$dbresult2 = $db->Execute($query2, array($saison,$now,$licence,'Janvier 2000',0,0,0,0,0,0));
+
+							//on teste la requete
+							if(!$dbresult2)
+							{
+								//une erreur ? laquelle ?
+								$message = $db->ErrorMsg();
+								$status = 'Pb Joueur poussé';
+								$action = 'push_player';
+								ping_admin_ops::ecrirejournal($now,$status,$message,$action);
+								
+
+							}
+							else //tout s'est bien passé
+							{
+								//on écrit dans le journal
+								$status = 'Joueur poussé';
+								$designation = 'joueur poussé : '.$licence;
+								$action = 'push_player';
+								ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
+								
+							}
+
+						}
 						//on écrit dans le journal
 						$status = 'Ok';
 						$message = "Inclusion de ".$nom." ".$prenom;

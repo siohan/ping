@@ -46,12 +46,12 @@
 		<p class="pagetext">Afficher les résultats de mes équipes uniquement</p>
 		<p class="pageinput">{$input_affiche_club_uniquement}</p>
 	</div>
-	<!--
+	
 	<div class="pageoverflow">
-		<p class="pagetext">Récupération si situation mensuelle à jour ?</p>
-		<p class="pageinput">{$sitmens_ok_only}</p>
+		<p class="pagetext">Récupération du Spid le x jour du mois</p>
+		<p class="pageinput">{$jour_sit_mens}</p>
 	</div>
-	-->
+
 	</fieldset>
 	<fieldset>
 		<legend>Scripts automatiques</legend>

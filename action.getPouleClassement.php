@@ -5,98 +5,56 @@ $db =& $this->GetDb();
 //on vérifie les permissions d'abord
 if(! $this->CheckPermission('Ping Use')) exit;
 require_once(dirname(__FILE__).'/include/prefs.php');
+$saison = $this->GetPreference('saison_en_cours');
+$phase = $this->GetPreference('phase_en_cours');
 $error = 0;
 $designation = '';
-$full = '';
+$full = 0;//variable pour récupérer l'ensemble des résultats ou une seule, par défaut 0 cad toutes
 $record_id = '';
 $lignes = 0;
+
+//on fait une requete générale et on affine éventuellement
+$query = "SELECT iddiv, idpoule, id as id_equipe FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? ";//AND phase = ?";
+$parms['saison'] = $saison;
+//$parms['phase']  = $phase;
+
 if(isset($params['record_id']) && $params['record_id'] !='')
 {
 	$record_id = $params['record_id'];
-	$full = 0;
-}
-$saison = $this->GetPreference('saison_en_cours');
-//on fait une requete générale et on affine éventuellement
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_equipes WHERE  saison = ?";
-$parms['saison'] = $saison;
-if($full == 0)
-{
-	//on récupère ts les classements
 	$query.=" AND id = ?";
 	$parms['id'] = $record_id;
+	$full = 1;
 }
+
 $dbresult = $db->Execute($query, $parms);
 
 //bon tt va bien, tt est Ok
 //on fait la boucle
 if($dbresult && $dbresult->RecordCount()>0)
 {
-	while($row = $dbresult->FetchRow())
+	while( $dbresult && $row = $dbresult->FetchRow())
 	{
 		$iddiv = $row['iddiv'];
 		$idpoule = $row['idpoule'];
-		//$idequipe = $row['id']
-		$service = new Servicen();
-		$page = 'xml_result_equ';
-		$var = "action=classement&auto=1&D1=".$iddiv."&cx_poule=".$idpoule;
-		$lien = $service->GetLink($page, $var);
-		$xml = simplexml_load_string($lien,'SimpleXMLElement', LIBXML_NOCDATA);
-		if($xml === FALSE)
+		$id_equipe = $row['id_equipe'];		
+		$service = new retrieve_ops();
+		if($full == '0')//toutes les équipes sont sélectionnées
 		{
-			$this->SetMessage("Le service est coupé");
-			$this->RedirectToAdminTab('equipes');
+			$retrieve = $service->retrieve_all_classements($iddiv,$idpoule,$record_id=$id_equipe);
+			sleep(1);
 		}
 		else
 		{
-			$array = json_decode(json_encode((array)$xml), TRUE);
-			$lignes = count($array['classement']);
+			$retrieve = $service->retrieve_all_classements($iddiv,$idpoule,$record_id=$params['record_id']);
 		}
-		//var_dump($xml);//$result = $service->getPouleClassement($iddiv, $idpoule);
-		//var_dump($result);
-
-		//on vérifie que le resultat est bien un array
-
-		//tt va bien, on continue
-		//on supprime tt ce qui était ds la bdd pour cette poule
-		if($lignes > 0)
-		{
-			$query = "DELETE FROM ".cms_db_prefix()."module_ping_classement WHERE iddiv = ? AND idpoule= ? AND idequipe = ? AND saison = ?";
-			$dbresult = $db->Execute($query, array($iddiv, $idpoule, $record_id,$saison_courante));
-			$i=0;//on initialise un compteur 
-			//on récupère le résultat et on fait le foreach
-			foreach($xml as $cle =>$tab)
-			{
-				$poule = (isset($tab->poule)?"$tab->poule":"");
-				$clt = (isset($tab->clt)?"$tab->clt":"");
-				$equipe = (isset($tab->equipe)?"$tab->equipe":"");
-				$joue = (isset($tab->joue)?"$tab->joue":"");
-				$pts = (isset($tab->pts)?"$tab->pts":"");
-
-				$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_classement (id,idequipe, saison, iddiv, idpoule, poule, clt, equipe, joue, pts) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-				//echo $query2;
-				$dbresultat = $db->Execute($query2, array($record_id,$saison_courante, $iddiv, $idpoule,$poule, $clt, $equipe, $joue,$pts));
-
-				if(!$dbresultat)
-				{
-					$designation.= $db->ErrorMsg();
-					$status = 'Ko';
-
-				}
-				else
-				{
-					$designation.="Récupération du classement de la poule : ".$poule;
-					$status = "Ok";
-				}
-
-			}
-			$action = 'getPouleclassement';
-			$this->SetMessage("$designation");
-			ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
-			$this->SetMessage("$designation");
-			$this->Redirect($id, 'admin_poules_tab3',$returnid, array("record_id"=>$record_id));
-		}
+		//$idequipe = $row['id']
 		
 	}
+	$this->RedirectToAdminTab('equipes');
+}
+else
+{
+	echo "Pas de résultats ou requete incorrecte";
 }
 
 

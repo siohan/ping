@@ -1,4 +1,4 @@
-{debug}
+{*debug*}
 {if $itemcount > 0}
 {*<p class="pageoptions">{$phase1} | {$phase2}</p>*}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -15,8 +15,6 @@
   <tr class="{$entry->rowclass}">
 	<td>{$entry->friendlyname}</td>
     <td>{$entry->clt}</td>
-    
-
   </tr>
 {/foreach}
  </tbody>

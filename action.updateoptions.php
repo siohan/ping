@@ -18,7 +18,7 @@ $this->SetPreference('dep', $params['dep']);
 //pour la version 0.1 beta2 on proposera de déduire la ligue et le département auxquels le club appartient
 //et on les mettra dans les préférences à créer également
 
-
+$this->SetPreference('jour_sit_mens', $params['jour_sit_mens']);
 $this->SetPreference('phase_en_cours', $params['phase_en_cours']);
 $this->SetPreference('saison_en_cours', $params['saison_en_cours']);
 $this->SetPreference('nom_equipes', strtoupper($params['nom_equipes']));
