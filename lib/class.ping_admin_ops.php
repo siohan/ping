@@ -399,6 +399,19 @@ public static function compte_spid($licence)
 	return $spid;
 
 }
+public static function compte_spid_errors($licence)
+{
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$ping = cms_utils::get_module('Ping');
+	$saison = $ping->GetPreference('saison_en_cours');
+	$query = "SELECT count(*) AS spid_errors FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND saison = ? AND statut = 0";
+	$dbresult = $db->Execute($query, array($licence,$saison));
+	$row = $dbresult->FetchRow();
+	$spid_errors = $row['spid_errors'];
+	return $spid_errors;
+
+}
 ##
 public static function compte_fftt($licence)
 {
@@ -513,7 +526,18 @@ public static function get_sit_mens($licence, $mois_event, $saison)
 		if ($dbresult && $dbresult->RecordCount() == 0)
 		{
 			//$designation.="Ecart non calculé";
+			//si on est dans le mois actuel et l' accès est libre, alors on va chercher
+			$mois_courant = date('n');
+			$jour_courant = date('j');
+			if($mois_courant == $mois_event && $jour_courant >= $ping->GetPreference('jour_sit_mens'))
+			{
+				$retrieve = new retrieve_ops();
+				$retour_sit_mens = $retrieve->retrieve_sit_mens($licence);
+			}
+			
 			$retour_sit_mens = 0;
+			
+			
 		}
 		else
 		{

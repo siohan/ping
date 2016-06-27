@@ -84,7 +84,19 @@ $designation = '';
 
 			if ($coefficient !=$coeff)
 			{
-					$designation.="Le coefficient et l'épreuve ne correspondent pas !";
+					//on vérifie si le coeff est différent de 0 ds la bdd des compétitions
+					if($coefficient == '' && $coeff != '')
+					{
+						//alors on peut mettre le coeff à jour en bdd
+						$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET coefficient = ? WHERE name = ?";
+						$dbresult = $db->Execute($query, array($coeff, $epreuve));
+						$designation.= "Coefficient mis à jour";
+					}
+					else
+					{
+						$designation.="Le coefficient et l'épreuve ne correspondent pas !";
+					}
+					
 			}
 		//on fait les calculs nécessaires
 
@@ -104,7 +116,7 @@ $designation = '';
 
 			}
 			
-			$query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET nom = ?, numjourn = ?, classement = ?, victoire = ?, ecart = ?, coeff = ?, pointres = ? WHERE id = ?";
+			$query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET nom = ?, numjourn = ?, classement = ?, victoire = ?, ecart = ?, coeff = ?, pointres = ?, statut = 1 WHERE id = ?";
 				
 			
 			$dbresult = $db->Execute($query, array($nom, $numjourn, $classement, $victoire, $ecart, $coeff,$pointres, $record_id));

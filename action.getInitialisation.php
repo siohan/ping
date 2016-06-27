@@ -17,6 +17,11 @@ $stall= 1; //on est dans l'installation
 	//step=1 Installation du compte et test de la connexion FFTT
 	//step=2 On récupère le numéro du club, on déduit la ligue, la zone et le comité ? Oui !
 	
+$zone = $this->GetPreference('zone');
+$ligue = $this->GetPreference('ligue');
+$dep = $this->GetPreference('dep');
+	
+		
 if(isset($params['step']) && $params['step'] != '')
 {
 	$step = $params['step'];
@@ -55,10 +60,26 @@ switch($step)
 	case "2" : 
 		//on va récupérer les épreuves des différentes ligues, zones et comités
 		//on prend donc les préférences obtenues précédemment
-		$zone = $this->GetPreference('zone');
-		$ligue = $this->GetPreference('ligue');
-		$dep = $this->GetPreference('dep');
-		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de zone",array("idorga"=>$zone,"stall"=>"1") ));
+		
+		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de zone",array("idorga"=>$zone,"stall"=>"1","step"=>"2") ));
+		
+		
+	
+	break;
+	case "3" : 
+		//on va récupérer les épreuves des différentes ligues, zones et comités
+		//on prend donc les préférences obtenues précédemment
+		
+		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de ligue",array("idorga"=>$ligue,"stall"=>"1","step"=>"3") ));
+		
+		
+	
+	break;
+	case "4" : 
+		//on va récupérer les épreuves des différentes ligues, zones et comités
+		//on prend donc les préférences obtenues précédemment
+		
+		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de département",array("idorga"=>$dep,"stall"=>"1","step"=>"4") ));
 		
 		
 	

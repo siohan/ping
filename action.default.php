@@ -87,7 +87,7 @@ $dbresult = $db->Execute($query);
 					else{
 						$equb= $row2['equb'];
 					}
-					$details= $this->CreateLink($id, 'retrieve_details_rencontres', $returnid, 'Détails', array('record_id'=>$row2['id'], 'template'=>'1'));
+					$details= $this->CreateLink($id, 'details', $returnid, 'Détails', array('record_id'=>$row2['id'], 'template'=>'1'));
 					$contenu.="<tr>";
 					//$contenu.="<td>$id</td>";
 					$contenu.="<td>$equa</td>";

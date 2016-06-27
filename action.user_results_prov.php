@@ -41,7 +41,7 @@ $affiche = 1;
 		}
 		
 		$rowarray1 = array();
-		$query = "SELECT SUM(victoire) AS vic, count(victoire) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
+		$query = "SELECT SUM(victoire) AS vic, count(victoire) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ? AND statut = '1'";
 		//qqs paramètres
 		$parms['saison'] = $saison_courante;
 		$parms['licence'] = $licence;
@@ -112,7 +112,7 @@ $affiche = 1;
 		$joueur = $row1['joueur'];
 		$smarty->assign('joueur', $joueur);
 		$result= array ();
-		$query3= "SELECT nom, classement,pointres, victoire,date_event,epreuve,numjourn FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";//" ORDER BY date_event ASC";
+		$query3= "SELECT nom, classement,pointres, victoire,date_event,epreuve,numjourn FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ? AND statut = 1";//" ORDER BY date_event ASC";
 		$parms['licence'] = $licence;
 		$parms['saison'] = $saison_courante;
 		if($affiche =='1')

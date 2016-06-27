@@ -113,7 +113,7 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				$rowarray2[]= $onerow2;
       			}
 			//$tab_chpt = array_unique($array_chpt);
-			print_r($array_chpt);
+			//print_r($array_chpt);
 			//var_dump($array_chpt);
   		}
 

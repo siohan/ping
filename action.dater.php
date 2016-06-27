@@ -102,14 +102,21 @@ if(isset($params['submit']))
 					{
 						$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id, saison, date_debut, date_fin, numjourn,tag, idepreuve ) VALUES ('', ?, ?, ? ,?, ?, ?)";
 						$dbresult2 = $db->Execute($query2, array($saison,$date_debut, $date_fin,$numjourn,$tag, $idepreuve));
+						
+						
+						
+						$service = new retrieve_ops();
 						// on insert aussi dans CGCalendar ?
 						// Chiche !
 						$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
 						$dbresult = $db->Execute($query, array($idepreuve));
 						$row = $dbresult->FetchRow();
 						$name = $row['name'];
+						
+						$insert = $service->insert_cgcalendar($name,$tag,$date_debut,$date_fin);
 						// on récupère id ds différentes tables
 						//Tout d'abord celui de la table events
+						/*
 						$query1 = "SELECT id FROM ".cms_db_prefix()."module_cgcalendar_events_seq";
 						$dbresult1 = $db->Execute($query1);
 						$row = $dbresult1->FetchRow();
@@ -125,6 +132,7 @@ if(isset($params['submit']))
 						//on modifie le events_seq
 						$query = "UPDATE ".cms_db_prefix()."module_cgcalendar_events_seq SET id = id+1";
 						$dbresult = $db->Execute($query);
+						*/
 					}
 
 				}

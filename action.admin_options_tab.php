@@ -77,9 +77,11 @@ $items = array();
 $items['Oui'] = 'Oui';
 $items['Non'] = 'Non';
 $saisondropdown = array();
-
+$saisondropdown = array("2013-2014"=>"2013-2014", "2014-2015"=>"2014-2015", "2015-2016"=>"2015-2016", "2016-2017"=>"2016-2017");
+/*
 $saisondropdown['2015-2016'] = '2015-2016';
-
+$saisondropdown['2016-2017'] = '2016-2017';
+*/
 $smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
 $smarty->assign('input_nom_equipes', 
 		$this->CreateInputText($id, 'nom_equipes', $this->GetPreference('nom_equipes', ''), 50,250));

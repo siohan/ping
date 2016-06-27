@@ -74,7 +74,7 @@ class PingRecupSpidTask implements CmsRegularTask
 					//$player = $row['player'];
 
 
-					$retrieve_ops = $service->retrieve_parties_spid($licence);
+					$retrieve_ops = $service->retrieve_parties_spid2($licence);
 					sleep(1);
 
 				}//fin du while

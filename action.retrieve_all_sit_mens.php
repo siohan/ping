@@ -9,6 +9,20 @@ if (!$this->CheckPermission('Ping Use'))
 	echo $this->ShowErrors($this->Lang('needpermission'));
 	return;
 }
+
+/*
+$pong = cms_utils::get_module('CGCalendar', $version='1.15.8');
+var_dump($pong);
+if (NULL !== $pong)
+{
+	echo "Le module existe";
+}
+else
+{
+	echo "pas de chance";
+}
+*/
+/**/
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $db=$gCms->GetDb();
@@ -63,14 +77,19 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$service = new retrieve_ops();
  	//on instancie un compteur 
 	
-
+	//on incrémente un compteur dans la boucle
+	$compt = 0;
     	while ($dbresult && $row = $dbresult->FetchRow())
       	{
+		$compt++;
 		$licence2 = $row['licence'];
 			
 		$result = $service->retrieve_sit_mens("$licence2");
-		sleep(1);
 		
+		if($compt % 2 == 0)
+		{
+			sleep(1);
+		}
         }//fin du while
 
 	
@@ -78,7 +97,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
   }
 	$this->SetMessage('Consultez le journal');
 	$this->RedirectToAdminTab('situation');  
-
+/**/
 #
 # EOF
 #

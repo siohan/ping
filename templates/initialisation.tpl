@@ -18,4 +18,12 @@
 		<div class="pageoverflow">
 			<p class="pagetext success">Récupérer les compétitions de zone : {$compet_zone}</p>
 		</div>
+{elseif $step=="3"}
+		<div class="pageoverflow">
+			<p class="pagetext success">Récupérer les compétitions de ligue : {$compet_zone}</p>
+		</div>
+{elseif $step=="4"}
+		<div class="pageoverflow">
+			<p class="pagetext success">Récupérer les compétitions de département : {$compet_zone}</p>
+		</div>
 {/if}

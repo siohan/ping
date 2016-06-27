@@ -64,10 +64,46 @@ else //deuxième possibilité, rien n'est défini...
 		//unset($valeur2);
 	}
 }
-
+if(isset($params['stall']) && $params['stall']== "1")
+{
+	$stall = $params['stall'];
 	
+	if(isset($params['step']) && $params['step'] !="")
+	{
+		$step = $params['step'];
+		switch($step)
+		{
+			
+			
+			case "2" : 
+			$this->SetMessage("$designation");
+			$this->Redirect($id, 'getInitialisation', $returnid, array("stall"=>$stall, "step"=>"3"));
+			
+			case "3" : 
+			$this->SetMessage("$designation");
+			$this->Redirect($id, 'getInitialisation', $returnid, array("stall"=>$stall, "step"=>"4"));
+			
+			case "4" : 
+			$this->SetMessage("$designation");
+			$this->Redirect($id, 'getInitialisation', $returnid, array("stall"=>$stall, "step"=>"5"));
+		}
+	}
+	else
+	{
+		
+		$this->SetMessage("$designation");
+		$this->Redirect($id, 'getInitialisation', $returnid, array("stall"=>$stall, "step"=>"2"));
+	}
+	
+	
+}
+else
+{
 	$this->SetMessage("$designation");
 	$this->RedirectToAdminTab('compets');
+}
+	
+	
 
 #
 # EOF

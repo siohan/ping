@@ -90,6 +90,7 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
+	statut L,
 	saison C(255),
 	datemaj ". CMS_ADODB_DT .",
 	licence I(11),

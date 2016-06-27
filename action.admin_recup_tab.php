@@ -38,6 +38,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$fftt = ping_admin_ops::compte_fftt($licence);
 	$spid = ping_admin_ops::compte_spid($licence);
 	$sit_mens = ping_admin_ops::sit_mens($licence);
+	$spid_errors = ping_admin_ops::compte_spid_errors($licence);
 	//var_dump($sit_mens);
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
@@ -51,6 +52,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->maj_fftt= $row['maj_fftt'];
 	//$onerow->spid= $row['spid'];
 	$onerow->spid= $spid;
+	$onerow->spid_errors = $spid_errors;
 	$onerow->spid_total= $row['spid_total'];
 	$onerow->maj_spid= $row['maj_spid'];
 	//$onerow->doedit= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']), $row);

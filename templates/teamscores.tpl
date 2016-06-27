@@ -50,11 +50,11 @@ $(document).ready(function(){
  
 </div>
 
-
+{*
 <div class="pageoptions">
   <a id="toggle_filter2">Actions globales</a>
 </div>
-
+*}
 {*
 	{if isset($formstart) }
 <fieldset>
@@ -74,7 +74,7 @@ $(document).ready(function(){
 </fieldset>
 {/if}
 *}
-{*$classement*}
+{$classement}
 <div class="pageoptions<"><p><span class="pageoptions warning">Récupérez les {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres} </span></p></div>
 <div class="pageoptions<"><p><span class="pageoptions warning">{$retrieve_all} | {$retrieve_calendriers} | {$classements}</span></p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>

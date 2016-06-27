@@ -77,10 +77,10 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 			//$onerow->national = $this->CreateLink($id,'retrieve_divisions',$returnid,'N', array("idorga"=>$fede, "idepreuve"=>$row['idepreuve'],"type"=>$type));
 		}
 		
-		$onerow->natio = $this->CreateLink($id, 'admin_divisions_tab',$returnid,$contents='National', array("active_tab"=>"compets","idepreuve"=>$row['idepreuve'],"idorga"=>$fede));
-		$onerow->zone = $this->CreateLink($id, 'admin_divisions_tab',$returnid,$contents='Zone', array("idepreuve"=>$row['idepreuve'],"idorga"=>$zone));
-		$onerow->ligue = $this->CreateLink($id, 'admin_divisions_tab',$returnid,$contents='Ligue', array("idepreuve"=>$row['idepreuve'],"idorga"=>$ligue));
-		$onerow->dep = $this->CreateLink($id, 'admin_divisions_tab',$returnid,$contents='Dép', array("idepreuve"=>$row['idepreuve'],"idorga"=>$dep));
+		$onerow->natio = $this->CreateLink($id, 'retrieve_divisions',$returnid,$contents='National', array("active_tab"=>"compets","idepreuve"=>$row['idepreuve'],"idorga"=>$fede));
+		$onerow->zone = $this->CreateLink($id, 'retrieve_divisions',$returnid,$contents='Zone', array("idepreuve"=>$row['idepreuve'],"idorga"=>$zone));
+		$onerow->ligue = $this->CreateLink($id, 'retrieve_divisions',$returnid,$contents='Ligue', array("idepreuve"=>$row['idepreuve'],"idorga"=>$ligue));
+		$onerow->dep = $this->CreateLink($id, 'retrieve_divisions',$returnid,$contents='Dép', array("idepreuve"=>$row['idepreuve'],"idorga"=>$dep));
 	}
 	
 	$onerow->editlink = $this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));

@@ -57,17 +57,21 @@ if(isset($params['date_fin']) && $params['date_fin'] !='')
 	$query1.=" AND cal.date_fin = ?";
 	$parms['date_fin'] = $date_fin;
 }
-/*
-if(isset($params['tour']) && $params['tour'] !='')
+
+if(isset($params['tri']) && $params['tri'] !='')
 {
 	$parametres++;
-	$tour = $params['tour'];
+	$tri = $params['tri'];
 	
-	$query1.=" AND cal.numjourn = ?";
-	$parms['numjourn'] = $tour;
+	$query1.=" ORDER BY cal.date_debut ?";
+	$parms['tri'] = $tri;
 }
-*/
-$query1.=" ORDER BY cal.date_debut ASC";
+else //le tri n'est pas renseigné, on met descendant par défaut
+{
+	$query1.=" ORDER BY cal.date_debut DESC";
+}
+
+
 //echo $query1;
 	$result1 = $db->Execute($query1,$parms);
 $lignes = $result1->RecordCount();

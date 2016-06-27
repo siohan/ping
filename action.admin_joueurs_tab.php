@@ -27,7 +27,7 @@ if($motdepasse == '')
 	$error_compte++;
 }
 */
-$error_compte =1;
+//$error_compte =1;
 //echo $error_compte;
 $error_config = 0;
 $club_number = $this->GetPreference('club_number');

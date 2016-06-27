@@ -43,7 +43,7 @@ else
 $smarty->assign('recup_div',
 		$this->CreateLink($id, 'retrieve_divisions',$returnid, $contents="Récupérer les divisions",array("idepreuve"=>$params['idepreuve'], "idorga"=>$params['idorga'])));	
 
-
+$query.=" ORDER BY dv.libelle ASC";
 //echo $query;
 $dbresult= $db->Execute($query,$parms);
 

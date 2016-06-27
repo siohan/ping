@@ -10,7 +10,7 @@ $saison = $this->GetPreference('saison_en_cours');
 
 $db =& $this->GetDb();
 global $themeObject;
-
+$mois_courant = date('n');
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'spid')));
 //$smarty->assign('formstart',$this->CreateFormStart($id,'admin_spid_tab'));
@@ -49,7 +49,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 $result= array ();
 $parms = array();
-$query2 = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
+$query2 = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement,sp.statut, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
 
 $parms['saison'] = $saison;
 
@@ -83,6 +83,7 @@ if( isset($params['submitfilter'] ))
 }
 else
 {
+	$query2.=" AND MONTH(sp.date_event) = $mois_courant ";
 	$query2.=" ORDER BY joueur ASC, sp.date_event ASC LIMIT 100";
 }
 
@@ -101,6 +102,7 @@ if ($dbresult2 && $dbresult2->RecordCount() > 0)
       {
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
+	$onerow->statut= $row['statut'];
 	$onerow->record_id= $row['record_id'];
 	$onerow->joueur= $row['joueur'];//$this->CreateLink($id, 'view_user_results', $returnid, $row['joueur'],array('joueur'=>$row['joueur']),$row) ;
 	$onerow->date_event= $row['date_event'];
@@ -125,10 +127,7 @@ if ($dbresult2 && $dbresult2->RecordCount() > 0)
       }
   }
 /**/
-$smarty->assign('cron_spid_fftt', 
-		$this->CreateLink($id, 'cron_spid_fftt', $returnid, 'Vérif Spid <-> FFTT'));
-$smarty->assign('verif_spid_fftt', 
-		$this->CreateLink($id, 'verif_spid_fftt', $returnid, 'Vérif Spid <-> FFTT'));
+
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

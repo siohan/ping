@@ -24,7 +24,7 @@ $(document).ready(function(){
 });
 //]]>
 </script>
-{**}
+{*
 <div id="filter_form" style="display: none;" title="Alertes du module">
   <table>
     <tr>
@@ -66,7 +66,7 @@ $(document).ready(function(){
   <a id="toggle_filter">Ouvrir les alertes du module</a>
 </div>
 {/if}
-{**}
+*}
 {* les messages ci-dessous proviennent de la page action.updateoptions.php*}
 {if $msg =='Full'}
 <p>Cliquez ci-après pour finaliser le changement de saison {$delete_all}</p>

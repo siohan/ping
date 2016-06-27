@@ -20,7 +20,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.4.5'; }  
+  function GetVersion() { return '0.5'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -41,7 +41,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-	//return array('CGExtensions'=>'1.51.1');
+	return array('CGCalendar'=>'1.15.8');
   }
 
   

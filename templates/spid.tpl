@@ -49,6 +49,7 @@ $(document).ready(function(){
  <thead>
 	<tr>	
 		<th>Id</th>
+		<th>Statut</th>
 		<th>Joueur</th>
 		<th>Date</th>
 		<th>Epreuve</th>
@@ -67,6 +68,7 @@ $(document).ready(function(){
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
     <td>{$entry->record_id}</td>
+	{if $entry->statut eq "0"}<td style="background-color: red;">Erreur{else}<td>Ok{/if}</td>
 	<td>{$entry->joueur}</td>	
     <td>{$entry->date_event|date_format:"%A %e %B %Y"}</td>
     <td>{$entry->epreuve}</td>

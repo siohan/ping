@@ -40,7 +40,7 @@ if ($dbresult && $dbresult->RecordCount()>0)
 			
 			//on va maintenant calculer le total des points spid du mois en cours 
 			//pour les ajouter ensuite aux points de la dernière situation mensuelle
-			$query3 = "SELECT SUM(pointres) AS total FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND  MONTH(date_event) = ? AND saison = ?";
+			$query3 = "SELECT SUM(pointres) AS total FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND  MONTH(date_event) = ? AND saison = ? AND statut = '1'";
 			$dbresult3 = $db->Execute($query3, array($licence,$mois_courant,$saison_courante));
 			
 				if( $dbresult3->RecordCount()>0)

@@ -10,10 +10,12 @@ $error = 0; //on instancie le compteur d'erreurs
 $saison = $this->GetPreference('saison_en_cours');
 $phase = $this->GetPreference('phase_en_cours');
 $designation= '';
+/*
 if(isset($params['cal']) && $params['cal'] = 'all')
 {
 	//on récupère le calendrier
 }
+*/
 if(isset($params['record_id']) && $params['record_id'] != '')
 {
 	$record_id = $params['record_id'];
@@ -49,7 +51,7 @@ elseif(isset($params['cal']) && $params['cal'] == 'cal')
 			$iddiv = $row['iddiv'];
 			$idpoule = $row['idpoule'];
 			$service = new retrieve_ops();
-			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$cal,$idepreuve=$idepreuve);
+			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$cal,$idepreuve);
 			
 		}
 	}
@@ -72,6 +74,7 @@ elseif(isset($params['cal']) && $params['cal'] = 'all')
 			$idpoule = $row['idpoule'];
 			$service = new retrieve_ops();
 			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$cal,$idepreuve);
+			var_dump($retrieve);
 			
 		}
 	}

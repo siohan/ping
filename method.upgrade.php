@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: Ping
-# Version: 1.5, SjG
+# Version: 0.4.6
 # Method: Upgrade
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2008 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -16,13 +16,14 @@
  * API, and that everything's safe to continue:
 */ 
 if (!isset($gCms)) exit;
-$db = $this->GetDb();
 
+$db = $this->GetDb();			/* @var $db ADOConnection */
+$dict = NewDataDictionary($db); 	/* @var $dict ADODB_DataDict */
 /**
  * After this, the code is identical to the code that would otherwise be
  * wrapped in the Upgrade() method in the module body.
  */
-
+$now = trim($db->DBTimeStamp(time()), "'");
 $current_version = $oldversion;
 switch($current_version)
 {
@@ -355,6 +356,7 @@ case "0.2.4" :
 		
 		
 	}
+	break;
 case "0.2.5" :
 case "0.3" : 
 	{
@@ -504,6 +506,7 @@ case "0.3" :
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_calendrier", "idepreuve C(11)");
 		$dict->ExecuteSQLArray( $sqlarray );
 	}
+	break;
 	
 case  "0.3.0.1" :
 	{
@@ -577,6 +580,8 @@ case  "0.3.0.1" :
 		$dict->ExecuteSQLArray( $sqlarray );
 		
 	}
+	break;
+	
 	case "0.3.1" : 
 	case "0.4" :
 	case "0.4.1" :
@@ -609,7 +614,10 @@ case  "0.3.0.1" :
 		$db->execute($insert_sql, array( 1, 'Compte et test connexion', 0, 0));
 		
 	}
+	break;
+	
 	case "0.4.3" : 
+	case "0.4.4" :
 	{
 		$db = $this->GetDb();
 		//$dict->ExecuteSQLArray($sqlarray);
@@ -620,6 +628,143 @@ case  "0.3.0.1" :
 			    cms_db_prefix().'module_ping_sit_mens', 'mois, annee, licence',$idxoptarray);
 		$dict->ExecuteSQLArray($sqlarray);
 	}
+	break;
+	
+	case "0.4.5" :
+	case "0.4.6" :
+	case "0.5" :
+	{
+		$db = $this->GetDb();
+		$query = "SELECT tag,idepreuve,date_debut,date_fin FROM ".cms_db_prefix()."module_ping_calendrier";
+		$result = $db->Execute($query);
+		if($result && $result->RecordCount()>0)
+		{
+			while($row = $result->FetchRow())
+			{
+				
+				$tag = $row['tag'];
+				$idepreuve = $row['idepreuve'];
+				$date_debut = $row['date_debut'];
+				$date_fin = $row['date_fin'];
+				$query2 = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+				$dbresult2 = $db->Execute($query2, array($idepreuve));
+				$row = $dbresult2->FetchRow();
+				$name = $row['name'];
+				$service = new retrieve_ops();
+				$insert = $service->insert_cgcalendar($name,$tag,$date_debut,$date_fin);
+
+			}
+		}
+		else
+		{
+			echo 'ERROR ' . __LINE__ . ': ' . $db->ErrorMsg();
+			exit();
+		}
+		
+		$insert_sql = "INSERT INTO ".cms_db_prefix()."module_templates (module_name, template_name, content, create_date, modified_date) VALUES ( ?, ?, ?, ?, ?)";
+		$result = $db->Execute($insert_sql, array('CGCalendar','calendar_Rookie','{if !isset($smarty.get.nojs)}
+		<script type=\'text/javascript\'>{jsmin}
+		// the jsmin plugin is included with CGExtensions.
+		if( typeof jQuery != \'undefined\' ) {
+			  $(document).ready(function(){
+				    $(document).on(\'click\',\'a.calendar-nav\',function(ev){
+					      // allow paginating through months via ajax.
+					      ev.preventDefault();
+					      var url = $(this).attr(\'href\')+\'&nojs=1&showtemplate=false\';
+					      url = url.replace(/amp;/g,\'\');
+					      $(\'#cal-calendar\').load(url);
+					    });
+					
+					    if( jQuery().dialog ) {
+						      $(document).on(\'click\',\'a.calendar-daylist\',function(ev){
+							        // demonstrate viewing a day list in a popup dialog
+							        // and mixing smarty and javascript code.
+							        // uses jquery ui dialog... but could just as easily use fancybox etc.
+							        // you could add parameters here for changing the template from the default, etc, or even filter by category.
+							        ev.preventDefault();
+							        var day = new Date( $(this).data(\'day\') * 1000 );
+							        var m = day.getMonth()+1;
+							        var d = day.getDate();
+							        var y = day.getFullYear();
+							        var url = \'{module_action_link module=CGCalendar display=list day=DDDD  month=MMMM year=YYYY jsfriendly=1}&showtemplate=false\';
+							        url = url.replace(\'MMMM\',m).replace(\'DDDD\',d).replace(\'YYYY\',y);
+							        $(\'#cal-dayview\').load(url,function(data){
+								          $(\'#cal-dayview\').dialog({
+									            title: \'{$mod->Lang(\'dayview\')}\'
+									          })
+									        });
+									      });
+									    }
+									  })
+									} 
+									// jquery test
+									{/jsmin}</script&gt;
+									{/if}
+									
+									{strip}
+									{if !isset($smarty.get.nojs)}
+									<div style=\'display: none;\'>{* a simple wrapper *}
+									  <div id=\'cal-dayview\'></div>
+									</div>
+									{/if}
+									
+									<table class=\'widget_calendar\' id=\'cal-calendar\'>
+									<caption class=\'calendar-month\'>
+									   <span class=\'calendar-prev\'><a class=\'calendar-nav\' href=\'{$navigation.prev}\'>&amp;laquo;</a></span>
+									     <span class=\'calendar-lbl\'>{$date|cms_date_format:\'%b %Y\'}</span>
+									   <span class=\'calendar-next\'><a class=\'calendar-nav\' href=\'{$navigation.next}\'>&amp;raquo;</a></span>
+									</caption>
+									<tbody><tr>
+									{foreach from=$day_names item=day key=key}
+									<th class=\'cal-dayhdr cal-{$day_short_names[$key]|strtolower}\' abbr=\'{$day}\'>{$day_short_names[$key]}</th>
+									{/foreach}</tr>
+								
+									<tr>
+									{* initial empty days *}
+									{if $first_of_month_weekday_number > 0}
+									<td colspan=\'{$first_of_month_weekday_number}\'>&amp;nbsp;</td>
+									{/if}
+									
+									{* iterate over the days of this month *}
+									{assign var=weekday value=$first_of_month_weekday_number}
+									{foreach from=$days item=day key=key}
+									{if $weekday == 7}
+									  {assign var=weekday value=0}
+									</tr>\r\n<tr>
+									{/if}
+									<td {if isset($day.class)}class=\'{$day.class} cal-day cal-{$day_short_names[$weekday]|strtolower}\'{/if}>\r\n
+									{if isset($day.events.0)}<a class=\'calendar-daylist\' data-day=\'{$day.date}\' href=\'{$day.ni_url}\'>{$key}</a>{* by default use the non inline (replace content tag) version of the URL *}\r\n
+									{*<ul>
+										{foreach from=$day.events item=event}
+										<li>
+									   
+									  {$style=\'\'}{if $event.bgcolor}{$style=\'style=\\\'color: {$event.fgcolor}; background-color: {$event.bgcolor}\\\'\'}{/if}
+									  <a class=\'calendar-event\' href=\'{$event.url}\' {$style}>{$event.event_title|summarize:20}</a></li>
+									{/foreach}
+									</ul>*}
+									{else}{$key}{/if}
+									</td>
+									{math assign=weekday equation=\'x + 1\' x=$weekday}
+									{/foreach}
+							
+									{* remaining empty days *}
+									{if $weekday != 7}
+									<td colspan=\'{math equation=\'7-x\' x=$weekday}\'>&amp;nbsp;</td>
+										{/if}
+									</tr>
+									</tbody></table>
+									
+									{/strip}',$now,$now));
+						if (!$result) die('Installation Error:' . $db->ErrorMsg() . ' with(' . $db->sql .')');
+						
+				$dict = NewDataDictionary( $db );
+				$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_parties_spid", "statut L");
+				$dict->ExecuteSQLArray( $sqlarray );
+				
+				$query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET statut = '1'";
+				$db->Execute($query);
+	}	
+	break;
 	 
 
 	
