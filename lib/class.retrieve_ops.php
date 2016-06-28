@@ -1991,9 +1991,9 @@ public function retrieve_sit_mens($licence)
 		global $gCms;
 		$db = cmsms()->GetDb();
 		//on vérifie d'abord que l'événement n'est pas déjà ds la base
-		$query = "SELECT event_title, event_date_start WHERE event_title = ? AND event_date_start = ? AND event_date_end = ?";
+		$query = "SELECT event_title, event_date_start FROM ".cms_db_prefix()."module_cgcalendar_events WHERE event_title = ? AND event_date_start = ? AND event_date_end = ?";
 		$dbresult = $db->Execute($query, array($name, $date_debut, $date_fin ));
-		if($dbresult->RecordCount() == 0)
+		if($dbresult && $dbresult->RecordCount() == 0)
 			{
 				// on récupère id ds différentes tables
 				//Tout d'abord celui de la table events

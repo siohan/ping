@@ -630,9 +630,9 @@ case  "0.3.0.1" :
 	}
 	break;
 	
-	case "0.4.5" :
-	case "0.4.6" :
-	case "0.5" :
+	case "0.4.5":
+	case "0.4.6":
+	case "0.5":
 	{
 		$db = $this->GetDb();
 		$query = "SELECT tag,idepreuve,date_debut,date_fin FROM ".cms_db_prefix()."module_ping_calendrier";
@@ -648,19 +648,17 @@ case  "0.3.0.1" :
 				$date_fin = $row['date_fin'];
 				$query2 = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
 				$dbresult2 = $db->Execute($query2, array($idepreuve));
-				$row = $dbresult2->FetchRow();
-				$name = $row['name'];
-				$service = new retrieve_ops();
-				$insert = $service->insert_cgcalendar($name,$tag,$date_debut,$date_fin);
+				
+				if($dbresult2 && $dbresult2->RecordCount()>0)
+				{
+					$row = $dbresult2->FetchRow();
+					$name = $row['name'];
+					$service = new retrieve_ops();
+					$insert = $service->insert_cgcalendar($name,$tag,$date_debut,$date_fin);
+				}
 
 			}
 		}
-		else
-		{
-			echo 'ERROR ' . __LINE__ . ': ' . $db->ErrorMsg();
-			exit();
-		}
-		
 		$insert_sql = "INSERT INTO ".cms_db_prefix()."module_templates (module_name, template_name, content, create_date, modified_date) VALUES ( ?, ?, ?, ?, ?)";
 		$result = $db->Execute($insert_sql, array('CGCalendar','calendar_Rookie','{if !isset($smarty.get.nojs)}
 		<script type=\'text/javascript\'>{jsmin}
@@ -756,13 +754,13 @@ case  "0.3.0.1" :
 									
 									{/strip}',$now,$now));
 						if (!$result) die('Installation Error:' . $db->ErrorMsg() . ' with(' . $db->sql .')');
-						
-				$dict = NewDataDictionary( $db );
-				$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_parties_spid", "statut L");
-				$dict->ExecuteSQLArray( $sqlarray );
 				
-				$query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET statut = '1'";
-				$db->Execute($query);
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_parties_spid", "statut L");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET statut = '1'";
+		$db->Execute($query);
 	}	
 	break;
 	 

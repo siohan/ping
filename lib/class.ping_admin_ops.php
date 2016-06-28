@@ -407,9 +407,13 @@ public static function compte_spid_errors($licence)
 	$saison = $ping->GetPreference('saison_en_cours');
 	$query = "SELECT count(*) AS spid_errors FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND saison = ? AND statut = 0";
 	$dbresult = $db->Execute($query, array($licence,$saison));
-	$row = $dbresult->FetchRow();
-	$spid_errors = $row['spid_errors'];
-	return $spid_errors;
+	if($dbresult && $dbresult->RecordCount()>0)
+	{
+		$row = $dbresult->FetchRow();
+		$spid_errors = $row['spid_errors'];
+		return $spid_errors;
+	}
+	
 
 }
 ##
