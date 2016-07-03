@@ -3,7 +3,7 @@ if( !isset($gCms) ) exit;
 ##############################################################
 #              SPID                                          #
 ##############################################################
-//	debug_display($params, 'Parameters');
+	debug_display($params, 'Parameters');
 
 require_once(dirname(__FILE__).'/function.calculs.php');
 $saison = $this->GetPreference('saison_en_cours');
@@ -49,7 +49,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 $result= array ();
 $parms = array();
-$query2 = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement,sp.statut, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
+$query2 = "SELECT sp.id as record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement,sp.statut, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
 
 $parms['saison'] = $saison;
 
@@ -77,14 +77,14 @@ if( isset($params['submitfilter'] ))
 	
 	if(isset($params['error_only']) && $params['error_only'] !='')
 	{
-		$query2.=" AND sp.classement = -sp.ecart ";
+		$query2.=" AND sp.classement = -sp.ecart OR sp.statut = '0'";
 	}
 	$query2.=" ORDER BY joueur ASC, sp.date_event ASC";
 }
 else
 {
 	$query2.=" AND MONTH(sp.date_event) = $mois_courant ";
-	$query2.=" ORDER BY joueur ASC, sp.date_event ASC LIMIT 100";
+	$query2.=" ORDER BY joueur ASC, sp.date_event ASC";
 }
 
 
@@ -115,7 +115,7 @@ if ($dbresult2 && $dbresult2->RecordCount() > 0)
 	$onerow->pointres= $row['pointres'];
 	$onerow->forfait= $row['forfait'];
 	$onerow->editlink= $this->CreateLink($id, 'edit_player_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['record_id']));
-	$onerow->duplicatelink= $this->CreateLink($id, 'do_edit_result', $returnid, $themeObject->DisplayImage('icons/system/copy.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['record_id'], 'duplicate'=>'1'));
+	//$onerow->duplicatelink= $this->CreateLink($id, 'do_edit_result', $returnid, $themeObject->DisplayImage('icons/system/copy.gif', $this->Lang('duplicate'), '', '', 'systemicon'), array('record_id'=>$row['record_id'], 'duplicate'=>'1'));
 	
 	if($this->CheckPermission('Ping Delete'))
 	{

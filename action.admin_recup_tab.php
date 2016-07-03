@@ -18,7 +18,7 @@ $sit_courante = 'Juin 2014';
 $smarty->assign('sit_courante', "$sit_courante");
 $smarty->assign('display_unable_players', 
 		$this->CreateLink($id,'display_unable_players', $returnid, 'liste des joueurs inactifs'));
-
+$smarty->assign('attention_img', '<img src="../modules/Ping/images/warning.gif" alt="'.$this->Lang('missing_sit_mens').'" title="'.$this->Lang('missing_sit_mens').'" width="16" height="16" />');
 
 $dbresult= array ();
 //SELECT * FROM ping_module_ping_recup_parties AS rec right JOIN ping_module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
@@ -52,6 +52,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->maj_fftt= $row['maj_fftt'];
 	//$onerow->spid= $row['spid'];
 	$onerow->spid= $spid;
+	//$onerow->error_link= $this->CreateLink($id, 'defaultadmin',$returnid, 'Corriger', array("active_tab"=>"spid","submitfilter"=>"Ok","curplayer"=>$row['licence'],"error_only"=>"0"));
 	$onerow->spid_errors = $spid_errors;
 	$onerow->spid_total= $row['spid_total'];
 	$onerow->maj_spid= $row['maj_spid'];
@@ -93,7 +94,7 @@ $smarty->assign('items', $rowarray);
 $smarty->assign('retrieve_users', 
 		$this->CreateLink($id, 'retrieve_users', $returnid,'Récupération de tous les joueurs'));
 */
-$smarty->assign('attention_img', '<img src="../modules/Ping/images/warning.gif" alt="'.$this->Lang('missing_sit_mens').'" title="'.$this->Lang('missing_sit_mens').'" width="16" height="16" />');
+
 
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));

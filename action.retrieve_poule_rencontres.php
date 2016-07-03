@@ -74,7 +74,7 @@ elseif(isset($params['cal']) && $params['cal'] = 'all')
 			$idpoule = $row['idpoule'];
 			$service = new retrieve_ops();
 			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$cal,$idepreuve);
-			var_dump($retrieve);
+		//	var_dump($retrieve);
 			
 		}
 	}

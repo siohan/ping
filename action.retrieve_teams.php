@@ -100,8 +100,8 @@ foreach($xml as $cle =>$tab)
 	//$type_compet = $type;
 	
 	
-	$query = "SELECT phase, saison, libequipe, libdivision FROM ".cms_db_prefix()."module_ping_equipes WHERE libequipe = ? AND saison = ? AND phase = ? AND libdivision = ?";
-	$dbresult = $db->Execute($query, array($new_equipe, $saison,$phase, $libdivision));
+	$query = "SELECT phase, libequipe, libdivision FROM ".cms_db_prefix()."module_ping_equipes WHERE libequipe = ? AND saison = ? AND phase = ? AND libdivision = ?";
+	$dbresult = $db->Execute($query, array($new_equipe,$phase, $libdivision));
 	
 		if($dbresult  && $dbresult->RecordCount() == 0) 
 		{
