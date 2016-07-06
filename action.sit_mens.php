@@ -7,6 +7,7 @@ global $themeObject;
 $mois_courant = date('n');
 $annee_choisie = date('Y');
 $mois_choisi = '';
+$jour = date('d');
 $phase = $this->GetPreference('phase_en_cours');
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 	if(isset($params['mois']) && $params['mois'] !='')
@@ -15,7 +16,14 @@ $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPrefere
 	}
 	else
 	{
-		$mois_choisi = $mois_courant;
+		if($jour < $this->GetPreference('jour_sit_mens'))
+		{
+			$mois_choisi = $mois_courant-1;
+		}
+		else
+		{
+			$mois_choisi = $mois_courant;
+		} 
 	}
 
 	if($mois_choisi ==1)
@@ -48,17 +56,17 @@ $jour = date('j');
 
 $phase_courante = $this->GetPreference('phase');
 
-$query = "SELECT licence,mois, points, clnat, rangreg, rangdep, progmois, CONCAT_WS(' ', nom, prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens";//" WHERE annee = ? AND mois = ?";
+$query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep, sm.progmois, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens sm, ".cms_db_prefix()."module_ping_joueurs j WHERE sm.licence  = j.licence";//" WHERE annee = ? AND mois = ?";
 
 	if(isset($params['mois']) && $params['mois'] !='')
 	{
-		$query.=" WHERE mois = ?";
+		$query.=" AND mois = ?";
 		$parms['mois'] = $mois_choisi;
 	
 	}
 	else
 	{
-		$query.=" WHERE mois = ?";
+		$query.=" AND mois = ?";
 		$parms['mois'] = $mois_choisi;
 	}
 	

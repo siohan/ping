@@ -702,8 +702,16 @@ public function retrieve_sit_mens($licence)
 				$valcla = (isset($result->licence)?"$result->valcla":"");
 				$clpro = (isset($result->licence)?"$result->clpro":"");
 				$valinit = (isset($result->licence)?"$result->valinit":"");
-				$progmois = (isset($result->licence)?"$result->progmois":"");
-				$progann = (isset($result->licence)?"$result->progann":"");
+				//$progmois = (isset($result->licence)?"$result->progmois":"");
+				//$progann = (isset($result->licence)?"$result->progann":"");
+				//on peut faire qqs traitements pour calculer les progressions par exemples
+				$progmois = $clglob - $aclglob;
+				$progann = $clglob -$valinit; 
+				
+				
+				
+				
+				
 			}
 			$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, points, clnat, rangreg,rangdep, progmois,saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
@@ -1191,7 +1199,7 @@ public function retrieve_sit_mens($licence)
 
 		$designation = '';
 		//var_dump($result);
-		var_dump($xml);
+		//var_dump($xml);
 		/**/
 		//on va tester la valeur de la variable $result
 		//cela permet d'éviter de boucler s'il n'y a rien dans le tableau

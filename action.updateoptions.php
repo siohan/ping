@@ -6,6 +6,7 @@ if( !$this->CheckPermission( 'Ping Set Prefs' ) )
   return;
 }
 //debug_display($params, 'Parameters');
+$stall = 0;
 if(isset($params['stall']) && $params['stall'] =="1")
 {
 	$stall = $params['stall'];

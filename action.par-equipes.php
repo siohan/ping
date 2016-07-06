@@ -49,6 +49,13 @@ if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 	$query.=" AND cal.idepreuve = ?";
 	$parms['idepreuve'] = $idepreuve;
 }
+if(isset($params['saison']) && $params['saison'] != '')
+{
+	$para++;
+	$saison = $params['saison'];
+	$query.= " AND cal.saison = ?";
+	$parms['saison']  = $saison;
+}
 if($para>0)
 {
 	$query.=" GROUP BY ren.date_event ORDER BY ren.date_event DESC";

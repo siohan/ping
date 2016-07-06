@@ -12,12 +12,7 @@ global $themeObject;
 //debug_display($params, 'Parameters');
 $saison_courante = $this->GetPreference('saison_en_cours');
 $phase_courante = $this->GetPreference('phase_en_cours');
-$smarty->assign('retrieve_all',
-		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les calendriers', array("cal"=>"cal")));
-$smarty->assign('retrieve_calendriers',
-		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les dernières rencontres', array("cal"=>"all")));
-$smarty->assign('classements',
-		$this->CreateLink($id, 'getPouleClassement', $returnid,$contents='Récupérer tous les classements'));
+
 $phase = (isset($params['phase']))?$params['phase']:$phase_courante;
 
 $smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'equipes')));
@@ -181,7 +176,12 @@ $dbresult= $db->Execute($query,$parms);
 			//print_r($array_chpt);
 			//var_dump($array_chpt);
   		}
-
+		$smarty->assign('retrieve_all',
+				$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les calendriers', array("cal"=>"cal", "idepreuve"=>$idepreuve)));
+		$smarty->assign('retrieve_calendriers',
+				$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les dernières rencontres', array("cal"=>"all")));
+		$smarty->assign('classements',
+				$this->CreateLink($id, 'getPouleClassement', $returnid,$contents='Récupérer tous les classements'));
 		$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('items', $rowarray);

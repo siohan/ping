@@ -9,7 +9,14 @@ if (!$this->CheckPermission('Ping Use'))
 	echo $this->ShowErrors($this->Lang('needpermission'));
 	return;
 }
-
+$jour = date('d');
+$designation= '';
+if( $jour < $this->GetPreference('jour_sit_mens'))
+{
+	$designation.= "L'accès n'est pas encore libre ou changez le paramètre dans l'onglet Configuration";
+	$this->SetMessage($designation);
+	$this->RedirectToAdminTab('situation');
+}
 /*
 $pong = cms_utils::get_module('CGCalendar', $version='1.15.8');
 var_dump($pong);

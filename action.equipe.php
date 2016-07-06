@@ -3,7 +3,7 @@ if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 $db =& $this->GetDb();
 $saison_en_cours = $this->GetPreference('saison_en_cours');
-$saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
+//$saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
 $record_id = '';
 if(!isset($params['record_id']) || $params['record_id'] =='')
 {
@@ -18,8 +18,8 @@ else
 
 //le numéro de l'équipe est ok, on continue
 //on va d'abord récupérer le classement de cette équipe
-$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,eq.libequipe FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
-$dbresult= $db->Execute($query, array($record_id,$saison));
+$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,eq.libequipe FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? ORDER BY cl.id ASC";
+$dbresult= $db->Execute($query, array($record_id));
 
 $rowarray = array();
 if($dbresult && $dbresult->RecordCount()>0)
@@ -60,8 +60,8 @@ $smarty->assign('items', $rowarray);
 
 
 
-$query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv,eq.id as id_alias FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND ren.saison = ? AND eq.id = ? GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
-$parms['saison'] = $saison;
+$query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv,eq.id as id_alias FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND eq.id = ? GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
+//$parms['saison'] = $saison;
 $parms['id_alias'] = $record_id;
 
 $dbresultat = $db->Execute($query2,$parms);
