@@ -20,10 +20,12 @@ $(document).ready(function() {
 	<tr class="header">
 		<th>Joueur</th>
 		<th>Points</th>
-		<th>Rang nat</th>
+		<th>Rang National</th>
+		<th>Rang nat (Hors étranger)</th>
 		<th>Rang reg</th>
 		<th>Rang dép</th>
-		<th>Progression mens</th>
+		<th>Prog mois</th>
+		<th>Prog an</th>
 	</tr>
  </thead>
  <tbody>
@@ -31,10 +33,12 @@ $(document).ready(function() {
   <tr class="{$entry->rowclass} header">
     <td>{$entry->joueur}</td>
     <td>{$entry->points}</td>
+	<td>{$entry->clglob}</td>
 	<td>{$entry->clnat}</td>
 	<td>{$entry->rangreg}</td>
 	<td>{$entry->rangdep}</td>
 	<td>{$entry->progmois}</td>
+	<td>{$entry->progann}</td>
   </tr>
 {/foreach}
  </tbody>

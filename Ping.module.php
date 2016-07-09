@@ -20,7 +20,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.5.2'; }  
+  function GetVersion() { return '0.5.3'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -41,7 +41,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-	return array('CGCalendar'=>'1.15.8');
+	return array('CGCalendar'=>'2.1.4.1');
   }
 
   
@@ -172,22 +172,6 @@ return $obj;
   }
 
 
-function dropdown ($competition)
-{
-	$db  = cmsms()->GetDb();
-	$query ="SELECT joueurs FROM ".cms_db_prefix()."module_ping_competitions WHERE code_compet = ?";
-	$dbretour = $db->Execute($query, array($competition));
-	
-	if ($dbretour && $dbretour->RecordCount() > 0)
-  	{
-    		while ($row= $dbretour->FetchRow())
-      		{
-			$joueurs = $row['joueurs'];
-			return $joueurs;
-		}
-
-	}
-}
 
 function random($car) {
 $string = "";

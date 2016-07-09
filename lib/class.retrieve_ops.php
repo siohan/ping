@@ -657,13 +657,13 @@ public function retrieve_sit_mens($licence)
 	$var = "licence=".$licence;
 	$lien = $service->GetLink($page, $var);
 	$xml = simplexml_load_string($lien,'SimpleXMLElement', LIBXML_NOCDATA);
-	
+	//var_dump($xml);
 	if($xml === FALSE)
 	{
 		$lignes = 0;
 		$array = 0;
 		$result = 0;
-		//var_dump($xml);
+		var_dump($xml);
 	}
 	else
 	{
@@ -704,18 +704,20 @@ public function retrieve_sit_mens($licence)
 				$valinit = (isset($result->licence)?"$result->valinit":"");
 				//$progmois = (isset($result->licence)?"$result->progmois":"");
 				//$progann = (isset($result->licence)?"$result->progann":"");
+				
 				//on peut faire qqs traitements pour calculer les progressions par exemples
-				$progmois = $clglob - $aclglob;
-				$progann = $clglob -$valinit; 
+				$progmoisplaces = $aclglob - $clglob;//progression en termes de places
+				$progmois = $point - $apoint;//progression du mois en termes de points
+				$progann = $point - $valinit; //progression à l'année en termes de points
 				
 				
 				
 				
 				
 			}
-			$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, points, clnat, rangreg,rangdep, progmois,saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, categ,points, apoint,clglob, aclglob, clnat, rangreg, rangdep, progmoisplaces, progmois, progann, valinit, valcla,saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			//echo $query;
-			$dbresultat = $db->Execute($query2,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2,  $point, $clnat, $rangreg, $rangdep, $progmois, $saison));
+			$dbresultat = $db->Execute($query2,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $categ, $point,$apoint,$clglob, $aclglob, $clnat, $rangreg, $rangdep, $progmoisplaces, $progmois, $progann,$valinit, $valcla, $saison));
 
 				
 				if($dbresultat)

@@ -205,11 +205,18 @@ $flds = "
 	categ C(10),
 	nom C(255),
 	prenom C(255),
+	clglob I(4),
+	aclglob I(4),
 	points N(6.2),
+	apoint N(6.2),
 	clnat I(11),
+	valcla I(4),
+	valinit I(4),
 	rangreg I(11),
 	rangdep I(11),
-	progmois N(6.2)";
+	progmois N(6.2),
+	progmoisplaces I(4) SIGNED,
+	progann I(4) SIGNED";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_sit_mens",

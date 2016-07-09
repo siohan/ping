@@ -109,6 +109,13 @@ class Servicen
 	return file_get_contents($chaine);
 	//return $chaine;//pour tester le lien
     }
+public function GetRSS($page,$var = "")
+    {
+       
+	$chaine = 'http://www.fftt.com/site/medias/flux/'.$page.'.xml'; 
+	return file_get_contents($chaine);
+	//return $chaine;//pour tester le lien
+    }
  
     public function initialization()
     {

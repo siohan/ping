@@ -763,6 +763,16 @@ case  "0.3.0.1" :
 		$db->Execute($query);
 	}	
 	break;
+	case "0.5.1" :
+	case "0.5.2" :
+	case "0.5.3" :
+	 
+	{
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_sit_mens", "clglob I(4), aclglob I(4),apoint I(4),valcla I(4), valinit I(4),progmoisplaces I(4) SIGNED,progann I(4) SIGNED");
+		$dict->ExecuteSQLArray( $sqlarray );
+	}
+	break;
 	 
 
 	

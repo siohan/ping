@@ -56,7 +56,7 @@ $jour = date('j');
 
 $phase_courante = $this->GetPreference('phase');
 
-$query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep, sm.progmois, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens sm, ".cms_db_prefix()."module_ping_joueurs j WHERE sm.licence  = j.licence";//" WHERE annee = ? AND mois = ?";
+$query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep,sm.progann, sm.progmois,sm.clglob, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens sm, ".cms_db_prefix()."module_ping_joueurs j WHERE sm.licence  = j.licence";//" WHERE annee = ? AND mois = ?";
 
 	if(isset($params['mois']) && $params['mois'] !='')
 	{
@@ -87,10 +87,12 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->rowclass= $rowclass;
 		$onerow->joueur= $this->CreateLink($id,'user_results',$returnid, $row['joueur'], array("licence"=>$row['licence'],"month"=>$mois_choisi-1,"saison"=>$saison_courante));
 		$onerow->points = $row['points'];
+		$onerow->clglob = $row['clglob'];
 		$onerow->clnat= $row['clnat'];
 		$onerow->rangreg= $row['rangreg'];
 		$onerow->rangdep= $row['rangdep'];
 		$onerow->progmois= $row['progmois'];
+		$onerow->progann= $row['progann'];
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
 	}
