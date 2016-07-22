@@ -9,7 +9,7 @@ $db =& $this->GetDb();
 //mettre les autorisations
 $aujourdhui = date('Y-m-d');
 echo $aujourdhui;
-
+$designation = '';
 //1ère condition : 
 //on prend les résultats d'une poule
 $eq_id = 0; //on instancie donc le parametre de l'équipe
@@ -37,6 +37,8 @@ if(isset($params['eq_id']) && $params['eq_id'] != '')
 				//le service est coupé
 				$array = 0;
 				$lignes = 0;
+				$designation.="Le service est coupé";
+				$this->SetMessage($designation);
 				$this->RedirectToAdminTab('poules');
 			}
 			else

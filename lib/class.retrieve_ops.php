@@ -663,7 +663,7 @@ public function retrieve_sit_mens($licence)
 		$lignes = 0;
 		$array = 0;
 		$result = 0;
-		var_dump($xml);
+		//var_dump($xml);
 	}
 	else
 	{
@@ -1339,7 +1339,7 @@ public function retrieve_sit_mens($licence)
 										$dbresult1 = $db->Execute($query1);
 										$row = $dbresult1->FetchRow();
 										$id_event = $row['id']+1;
-										$query_cal = "INSERT INTO demo_module_cgcalendar_events
+										$query_cal = "INSERT INTO ".cms_db_prefix()."module_cgcalendar_events
 										           (event_id, event_title, event_details, event_date_start, event_date_end)
 										            VALUES (?, ?, ? , ?, ?)";
 										$dbresult_cal = $db->Execute($query_cal, array($id_event,$name,$tag,$date_event,$date_event));

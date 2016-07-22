@@ -7,6 +7,7 @@
 			<th>Id</th>
 			<th>Date</th>
 			<th>Date</th>
+			<th>Epreuve</th>
 			<th>Licence </th>
 			<th>Licence</th>
 			<th>Nom</th>
@@ -27,6 +28,7 @@
 			<td>{$entry->record_id}</td>
 			<td>{$entry->date_spid|date_format:"%d/%m"}</td>
 			<td>{$entry->date_fftt|date_format:"%d/%m"}</td>
+			<td>{$entry->epreuve}({$entry->codechamp})</td>
 			<td>{$entry->licence_spid}</td>
 			<td>{$entry->licence_fftt}</td>
 			<td>{$entry->nom_spid}</td>
