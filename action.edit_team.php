@@ -23,7 +23,7 @@ if( isset( $params['record_id'] ) && $params['record_id'] != '')
 
 
     // find the user
-    $query = "SELECT eq.saison, eq.phase,eq.libequipe, eq.libdivision,eq.liendivision,eq.friendlyname, eq.iddiv,eq.idpoule,eq.idepreuve FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE  eq.id = ?";
+    $query = "SELECT eq.saison, eq.phase,eq.libequipe, eq.libdivision,eq.liendivision,eq.friendlyname, eq.iddiv,eq.idpoule,eq.idepreuve,eq.calendrier FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE  eq.id = ?";
     $dbresult = $db->GetRow($query, array( $record_id ));
     if($dbresult)
       
@@ -46,8 +46,8 @@ if( isset( $params['record_id'] ) && $params['record_id'] != '')
 	//	$index = $dbresult['index1'] - 1;
 	//	$name = $dbresult['name'];
 		$type_compet_selected = $dbresult['idepreuve'];
-		
-		
+		$calendrier1 = $dbresult['calendrier'];
+		//var_dump($dbresult);
 		//$organisme = get_organisme($libdivision);
 		
 		
@@ -65,7 +65,7 @@ if($edit=='1')
 }
 $listsaisons = array( '2014-2015'=>'2014-2015');
 $listphase = array('1'=>'1', '2'=>'2');
-   
+$yesno = array("Oui"=>"1", "Non"=>"0");   
 $smarty->assign('saison',
 		$this->CreateInputText($id, 'saison',
 		(isset($saison)?$saison:$this->GetPreference('saison_en_cours'))));
@@ -87,6 +87,9 @@ $smarty->assign('iddiv',
 $smarty->assign('idpoule', 
 		$this->CreateInputText($id, 'idpoule', 
 		(isset($idpoule)?$idpoule:""), 10,20));
+$smarty->assign('input_calendrier',
+		$this->CreateInputDropdown($id,'calendrier',$yesno,'' 
+		,(isset($calendrier1)?$calendrier1:"")));
 		
 
 $numero_club = $this->GetPreference('club_number');
@@ -95,6 +98,7 @@ if($edit =='1')
 {
 	$smarty->assign('organisme', 
 			$this->CreateInputText($id,'organisme', $organisme,10,20));
+	
 }
 else
 {

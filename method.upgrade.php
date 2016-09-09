@@ -102,7 +102,7 @@ switch($current_version)
 		$sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?)";
 		$db->Execute($sql, array('Indéterminé', 'U', '0.00'));
 
-		break;
+		
 	}
 
 
@@ -356,7 +356,7 @@ case "0.2.4" :
 		
 		
 	}
-	break;
+	
 case "0.2.5" :
 case "0.3" : 
 	{
@@ -506,7 +506,7 @@ case "0.3" :
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_calendrier", "idepreuve C(11)");
 		$dict->ExecuteSQLArray( $sqlarray );
 	}
-	break;
+	
 	
 case  "0.3.0.1" :
 	{
@@ -580,7 +580,7 @@ case  "0.3.0.1" :
 		$dict->ExecuteSQLArray( $sqlarray );
 		
 	}
-	break;
+	
 	
 	case "0.3.1" : 
 	case "0.4" :
@@ -614,7 +614,7 @@ case  "0.3.0.1" :
 		$db->execute($insert_sql, array( 1, 'Compte et test connexion', 0, 0));
 		
 	}
-	break;
+	
 	
 	case "0.4.3" : 
 	case "0.4.4" :
@@ -628,7 +628,7 @@ case  "0.3.0.1" :
 			    cms_db_prefix().'module_ping_sit_mens', 'mois, annee, licence',$idxoptarray);
 		$dict->ExecuteSQLArray($sqlarray);
 	}
-	break;
+	
 	
 	case "0.4.5":
 	case "0.4.6":
@@ -762,7 +762,7 @@ case  "0.3.0.1" :
 		$query = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET statut = '1'";
 		$db->Execute($query);
 	}	
-	break;
+	
 	case "0.5.1" :
 	case "0.5.2" :
 	case "0.5.3" :
@@ -772,8 +772,91 @@ case  "0.3.0.1" :
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_sit_mens", "clglob I(4), aclglob I(4),apoint I(4),valcla I(4), valinit I(4),progmoisplaces I(4) SIGNED,progann I(4) SIGNED");
 		$dict->ExecuteSQLArray( $sqlarray );
 	}
-	break;
-	 
+	
+	
+//if(version_compare($oldversion,'0.5.3.2')<0)
+	case "0.5.3.1" :
+	case "0.5.3.2" :
+	
+	{
+		$prefs = array('vicNorm0_24','vicNorm25_49','vicNom50_99', 'vicNorm100_149','vicNorm150_199',
+				'vicNorm200_299','vicNorm300_399','vicNorm400_499','vicNormPlus500', 
+				'vicAnorm0_24', 'vicAnorm25_49','vicAnom50_99','vicAnorm100_149','vicAnorm150_199',
+				'vicAnorm200_299', 'vicAnorm300_399','vicAnorm400_499','vicAnormPlus500',
+				'defNorm0_24','defNorm25_49','defNorm50_99','defNorm100_149','defNorm150_199',
+				'defNorm200_299','defNorm300_399','defNorm400_499','defNormPlus500',
+				'defAnorm0_24','defAnorm25_49','defAnorm50_99','defAnorm100_149','defAnorm150_199',
+				'defAnorm200_299','defAnorm300_399','defAnorm400_499','defAnormPlus500');
+		    foreach( $prefs as $pref_name ) {
+		        $this->RemovePreference($pref_name);
+		}
+		$this->SetPreference('email_admin_ping', 'admin@localhost.com');
+		$this->SetPreference('email_succes', 'Oui');
+		
+		
+		//on va éliminer les doublons possibles de la table divisions
+		$query = "SELECT count(*) AS nb_doublons, iddivision,id FROM ".cms_db_prefix()."module_ping_divisions GROUP BY iddivision HAVING count(*) >1";
+		$dbresult = $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$id = $row['id'];
+				$iddivision = $row['iddivision'];
+				$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_divisions WHERE id = ?";
+				$dbresultat = $db->Execute($query1, array($row['id']));
+
+			}
+		}
+		//on ajoute des contraintes pour qqs tables afin d'éviter des doublons
+			$db = $this->GetDb();
+			$dict = NewDataDictionary( $db );
+			$idxoptarray = array('UNIQUE');
+			$sqlarray = $dict->CreateIndexSQL('divisions_ep',
+				    cms_db_prefix().'module_ping_divisions', 'idepreuve,iddivision',$idxoptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+		
+		//on supprime une table inutile
+			$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_control_panel");
+			$dict->ExecuteSQLArray($sqlarray);
+			
+			
+			$dict = NewDataDictionary( $db );
+			$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_poules_rencontres", "renc_id I(11)");
+			$dict->ExecuteSQLArray( $sqlarray );
+			
+			$idxoptarray = array('UNIQUE');
+			$sqlarray = $dict->CreateIndexSQL('renc_id',
+						    cms_db_prefix().'module_ping_poules_rencontres', 'renc_id',$idxoptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+			
+			//on fait la requete pour les autres résultats déjà en place
+			
+			$query = "SELECT lien FROM ".cms_db_prefix()."module_ping_poules_rencontres";
+			$dbresult = $db->Execute($query);
+			if($dbresult)
+			{
+				while($row = $dbresult->FetchRow())
+				{
+					$lien = $row['lien'];
+					$renc_prep = explode('&',$lien);
+					$renc_id_prep = explode('=',$renc_prep['4']);
+					$renc_id = $renc_id_prep['1'];
+					$query2 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET renc_id = ? WHERE lien = ?";
+					$dbresult2 = $db->Execute($query2, array($renc_id,$lien));
+					
+				}
+			}
+			
+			$dict = NewDataDictionary( $db );
+			$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_equipes", "calendrier I(1) DEFAULT '0'");
+			$dict->ExecuteSQLArray( $sqlarray );
+			
+			
+			
+		
+	}
+	
 
 	
 }

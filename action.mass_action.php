@@ -176,7 +176,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 				$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_classement WHERE iddivision = ?";
 				$db->Execute($query, array($record_id));
 	  		}
-			$this->Redirect($id,'defaultadmin2', $returnid,$contents='Retour',array('active_tab'=>'tours'));
+			$this->Redirect($id,'defaultadmin', $returnid,$contents='Retour',array('active_tab'=>'indivs'));
 			break;
 			
 			case "supp_div_tours" :
@@ -185,7 +185,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_tours WHERE id = ?";
 				$db->Execute($query, array($record_id));
 	  		}
-			$this->Redirect($id,'defaultadmin2', $returnid,$contents='Retour',array('active_tab'=>'tours'));
+			$this->Redirect($id,'defaultadmin', $returnid,$contents='Retour',array('active_tab'=>'indivs'));
 			break;
 			
 			case "supp_div_parties" :
@@ -194,7 +194,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	    			$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_parties WHERE id = ?";
 				$db->Execute($query, array($record_id));
 	  		}
-				$this->Redirect($id,'defaultadmin2',$returnid, array("active_tab"=>"partie"));
+				$this->Redirect($id,'defaultadmin',$returnid, array("active_tab"=>"indivs"));
 			break;
 			
 			case "dater" :

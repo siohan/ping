@@ -69,7 +69,8 @@ $flds= "id I(11) KEY AUTO,
 	iddiv I(11),
 	type_compet C(3) DEFAULT 'U',
 	tag C(255),
-	idepreuve C(11)";
+	idepreuve C(11),
+	calendrier I(1) DEFAULT '0'";
 
 $sqlarray= $dict->CreateTableSQL( cms_db_prefix()."module_ping_equipes",
 				  $flds,
@@ -167,6 +168,7 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
      id I(11) AUTO KEY,
+	renc_id I(11),
 	saison C(255),
 	idpoule I(11),
 	iddiv I(11),
@@ -695,6 +697,10 @@ $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'sit_mens',
 		    cms_db_prefix().'module_ping_sit_mens', 'mois, annee, licence',$idxoptarray);
 		       $dict->ExecuteSQLArray($sqlarray);
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'divisions_ep',
+				    cms_db_prefix().'module_ping_divisions', 'idepreuve, iddivision',$idxoptarray);
+				       $dict->ExecuteSQLArray($sqlarray);
 #
 //mieux vaut créer un index sur la clé étrangère fk_id
 //$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
@@ -709,15 +715,7 @@ $this->CreatePermission('Ping Delete', 'Ping Delete');
 // create a preference
 //$this->SetPreference("mini_trancheA', '0');
 /* les victoires normales */
-$this->SetPreference('vicNorm0_24', '6');
-$this->SetPreference('vicNorm25_49', '5,5');
-$this->SetPreference('vicNorm50_99', '5');
-$this->SetPreference('vicNorm100_149', '4');
-$this->SetPreference('vicNorm150_199', '3');
-$this->SetPreference('vicNorm200_299', '2');
-$this->SetPreference('vicNorm300_399', '1');
-$this->SetPreference('vicNorm400_499', '0,5');
-$this->SetPreference('vicNormPlus500', '0');
+
 #
 #    Pour les tâches CRON
 #
@@ -726,59 +724,14 @@ $this->SetPreference('LastRecupFftt', '');
 $this->SetPreference('LastRecupResults', '');
 $this->SetPreference('LastRecupRencontres', '');
 #
-/*
-* Css
-
-
-$css_file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'css'. DIRECTORY_SEPARATOR .'bootstrap-table.css';
-if (file_exists($css_file))
-{
- $css = @file_get_contents($css_file);
- $css_id = $db->GenID(cms_db_prefix().'css_seq');
- $db->Execute('insert into '.cms_db_prefix().'css (css_id, css_name, css_text, media_type, create_date) values (?,?,?,?,?)',
-   array($css_id, 'Ping table', $css, 'screen', date('Y-m-d')));
-}
-*/
-
-/* les victoires anormales */
-$this->SetPreference('vicAnorm0_24', '6');
-$this->SetPreference('vicAnorm25_49', '7');
-$this->SetPreference('vicAnorm50_99', '8');
-$this->SetPreference('vicAnorm100_149', '10');
-$this->SetPreference('vicAnorm150_199', '13');
-$this->SetPreference('vicAnorm200_299', '17');
-$this->SetPreference('vicAnorm300_399', '22');
-$this->SetPreference('vicAnorm400_499', '28');
-$this->SetPreference('vicAnormPlus500', '40');
-#
-/* défaites normales */
-$this->SetPreference('defNorm0_24', '-5');
-$this->SetPreference('defNorm25_49', '-4,5');
-$this->SetPreference('defNorm50_99', '-4');
-$this->SetPreference('defNorm100_149', '-3');
-$this->SetPreference('defNorm150_199', '-2');
-$this->SetPreference('defNorm200_299', '-1');
-$this->SetPreference('defNorm300_399', '-0,5');
-$this->SetPreference('defNorm400_499', '0');
-$this->SetPreference('defNormPlus500', '0');
-#
-/* défaites Anormales */
-$this->SetPreference('defAnorm0_24', '-5');
-$this->SetPreference('defAnorm25_49', '-6');
-$this->SetPreference('defAnorm50_99', '-7');
-$this->SetPreference('defAnorm100_149', '-8');
-$this->SetPreference('defAnorm150_199', '-10');
-$this->SetPreference('defAnorm200_299', '-12,5');
-$this->SetPreference('defAnorm300_399', '-16');
-$this->SetPreference('defAnorm400_499', '-20');
-$this->SetPreference('defAnormPlus500', '-29');
-
 
 // create a preference
 $this->SetPreference('defaultMonthSitMens', '5');
 $this->SetPreference('phase', '1');
 $this->SetPreference('populate_calendar', 'Oui');
 $this->SetPreference('affiche_club_uniquement', 'Oui');
+$this->SetPreference('email_admin_ping','admin@localhost.com');
+$this->SetPreference('email_succes', 'Oui');
 #
 #Préférences de l'application
 #
@@ -796,6 +749,11 @@ $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
 	    cms_db_prefix().'module_ping_rencontres_parties', 'fk_id');
 	       $dict->ExecuteSQLArray($sqlarray);
+	
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL('renc_id',
+			    cms_db_prefix().'module_ping_poules_rencontres', 'renc_id',$idxoptarray);
+$dict->ExecuteSQLArray($sqlarray);
 #
 // put mention into the admin log
 $this->Audit( 0, 

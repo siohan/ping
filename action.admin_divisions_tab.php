@@ -105,7 +105,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
   {
 	if($essai == '0')
 	{
-		$this->Redirect($id,'retrieve_divisions',$returnid, array("idepreuve"=>$params['idepreuve'], "idorga"=>$params['idorga']));	
+		$this->Redirect($id,'retrieve',$returnid, array("retrieve"=>"divisions","idepreuve"=>$params['idepreuve'], "idorga"=>$params['idorga']));	
 		
 	}
   }

@@ -78,8 +78,7 @@ $edit = 0;
 			$this->CreateInputDate($id, 'date_fin',$date_fin));
 	$smarty->assign('numjourn',
 			$this->CreateInputText($id,'numjourn',$numjourn,3,5));
-	$smarty->assign('indivs',
-			$this->CreateInputHidden($id,'indivs',$indivs,3,5));	
+		
 	$smarty->assign('submit',
 			$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
 	$smarty->assign('cancel',

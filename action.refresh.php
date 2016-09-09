@@ -52,8 +52,14 @@ $i = 0;//on instancie un compteur pour connaitre le nb de tableau rafraichit
 		}
 		
 	}
-
 	
+	/*
+	$query = "SELECT * ".cms_db_prefix()."module_ping_poules_rencontres WHERE ";
+	$dbresult = $db->Execute($query);
+	
+	if($dbresult && )
+
+	*/
 
 
 

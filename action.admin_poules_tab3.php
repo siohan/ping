@@ -47,7 +47,7 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 //on crée des liens pour naviguer d'une équipe l'autre
 $rowarray3 = array();
 $rowclass3 = '';
-$query3 = "SELECT id, libequipe, friendlyname FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ? AND idepreuve = ?";
+$query3 = "SELECT id, libequipe, friendlyname FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ? AND idepreuve = ? ORDER BY id ASC";
 $dbresultat3 = $db->Execute($query3, array($saison,$phase,$idepreuve));
 if($dbresultat3 && $dbresultat3->RecordCount()>0)
 {
@@ -89,7 +89,7 @@ $smarty->assign('all_results',
 		
 //on prépare un lien pour récupérer le classement ou le mette à jour
 $smarty->assign('refresh_class',
-$this->CreateLink($id, 'getPouleClassement', $returnid,$contents="Récupérer ou mettre le classement à jour",array("record_id"=>$record_id)));	
+		$this->CreateLink($id, 'retrieve', $returnid,$contents="Récupérer ou mettre le classement à jour",array("retrieve"=>"classement_equipes","record_id"=>$record_id)));	
 //le classement de l'équipe
 $query2 = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
 $dbresult2= $db->Execute($query2, array($record_id,$saison));

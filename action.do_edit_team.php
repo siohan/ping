@@ -66,6 +66,10 @@ $error =0;
 		{
 			$organisme = $params['organisme'];
 		}
+		if (isset($params['calendrier']))
+		{
+			$calendrier = $params['calendrier'];
+		}
 		$liendivision = "cx_poule=".$idpoule."&D1=".$iddiv."&organisme_pere=".$organisme;
 		//echo "le lien est : ".$lien;
 		if($error>0)
@@ -76,8 +80,8 @@ $error =0;
 		if(isset($params['Ajouter']))
 		{
 			
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision,friendlyname, liendivision, idpoule, iddiv, idepreuve) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			$dbresult = $db->Execute($query,array($saison, $phase, $libequipe, $libdivision,$friendlyname, $liendivision, $idpoule, $iddiv, $idepreuve));
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision,friendlyname, liendivision, idpoule, iddiv, idepreuve,calendrier) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$dbresult = $db->Execute($query,array($saison, $phase, $libequipe, $libdivision,$friendlyname, $liendivision, $idpoule, $iddiv, $idepreuve, $calendrier));
 			$designation.="Equipe ajoutée avec succès";
 		}
 		else
@@ -85,8 +89,8 @@ $error =0;
 			//on a pas de modification du coeff, on change simplement les données sans recalculer
 			//on refait le tag
 			$tag = ping_admin_ops::tag_equipe($id);
-			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? , liendivision = ?, idepreuve = ?, tag = ? WHERE id = ?";
-			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$liendivision, $idepreuve,$tag,$id));
+			$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET  saison = ?, phase = ?, libequipe = ?, libdivision = ? , friendlyname = ? , liendivision = ?, idepreuve = ?, tag = ?, calendrier = ? WHERE id = ?";
+			$dbresult = $db->Execute($query, array($saison,$phase,$libequipe, $libdivision,$friendlyname,$liendivision, $idepreuve,$tag,$calendrier,$id));
 			//echo $query;
 			$designation.="Equipe mise à jour avec succès";
 		}

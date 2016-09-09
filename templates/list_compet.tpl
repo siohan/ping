@@ -1,4 +1,4 @@
-	<div class="pageoptions"><p class="pageoptions alert">{$Nat_indivs} - {$Nat_equipes} - {$zone_indivs} - {$zone_equipes} - {$ligue_indivs} - {$ligue_equipes} - {$dep_indivs} - {$dep_equipes}{*$createlink*}</p></div>{*}{if isset($formstart) }
+	<div class="pageoptions"><p class="pageoptions warning">Récupérer les différentes compétitions - > {$Nat_indivs} - {$Nat_equipes} - {$zone_indivs} - {$zone_equipes} - {$ligue_indivs} - {$ligue_equipes} - {$dep_indivs} - {$dep_equipes}{*$createlink*}</p></div>{*}{if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>
   {$formstart}

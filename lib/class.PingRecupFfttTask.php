@@ -17,6 +17,7 @@ class PingRecupFfttTask implements CmsRegularTask
 
       // Instantiation du module
       $ping = cms_utils::get_module('Ping');
+$interval =  $ping->GetPreference('fftt_interval');
 
       // Récupération de la dernière date d'exécution de la tâche
       if (!$time)
@@ -27,7 +28,7 @@ class PingRecupFfttTask implements CmsRegularTask
       $last_execute = $ping->GetPreference('LastRecupFftt');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 30*60 ) >= $last_execute )//toutes les dix minutes
+      if ( ($time - 30*60 ) >= $last_execute && $interval < 365)//toutes les dix minutes
       {
          return TRUE;
       }

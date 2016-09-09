@@ -218,7 +218,7 @@ $rowarray= array ();
 				
 				
 				
-				//$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('type_compet'=>$row['type_compet'],'date_debut'=>$row['date_debut'],'date_fin'=>$row['date_fin']));
+				$onerow->participe = $this->CreateLink($id, 'participe', $returnid, 'Participants', array('idepreuve'=>$row['idepreuve'],'date_debut'=>$row['date_debut'],'date_fin'=>$row['date_fin']));
 			}
 			else
 			{

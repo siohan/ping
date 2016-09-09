@@ -130,10 +130,10 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('retrieve_users', 
-		$this->CreateLink($id, 'retrieve_users', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_users'), '', '', 'systemicon')).
-$this->CreateLink($id, 'retrieve_users', $returnid, 
+		$this->CreateLink($id, 'retrieve', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_users'), '', '', 'systemicon')).
+$this->CreateLink($id, 'retrieve', $returnid, 
 		  $this->Lang('retrieve_users'), 
-		  array()));
+		  array("retrieve"=>"users")));
 
 $msg = '';
 if(isset($params['message']) && $params['message'] !='')

@@ -84,6 +84,8 @@ switch($step)
 		
 	
 	break;
+	case "5":
+		$smarty->assign('retourAdmin', $this->CreateLink($id, 'defaultadmin',$returnid,$contents="Retour à l'administration du module"));
 };
 
 

@@ -1,6 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 
 	if (!$this->CheckPermission('Ping Manage'))
 	{
@@ -17,6 +17,11 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		if (isset($params['idepreuve']) && $params['idepreuve'] != '')
 		{
 			$idepreuve = $params['idepreuve'];
+			//epreuve individuelle ou par équipes ?
+			$query = "SELECT indivs FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+			$dbresult = $db->Execute($query, array($idepreuve));
+			$row = $dbresult->FetchRow();
+			$indivs = $row['indivs'];
 		}
 		else
 		{
@@ -49,11 +54,8 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		{
 			$error++;
 		}
-		$indivs = '';
-		if (isset($params['indivs']) && $params['indivs'] !='')
-		{
-			$indivs = $params['indivs'];
-		}
+		
+	
 		
 		//s'agit-il d'une édition ou d'un ajout ?
 		$record_id = '';

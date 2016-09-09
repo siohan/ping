@@ -21,15 +21,15 @@ $smarty->assign('input_indivs',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
 
-$smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Zone indivs', array("idorga"=>$zone,"type"=>"I")));
-$smarty->assign('zone_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Zone Equipes', array("idorga"=>$zone,"type"=>"E")));
-$smarty->assign('Nat_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'National indivs', array("idorga"=>$fede,"type"=>"I")));
-$smarty->assign('Nat_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'National Equipes', array("idorga"=>$fede,"type"=>"E")));
-$smarty->assign('ligue_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Ligue indivs', array("idorga"=>$ligue,"type"=>"I")));
-$smarty->assign('ligue_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Ligue Equipes', array("idorga"=>$ligue,"type"=>"E")));
-$smarty->assign('dep_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Dép indivs', array("idorga"=>$dep,"type"=>"I")));
-$smarty->assign('dep_equipes', $this->CreateLink($id, 'retrieve_compets',$returnid,'Dép Equipes', array("idorga"=>$dep,"type"=>"E")));
-
+$smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Zone indivs', array("retrieve"=>"compets","idorga"=>$zone,"type"=>"I")));
+$smarty->assign('zone_equipes', $this->CreateLink($id, 'retrieve',$returnid,'Zone Equipes', array("retrieve"=>"compets","idorga"=>$zone,"type"=>"E")));
+$smarty->assign('Nat_indivs', $this->CreateLink($id, 'retrieve',$returnid,'National indivs', array("retrieve"=>"compets","idorga"=>$fede,"type"=>"I")));
+$smarty->assign('Nat_equipes', $this->CreateLink($id, 'retrieve',$returnid,'National Equipes', array("retrieve"=>"compets","idorga"=>$fede,"type"=>"E")));
+$smarty->assign('ligue_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Ligue indivs', array("retrieve"=>"compets","idorga"=>$ligue,"type"=>"I")));
+$smarty->assign('ligue_equipes', $this->CreateLink($id, 'retrieve',$returnid,'Ligue Equipes', array("retrieve"=>"compets","idorga"=>$ligue,"type"=>"E")));
+$smarty->assign('dep_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Dép indivs', array("retrieve"=>"compets","idorga"=>$dep,"type"=>"I")));
+$smarty->assign('dep_equipes', $this->CreateLink($id, 'retrieve',$returnid,'Dép Equipes', array("retrieve"=>"compets","idorga"=>$dep,"type"=>"E")));
+$parms = array();
 $result= array ();
 $query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE id > ?";
 $parms['id'] = 0;
@@ -135,6 +135,8 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 else
 {
 	//il n'y a pas de résultats, on fait quoi ?
+	//ou une erreur
+	echo $db->errorMsg();
 }
 
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));

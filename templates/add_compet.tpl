@@ -8,10 +8,10 @@
 <div class="pageoverflow">
 {$formstart}
 {$record_id}
-{$indivs}
+{*$indivs*}
 <div class="pageoverflow">
     <p class="pagetext">Compétition :</p>
-    <p class="pageinput">{$idepreuve} {*$tooltip*}</p>
+    <p class="pageinput">{$idepreuve} {$tooltip}</p>
   </div>
 	<div class="pageoverflow">
     <p class="pagetext">Date début:</p>

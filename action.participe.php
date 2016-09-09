@@ -5,17 +5,18 @@ if( !isset($gCms) ) exit;
 ####################################################################
 //debug_display($params, 'Parameters');
 $type_compet = '';
+$idepreuve = '';
 $designation = '';
 $rowarray = array();
 
-	if(!isset($params['type_compet']) || $params['type_compet'] == '')
+	if(!isset($params['idepreuve']) || $params['idepreuve'] == '')
 	{
 		$this->SetMessage("parametres manquants");
 		$this->RedirectToAdminTab('compets');
 	}
 	else
 	{
-		$type_compet = $params['type_compet'];
+		$idepreuve = $params['idepreuve'];
 	}
 	if(!isset($params['date_debut']) || $params['date_debut'] == '')
 	{
@@ -50,8 +51,8 @@ $dbresult = $db->Execute($query);
 
 	$smarty->assign('formstart',
 			$this->CreateFormStart( $id, 'do_participe', $returnid ) );
-	$smarty->assign('type_compet',
-			$this->CreateInputText($id,'type_compet',$type_compet,10,15));
+	$smarty->assign('idepreuve',
+			$this->CreateInputText($id,'idepreuve',$idepreuve,10,15));
 	$smarty->assign('date_debut',
 			$this->CreateInputText($id,'date_debut',$date_debut,10,15));
 	$smarty->assign('date_fin',
@@ -68,9 +69,9 @@ $dbresult = $db->Execute($query);
 			$rowarray[$licence]['participe'] = false;
 			
 			//on va chercher si le joueur est déjà dans la table participe
-			$query2 = "SELECT licence, type_compet FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND type_compet = ? AND date_debut BETWEEN ? AND ?";
+			$query2 = "SELECT licence, idepreuve FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND idepreuve = ? AND date_debut BETWEEN ? AND ?";
 			//echo $query2;
-			$dbresultat = $db->Execute($query2, array($licence, $type_compet, $date_debut,$date_fin));
+			$dbresultat = $db->Execute($query2, array($licence, $idepreuve, $date_debut,$date_fin));
 			
 			if($dbresultat->RecordCount()>0)
 			{
@@ -80,7 +81,8 @@ $dbresult = $db->Execute($query);
 				
 					$rowarray[$licence]['participe'] = true;
 				}
-			}//print_r($rowarray);
+			}
+			//print_r($rowarray);
 			
 			
 						

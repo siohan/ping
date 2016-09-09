@@ -26,10 +26,10 @@
 <!-- Don't touch this! -->
 
 {cms_jquery append='http://code.jquery.com/jquery.min.js,http://code.jquery.com/jquery-migrate-1.1.0.js,modules/Ping/jqplot/jquery.jqplot.min.js,modules/Ping/jqplot/jquery.jqplot.js,modules/Ping/jqplot/plugins/jqplot.barRenderer.min.js,modules/Ping/jqplot/syntaxhighlighter/scripts/shCore.min.js,modules/Ping/jqplot/syntaxhighlighter/scripts/shBrushJScript.min.js,modules/Ping/jqplot/syntaxhighlighter/scripts/shBrushXml.min.js,modules/Ping/jqplot/plugins/jqplot.barRenderer.js,modules/Ping/jqplot/plugins/jqplot.pieRenderer.js'}
-    
+
     
 <!-- Additional plugins go here -->
-<!-- >
+
   <script class="include" type="text/javascript" src="modules/Ping/jqplot/plugins/jqplot.barRenderer.js"></script>
   <script class="include" type="text/javascript" src="modules/Ping/jqplot/plugins/jqplot.pieRenderer.js"></script>
   <script class="include" type="text/javascript" src="modules/Ping/jqplot/plugins/jqplot.categoryAxisRenderer.js"></script>
@@ -40,4 +40,3 @@
 <script type="text/javascript" src="modules/Ping/jqplot/jquery.jqplot.min.js"></script>
 <script type="text/javascript" src="modules/Ping/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
 <link rel="stylesheet" type="text/css" hrf="modules/Ping/jqplot/jquery.jqplot.min.css" />
--->

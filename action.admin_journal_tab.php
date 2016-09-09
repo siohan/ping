@@ -108,7 +108,7 @@ $query2= "SELECT id, datecreated, designation, status,action FROM ".cms_db_prefi
 	}
 	else
 	{
-		$query2.= " ORDER BY datecreated DESC";
+		$query2.= " ORDER BY id DESC";
 		$result= $db->Execute($query2);
 	}
 	

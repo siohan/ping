@@ -1,5 +1,5 @@
 {if $itemcount > 0}
-<h1>Les meilleures Perfs</h1>
+
 <table class="pagetable, table-bordered">
  <thead>
 	<tr>

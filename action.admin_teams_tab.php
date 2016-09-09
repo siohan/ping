@@ -100,7 +100,7 @@ $parms['saison'] = $saison;
 		}//$query.=" ORDER BY joueur,pts.date_event ASC LIMIT 100";
 
 	}
-	
+$query.=" ORDER BY eq.id";	
 //echo $query;
 $dbresult= $db->Execute($query,$parms);
 
@@ -136,6 +136,9 @@ $dbresult= $db->Execute($query,$parms);
 				//$onerow->name= $row['name'];
 				$onerow->idepreuve = $row['idepreuve'];
 				$onerow->tag = $row['tag_equipe'];
+				$yesimage = $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('download_poule_results'),'','','systemicon');
+				$noimage = $themeObject->DisplayImage('icons/system/stop.gif', $this->Lang('download_poule_results'),'','','systemicon');
+				$onerow->calendrier = $row['calendrier'];
 				$onerow->view= $this->createLink($id, 'admin_poules_tab3', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('view_results'), '', '', 'systemicon'),array('active_tab'=>'equipes','libequipe'=>$row['libequipe'],"record_id"=>$row['eq_id'],"idepreuve"=>$row['idepreuve'])) ;
 
 				$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['eq_id']));
@@ -176,12 +179,16 @@ $dbresult= $db->Execute($query,$parms);
 			//print_r($array_chpt);
 			//var_dump($array_chpt);
   		}
+		$yesimage = $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('download_poule_results'),'','','systemicon');
+		$noimage = $themeObject->DisplayImage('icons/system/stop.gif', $this->Lang('download_poule_results'),'','','systemicon');
+		$smarty->assign('yes', $yesimage);
+		$smarty->assign('no', $noimage);
 		$smarty->assign('retrieve_all',
 				$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les calendriers', array("cal"=>"cal", "idepreuve"=>$idepreuve)));
 		$smarty->assign('retrieve_calendriers',
 				$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents='Récupérer les dernières rencontres', array("cal"=>"all")));
 		$smarty->assign('classements',
-				$this->CreateLink($id, 'getPouleClassement', $returnid,$contents='Récupérer tous les classements'));
+				$this->CreateLink($id, 'retrieve', $returnid,$contents='Récupérer tous les classements',array("retrieve"=>"classement_equipes")));
 		$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('items', $rowarray);
@@ -189,11 +196,11 @@ $dbresult= $db->Execute($query,$parms);
 		//$smarty->assign('tab_chpt', $tab_chpt);
 		
 		$smarty->assign('retrieve_teams',
-			$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes masculines", array('type'=>'M')));
+			$this->CreateLink($id, 'retrieve', $returnid, $contents = "Equipes masculines", array("retrieve"=>"teams",'type'=>'M')));
 		$smarty->assign('retrieve_teams_fem',
-			$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Equipes féminines", array('type'=>'F')));
+			$this->CreateLink($id, 'retrieve', $returnid, $contents = "Equipes féminines", array("retrieve"=>"teams",'type'=>'F')));
 		$smarty->assign('retrieve_teams_autres',
-				$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Autres équipes"));
+				$this->CreateLink($id, 'retrieve', $returnid, $contents = "Autres équipes", array("retrieve"=>"teams",'type'=>'U')));
 		$smarty->assign('edit_team',
 				$this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add'), '', '', 'systemicon')).$this->CreateLink($id, 'edit_team', $returnid, 
 								  $this->Lang('addmanually'), 

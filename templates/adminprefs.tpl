@@ -56,6 +56,16 @@
 	<fieldset>
 		<legend>Scripts automatiques</legend>
 		<fieldset>
+			<legend>Tâches Cron</legend>
+			<div class="pageoverflow">
+				<p class="pagetext">Email pour recevoir les notifications</p>
+				<p class="pageinput">{$email_admin_ping}</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext">Notification uniquement si succès</p>
+				<p class="pageinput">{$email_succes}</p>
+			</div>
+		</fieldset><fieldset>
 			<legend>Spid</legend>
 			<div class="pageoverflow">
 				<p class="pagetext">Récupération tous les x jours</p>

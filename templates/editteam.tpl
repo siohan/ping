@@ -38,6 +38,10 @@
     <p class="pagetext">Compétition:</p>
     <p class="pageinput">{$idepreuve}</p>
   </div>
+<div class="pageoverflow">
+    <p class="pagetext">Calendrier:</p>
+    <p class="pageinput">{$input_calendrier}</p>
+  </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
     <p class="pageinput">{$submit}{$cancel}{$back}</p>

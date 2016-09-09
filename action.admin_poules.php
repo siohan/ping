@@ -11,19 +11,22 @@ global $themeObject;
 //debug_display($params, 'Parameters');
 //créations de liens de récupération des compétitions
 //on récupère d'abord les préférences de zones, ligues et département
+$saison = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 $fede = '100001';
 $zone = $this->GetPreference('zone');
 $ligue = $this->GetPreference('ligue');
 $dep = $this->GetPreference('dep');
 $parms = array();
+$nb_params = 0; //on instancie un compteur de paramètres
 $idepreuve = '';
 $iddivision = '';
 $result= array ();
-$query = "SELECT pou.id AS tour_id, dv.libelle,dv.idorga,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision";//" ORDER BY dv.iddivision,pou.tour ASC";
-
+$query = "SELECT pou.id AS tour_id, dv.libelle,dv.idorga,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision AND pou.saison = ?";//" ORDER BY dv.iddivision,pou.tour ASC";
+$parms['saison'] = $saison;
 	
 	if (isset($params['idepreuve']) && $params['idepreuve'] !='')
 	{
+		$nb_params++;
 		$idepreuve = $params['idepreuve'];
 		$query.=" AND pou.idepreuve = ?";
 		$parms['idepreuve'] = $idepreuve;
@@ -33,14 +36,23 @@ $query = "SELECT pou.id AS tour_id, dv.libelle,dv.idorga,pou.idepreuve,pou.iddiv
 		$iddivision = $params['iddivision'];
 		$query.=" AND pou.iddivision = ?";
 		$parms['iddivision'] = $iddivision;
+		$nb_params++;
 	}
 	if(isset($params['idorga']) && $params['idorga'] != '')
 	{
 		$idorga = $params['idorga'];
+		$nb_params++;
 	}
 $query.=" ORDER BY pou.tour ASC";	
 	
-	$dbresult= $db->Execute($query, $parms);
+	if($nb_params >0)
+	{
+		$dbresult= $db->Execute($query, $parms);
+	}
+	else
+	{
+		$dbresult= $db->Execute($query);
+	}
 	
 $smarty->assign('recup_tours',
 		$this->CreateLink($id, 'retrieve_div_results',$returnid, $contents="Récupération", array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision)));
@@ -121,7 +133,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Dater"=>"dater2","Récupérer les parties"=>"retrieve_div_parties", "Récupérer les classements"=>"retrieve_div_classement","Supprimer les tours"=>"supp_tours");
+$articles = array("Dater"=>"dater2","Récupérer les parties"=>"retrieve_div_parties", "Récupérer les classements"=>"retrieve_div_classement","Supprimer les tours"=>"supp_div_tours");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

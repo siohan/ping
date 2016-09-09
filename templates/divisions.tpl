@@ -36,7 +36,7 @@ $(document).ready(function(){
 </fieldset>
 {/if}
 {$retourlien} <p class="warning">{$alert_message}</p>{*$recup_div*}
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}     --->{$tours}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  {if $itemcount > 0}   --->{$tours}</p></div>{else}</p></div>{/if}
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">

@@ -20,7 +20,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.5.3.1'; }  
+  function GetVersion() { return '0.5.4'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -123,6 +123,8 @@ class Ping extends CMSModule
 	$this->SetParameterType('lien', CLEAN_STRING);
 	$this->SetParameterType('message', CLEAN_STRING);
 	$this->SetParameterType('stall', CLEAN_INT);
+	$this->SetParameterType('retrieve', CLEAN_STRING);
+	$this->SetParameterType('direction', CLEAN_STRING);
 
 }
 

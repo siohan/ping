@@ -24,7 +24,7 @@ $(document).ready(function(){
 });
 //]]>
 </script>
-<div class="pageoptions"><p><span class="pageoptions warning">Récupérez les {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres} </span></p></div>
+<div class="pageoptions"><p class="pageoptions warning">Récupérez les {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres} </p></div>
 {if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>
@@ -48,24 +48,22 @@ $(document).ready(function(){
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
 	<tr>
-		<th>{$id}</th>
-		<th>{$equipe}</th>
+		<th>Equipe</th>
 		<th>Niveau</th>
-		<th>Compétition</th>
 		<th>Nom court</th>
 		<th>Tag pour affichage</th>
+		<th>Calendrier</th>
 		<th colspan="4">Actions</th>
 	</tr>
  </thead>
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
-	<td>{$entry->id}</td>
-    <td>{$entry->libequipe}</td>
+	<td>{$entry->libequipe}</td>
     <td>{$entry->libdivision}</td>
-	<td>{$entry->name}</td>
     <td>{$entry->friendlyname}</td>
 	<td>{$entry->tag}</td>
+	<td>{if $entry->calendrier==0}Non !!{else}Oui{/if}</td>
 	<td>{$entry->view}</td>
 	<td>{$entry->editlink}</td>
     <td>{$entry->deletelink}</td>
