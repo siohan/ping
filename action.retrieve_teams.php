@@ -68,12 +68,12 @@ $var = "numclu=".$club_number;
 
 */
 //on va tester si la variable est bien un tableau   
-/**/	
+	
 
 ///on initialise un compteur général $i
 $i=0;
 //on initialise un deuxième compteur
-$compteur = 0;
+$compteur=0;
 foreach($xml as $cle =>$tab)
 {
 	
@@ -100,8 +100,8 @@ foreach($xml as $cle =>$tab)
 	//$type_compet = $type;
 	
 	
-	$query = "SELECT phase, libequipe, libdivision FROM ".cms_db_prefix()."module_ping_equipes WHERE libequipe LIKE ? AND saison = ? AND phase = ? AND libdivision LIKE ?";
-	$dbresult = $db->Execute($query, array($new_equipe,$saison,$phase, $libdivision));
+	$query = "SELECT phase, libequipe, libdivision FROM ".cms_db_prefix()."module_ping_equipes WHERE libequipe = ? AND saison = ? AND phase = ? AND libdivision = ?";
+	$dbresult = $db->Execute($query, array($new_equipe,$phase, $libdivision));
 	
 		if($dbresult  && $dbresult->RecordCount() == 0) 
 		{
@@ -122,10 +122,6 @@ foreach($xml as $cle =>$tab)
 				$designation .= $db->ErrorMsg();			
 			}
 
-		}
-		else
-		{
-			echo "une erreur est apparue";
 		}//fin du if $dbresult
 	
 	

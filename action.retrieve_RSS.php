@@ -38,15 +38,15 @@ $page = "rss_all";
 		$array = json_decode(json_encode((array)$xml), TRUE);
 	}
 
-$i = 0;
+
 
 foreach ($xml->channel->item as $item)
 {
  	$datetime = date_create($item->pubDate);
  	$date = date_format($datetime, 'Y-m-d H:i:s');
-	$des = $item->description;//filter_var($item->description, FILTER_SANITIZE_STRING,!FILTER_FLAG_STRIP_LOW);
+	$des = addslashes($item->description);
 	$link = munge_string_to_url($item->link,false, true);
-	$title = addslashes($item->title);//, FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_LOW);
+	$title = cms_html_entity_decode($item->title);
 	$enclosure_url = munge_string_to_url($item->enclosure_url,false, true);
 	
 	//on fait la requete pour voir si le lien existe déjà
@@ -56,13 +56,12 @@ foreach ($xml->channel->item as $item)
 	if($dbresult && $dbresult->RecordCount() == 0)
 	{
 		//on peut insérer la news
-		$i++;//un compteur pour connaitre le nb d'articles dûment importés
-		$article_id = $db->GenId(cms_db_prefix().'module_news_seq');
+		$i = 0;//un compteur pour connaitre le nb d'articles dûment importés
+		$article_id = $db->GenId(cms_db_prefix.'module_news_seq');
 		$query2 = "INSERT INTO ".cms_db_prefix()."module_news (news_id, news_category_id, news_title, news_data, summary, status, news_date, start_time, end_time, create_date, modified_date,author_id,news_extra,news_url,searchable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		$dbresult2 = $db->Execute($query2, array($article_id,'1',$title,$des,$des,'published',$date,NULL,NULL,'','',1,'',$link,1));
+		$dbresult2 = $db->Execute($query2, array($article_id,'1',$title,'&lt;p&gt;'.$des.'&lt;/p&gt;','&lt;p&gt;'.$des.'&lt;/p&gt;','published',$date,NULL,NULL,'','',1,'',$link,1));
 		
 		//on teste si ça marche
-	/*
 		if ($dbresult2)
 		{
 			$i++;
@@ -71,7 +70,7 @@ foreach ($xml->channel->item as $item)
 			$dbresult3 = $db->Execute($query3);
 			
 		}
-	*/	
+		
 	}
 	
 	

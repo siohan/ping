@@ -58,7 +58,7 @@ $designation= '';
 	$dbresult = $link->query($query);
 
 	$row_cnt = mysqli_num_rows($dbresult);
-	echo "<br />le nb de résultats est : ".$row_cnt;
+	//echo "<br />le nb de résultats est : ".$row_cnt;
 	
 	if($dbresult && $row_cnt >0)
 	{
@@ -101,12 +101,12 @@ $designation= '';
 			{ 
 
 					//le tableau est vide, il faut envoyer un message pour le signaler
-					echo "le service est coupé";
+					//echo "le service est coupé";
 				
 			}   
 			else
 			{
-				echo "le service fonctionne ! <br/>";
+				//echo "le service fonctionne ! <br/>";
 			$i=0;
 				foreach($xml as $cle =>$tab)
 				{
@@ -161,7 +161,7 @@ $designation= '';
 							$scoreb = 0;
 							$update = 0;
 							//on arrete là on passe au suivant
-							echo "match non joué ou résultat non parvenu";		
+							//echo "match non joué ou résultat non parvenu";		
 						}
 						else
 						{
@@ -249,7 +249,7 @@ $designation= '';
 										}
 										else
 										{
-											echo "<br />La date existe déjà dans la table calendrier du module ! ";
+											//echo "<br />La date existe déjà dans la table calendrier du module ! ";
 										}
 								}//fin du if $row_cnt1
 								sleep(1);

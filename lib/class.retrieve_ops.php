@@ -634,8 +634,8 @@ public static function retrieve_parties_fftt( $licence )
 
 //la fonction ci-dessous récupère la situation mensuelle pour une ou plusieurs personnes
 //Attention de ne pas mettre de messages de sortie autre que ds le journal
-public function retrieve_sit_mens($licence)
-  {
+	public function retrieve_sit_mens($licence)
+  	{
 	//on vérifie si la situation mensuelle a déjà été prise en compte
 	global $gCms;
 	$ping = cms_utils::get_module('Ping'); 
@@ -769,7 +769,7 @@ public function retrieve_sit_mens($licence)
 
 
   }
- 	function retrieve_compets ($idorga,$type = '')
+	function retrieve_compets ($idorga,$type = '')
 	{
 		global $gCms;
 		$ping = cms_utils::get_module('Ping'); 
@@ -861,7 +861,7 @@ public function retrieve_sit_mens($licence)
 
 		}// fin du foreach
 		
-	}
+}
 	
 //Cette fonction récupère les divisions de chaque épreuve
 	function retrieve_divisions ($idorga,$idepreuve,$type = '')
@@ -898,7 +898,7 @@ public function retrieve_sit_mens($licence)
 					$array = 0;
 					$lignes = 0;
 				}
-				else
+				else 
 				{
 					$array = json_decode(json_encode((array)$xml), TRUE);
 					
@@ -955,7 +955,7 @@ public function retrieve_sit_mens($licence)
 				}
 			//}//fin du premier foreach
 		
-	}
+}
 	
 	function retrieve_div_tours ($idepreuve,$iddivision)
 	{
@@ -974,7 +974,7 @@ public function retrieve_sit_mens($licence)
 		$lien = $service->GetLink($page, $var);
 		
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		//var_dump($xml);
+		var_dump($xml);
 		if($xml === FALSE)
 		{
 			//le service est coupé
@@ -1000,8 +1000,8 @@ public function retrieve_sit_mens($licence)
 			$lien = htmlentities($value->lien);
 			$tab1 = explode("&",$value->lien);
 
-			$tableau = trim($tab1[2], 'cx_tableau=');
-
+			$tableau = trim($tab1[2], $character_mask='cx_tableau=');
+			echo $tableau."<br />";
 			if($tableau != '')
 			{
 				
@@ -1011,21 +1011,21 @@ public function retrieve_sit_mens($licence)
 				$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle,$tour2, $tableau,$lien,$saison));
 				if($dbresult)
 				{
-				$i++;
+					$i++;
 				
-				//et si on continuait ?
-				//reprendre les infos ci dessus pour les traiter !
-				//on pourrait préparer les différents tags : poule, classement, partie.
-				//on met à tjour la table divisions pour dire qu'on a bien uploadé
-				$uploaded = 1;
-				$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
-				$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
+					//et si on continuait ?
+					//reprendre les infos ci dessus pour les traiter !
+					//on pourrait préparer les différents tags : poule, classement, partie.
+					//on met à tjour la table divisions pour dire qu'on a bien uploadé
+					$uploaded = 1;
+					$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
+					$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
 				
-				//on écrit dans le journal
-				$status = 'Ok';
-				$action = 'retrieve_div_tours';
-				$designation = $i." tour(s) inséré(s) pour l\'épreuve ".$idepreuve;
-				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+					//on écrit dans le journal
+					$status = 'Ok';
+					$action = 'retrieve_div_tours';
+					$designation = $i." tour(s) inséré(s) pour l\'épreuve ".$idepreuve;
+					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 				}
 			}
 
@@ -1526,32 +1526,34 @@ public function retrieve_sit_mens($licence)
 											$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,idepreuve, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
 											$dbresult4 = $db->Execute($query4, array($date_event,$date_event,$idepreuve,$tour,$tag,$saison));
 
+				
 											if($dbresult4)
 											{
 												$designation.= $db->ErrorMsg();
 											}
 									}
-						}
-						elseif($dbresult1->RecordCount() >0)
-						{
-								//il y a déjà un enregistrement, le score est-il à jour ?
-								$update = 1;
-								$row = $dbresult1->FetchRow();
-								$id = $row['id'];
-								$scoreA = $row['scorea'];
-								$scoreB = $row['scoreb'];
+		}
+		elseif($dbresult1->RecordCount() >0)
+		{
+			//il y a déjà un enregistrement, le score est-il à jour ?
+			$update = 1;
+			$row = $dbresult1->FetchRow();
+			$id = $row['id'];
+			$scoreA = $row['scorea'];
+			$scoreB = $row['scoreb'];
 
-									if($scoreA ==0 && $scoreB ==0)
-									{
-										$query5 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
-										$dbresultA = $db->Execute($query5, array($scorea, $scoreb, $id));
-										$i++;
-										if(!$dbresultA)
-										{
-											$designation.= $db->ErrorMsg();
-										}
-									}
-						}
+			if($scoreA ==0 && $scoreB ==0)
+			{
+				$query5 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+				$dbresultA = $db->Execute($query5, array($scorea, $scoreb, $id));
+				$i++;
+				
+				if(!$dbresultA)
+				{
+					$designation.= $db->ErrorMsg();
+				}
+			}
+		}
 				
 				}
 
@@ -1565,7 +1567,7 @@ public function retrieve_sit_mens($licence)
 				$query_cal = "UPDATE ".cms_db_prefix()."module_ping_equipes SET calendrier = 1 WHERE idpoule = ? AND iddiv = ?";
 				$dbcal = $db->Execute($query_cal,array($idpoule,$iddiv));
 			}
-        }//fin du if is_array($result)
+		}//fin du if is_array($result)
 	function retrieve_all_classements( $iddiv,$idpoule, $record_id )
 	{
 		global $gCms;
@@ -1643,7 +1645,7 @@ public function retrieve_sit_mens($licence)
 		}
 		$action = 'getPouleclassement';
 		ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
-	}
+}
 	
 	function insert_cgcalendar ($name,$tag,$date_debut,$date_fin)
 	{

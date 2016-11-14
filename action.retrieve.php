@@ -61,7 +61,8 @@ switch($params['retrieve'])
 		$retrieve = $service->retrieve_divisions($idorga,$idepreuve,$type="");
 		$message='Retrouvez toutes les infos dans le journal';
 		$this->SetMessage($message);
-		$this->RedirectToAdminTab('equipes');
+		$this->Redirect($id, 'admin_divisions_tab',$returnid, array("idepreuve"=>$idepreuve,"idorga"=>$idorga,"essai"=>"1"));
+		//$this->RedirectToAdminTab('compets');
 	
 	break;
 	
@@ -152,6 +153,10 @@ switch($params['retrieve'])
 		$this->SetMessage($message);
 		$this->RedirectToAdminTab('configuration');
 
+	break;
+	
+	case "export_events" :
+		
 	break;
 
 	

@@ -8,7 +8,7 @@ $db =& $this->GetDb();
 //a faire 
 //mettre les autorisations
 $aujourdhui = date('Y-m-d');
-echo $aujourdhui;
+//echo $aujourdhui;
 $designation = '';
 //1ère condition : 
 //on prend les résultats d'une poule
@@ -111,7 +111,7 @@ if(isset($params['eq_id']) && $params['eq_id'] != '')
 							$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_rencontres_parties (id, fk_id, joueurA, scoreA, joueurB, scoreB) VALUES ('', ?, ?, ?, ?, ?)";
 							$dbresult4 = $db->Execute($query4, array($record_id, $$ja,$$scorea, $$jb, $$scoreb));
 							
-							if($club == "1")
+							if($club == "1" && date('d') >= 10)
 							{
 								$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
 								//echo $query2;
@@ -254,28 +254,31 @@ else
 								$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_rencontres_parties (id, fk_id, joueurA, scoreA, joueurB, scoreB) VALUES ('', ?, ?, ?, ?, ?)";
 								$dbresult4 = $db->Execute($query4, array($record_id, $$ja,$$scorea, $$jb, $$scoreb));
 
-								$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
-								//echo $query2;
-								$dbresult2 = $db->Execute($query2, array($$xjb,$$xja));
+								if(date('d') >= 10)
+								{
+									$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
+									//echo $query2;
+									$dbresult2 = $db->Execute($query2, array($$xjb,$$xja));
 
-									if($dbresult2 && $dbresult2->RecordCount()>0)
-									{
-										while($row2= $dbresult2->FetchRow())
+										if($dbresult2 && $dbresult2->RecordCount()>0)
 										{
-											$serv = new retrieve_ops();
-											$licence = $row2['licence'];
-											$retrieve = $serv->retrieve_parties_spid($licence);
+											while($row2= $dbresult2->FetchRow())
+											{
+												$serv = new retrieve_ops();
+												$licence = $row2['licence'];
+												$retrieve = $serv->retrieve_parties_spid($licence);
 
+
+											}
+										}
+										else
+										{
 
 										}
-									}
-									else
-									{
 
-									}
-
-									//on pourrait aussi récupérer ces infos pour les mettre en bdd	
-									//echo $$xja;
+										//on pourrait aussi récupérer ces infos pour les mettre en bdd	
+										//echo $$xja;
+								}
 							}
 
 		//on met la valeur uploaded à 1
