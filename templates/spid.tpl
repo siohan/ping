@@ -81,7 +81,7 @@ $(document).ready(function(){
 	<td>{$entry->forfait}</td>
 	<td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>
-	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" class="select"></td>
+	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->record_id}" class="select"></td>
   </tr>
 {/foreach}
  </tbody>

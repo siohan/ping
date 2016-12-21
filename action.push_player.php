@@ -22,8 +22,8 @@ else
 require_once(dirname(__FILE__).'/include/prefs.php');
 $saison = $this->GetPreference('saison_en_cours');
 //on vérifie la présence ou non du joueur
-$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ? AND saison = ?";
-$dbresult = $db->Execute($query, array($licence, $saison));
+$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
+$dbresult = $db->Execute($query, array($licence));
 $count = $dbresult->RecordCount();
 if($count==0)//on est ok
 {
@@ -31,7 +31,7 @@ if($count==0)//on est ok
 	//où on laisse l'admin le faire ?
 	//pour l'heure on fait le mini
 	$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens,fftt,maj_fftt,spid,maj_spid,maj_total,spid_total) VALUES('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	$dbresult2 = $db->Execute($query2, array($saison,$now,$licence,'Janvier 2000',0,0,0,0,0,0));
+	$dbresult2 = $db->Execute($query2, array($saison,$now,$licence,'Janvier 2000','1970-01-01',0,'1970-01-01',0,0,0));
 	
 	//on teste la requete
 	if(!$dbresult2)

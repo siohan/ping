@@ -61,8 +61,7 @@ switch($params['retrieve'])
 		$retrieve = $service->retrieve_divisions($idorga,$idepreuve,$type="");
 		$message='Retrouvez toutes les infos dans le journal';
 		$this->SetMessage($message);
-		$this->Redirect($id, 'admin_divisions_tab',$returnid, array("idepreuve"=>$idepreuve,"idorga"=>$idorga,"essai"=>"1"));
-		//$this->RedirectToAdminTab('compets');
+		$this->Redirect($id, 'admin_divisions_tab', $returnid, array("idepreuve"=>$idepreuve, "idorga"=>$idorga, "essai"=>"1"));
 	
 	break;
 	
@@ -74,15 +73,15 @@ switch($params['retrieve'])
 		}
 		if(isset($params['type']) && $params['type'] != '')
 		{
-			$type = $params['type'];
+			$typeC = $params['type'];
 		}
 		else
 		{
-			$type = '';
+			$typeC = '';
 		}
 		
 		
-		$retrieve = $service->retrieve_compets($idorga,$type="");
+		$retrieve = $service->retrieve_compets($idorga,$type=$typeC);
 		$message='Retrouvez toutes les infos dans le journal';
 		$this->SetMessage($message);
 		$this->RedirectToAdminTab('compets');
@@ -144,7 +143,27 @@ switch($params['retrieve'])
 		}
 		
 	break;
-	
+	case "spid" :
+		$service = new retrieve_ops();
+		foreach( $params['sel'] as $licence )
+  		{
+    			$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
+			$dbretour = $db->Execute($query, array($licence));
+			if ($dbretour && $dbretour->RecordCount() > 0)
+			{
+			    while ($row= $dbretour->FetchRow())
+			      	{
+					$player = $row['player'];
+					$cat = $row['cat'];
+					//return $player;
+					$service = new retrieve_ops();
+					$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+					//var_dump($resultats);
+				}
+
+			}
+  		}
+	break;
 	case "organismes" :
 		
 		$service = new retrieve_ops();
@@ -153,10 +172,6 @@ switch($params['retrieve'])
 		$this->SetMessage($message);
 		$this->RedirectToAdminTab('configuration');
 
-	break;
-	
-	case "export_events" :
-		
 	break;
 
 	

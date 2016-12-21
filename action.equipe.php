@@ -60,8 +60,7 @@ $smarty->assign('items', $rowarray);
 
 
 
-$query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv,eq.id as id_alias FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND eq.id = ? "; 
-$query2.=" GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
+$query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv,eq.id as id_alias FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND eq.id = ? GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
 //$parms['saison'] = $saison;
 $parms['id_alias'] = $record_id;
 

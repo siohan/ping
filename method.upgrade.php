@@ -856,6 +856,15 @@ case  "0.3.0.1" :
 			
 		
 	}
+	case "0.5.4" : 
+	{
+		//
+		//on va éliminer les doublons possibles de la table divisions
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = '1970-01-01' WHERE maj_spid = '0000-00-00'";
+		$dbresult = $db->Execute($query);
+		$query1 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = '1970-01-01' WHERE maj_fftt = '0000-00-00'";
+		$dbresult1 = $db->Execute($query1);
+	}
 	
 
 	

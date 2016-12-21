@@ -9,8 +9,24 @@ $smarty->assign('id', $this->Lang('id'));
 $smarty->assign('username', 'Joueur');
 $smarty->assign('points', 'Points');
 $saison = $this->GetPreference('saison_en_cours');
+/**/
+$journee_sit_mens = $this->GetPreference('jour_sit_mens');
+$jour_sit_mens = (isset($journee_sit_mens)?$journee_sit_mens:'10');
+//echo $jour_sit_mens;
+/**/
 $mois_courant = date('n');
 $annee_courante = date('Y');
+$jour_courant = date('d');
+/**/
+if($jour_courant < $jour_sit_mens)
+{
+	$smarty->assign('affichage', FALSE);
+}
+else
+{
+	$smarty->assign('affichage', TRUE);
+}
+/**/
 //$month = mois_francais("$mois_courant");
 //echo "le mois en français : ".$month;
 //$smarty->assign('mois-en-francais', "$month");

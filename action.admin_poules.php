@@ -64,8 +64,6 @@ $smarty->assign('refresh',
 $rowclass = '';
 //echo $query;
 $rowarray= array ();
-$compteur = $dbresult->RecordCount();
-echo "le compteur est : ".$compteur;
 if ($dbresult && $dbresult->RecordCount() > 0)
   {
     while ($row= $dbresult->FetchRow())

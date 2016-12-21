@@ -119,26 +119,16 @@ $service = new Servicen();
 				//reprendre les infos ci dessus pour les traiter !
 				//on pourrait préparer les différents tags : poule, classement, partie.
 				//on met à jour la table divisions pour dire qu'on a bien uploadé
-				if($dbresult)
-				{
-					$uploaded = 1;
-					$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
-					$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
-					$designation.="Tour(s) inséré(s)";
-				}
-				else
-				{
-					$designation.= $db->ErrorMsg();//mysqli_errno();
-					//echo "erreur N° : ".$designation;
-				}
-				
+				$uploaded = 1;
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
+				$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
 			}
 
 
 
 
 		}
-		
+		$designation.="Tour(s) inséré(s)";
 		$this->SetMessage("$designation");
 		$this->Redirect($id,'admin_divisions_tab', $returnid, array("idepreuve"=>$idepreuve, "idorga"=>$idorga));
 

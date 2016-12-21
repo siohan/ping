@@ -21,7 +21,7 @@ $(document).ready(function(){
 });
 //]]>
 </script>
-
+{$deletelog}
 {if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>

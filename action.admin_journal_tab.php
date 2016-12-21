@@ -23,7 +23,7 @@ global $themeObject;
 
 $totalcount = $db->GetOne('SELECT COUNT(id) as count FROM ' . cms_db_prefix() . 'module_ping_recup');
 /* on fait un formulaire de filtrage des résultats*/
-//$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'journal')));
+$smarty->assign('deletelog',$this->CreateLink($id,'delete',$returnid,'Supprimer tout le journal',array('record_id'=>'0','type_compet'=>'journal')));
 $smarty->assign('formstart', $this->CreateFormStart($id, 'admin_journal_tab'));
 $statuslist[$this->lang('allstatus')] ='';
 $datelist[$this->Lang('alldates')] = '';
@@ -74,7 +74,7 @@ $smarty->assign('submitfilter',
 $smarty->assign('formend',$this->CreateFormEnd());
 
 $edit = 0;//pour completer la requete.
-$parm= array ();
+$parms= array();
 $critere = '';
 $activation = 0;
 $query2= "SELECT id, datecreated, designation, status,action FROM ".cms_db_prefix()."module_ping_recup";

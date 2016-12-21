@@ -141,9 +141,9 @@ $query2 = "SELECT *, sm.saison, sm.id,j.licence,sm.id,sm.mois,sm.points, sm.anne
 	
 	}
 	
-	
-$query2.="  AND sm.saison = ? ORDER BY joueur ASC,sm.id ASC";
-$parms['saison'] = $saison_courante;
+//$query2.=" AND sm.saison = ?";	
+$query2.=" ORDER BY joueur ASC,sm.id ASC";
+//$parms['saison'] = $saison_courante;
 
 $dbresult= $db->Execute($query2,$parms);
 //echo $query2;

@@ -29,6 +29,7 @@ $this->SetPreference('spid_nombres', $params['spid_nombres']);
 $this->SetPreference('fftt_nombres', $params['fftt_nombres']);
 $this->SetPreference('spid_interval', $params['spid_interval']);
 $this->SetPreference('fftt_interval', $params['fftt_interval']);
+$this->SetPreference('email_admin_ping', $params['email_admin_ping']);
 $this->SetMessage('Vos options ont été mises à jours');
 $this->Audit('', 'Ping',$params['club_number']);
 //$this->RedirectToAdminTab('joueurs');

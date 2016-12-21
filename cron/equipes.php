@@ -15,17 +15,7 @@ if (mysqli_connect_errno()) {
     
 }
 
-/*
-echo $config['db_hostname'];
-echo $config['db_username'];
-echo $config['db_password'];
-echo $config['db_name'];
-echo $config['db_prefix'];
-*/
-	
-
-
-$tab= array("Ping_mapi_pref_club_number", "Ping_mapi_pref_idAppli", "Ping_mapi_pref_serie","Ping_mapi_pref_motdepasse","Ping_mapi_pref_saison_en_cours", "Ping_mapi_pref_phase_en_cours");
+$tab= array("Ping_mapi_pref_club_number", "Ping_mapi_pref_idAppli", "Ping_mapi_pref_serie","Ping_mapi_pref_motdepasse","Ping_mapi_pref_saison_en_cours", "Ping_mapi_pref_phase_en_cours","Ping_mapi_pref_email_admin_ping");
 foreach($tab as $value)
 {
 	
@@ -146,13 +136,28 @@ foreach($tab as $value)
 
 		}// fin du foreach
 	}
+	//echo $Ping_mapi_pref_email_admin_ping;
 //on envoie un mail qui donne les infos
 // Dans le cas où nos lignes comportent plus de 70 caractères, nous les coupons en utilisant wordwrap()
 $message = $compteur." equipe(s) insérée(s)";
 $message = wordwrap($message, 70, "\r\n");
 
-// Envoi du mail
-mail('claude.siohan@gmail.com', '[Cron] equipes', $message);
+// Envoi du mail si autorisation
+if($Ping_mapi_pref_email_notification == 'Oui')
+{
+	if($Ping_mapi_pref_email_succes == 'Oui')
+	{
+			if($compteur >0)//seulement s'il y a des résultats
+			{
+				mail($Ping_mapi_pref_email_admin_ping, '[Cron] equipes', $message);
+			}
+	}
+	else
+	{
+		mail($Ping_mapi_pref_email_admin_ping, '[Cron] equipes', $message);
+	}
+}
+
 
 
 ?>

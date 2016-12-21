@@ -18,11 +18,13 @@ if($mois_courant >= 7)
 {
 	$annee_debut = $annee_courante;
 	$annee_fin = $annee_courante +1;
+	$phase = 1;
 }
 else
 {
 	$annee_debut = $annee_courante -1;
 	$annee_fin = $annee_courante;
+	$phase = 2;
 }
 
 $smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve',$returnid,$contents='Récupérer les organismes',array("retrieve"=>"organismes")));
@@ -87,6 +89,8 @@ $smarty->assign('input_nom_equipes',
 		$this->CreateInputText($id, 'nom_equipes', $this->GetPreference('nom_equipes', ''), 50,250));
 $smarty->assign('jour_sit_mens',
 		$this->CreateInputText($id,'jour_sit_mens', $this->GetPreference('jour_sit_mens', ''), 5, 7));
+$smarty->assign('email_notification',
+			$this->CreateInputDropdown($id,'email_notification',$items,-1,$this->GetPreference('email_notification'),50,255));
 $smarty->assign('email_admin_ping',
 		$this->CreateInputText($id,'email_admin_ping', $this->GetPreference('email_admin_ping', ''), 25, 70));
 $smarty->assign('email_succes',

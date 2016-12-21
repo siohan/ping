@@ -55,15 +55,15 @@ class PingRecupSpidTask implements CmsRegularTask
 			$db = $ping->GetDb();
 			$saison_courante = $ping->GetPreference('saison_en_cours');
 			$now = trim($db->DBTimeStamp(time()), "'");
-			$query = "SELECT j.licence FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' AND saison = ? ";
+			$query = "SELECT DISTINCT j.licence, CONCAT_WS( ' ', j.nom, j.prenom) AS player, j.cat FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' ";
 			$interval = $ping->GetPreference('spid_interval');
-			$query.=" AND maj_spid < NOW()-INTERVAL ".$interval." DAY ";
-			$query.=" OR maj_spid = '000-00-00' ";
-			$query.=" ORDER BY maj_spid DESC ";
+			$query.=" AND rp.maj_spid < NOW()-INTERVAL ".$interval." DAY ";
+			//$query.=" OR maj_spid = '000-00-00' ";
+			$query.=" ORDER BY rp.maj_spid DESC ";
 			$limit = $ping->GetPreference('spid_nombres');
 			$query.= "LIMIT ".$limit;
 			//$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1' LIMIT 2";
-			$dbresult = $db->Execute($query,array($saison_courante));
+			$dbresult = $db->Execute($query);
 			if($dbresult && $dbresult->RecordCount() > 0)
 			{
 
@@ -73,10 +73,11 @@ class PingRecupSpidTask implements CmsRegularTask
 				while ($row= $dbresult->FetchRow())
 				{
 					$licence = $row['licence'];		
-					//$player = $row['player'];
+					$player = $row['player'];
+					$cat = $row['cat'];
 
 
-					$retrieve_ops = $service->retrieve_parties_spid2($licence);
+					$retrieve_ops = $service->retrieve_parties_spid2($licence, $player, $cat);
 					sleep(1);
 
 				}//fin du while

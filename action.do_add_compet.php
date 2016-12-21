@@ -1,6 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 
 	if (!$this->CheckPermission('Ping Manage'))
 	{
@@ -18,10 +18,11 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		{
 			$idepreuve = $params['idepreuve'];
 			//epreuve individuelle ou par équipes ?
-			$query = "SELECT indivs FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+			$query = "SELECT indivs, name FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
 			$dbresult = $db->Execute($query, array($idepreuve));
 			$row = $dbresult->FetchRow();
 			$indivs = $row['indivs'];
+			$name = $row['name'];
 		}
 		else
 		{
@@ -78,6 +79,8 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 			$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,saison, idepreuve, date_debut, date_fin, numjourn,tag) VALUES ('',?,?, ?, ?, ?,?)";
 			$dbresult = $db->Execute($query, array($saison,$idepreuve,$date_debut, $date_fin, $numjourn,$tag));
 			
+			//on insert aussi dans le module Calendrier
+			$calendar = retrieve_ops::insert_cgcalendar($name,$tag,$date_debut,$date_fin);
 		}
 		else
 		{

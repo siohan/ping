@@ -454,6 +454,7 @@ public static function search_player_licence($name)
 public static function get_name($nom)
 {
 	
+	//il faut sélectionner les uppercase et non les vides
 	$explosion = explode(' ',$nom);
 	$compteur = count($explosion);
 	$name = array();

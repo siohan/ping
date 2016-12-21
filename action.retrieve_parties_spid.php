@@ -13,16 +13,17 @@ $licence = $params['licence'];
 $designation = '';
 
 
-$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
+$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
 $dbretour = $db->Execute($query, array($licence));
 if ($dbretour && $dbretour->RecordCount() > 0)
 {
     while ($row= $dbretour->FetchRow())
       	{
 		$player = $row['player'];
+		$cat = $row['cat'];
 		//return $player;
 		$service = new retrieve_ops();
-		$resultats = $service->retrieve_parties_spid2($licence);
+		$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
 		//var_dump($resultats);
 	}
 	

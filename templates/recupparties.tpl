@@ -32,7 +32,7 @@ $(document).ready(function(){
 		<th>Joueur</th>
 		<th>Dernière Situation</th>
 		<th>Parties FFTT</th>
-		<th>Parties Spid</th>
+		<th>Spid du mois/Erreurs</th>
 		<th colspan='3'>Actions</th>
 		<th><input type="checkbox" id="selectall" name="selectall"></th>
 	</tr>
@@ -45,9 +45,12 @@ $(document).ready(function(){
 	<td>{if $entry->sit_mens ==''}{$entry->push_player}{else}{$entry->sit_mens}{/if}</td>
 	<td>{$entry->fftt}<br />(maj le {$entry->maj_fftt|date_format:"%A %e %B"})</td>
 	<td>{$entry->spid}/{$entry->spid_errors}{if $entry->spid_errors >0} {$attention_img}{/if}<br />(maj le {$entry->maj_spid|date_format:"%A %e %B"})</td>
-    <td>{$entry->sitmenslink}</td>
+    
 	<td>{$entry->getpartieslink}</td>
+	{if $affichage != FALSE}
+	<td>{$entry->sitmenslink}</td>
 	<td>{$entry->getpartiesspid}</td>
+	{/if}
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->licence}" class="select"></td>
   </tr>
 {/foreach}

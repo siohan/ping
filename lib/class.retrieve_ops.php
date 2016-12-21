@@ -11,7 +11,7 @@ class retrieve_ops
 
 ##
 ##
-public function retrieve_parties_spid2( $licence )
+public function retrieve_parties_spid2( $licence, $player,$cat )
   {
 	global $gCms;
 	$db = cmsms()->GetDb();
@@ -23,17 +23,10 @@ public function retrieve_parties_spid2( $licence )
 	$saison_courante = $ping->GetPreference('saison_en_cours');
 	$now = trim($db->DBTimeStamp(time()), "'");
 	$aujourdhui = date('Y-m-d');
+	$mois_courant = date('m');
+	$annee_courante = date('Y');
 	//$error = 0;//le compteur d'erreurs
-	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player,cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
-	$dbretour = $db->Execute($query, array($licence));
-	if ($dbretour && $dbretour->RecordCount() > 0)
-	{
-	    while ($row= $dbretour->FetchRow())
-		{
-		$player = $row['player'];
-		$cat = $row['cat'];
-		//on veut savoir si le joueur est senior ou pas
-		//car pour les indivs, le coeff est différent
+
 		if(substr($cat,0,1) =='S' || substr($cat,0,1) =='V')
 		{
 			$senior = 1;
@@ -81,7 +74,7 @@ public function retrieve_parties_spid2( $licence )
 				
 			}
 			*/
-			if($lignes <= $spid)
+			if($lignes < $spid)
 			{
 				$message = "Résultats SPID à jour pour ".$player." : ".$spid." en base de données ".$lignes." en ligne."; 
 				$status = 'Echec';
@@ -92,8 +85,17 @@ public function retrieve_parties_spid2( $licence )
 				if($lignes == $spid)
 				{
 				*/
-					$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ? WHERE licence = ? AND saison = ?";
-					$dbresult4 = $db->Execute($query4,array($aujourdhui,$licence,$saison_courante));
+					$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ? WHERE licence = ?";
+					$dbresult4 = $db->Execute($query4,array($aujourdhui,$licence));
+					
+					if(!$dbresult4)
+					{
+						$status = 'Echec';
+						$message = $db->ErrorMsg();
+						$designation.= $message;
+						$action = "mass_action";
+						ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+					}
 				/*
 				}
 				*/
@@ -108,8 +110,8 @@ public function retrieve_parties_spid2( $licence )
 				//on initialise un tableau pour éviter de faire des requetes redondantes
 				$array_classement = array();
 				//on va faire une nouvelle conditionnelle pour déterminer si on récupère les résultats du mois en cours seulement ou non
-				$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
-				$dbresult1 = $db->Execute($query1, array($saison_courante, $licence));
+				$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ? AND MONTH(date_event) = ? AND YEAR(date_event) = ?";
+				$dbresult1 = $db->Execute($query1, array($saison_courante, $licence,$mois_courant, $annee_courante));
 			//	foreach($array as $cle =>$tab)
 				foreach($xml as $cle=> $tab)
 				{
@@ -121,28 +123,11 @@ public function retrieve_parties_spid2( $licence )
 					//on synthétise tous les éléments à récupérer
 					//on fera un éventuel traitement ensuite
 					$dateevent = (isset($tab->date)?"$tab->date":"");//$tab['date'];
-					$nom = (isset($tab->nom)?"$tab->nom":"");//$tab['nom'];
-					$classement = (isset($tab->classement)?"$tab->classement":"");
-					$epreuve = (isset($tab->epreuve)?"$tab->epreuve":"");
-					$victoire = (isset($tab->victoire)?"$tab->victoire":"");
-					$forfait = (isset($tab->forfait)?"$tab->forfait":"");
-					$epreuve = (isset($tab->epreuve)?"$tab->epreuve":"");//$tab['epreuve'];
-					$victoire = (isset($tab->victoire)?"$tab->victoire":"");
-					$forfait = (isset($tab->forfait)?"$tab->forfait":"");
 					
-					$retour_sit_mens = 0;
-					//on peut désormais faire les traitements
-					//on va d'abord faire différents traitements et si pas possible
-					//on incrémentera le compteur d'erreurs $error;
-					
-					//echo "le dateevent est : ".$dateevent;
 					$chgt = explode("/",$dateevent);
 					$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
 					$annee = '20'.$chgt[2];
 					$date_mysql = $annee.'-'.$chgt[1].'-'.$chgt[0];
-						
-						//ci-dessous , on regarde le format du mois récupéré
-						//les mois récupérés comportent des zéros initiaux ex 01 pour janvier
 						if (substr($chgt[1], 0,1)==0)
 						{
 							$mois_event = substr($chgt[1], 1,1);
@@ -152,32 +137,51 @@ public function retrieve_parties_spid2( $licence )
 						{
 							$mois_event = $chgt[1];
 						}
-						//echo "le mois est : ".$mois_event;
-					//on va vérifier si on a la situation mensuelle du joueur du club à jour pour le mois en question
-					//on la met dans un tableau pour éviter une nouvelle requete identique
-					//if(in_array())
-					//on interroge le tableau array_classement avant de faire la requete
-				
-					$retour_sit_mens = ping_admin_ops::get_sit_mens($licence,$mois_event,$saison_courante);
-					
-					
-					
-					if($retour_sit_mens==0)
+					if($mois_event == $mois_courant && $annee == $annee_courante)
 					{
-						$designation.="Situation du mois ".$mois_event." manquante pour ".$player;
-						$a++;
-						$error++;
+						$nom = (isset($tab->nom)?"$tab->nom":"");//$tab['nom'];
+						$classement = (isset($tab->classement)?"$tab->classement":"");
+						$victoire = (isset($tab->victoire)?"$tab->victoire":"");
+						$forfait = (isset($tab->forfait)?"$tab->forfait":"");
+						$epreuve = (isset($tab->epreuve)?"$tab->epreuve":"");//$tab['epreuve'];
+
+						$retour_sit_mens = 0;
+						//on peut désormais faire les traitements
+						//on va d'abord faire différents traitements et si pas possible
+						//on incrémentera le compteur d'erreurs $error;
+
+						//echo "le dateevent est : ".$dateevent;
+
+
+							//ci-dessous , on regarde le format du mois récupéré
+							//les mois récupérés comportent des zéros initiaux ex 01 pour janvier
+
+							//echo "le mois est : ".$mois_event;
+						//on va vérifier si on a la situation mensuelle du joueur du club à jour pour le mois en question
+						//on la met dans un tableau pour éviter une nouvelle requete identique
+						//if(in_array())
+						//on interroge le tableau array_classement avant de faire la requete
+
+						$retour_sit_mens = ping_admin_ops::get_sit_mens($licence,$mois_event,$saison_courante);
+
+
+
+						if($retour_sit_mens==0)
+						{
+							$designation.="Situation du mois ".$mois_event." manquante pour ".$player;
+							$a++;
+							$error++;
+
+						}
 						
-					}
-						
-						
-						//echo "le nom est : ".$nom;
+						//echo "<br />le nom est : ".$nom;
 						//on adapte son nom d'abord
 						$nom_global = ping_admin_ops::get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
 						$nom_reel1 = $nom_global[0];
 						$nom_reel = addslashes($nom_global[0]);//le nom					
 						$prenom_reel = $nom_global[1];//le prénom
 						$annee_courante = date('Y');
+						//echo "<br /> Le nom final est : ".$nom_reel;
 					
 					//classement fourni par le spid
 						$cla = substr($classement, 0,1);
@@ -187,7 +191,8 @@ public function retrieve_parties_spid2( $licence )
 							$query4 = "SELECT points FROM ".cms_db_prefix()."module_ping_adversaires WHERE nom = ? AND prenom = ? AND mois = ? AND annee = ?";
 							//echo $query4.'<br />';
 							$dbresult4 = $db->Execute($query4, array($nom_reel1, $prenom_reel,$mois_event,$annee_courante));
-
+							$compteur = $dbresult4->RecordCount();
+							//echo " Le compteur est : ".$compteur;
 								if($dbresult4 && $dbresult4->RecordCount()>0 && $dbresult4->RecordCount() <2)//ok on a un enregistrement qui correspond
 								{
 									$row4 = $dbresult4->FetchRow();
@@ -199,80 +204,35 @@ public function retrieve_parties_spid2( $licence )
 								{
 									//on va chercher la sit mens du pongiste
 								
-
-									$service = new Service();
-									$resultat = $service->getJoueursByName("$nom_reel", $prenom ="$prenom_reel");
+									$resultat = retrieve_ops::advlicence($nom_reel, $prenom =$prenom_reel);
 									//var_dump($resultat);
-									if(is_array($resultat) && count($resultat)>0 && count($resultat)<2)
-									{//on a bien un tableau avec au moins un élément : c'est ok !
-
-										//on a un résultat ?
-										//echo "Glop";
-										//$compteur++;
-										$licen = $resultat[0]['licence'];//on a bien un numéro de licence, on peut donc récupérer la situation mensuelle en cours
-										//echo $licen.'<br />';
-										$service = new Service();
-										$resultat2 = $service->getJoueur("$licen");
-
-										if(is_array($resultat2) && count($resultat2)>0)
-										{
-											$licence2 = $resultat2['licence'];
-											$nom = $resultat2['nom'];
-											//echo 'autre nom : '.$nom .' '.$prenom;
-											$prenom = $resultat2['prenom'];
-											$natio = $resultat2['natio'];
-											$clglob = $resultat2['clglob'];
-											$point = $resultat2['point'];
-											$aclglob = $resultat2['aclglob'];
-											$apoint = $resultat2['apoint'];
-											$clnat = $resultat2['clnat'];
-											$categ = $resultat2['categ'];
-											$rangreg = $resultat2['rangreg'];
-											$rangdep = $resultat2['rangdep'];
-											$valcla = $resultat2['valcla'];
-											$clpro = $resultat2['clpro'];
-											$valinit = $resultat2['valinit'];
-											$progmois = $resultat2['progmois'];
-											$progann = $resultat2['progann'];
-											$annee_courante = date('Y');
-											//on insère le tout dans la bdd
-											$query5 = "INSERT INTO ".cms_db_prefix()."module_ping_adversaires (id,datecreated, datemaj, mois, annee, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-											//echo $query5;
-											$dbresultat5 = $db->Execute($query5,array($now,$now,$mois_event, $annee_courante, $licence2, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
-												//On vérifie que l'insertion se passe bien
-											$newclass = $point;
-										}
-										else
-										{
-											if($cla == 'N'){
-												$newclassement = explode('-', $classement);
-												$newclass = $newclassement[1];
-											}
-											else 
-											{
-												$newclass = $classement;
-											}
-										}
-
-
-									}
-									else
+									
+									$licence_adv = $resultat;//on a bien un numéro de licence, on peut donc récupérer la situation mensuelle en cours
+									//echo "<br />".$licence_adv.'<br />';
+									
+									$insert_adv = retrieve_ops::retrieve_sit_mens($licence_adv, $ext='True');
+									//var_dump($insert_adv);
+									//
+									if($insert_adv === FALSE)//pas de résultats !
 									{
-										if(count($resultat)>1)//homonymie, etc...
+										if($cla == 'N')
 										{
-											$designation.="Homonymie pour ".$player;
-											$error++;
-										}
-										//echo "Pas Glop";
-										if($cla == 'N'){
-										$newclassement = explode('-', $classement);
-										$newclass = $newclassement[1];
+											$newclassement = explode('-', $classement);
+											$newclass = $newclassement[1];
 										}
 										else 
 										{
 											$newclass = $classement;
 										}
-									}//fin du if is_array($resultat)
+									}
+									else
+									{
+										$newclass = $insert_adv;
+									}	
+									
+
+
+								
 								}
 								else
 								{
@@ -435,12 +395,17 @@ public function retrieve_parties_spid2( $licence )
 				//	}//fin du if si la sit mens du joueur du club est dûment renseignée
 					//on détruit le nb d'erreur
 					unset($error);
+					}
 				}//fin du foreach
+					
+						
+						
+						
 				
 				$comptage = $i;
 				
-				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ?,spid_total = ? WHERE licence = ? AND saison = ?";
-				$dbresult4 = $db->Execute($query4,array($aujourdhui,$compteur,$licence,$saison_courante));
+				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ?,spid_total = ? WHERE licence = ?";
+				$dbresult4 = $db->Execute($query4,array($aujourdhui,$compteur,$licence));
 				
 				$status = 'Parties SPID';
 				$designation.= $comptage." parties Spid sur ".$compteur."  de ".$player;
@@ -453,8 +418,8 @@ public function retrieve_parties_spid2( $licence )
 				
 
 			}//fin du if !is_array
-		}//fin du while
-	}//fin du if dbretour >0
+	//	}//fin du while
+
 
 
 
@@ -506,7 +471,8 @@ public static function retrieve_parties_fftt( $licence )
 		else
 		{
 			$array = json_decode(json_encode((array)$xml), TRUE);
-			//$lignes = count($array['partie']);
+			$lignes = count($array['partie']);
+			//var_dump($xml);
 		}
 		
 		$fftt = ping_admin_ops::compte_fftt($licence);
@@ -524,8 +490,8 @@ public static function retrieve_parties_fftt( $licence )
 				$action = "mass_action";
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 				$aujourdhui = date('Y-m-d');
-				$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ? WHERE licence = ? AND saison = ?";
-				$dbresult4 = $db->Execute($query, array($aujourdhui,$licence,$saison_courante));
+				$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ? WHERE licence = ?";
+				$dbresult4 = $db->Execute($query, array($aujourdhui,$licence));
 				
 				
 			}
@@ -585,7 +551,8 @@ public static function retrieve_parties_fftt( $licence )
 
 				//	$date_event = conv_date_vers_mysql($dateevent);
 					$advsexe = (isset($tab->advsexe)?"$tab->advsexe":"");
-					$advnompre = mysqli_real_escape_string($link,(isset($tab->advnompre)?"$tab->advnompre":""));
+					//$advnompre = mysqli_real_escape_string($link,(isset($tab->advnompre)?"$tab->advnompre":""));
+					$advnompre =(isset($tab->advnompre)?"$tab->advnompre":"");
 					$pointres = (isset($tab->pointres)?"$tab->pointres":"");
 					$coefchamp = (isset($tab->coefchamp)?"$tab->coefchamp":"");
 					$advclaof = (isset($tab->advclaof)?"$tab->advclaof":"");
@@ -608,8 +575,8 @@ public static function retrieve_parties_fftt( $licence )
 				}
 				
 				$comptage = $i;
-				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ?,fftt = ? WHERE licence = ? AND saison = ?";
-				$dbresult4 = $db->Execute($query4, array($aujourdhui,$comptage,$licence,$saison));
+				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ?,fftt = ? WHERE licence = ?";
+				$dbresult4 = $db->Execute($query4, array($aujourdhui,$comptage,$licence));
 				
 				$status = 'Parties FFTT';
 				$designation.= "Récupération FFTT de ".$comptage." parties sur ".$compteur."  de ".$player;
@@ -634,8 +601,8 @@ public static function retrieve_parties_fftt( $licence )
 
 //la fonction ci-dessous récupère la situation mensuelle pour une ou plusieurs personnes
 //Attention de ne pas mettre de messages de sortie autre que ds le journal
-	public function retrieve_sit_mens($licence)
-  	{
+public function retrieve_sit_mens($licence, $ext="")
+  {
 	//on vérifie si la situation mensuelle a déjà été prise en compte
 	global $gCms;
 	$ping = cms_utils::get_module('Ping'); 
@@ -650,7 +617,7 @@ public static function retrieve_parties_fftt( $licence )
 	$message = "";
 	$saison = $ping->GetPreference('saison_en_cours');
 	$phase = $ping->GetPreference('phase_en_cours');
-	
+	//var_dump($ext);
 	//La situation mensuelle du mois en cours n'existe pas, on l'ajoute.
 	$service = new Servicen();
 	$page = "xml_joueur";
@@ -711,56 +678,49 @@ public static function retrieve_parties_fftt( $licence )
 				$progann = $point - $valinit; //progression à l'année en termes de points
 				
 				
-				
-				
-				
-			}
-			$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, categ,points, apoint,clglob, aclglob, clnat, rangreg, rangdep, progmoisplaces, progmois, progann, valinit, valcla,saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			//echo $query;
-			$dbresultat = $db->Execute($query2,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $categ, $point,$apoint,$clglob, $aclglob, $clnat, $rangreg, $rangdep, $progmoisplaces, $progmois, $progann,$valinit, $valcla, $saison));
-
-				
-				if($dbresultat)
+				if( $ext === 'True')
 				{
-				/*
-					$message = $db->ErrorMsg(); 
-					$status = 'Echec';
-					$designation = $message;
-					$action = "mass_action";
-					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 
-				}
-				else
-				{
-				*/
-					$status = 'Ok';
-					$designation = "Situation ok pour ".$nom." ".$prenom;
-					$action = 'mass_action';
-					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
-					//on met la table recup à jour pour le joueur
-					//Attention s'il s'agit d'un ajout !!
-					//on vérifie d'abord l'existence du joueur ds la bdd
-					/*
-					$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
-					$dbresult4 = $db->Execute($query4, array($licence2));
-					if($dbresult4->RecordCount() == 0)
+					$query5 = "INSERT INTO ".cms_db_prefix()."module_ping_adversaires (id,datecreated, datemaj, mois, annee, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					//echo $query5;
+					$dbresultat5 = $db->Execute($query5,array($now,$now,$mois_courant, $annee_courante, $licence2, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
+					//On vérifie que l'insertion se passe bien
+					if(!$dbresultat5)
 					{
-						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens) VALUES ('', ?, ?, ?, ?)";
-						$dbresult3 = $db->Execute($query3, array($saison,$now, $licence2, $mois_sit_mens));
-						
+						$designation = $db->ErrorMsg();
+						//echo $db->ErrorMsg();
+						$status = 'Ko computer';
+						$action = 'mass_action';
+						ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+
 					}
 					else
 					{
-						$query3 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
-						$dbresult3 = $db->Execute($query3, array($now, $mois_sit_mens, $licence2));
+						return $point;
 					}
-					*/
-
 					
 				}
+				else
+				{
+					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, categ,points, apoint,clglob, aclglob, clnat, rangreg, rangdep, progmoisplaces, progmois, progann, valinit, valcla,saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					//echo $query;
+					$dbresultat = $db->Execute($query2,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $categ, $point,$apoint,$clglob, $aclglob, $clnat, $rangreg, $rangdep, $progmoisplaces, $progmois, $progann,$valinit, $valcla, $saison));
 
+					if($dbresultat)
+					{
 
-				//$message.="<li>La licence est ok</li>";
+						$status = 'Ok';
+						$designation = "Situation ok pour ".$nom." ".$prenom;
+						$action = 'mass_action';
+						ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+
+					}
+				}
+				
+				
+			}
+			
+			
 			
 		}
 	
@@ -769,7 +729,7 @@ public static function retrieve_parties_fftt( $licence )
 
 
   }
-	function retrieve_compets ($idorga,$type = '')
+ 	function retrieve_compets ($idorga,$type)
 	{
 		global $gCms;
 		$ping = cms_utils::get_module('Ping'); 
@@ -789,7 +749,7 @@ public static function retrieve_parties_fftt( $licence )
 		//echo $var;
 		$service = new Servicen();
 		$lien = $service->GetLink($page, $var);
-		//echo "le lien est : ".$lien;
+		echo "le lien est : ".$lien;
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 
 		if($xml === FALSE)
@@ -803,7 +763,7 @@ public static function retrieve_parties_fftt( $licence )
 			$lignes = count($array['epreuve']);
 		}
 
-		//var_dump($result);
+		var_dump($xml);
 		/**/
 		//on va tester si la variable est bien un tableau   
 			if(!is_array($array) || $lignes == 0)  {
@@ -822,7 +782,7 @@ public static function retrieve_parties_fftt( $licence )
 			$i++;
 			$idepreuve = (isset($tab->idepreuve)?"$tab->idepreuve":"");
 			$idorga  = (isset($tab->idorga)?"$tab->idorga":"");
-			$libelle = mysqli_real_escape_string($link,(isset($tab->libelle)?"$tab->libelle":""));
+			$libelle = (isset($tab->libelle)?"$tab->libelle":"");
 			// 1- on vérifie si cette épreuve est déjà dans la base
 			$query = "SELECT idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
 			$dbresult = $db->Execute($query, array($idepreuve));
@@ -861,7 +821,7 @@ public static function retrieve_parties_fftt( $licence )
 
 		}// fin du foreach
 		
-}
+	}
 	
 //Cette fonction récupère les divisions de chaque épreuve
 	function retrieve_divisions ($idorga,$idepreuve,$type = '')
@@ -898,7 +858,7 @@ public static function retrieve_parties_fftt( $licence )
 					$array = 0;
 					$lignes = 0;
 				}
-				else 
+				else
 				{
 					$array = json_decode(json_encode((array)$xml), TRUE);
 					
@@ -955,7 +915,7 @@ public static function retrieve_parties_fftt( $licence )
 				}
 			//}//fin du premier foreach
 		
-}
+	}
 	
 	function retrieve_div_tours ($idepreuve,$iddivision)
 	{
@@ -974,7 +934,7 @@ public static function retrieve_parties_fftt( $licence )
 		$lien = $service->GetLink($page, $var);
 		
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		var_dump($xml);
+		//var_dump($xml);
 		if($xml === FALSE)
 		{
 			//le service est coupé
@@ -1000,8 +960,8 @@ public static function retrieve_parties_fftt( $licence )
 			$lien = htmlentities($value->lien);
 			$tab1 = explode("&",$value->lien);
 
-			$tableau = trim($tab1[2], $character_mask='cx_tableau=');
-			echo $tableau."<br />";
+			$tableau = trim($tab1[2], 'cx_tableau=');
+
 			if($tableau != '')
 			{
 				
@@ -1011,21 +971,21 @@ public static function retrieve_parties_fftt( $licence )
 				$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle,$tour2, $tableau,$lien,$saison));
 				if($dbresult)
 				{
-					$i++;
+				$i++;
 				
-					//et si on continuait ?
-					//reprendre les infos ci dessus pour les traiter !
-					//on pourrait préparer les différents tags : poule, classement, partie.
-					//on met à tjour la table divisions pour dire qu'on a bien uploadé
-					$uploaded = 1;
-					$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
-					$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
+				//et si on continuait ?
+				//reprendre les infos ci dessus pour les traiter !
+				//on pourrait préparer les différents tags : poule, classement, partie.
+				//on met à tjour la table divisions pour dire qu'on a bien uploadé
+				$uploaded = 1;
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
+				$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
 				
-					//on écrit dans le journal
-					$status = 'Ok';
-					$action = 'retrieve_div_tours';
-					$designation = $i." tour(s) inséré(s) pour l\'épreuve ".$idepreuve;
-					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+				//on écrit dans le journal
+				$status = 'Ok';
+				$action = 'retrieve_div_tours';
+				$designation = $i." tour(s) inséré(s) pour l\'épreuve ".$idepreuve;
+				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 				}
 			}
 
@@ -1526,34 +1486,32 @@ public static function retrieve_parties_fftt( $licence )
 											$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,date_debut,date_fin,idepreuve, numjourn,tag,saison) VALUES ( '', ?, ?, ?, ?, ?, ?)";
 											$dbresult4 = $db->Execute($query4, array($date_event,$date_event,$idepreuve,$tour,$tag,$saison));
 
-				
 											if($dbresult4)
 											{
 												$designation.= $db->ErrorMsg();
 											}
 									}
-		}
-		elseif($dbresult1->RecordCount() >0)
-		{
-			//il y a déjà un enregistrement, le score est-il à jour ?
-			$update = 1;
-			$row = $dbresult1->FetchRow();
-			$id = $row['id'];
-			$scoreA = $row['scorea'];
-			$scoreB = $row['scoreb'];
+						}
+						elseif($dbresult1->RecordCount() >0)
+						{
+								//il y a déjà un enregistrement, le score est-il à jour ?
+								$update = 1;
+								$row = $dbresult1->FetchRow();
+								$id = $row['id'];
+								$scoreA = $row['scorea'];
+								$scoreB = $row['scoreb'];
 
-			if($scoreA ==0 && $scoreB ==0)
-			{
-				$query5 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
-				$dbresultA = $db->Execute($query5, array($scorea, $scoreb, $id));
-				$i++;
-				
-				if(!$dbresultA)
-				{
-					$designation.= $db->ErrorMsg();
-				}
-			}
-		}
+									if($scoreA ==0 && $scoreB ==0)
+									{
+										$query5 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+										$dbresultA = $db->Execute($query5, array($scorea, $scoreb, $id));
+										$i++;
+										if(!$dbresultA)
+										{
+											$designation.= $db->ErrorMsg();
+										}
+									}
+						}
 				
 				}
 
@@ -1561,13 +1519,13 @@ public static function retrieve_parties_fftt( $licence )
 				
 			
 			}//fin du foreach
-			echo " le compteur est ".$i;
+		//	echo " le compteur est ".$i;
 			if($i >0)
 			{
 				$query_cal = "UPDATE ".cms_db_prefix()."module_ping_equipes SET calendrier = 1 WHERE idpoule = ? AND iddiv = ?";
 				$dbcal = $db->Execute($query_cal,array($idpoule,$iddiv));
 			}
-		}//fin du if is_array($result)
+        }//fin du if is_array($result)
 	function retrieve_all_classements( $iddiv,$idpoule, $record_id )
 	{
 		global $gCms;
@@ -1645,7 +1603,7 @@ public static function retrieve_parties_fftt( $licence )
 		}
 		$action = 'getPouleclassement';
 		ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
-}
+	}
 	
 	function insert_cgcalendar ($name,$tag,$date_debut,$date_fin)
 	{
@@ -1761,8 +1719,8 @@ public static function retrieve_parties_fftt( $licence )
 									//on fait la totale en récupérant toutes les données ?
 									//où on laisse l'admin le faire ?
 									//pour l'heure on fait le mini
-									$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id, saison, datemaj, licence, sit_mens,fftt,maj_fftt,spid,maj_spid,maj_total,spid_total) VALUES('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-									$dbresult2 = $db->Execute($query2, array($saison,$now,$licence,'Janvier 2000',0,0,0,0,0,0));
+									$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id,datemaj, licence, sit_mens,fftt,maj_fftt,spid,maj_spid,maj_total,spid_total) VALUES('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+									$dbresult2 = $db->Execute($query2, array($now,$licence,'Janvier 2000',0,0,0,0,0,0));
 
 									//on teste la requete
 									if(!$dbresult2)
@@ -1847,6 +1805,65 @@ public static function retrieve_parties_fftt( $licence )
 		
 		
 	}//fin de la fonction
+	function advlicence ($nom,$prenom="")
+	{
+		global $gCms;
+		$ping = cms_utils::get_module('Ping'); 
+		//echo "le nom est : ".$nom;
+		//echo "<br /> le prénom est : ".$prenom;
+		$nom_final = str_replace(' ','%20',$nom);
+		$db = cmsms()->GetDb();
+		$now = trim($db->DBTimeStamp(time()), "'");
+		$saison = $ping->GetPreference('saison_en_cours');
+		$page = "xml_liste_joueur";
+		$var ="nom=".$nom_final."&prenom=".$prenom;
+		$lignes = 0;
+		
+		//	$var.="&action=poule";
+
+		
+		$service = new Servicen();
+		$lien = $service->GetLink($page, $var);
+		//echo "<br />".$lien."<br />";
+		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+		//var_dump($xml);
+		if($xml === FALSE)
+		{
+			//le service est coupé
+			$array = 0;
+			$lignes = 0;
+		}
+		else
+		{
+			$array = json_decode(json_encode((array)$xml), TRUE);
+			$lignes = count($array['joueur']);
+		}
+		//echo "le nb de lignes est : ".$lignes;
+		$i = 0;
+		
+		if($lignes >0 )//&& $lignes <2)//un seul joueur
+		{
+			foreach($xml as $tab)
+			{
+				$licence = (isset($tab->licence)?"$tab->licence":"");
+				//echo "la licence est : <br />".$licence;
+				$nom = (isset($tab->nom)?"$tab->nom":"");
+				$prenom = (isset($tab->prenom)?"$tab->prenom":"");
+				$club = (isset($tab->club)?"$tab->club":"");
+				$nclub = (isset($tab->classement)?"$tab->classement":"");
+				$clast = (isset($tab->clast)?"$tab->clast":"");
+				
+				
+			}
+			return $licence;
+		}
+		else
+		{
+			return FALSE;
+		}
+			
+	}
+	
 	function retrieve_teams ($type)
 	{
 		global $gCms;

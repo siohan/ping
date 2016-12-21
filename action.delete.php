@@ -132,7 +132,15 @@ $designation = '';
 					$db->Execute($query, array($record_id));
 					$this->SetMessage('Classement supprimé');
 					$this->Redirect('defaultadmin');
-					
+				break;
+				
+				case "journal" : 
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_recup";
+					$db->Execute($query);
+					$this->SetMessage('Journal supprimé');
+					$this->Redirect('defaultadmin');
+				break;	
+				/*
 				case "demo" :
 					$query = "TRUNCATE ".cms_db_prefix()."module_ping_joueurs";
 					$db->Execute($query);
@@ -192,7 +200,7 @@ $designation = '';
 					$db->Execute($query);
 					
 				break;
-				
+				*/
 			}
 		}
 		
