@@ -37,6 +37,10 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 			$phase = $row['phase'];
 		}
 	}
+	else
+	{
+		
+	}
 	
 }
 

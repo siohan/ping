@@ -135,7 +135,7 @@ switch($params['retrieve'])
 				//$idequipe = $row['id']
 
 			}
-			$this->RedirectToAdminTab('equipes');
+			$this->Redirect($id,'admin_poules_tab3',$returnid, array("record_id"=>$record_id));
 		}
 		else
 		{
@@ -172,6 +172,11 @@ switch($params['retrieve'])
 		$this->SetMessage($message);
 		$this->RedirectToAdminTab('configuration');
 
+	break;
+	
+	case "sit_mens" :
+		$service = new retrieve_ops();
+		
 	break;
 
 	

@@ -9,6 +9,7 @@ if(!$this->CheckPermission('Ping Use') && !$this->CheckPermission('Ping Set Pref
   // CreateFormStart sets up a proper form tag that will cause the submit to
   // return control to this module for processing.
 //debug_display($params, 'Parameters');
+require_once(dirname(__file__).'/include/prefs.php');
 $mois_courant = date('m');
 $annee_courante = date('Y');
 $version = $this->GetVersion('Ping');
@@ -42,7 +43,9 @@ else
 $smarty->assign('stall', $this->CreateInputHidden($id,'stall',$value=$stall));
 $smarty->assign('endform', $this->CreateFormEnd ());
 $smarty->assign('title_club_number',$this->Lang('title_club_number'));
+
 $smarty->assign('input_club_number',$this->CreateInputText($id,'club_number',$this->GetPreference('club_number',''),50,255));
+
 // Construire la liste dynamiquement avec une requete
 $tableau = array('Z','L','D');//on oublie la Fédé qui est tjs à 100001
 foreach($tableau as $valeur)
@@ -67,10 +70,13 @@ foreach($tableau as $valeur)
 	  }
 	
 }
-
+/*
 $smarty->assign('input_ligue',$this->CreateInputDropdown($id, 'ligue', $listorga_L,-1,$this->GetPreference('ligue'),50,255));
+*/
 $smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listorga_Z,-1,$this->GetPreference('zone'),50,255));
+/*
 $smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listorga_D,-1,$this->GetPreference('dep'),50,255));
+*/
 $saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
 //$smarty->assign('title_formsubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
 $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));
@@ -78,8 +84,9 @@ $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this-
 $items = array();
 $items['Oui'] = 'Oui';
 $items['Non'] = 'Non';
-$saisondropdown = array();
-$saisondropdown = array("2013-2014"=>"2013-2014", "2014-2015"=>"2014-2015", "2015-2016"=>"2015-2016", "2016-2017"=>"2016-2017");
+//$saisondropdown = array();
+
+//$saisondropdown = array("2013-2014"=>"2013-2014", "2014-2015"=>"2014-2015", "2015-2016"=>"2015-2016", "2016-2017"=>"2016-2017", "2017-2018"=>"2017-2018");
 /*
 $saisondropdown['2015-2016'] = '2015-2016';
 $saisondropdown['2016-2017'] = '2016-2017';

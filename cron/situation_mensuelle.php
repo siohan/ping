@@ -42,7 +42,7 @@ foreach($tab as $value)
 	}
 
 }
-echo $Ping_mapi_pref_jour_sit_mens;
+//echo $Ping_mapi_pref_jour_sit_mens;
 $jour = date('d');
 if( $jour < $Ping_mapi_pref_jour_sit_mens)
 {
@@ -69,7 +69,7 @@ $mois_sit_mens = $mois_sm." ".$annee_courante;
 // afin de ne récupérer que celles manquantes
 $query = "SELECT licence FROM ".$config['db_prefix']."module_ping_sit_mens WHERE mois = '".$mois_courant."' AND annee = '".$annee_courante."' AND licence IS NOT NULL";
 //je les mets ensuite dans un tableau pour faire le NOT IN	
-echo $query."<br />";
+//echo $query."<br />";
 $dbresult = $link->query($query);
 $lignes = mysqli_num_rows($dbresult);
 echo "le nb de résultats est : ".$lignes;
@@ -87,7 +87,7 @@ if($dbresult && $lignes >0 )
 	}
 	
 }
-var_dump($licen);
+//var_dump($licen);
 if($lignes ==0)
 {
 
@@ -97,7 +97,7 @@ else
 {
 	$query2 = "SELECT licence FROM ".$config['db_prefix']."module_ping_joueurs WHERE actif=1 AND licence NOT IN ($licen)";
 }
-echo $query2;
+//echo $query2;
 
 $dbresult2 = $link->query($query2);
 $row_cnt = mysqli_num_rows($dbresult2);
@@ -110,13 +110,13 @@ if ($dbresult2 && $row_cnt > 0)
       	{
 		$compt++;
 		$licence2 = $row['licence'];
-		echo "<br />Licence : ".$licence2."<br />";	
+		//echo "<br />Licence : ".$licence2."<br />";	
 		$page = "xml_joueur";
 		$var = "licence=".$licence2;
 		$tm = substr(date('YmdHisu'),0,17);//le timestamp
 		$tmc = hash_hmac("sha1",$tm,$Ping_mapi_pref_motdepasse);
 		$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$Ping_mapi_pref_serie.'&tm='.$tm.'&tmc='.$tmc.'&id='.$Ping_mapi_pref_idAppli.'&'.$var; 
-		echo "<a target=\"_blank\" href=\"".$chaine."\">".$chaine."</a><br/>";
+		//echo "<a target=\"_blank\" href=\"".$chaine."\">".$chaine."</a><br/>";
 		$lien =  file_get_contents($chaine);
 		
 		$xml = simplexml_load_string($lien,'SimpleXMLElement', LIBXML_NOCDATA);
@@ -128,7 +128,7 @@ if ($dbresult2 && $row_cnt > 0)
 			$array = 0;
 			$result = 0;
 			echo "pas de résultat pour la licence : ".$licence2."<br />";
-			var_dump($xml);
+			//var_dump($xml);
 		}
 		else
 		{
@@ -178,7 +178,7 @@ if ($dbresult2 && $row_cnt > 0)
 
 				}
 				$query2 = "INSERT INTO ".$config['db_prefix']."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, categ,points, apoint,clglob, aclglob, clnat, rangreg, rangdep, progmoisplaces, progmois, progann, valinit, valcla,saison) VALUES ('', '".$now."','".$now."','".$mois_courant."', '".$annee_courante."', '".$phase."', '".$licence2."', '".$nom."', '".$prenom."', '".$categ."', '".$point."','".$apoint."','".$clglob."', '".$aclglob."', '".$clnat."', '".$rangreg."', '".$rangdep."', '".$progmoisplaces."', '".$progmois."', '".$progann."','".$valinit."', '".$valcla."', '".$Ping_mapi_pref_saison_en_cours."')";
-				echo "<br />".$query2."<br />";;
+				//echo "<br />".$query2."<br />";;
 				/**/
 				$dbresultat = $link->query($query2);
 
@@ -232,7 +232,7 @@ if ($dbresult2 && $row_cnt > 0)
 	//sleep(1);
 	
         }//fin du while
-echo "le nb de licences analysées est :".$compt;
+//echo "le nb de licences analysées est :".$compt;
 	
 
 }
@@ -247,7 +247,26 @@ else
 	//il n'y a pas encore de résultats
 	echo "Pas de résultats disponibles";
 }
+//on envoie un mail qui donne les infos
+// Dans le cas où nos lignes comportent plus de 70 caractères, nous les coupons en utilisant wordwrap()
+$message = $compt." situation(s) mensuelle(s) insérée(s)";
+$message = wordwrap($message, 70, "\r\n");
 
+// Envoi du mail si autorisation
+if($Ping_mapi_pref_email_notification == 'Oui')
+{
+	if($Ping_mapi_pref_email_succes == 'Oui')
+	{
+			if($compteur >0)//seulement s'il y a des résultats
+			{
+				mail($Ping_mapi_pref_email_admin_ping, '[T2T] situation mensuelle', $message);
+			}
+	}
+	else
+	{
+		mail($Ping_mapi_pref_email_admin_ping, '[T2T] situation mensuelle', $message);
+	}
+}
 # EOF
 #
 ?>

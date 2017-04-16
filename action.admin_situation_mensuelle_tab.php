@@ -45,7 +45,7 @@ if($nb >$nb2)
 			$this->CreateLink($id, 'retrieve_sit_mens'));
 }
 */
-$query = "SELECT pts.id, count(*) AS nombre,pts.mois ,j.licence, CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_sit_mens AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND j.actif = '1' AND pts.saison = ? ";//
+$query = "SELECT pts.id, pts.mois ,j.licence, CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_sit_mens AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND j.actif = '1' AND pts.saison = ? ";//
 
 $query.=" ORDER BY j.nom ASC,pts.id ASC";
 $dbresultat = $db->Execute($query,array($saison_courante));

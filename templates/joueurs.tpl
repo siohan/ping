@@ -25,7 +25,7 @@ $(document).ready(function(){
 //]]>
 </script>
 {*
-<div id="filter_form" style="display: none;" title="Alertes du module">
+<div id="filter_form"  title="Alertes du module">
   <table>
     <tr>
       <td style="vertical-align: top;">
@@ -74,6 +74,7 @@ $(document).ready(function(){
 
 
 {*Lien vers le formulaire de satisfaction *}
+
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;{$retrieve_users}</p></div>
 {if $itemcount > 0}
 	{$form2start}

@@ -1,14 +1,18 @@
 {*<pre>{$items|var_dump}</pre>*}
-<script src="http://code.jquery.com/jquery.min.js"></script>
+<script type="text/javascript" src=" lib/jquery/js/ jquery.tablesorter.min.js  "/></script>
 {literal}
-<script type="text/javascript">
-//<![CDATA[
-$(document).ready(function() { 
-        $('table').tablesorter( { sortList:[[0,0],[1,0]] } ); 
-    } 
-);
-//]]>
-</script>
+    <script type="text/javascript">
+        $(document).ready(function() { 
+           $("table").tablesorter({ 
+                headers: { 
+                                                            
+                    4: { 
+                        sorter: false 
+                    } 
+                } 
+            }); 
+        });
+    </script>
 {/literal}
 
 <div class="pageoptions"><p class="pageoptions">{$mois_precedent}&nbsp;{$mois_suivant} </p></div>

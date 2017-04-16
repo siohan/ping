@@ -75,7 +75,7 @@ foreach($tab as $value)
 			$newphase = explode ("-",$libequipe);
 			//echo "la phase est ".$newphase[1];
 			$phase = substr($newphase[1], -1);
-			$new_equipe = htmlentities($newphase[0], ENT_QUOTES,  "UTF-8");
+			$new_equipe = html_entity_decode($newphase[0]);
 			//echo "la phase est ".$phase;
 
 			$libdivision = htmlentities((isset($tab->libdivision)?"$tab->libdivision":""), ENT_QUOTES,  "UTF-8");
@@ -92,7 +92,7 @@ foreach($tab as $value)
 			//$type_compet = $type;
 
 
-			$query2 = "SELECT phase, libequipe, libdivision FROM ".$config['db_prefix']."module_ping_equipes WHERE libequipe LIKE '".$new_equipe."' AND saison LIKE '".$Ping_mapi_pref_saison_en_cours."' AND phase = $phase AND libdivision LIKE '".$libdivision."'";
+			$query2 = "SELECT saison, phase, libequipe, idpoule, iddiv FROM ".$config['db_prefix']."module_ping_equipes WHERE libequipe LIKE '".$new_equipe."' AND saison LIKE '".$Ping_mapi_pref_saison_en_cours."' AND phase = $phase AND iddiv = '".$iddiv."' AND idpoule ='".$idpoule."' ";
 			//echo $query2;
 
 			$result2 = $link->query($query2); 

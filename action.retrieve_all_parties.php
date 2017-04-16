@@ -20,6 +20,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$licence = $row['licence'];
 		$joueur = $row['joueur'];
 		retrieve_ops::retrieve_parties_fftt("$licence");
+		sleep(1);
      	}
 		
 		

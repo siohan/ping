@@ -83,7 +83,7 @@ $tabname = cms_db_prefix()."module_ping_equipes";
 $idxname = 'unicite';
 //$idxoptarray = 'Unique';
 $dict = NewDataDictionary( $db );
-  $sqlarray = $dict->CreateIndexSQL('unicite', 'demo_module_ping_equipes', 'saison, libequipe, liendivision');//, array('UNIQUE'));
+  $sqlarray = $dict->CreateIndexSQL('unicite', cms_db_prefix().'module_ping_equipes', 'saison, libequipe, liendivision');//, array('UNIQUE'));
   $dict->ExecuteSQLArray($sqlarray);
 //une nouvelle table pour les victoires brutes (pas de victoires détaillées pour l'instant)
 $dict = NewDataDictionary( $db );
@@ -729,6 +729,7 @@ $this->SetPreference('LastRecupRencontres', '');
 $this->SetPreference('defaultMonthSitMens', '5');
 $this->SetPreference('phase', '1');
 $this->SetPreference('populate_calendar', 'Oui');
+$this->SetPreference('jour_sit_mens', '10');
 $this->SetPreference('affiche_club_uniquement', 'Oui');
 $this->SetPreference('email_admin_ping','admin@localhost.com');
 $this->SetPreference('email_succes', 'Oui');

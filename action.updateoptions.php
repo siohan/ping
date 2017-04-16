@@ -13,9 +13,20 @@ if(isset($params['stall']) && $params['stall'] =="1")
 }
 //$nom_equipes = strtoupper($params['nom_equipes']);
 $this->SetPreference('club_number', $params['club_number']);
-$this->SetPreference('ligue', $params['ligue']);
+
+$ligue = substr($params['club_number'], 0,2);
+$departement = substr($params['club_number'], 2, 2);
+$ping_admin_ops = new ping_admin_ops();
+$chercher_ligue = $ping_admin_ops->chercher_ligue($ligue);
+$chercher_departement = $ping_admin_ops->chercher_departement($departement);
+$service = new retrieve_ops();
+$retrieve_club_detail = $service->retrieve_detail_club($params['club_number']);
+$this->SetPreference('ligue', $chercher_ligue);
+
 $this->SetPreference('zone', $params['zone']);
-$this->SetPreference('dep', $params['dep']);
+
+$this->SetPreference('dep', $chercher_departement);
+
 //pour la version 0.1 beta2 on proposera de déduire la ligue et le département auxquels le club appartient
 //et on les mettra dans les préférences à créer également
 

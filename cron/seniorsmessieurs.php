@@ -1,9 +1,5 @@
 <?php
-#################################################################
-#                      Script CRON                             ##
-#          Récupération des résulats des équipes               ##
-#################################################################
-
+echo "hello world ! ";
 
 $path = dirname(dirname(__FILE__));
 $absolute_path = str_replace('modules','',$path);
@@ -18,9 +14,6 @@ echo $message;
     
 }
 
-//$now = trim($link->DBTimeStamp(time()), "'");
-
-//on fait un tableau qui récapitule toutes les possibilités (F, Z etc...)
 //on récupère les préférences...
 $tab= array("Ping_mapi_pref_club_number", "Ping_mapi_pref_idAppli", "Ping_mapi_pref_serie","Ping_mapi_pref_motdepasse","Ping_mapi_pref_saison_en_cours", "Ping_mapi_pref_phase_en_cours","Ping_mapi_pref_ligue", "Ping_mapi_pref_zone","Ping_mapi_pref_dep","Ping_mapi_pref_nom_equipes");
 foreach($tab as $value)
@@ -28,7 +21,7 @@ foreach($tab as $value)
 	
 
 	$query = "SELECT sitepref_value FROM ".$config['db_prefix']."siteprefs WHERE sitepref_name LIKE '".$value."'";
-	//echo $query;
+	echo $query;
 	$result = $link->query($query); 
 	//var_dump($result);
 	if($result)
@@ -42,6 +35,7 @@ foreach($tab as $value)
 	}
 
 }
+
 $iddiv = "";
 $idpoule = "";
 $idepreuve = "";
@@ -52,17 +46,17 @@ $designation= '';
 	
 	$i = 0; //on insère un compteur pour les boucles
 	//on récupère tts les iddivisions et idepreuve disponible en bdd.
-	//$query = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".$config['db_prefix']."module_ping_equipes WHERE saison LIKE '".$Ping_mapi_pref_saison_en_cours."' AND phase = '".$Ping_mapi_pref_phase_en_cours."'";
-	$query = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".$config['db_prefix']."module_ping_type_rencontres WHERE saison LIKE '".$Ping_mapi_pref_saison_en_cours."' AND phase = '".$Ping_mapi_pref_phase_en_cours."' AND idepreuve = '1073'";
-	//echo $query." <br />";
-	$dbresult = $link->query($query);
+	$query2 = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".$config['db_prefix']."module_ping_equipes WHERE saison LIKE '".$Ping_mapi_pref_saison_en_cours."' AND phase = '".$Ping_mapi_pref_phase_en_cours."' AND idepreuve = '1073'";
+	//$query2 = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".$config['db_prefix']."module_ping_poules_rencontres AS ren, ".$config['db_prefix']."module_ping_equipes AS eq WHERE eq.saison LIKE '".$Ping_mapi_pref_saison_en_cours."' AND eq.phase = '".$Ping_mapi_pref_phase_en_cours."' AND idepreuve = '1073'";
+	echo $query2." <br />";
+	$dbresult2 = $link->query($query2);
 
-	$row_cnt = mysqli_num_rows($dbresult);
+	$row_cnt = mysqli_num_rows($dbresult2);
 	echo "<br />le nb de résultats est : ".$row_cnt;
 	
 	if($row_cnt >0)
 	{
-		while ($row = mysqli_fetch_assoc($dbresult)) 
+		while ($row = mysqli_fetch_assoc($dbresult2)) 
 		{
 			$idepreuve = $row['idepreuve'];
 			$iddiv = $row['iddiv'];
@@ -73,7 +67,7 @@ $designation= '';
 			$tm = substr(date('YmdHisu'),0,17);//le timestamp
 			$tmc = hash_hmac("sha1",$tm,$Ping_mapi_pref_motdepasse);
 			$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$Ping_mapi_pref_serie.'&tm='.$tm.'&tmc='.$tmc.'&id='.$Ping_mapi_pref_idAppli.'&'.$var; 
-			//echo "<a target=\"_blank\" href=\"".$chaine."\">".$chaine."</a><br/>";
+			echo "<a target=\"_blank\" href=\"".$chaine."\">".$chaine."</a><br/>";
 			$lien =  file_get_contents($chaine);
 			//echo "le lien est : ".$lien;
 			$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -174,13 +168,26 @@ $designation= '';
 							echo "<br /> le nb de résultats est : ".$row_cnt1."<br />";
 							//il n'y a pas d'enregistrement auparavant, on peut continuer
 
-								if($row_cnt1 == 0) 
+								if($row_cnt1 > 0) 
 								{
-									$query2 = "INSERT INTO ".$config['db_prefix']."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', '".$Ping_mapi_pref_saison_en_cours."','".$idpoule."', '".$iddiv."', '".$club."', '".$tour."', '".$date_event."', '".$uploaded."', '".$libelle."', '".$equa."', '".$equb."', '".$scorea."', '".$scoreb."', '".$lien."')";
-									//echo $query2;
+									$update = 1;
 									$i++;
-									$uploaded = 0;
-									$dbresultat = $link->query($query2);
+									$row = $dbresult->FetchRow();
+									$id = $row['id'];
+									$scoreA = $row['scorea'];
+									$scoreB = $row['scoreb'];
+
+										if($scoreA ==0 && $scoreB ==0)
+										{
+											$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+											$dbresultat = $link->query($query3);
+											$i++;
+											if(!$dbresultA)
+											{
+												$designation.= $db->ErrorMsg();
+											}
+										}
+									
 
 										if(!$dbresultat)
 										{
@@ -268,10 +275,9 @@ $designation= '';
 			
 			
 				}//fin du foreach
-				$message.=$i." rencontres insérées";
-			}//fin du else
+			
 		}//fin du while
-		sleep(1);
+		//sleep(1);
 	}
 	else
 	{
@@ -280,11 +286,10 @@ $designation= '';
 		$message.= mysqli_error($link);
 		echo $message;
 	}
+
 //on envoie le tout par mail ?
-$message = wordwrap($message, 70, "\r\n");
+//$message = wordwrap($message, 70, "\r\n");
 // Envoi du mail
-mail('claude.siohan@gmail.com', '[Cron] rencontres', $message);
-#
-# EOF
-#
+//mail('claude.siohan@gmail.com', '[Cron] rencontres', $message);
+
 ?>

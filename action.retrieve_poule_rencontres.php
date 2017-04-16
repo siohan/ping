@@ -1,6 +1,6 @@
 <?php
 if( !isset($gCms) ) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $iddiv = "";
 $idpoule = "";
@@ -10,6 +10,7 @@ $error = 0; //on instancie le compteur d'erreurs
 $saison = $this->GetPreference('saison_en_cours');
 $phase = $this->GetPreference('phase_en_cours');
 $designation= '';
+$aujourdhui = date('Y-m-d');
 /*
 if(isset($params['cal']) && $params['cal'] = 'all')
 {
@@ -19,7 +20,7 @@ if(isset($params['cal']) && $params['cal'] = 'all')
 if(isset($params['record_id']) && $params['record_id'] != '')
 {
 	$record_id = $params['record_id'];
-	$query = "SELECT * FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ?";
+	$query = "SELECT idepreuve, iddiv, idpoule, libequipe FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ?";
 	$dbresult = $db->Execute($query, array($record_id));
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
@@ -27,10 +28,11 @@ if(isset($params['record_id']) && $params['record_id'] != '')
 		$idepreuve2 = $row['idepreuve'];
 		$iddiv = $row['iddiv'];
 		$idpoule = $row['idpoule'];
+		$libequipe = $row['libequipe'];
 		$cal =0;
 		//on envoie vres le fichier
 		$service = new retrieve_ops();
-		$retrieve = $service->retrieve_poule_rencontres($iddiv,$idpoule,$cal,$idepreuve2);
+		$retrieve = $service->calendrier($iddiv,$idpoule,$idepreuve2,$libequipe);
 		
 		$this->SetMessage("$designation");
 		$this->Redirect($id, 'admin_poules_tab3',$returnid,array("record_id"=>$record_id));
@@ -62,14 +64,16 @@ elseif(isset($params['cal']) && $params['cal'] = 'all')
 	$cal = $params['cal'];
 	$i = 0; //on insère un compteur pour les boucles
 	//on récupère tts les iddivisions et idepreuve disponible en bdd.
-	$query = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ?";
-	$dbresult = $db->Execute($query, array($saison, $phase));
+	$query = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND scorea = 0 AND scoreb = 0 AND date_event < ?";
+//	$query = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ?";
+	$dbresult = $db->Execute($query, array($saison, $aujourdhui));
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
 		while ($dbresult && $row = $dbresult->FetchRow())
       		{
 			$i++;
-			$idepreuve = $row['idepreuve'];
+		//	$idepreuve = $row['idepreuve'];
+			$idepreuve = 0;
 			$iddiv = $row['iddiv'];
 			$idpoule = $row['idpoule'];
 			$service = new retrieve_ops();

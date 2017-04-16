@@ -34,6 +34,7 @@ $club_number = $this->GetPreference('club_number');
 $ligue = $this->GetPreference('ligue');
 $zone = $this->GetPreference('zone');
 $dep = $this->GetPreference('dep');
+
 if($club_number =='')
 {
 	$error_config++;
@@ -47,6 +48,10 @@ if($zone == '')
 	$error_config++;
 }
 if($dep =='')
+{
+	$error_config++;
+}
+if($saison_courante != $saison_en_cours)
 {
 	$error_config++;
 }

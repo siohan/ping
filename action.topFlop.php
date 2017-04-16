@@ -5,8 +5,15 @@ if(!isset( $gCms) ) exit;
 #################################################################
 require_once(dirname(__FILE__).'/include/prefs.php');
 //debug_display($params,'Parameters');
-$saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPreference('saison_en_cours');
+$saison_courante = $this->GetPreference('saison_en_cours');
+if(isset($params['saison']) && $params['saison'] !='')
+{
+	$saison_courante = $params['saison'];
+}
+//echo "la saison en paramètre : ".$params['saison'];
+//$saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 //on commence direct par la requete
+//echo $saison_courante;
 $db =& $this->GetDb();
 $titletable = '';//Ceci est le titre de la balise H1
 $getmore === FALSE;//pour afficher ou non le lien plus par défaut non.

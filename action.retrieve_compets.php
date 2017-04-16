@@ -55,10 +55,10 @@ else //deuxième possibilité, rien n'est défini...
 	$tableau_type_epreuves = array('I');//par equipes ou individuelles
 	foreach($tableau as $valeur)
 	{
-		echo "l'organisateur est : ".$valeur;
+		//echo "l'organisateur est : ".$valeur;
 		foreach($tableau_type_epreuves as $valeur2)
 		{
-			echo "le type de compétition est : ".$valeur2;
+			//echo "le type de compétition est : ".$valeur2;
 			$recup = $service->retrieve_compets($idorga = $valeur,$type = $valeur2);
 		}
 		//unset($valeur2);

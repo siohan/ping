@@ -68,6 +68,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('nom_complet',CLEAN_STRING);
 	$this->SetParameterType('adresse',CLEAN_STRING);
 	$this->SetParameterType('codepostal',CLEAN_INT);
+	$this->SetParameterType('eq_id',CLEAN_INT);
 	$this->SetParameterType('commune',CLEAN_STRING);
 	$this->SetParameterType('email',CLEAN_STRING);
 	$this->SetParameterType('confirm_email',CLEAN_STRING);

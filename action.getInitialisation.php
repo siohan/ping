@@ -60,6 +60,8 @@ switch($step)
 	case "2" : 
 		//on va récupérer les épreuves des différentes ligues, zones et comités
 		//on prend donc les préférences obtenues précédemment
+		//on a le numéro du club avec lequel on peut faire bcp de choses...
+		
 		
 		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de zone",array("idorga"=>$zone,"stall"=>"1","step"=>"2") ));
 		

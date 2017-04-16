@@ -109,6 +109,49 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			$this->SetMessage("$message");
 			$this->RedirectToAdminTab("recup");
 			break;
+			
+			case "spid_plus" :
+			//$saison_courante = $this->GetPreference('saison_en_cours');
+			$message='Retrouvez toutes les infos dans le journal';
+			$service = new retrieve_ops();
+			foreach( $params['sel'] as $record_id )
+	  		{
+	    			
+	
+				$query1 = "SELECT licence FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
+				$dbresult1 = $db->Execute($query1, array($record_id));
+				
+				if($dbresult1 && $dbresult1->RecordCount()>0)
+				{
+					while($row = $dbresult1->FetchRow())
+					{
+						$licence = $row['licence'];
+						
+						$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
+						$dbretour = $db->Execute($query, array($licence));
+						if ($dbretour && $dbretour->RecordCount() > 0)
+						{
+						    while ($row= $dbretour->FetchRow())
+						      	{
+								$player = $row['player'];
+								$cat = $row['cat'];
+								//return $player;
+								$service = new retrieve_ops();
+								$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+								//var_dump($resultats);
+							}
+
+						}
+						
+					}
+				}
+				sleep(1);
+	
+				
+	  		}
+			$this->SetMessage("$message");
+			$this->RedirectToAdminTab("spid");
+			break;
 	
 			case "fftt_parties" :
 			//$saison_courante = $this->GetPreference('saison_en_cours');

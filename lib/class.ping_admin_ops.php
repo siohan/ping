@@ -403,10 +403,11 @@ public static function compte_spid_errors($licence)
 {
 	global $gCms;
 	$db = cmsms()->GetDb();
+	$mois_courant = date('m');
 	$ping = cms_utils::get_module('Ping');
 	$saison = $ping->GetPreference('saison_en_cours');
-	$query = "SELECT count(*) AS spid_errors FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND saison = ? AND statut = 0";
-	$dbresult = $db->Execute($query, array($licence,$saison));
+	$query = "SELECT count(*) AS spid_errors FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND saison = ? AND MONTH(date_event) = ? AND statut = 0";
+	$dbresult = $db->Execute($query, array($licence,$saison,$mois_courant));
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
 		$row = $dbresult->FetchRow();
@@ -524,30 +525,18 @@ public static function get_sit_mens($licence, $mois_event, $saison)
 	$ping = cms_utils::get_module('Ping');
 	$saison = $ping->GetPreference('saison_en_cours');
 	$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND saison = ?";
-	$db->debug=true;
 	$dbresult = $db->Execute($query, array($licence,$mois_event,$saison));
 	//si la situation mensuelle du joueur du club n'existe pas ?
 	//alors on n'enregistre pas le résultat et on le signale
-		if ($dbresult && $dbresult->RecordCount() == 0)
+		if ($dbresult && $dbresult->RecordCount() > 0)
 		{
-			//$designation.="Ecart non calculé";
-			//si on est dans le mois actuel et l' accès est libre, alors on va chercher
-			$mois_courant = date('n');
-			$jour_courant = date('j');
-			if($mois_courant == $mois_event && $jour_courant >= $ping->GetPreference('jour_sit_mens'))
-			{
-				$retrieve = new retrieve_ops();
-				$retour_sit_mens = $retrieve->retrieve_sit_mens($licence);
-			}
-			
-			$retour_sit_mens = 0;
-			
+			$row = $dbresult->FetchRow();
+			$retour_sit_mens = $row['points'];
 			
 		}
 		else
 		{
-			$row = $dbresult->FetchRow();
-			$retour_sit_mens = $row['points'];
+			$retour_sit_mens = FALSE;
 		}
 	return $retour_sit_mens;
 //end of function
@@ -749,7 +738,7 @@ function tag_equipe($record_id)
 	
 }
 
-public static function coeff ($typeCompetition)
+public static function coeff ($typeCompetition,$senior)
 {
 	$db  = cmsms()->GetDb();
 	$query ="SELECT coefficient FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
@@ -759,8 +748,22 @@ public static function coeff ($typeCompetition)
 		  	{
 		    		while ($row= $dbretour->FetchRow())
 		      		{
-					$coeff = $row['coefficient'];
-					//return $coeff;
+					if($typeCompetition == 'Critérium fédéral')
+					{
+						if($senior == 1)
+						{
+							$coeff ="1.25";
+
+						}
+						else
+						{
+							$coeff = "1.00";
+						}
+					}
+					else
+					{
+						$coeff = $row['coefficient'];
+					}
 				}
 	
 			}
@@ -838,6 +841,67 @@ public static function delete_journal($journalid)
 
     
   }
+function get_adv_pts($nom_reel1,$prenom_reel,$mois_event,$annee_courante)
+{
+	$db = cmsms()->GetDb();
+	$query = "SELECT points FROM ".cms_db_prefix()."module_ping_adversaires WHERE nom = ? AND prenom = ? AND mois = ? AND annee = ?";
+	//echo $query4.'<br />';
+	$dbresult = $db->Execute($query, array($nom_reel1, $prenom_reel,$mois_event,$annee_courante));
+	$compteur = $dbresult->RecordCount();
+	//echo " Le compteur est : ".$compteur;
+	
+	if($dbresult && $dbresult->RecordCount()>0 && $dbresult->RecordCount() <2)//ok on a un enregistrement qui correspond
+	{
+		$row = $dbresult->FetchRow();
+		$newclass = $row['points'];
+		
+		return $newclass;
+	}
+	else
+	{
+		return FALSE;
+	}
+		
+}
+
+function update_recup_parties ($licence)
+{
+	$db = cmsms()->GetDb();
+	$aujourdhui = date('Y-m-d');
+	$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ? WHERE licence = ?";
+	$dbresult = $db->Execute($query,array($aujourdhui,$licence));
+}
+
+function code_compet($name)
+{
+	$db = cmsms()->GetDb();
+	$query = "SELECT idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
+	$dbresult = $db->Execute($query, array($name));
+	$row = $dbresult->FetchRow();
+	$idepreuve = $row['idepreuve'];
+	
+	return $idepreuve;
+}
+function chercher_ligue($ligue)
+{
+	$db = cmsms()->GetDb();
+	
+	$query = "SELECT idorga  FROM ".cms_db_prefix()."module_ping_organismes WHERE `scope` LIKE 'L' AND SUBSTRING(code, 2,2) = ?";
+	$dbresult = $db->Execute($query, array($ligue));
+	$row = $dbresult->FetchRow();
+	$ligue = $row['idorga'];
+	return $ligue;
+}
+function chercher_departement($departement)
+{
+	$db = cmsms()->GetDb();
+	
+	$query = "SELECT idorga  FROM ".cms_db_prefix()."module_ping_organismes WHERE `scope` LIKE 'D' AND SUBSTRING(code, 2,2) = ?";
+	$dbresult = $db->Execute($query, array($departement));
+	$row = $dbresult->FetchRow();
+	$departement = $row['idorga'];
+	return $departement;
+}
 
 
 } // end of class
