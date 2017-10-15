@@ -21,7 +21,7 @@ $nb_params = 0; //on instancie un compteur de paramètres
 $idepreuve = '';
 $iddivision = '';
 $result= array ();
-$query = "SELECT pou.id AS tour_id, dv.libelle,dv.idorga,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision AND pou.saison = ?";//" ORDER BY dv.iddivision,pou.tour ASC";
+$query = "SELECT pou.id AS tour_id, dv.libelle,dv.idorga,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision AND dv.saison = pou.saison AND pou.saison = ?";//" ORDER BY dv.iddivision,pou.tour ASC";
 $parms['saison'] = $saison;
 	
 	if (isset($params['idepreuve']) && $params['idepreuve'] !='')

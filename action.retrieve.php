@@ -19,7 +19,7 @@ switch($params['retrieve'])
 	
 		$message='Retrouvez toutes les infos dans le journal';
 	
-		$retrieve = $service->retrieve_users();
+		//$retrieve = $service->retrieve_users();
 		$retrieve = $service->retrieve_users_fftt();
 		$this->SetMessage($message);
 		$this->RedirectToAdminTab('joueurs');
@@ -145,6 +145,7 @@ switch($params['retrieve'])
 	break;
 	case "spid" :
 		$service = new retrieve_ops();
+		$ping_ops = new ping_admin_ops();
 		foreach( $params['sel'] as $licence )
   		{
     			$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
@@ -158,6 +159,30 @@ switch($params['retrieve'])
 					//return $player;
 					$service = new retrieve_ops();
 					$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+					$maj_spid = $ping_ops->compte_spid($licence);
+					//var_dump($resultats);
+				}
+
+			}
+  		}
+	break;
+	case "fftt" :
+		$service = new retrieve_ops();
+		$ping_ops = new ping_admin_ops();
+		foreach( $params['sel'] as $licence )
+  		{
+    			$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
+			$dbretour = $db->Execute($query, array($licence));
+			if ($dbretour && $dbretour->RecordCount() > 0)
+			{
+			    while ($row= $dbretour->FetchRow())
+			      	{
+					$player = $row['player'];
+					$cat = $row['cat'];
+					//return $player;
+					$service = new retrieve_ops();
+					$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+					$maj_spid = $ping_ops->compte_spid($licence);
 					//var_dump($resultats);
 				}
 
@@ -175,7 +200,12 @@ switch($params['retrieve'])
 	break;
 	
 	case "sit_mens" :
+		
 		$service = new retrieve_ops();
+		$sit_mens = $service->retrieve_sit_mens($params['sel']);
+		//$this->SetMessage();
+		$this->RedirectToAdminTab('joueurs');
+		
 		
 	break;
 

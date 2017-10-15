@@ -27,11 +27,7 @@ $(document).ready(function(){
   {$formstart}
   <div class="pageoverflow">
 	<p class="pagetext">Type Compétition:</p>
-    <p class="pageinput">{$input_compet} </p>
-    <!--<p class="pagetext">{$prompt_tour}:</p>
-    <p class="pageinput">{$input_tour} </p>-->
-	<p class="pagetext">Date:</p>
-    <p class="pageinput">{$input_date} </p>
+    <p class="pageinput">{$input_compet} </p>	
 	<p class="pagetext">Joueur :</p>
     <p class="pageinput">{$input_player} </p>
 	<p class="pagetext">Erreurs uniquement:</p>

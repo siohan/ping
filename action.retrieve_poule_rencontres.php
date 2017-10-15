@@ -1,6 +1,6 @@
 <?php
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $iddiv = "";
 $idpoule = "";

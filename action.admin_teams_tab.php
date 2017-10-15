@@ -14,13 +14,13 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 $phase_courante = $this->GetPreference('phase_en_cours');
 
 $phase = (isset($params['phase']))?$params['phase']:$phase_courante;
-
+$saison_en_cours = (isset($params['saison_en_cours']))?$params['saison_en_cours']:$saison_courante;
 $smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'equipes')));
 
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
 $query1 = "SELECT DISTINCT tc.name,tc.idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions AS tc, ".cms_db_prefix()."module_ping_equipes AS eq WHERE tc.idepreuve = eq.idepreuve AND eq.saison = ?";
-$dbresult = $db->Execute($query1, array($saison));
+$dbresult = $db->Execute($query1, array($saison_en_cours));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
     
@@ -46,7 +46,7 @@ $curCompet = $this->GetPreference( 'competChoisie');
 $smarty->assign('input_compet',
 		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
 $smarty->assign('curphase',
-		$this->CreateInputDropdown($id,'curphase',$listphase,-1,$curphase));
+		$this->CreateInputDropdown($id,'curphase',$listphase,-1,(isset($curphase)?$curphase:$phase_courante)));
 
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
@@ -54,7 +54,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 $parms = array();
 $result= array ();
 $query = "SELECT DISTINCT *, eq.id AS eq_id,  eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.saison = ?";
-$parms['saison'] = $saison;
+$parms['saison'] = $saison_en_cours;
 
 	if( isset($params['submitfilter'] )){
 

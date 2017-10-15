@@ -8,7 +8,6 @@ if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
-require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
 $saison = $this->GetPreference('saison_en_cours');
 

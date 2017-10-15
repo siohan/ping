@@ -6,7 +6,6 @@ if( !isset($gCms) ) exit;
 $db =& $this->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
-require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
 $saison = $this->GetPreference('saison_en_cours');
 /* on fait un formulaire de filtrage des résultats*/
@@ -86,7 +85,7 @@ $parms['saison'] = $saison;
 	}
 	else
 	{
-		$query.=" ORDER BY joueur,pts.date_event ASC LIMIT 100";
+		$query.=" ORDER BY joueur,pts.date_event ASC";
 		
 	}
 	

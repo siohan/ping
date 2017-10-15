@@ -179,8 +179,8 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 <p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (Voir feuille de route plus bas).</p>
 <h3>Comment l\'utiliser ?</h3>
 <h2>Première utilisation</h2>
-<ol><li>Dans l\'onglet "Compte", renseignez les identifiants fournis par la FFTT.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li><li>Renseignez l\'onglet "Configuration" avec le N° de votre club, la saison, la phase en cours ainsi que le nom générique de vos équipes (le plus souvent le nom de votre ville)</li>
-<li>Dans l\'onglet "Compétitions", récupérez les compétitions de zone, ligue et comité (les nationales sont installées par défaut)</li><li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
+<ol><li>Ce module est dépendant du module Ahérents(T2T Adherents), dans l\'onglet "Compte" du module Adhérents, renseignez les identifiants fournis par la FFTT ainsi que le Numéro de votre club.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li>
+<li>Renseignez l\'onglet "Configuration" du module Ping, récupérez les compétitions de zone, ligue et comité (les nationales sont installées par défaut)</li><li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
 Un lien pour les équipes du championnat de France par équipes masculin, un autre pour les féminines et le dernier pour toutes les autres équipes, indiquez le type de compétitions auxquelles elles participent.</li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom.</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>

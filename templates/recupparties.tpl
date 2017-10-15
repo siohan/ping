@@ -22,7 +22,7 @@ $(document).ready(function(){
 //]]>
 </script>
 <h2>Etat des récupérations des joueurs actifs</h2>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  {*$barcharts*}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieve_users}</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">

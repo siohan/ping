@@ -2,7 +2,8 @@
 if (!isset($gCms)) exit;
 
 //debug_display($params, 'Parameters');
-
+$equipes_ops = new equipes();
+$ping_admin_ops = new ping_admin_ops();
 if (!$this->CheckPermission('Ping Delete'))
 	{
 	$params = array('message'=>Lang('needpermission'), 'active_tab' => 'users');
@@ -46,6 +47,12 @@ $designation = '';
 					}
 					else
 					{
+						//on met à jour la table récup_parties
+						if(isset($params['licence']) && $params['licence'] !='')
+						{
+								 $licence = $params['licence'];
+						}
+						$ping_admin_ops->compte_spid($licence);
 						$designation.="Résultat supprimé";
 						$this->SetMessage("$designation");
 						$this->RedirectToAdminTab('spid');
@@ -75,10 +82,14 @@ $designation = '';
 					$this->RedirectToAdminTab('compets');
 				break;
 				case "teams" : 
-					$query = "DELETE FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ?";
-					$db->Execute($query, array($record_id));
+					$message = '';//on instancie un message de sortie
+					$del_class = $equipes_ops->delete_classement($record_id);
+					$supp_eq = $equipes_ops->delete_team($record_id);
+					
+					$message.=" Equipe supprimée. ";
+					
 
-					$this->SetMessage('Equipe supprimée');
+					$this->SetMessage($message);
 					$this->RedirectToAdminTab('equipes');
 				break;
 				

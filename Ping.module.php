@@ -20,7 +20,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.5.6'; }  
+  function GetVersion() { return '0.6'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -41,7 +41,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-	return array('CGCalendar'=>'2.1.4.1');
+	return array('Adherents'=>'0.1','CGCalendar'=>'2.1.4.1');
   }
 
   
@@ -149,9 +149,9 @@ public function HasCapability($capability, $params = array())
 public function get_tasks()
 {
    $obj = array();
-	$obj[0] = new PingRecupFfttTask();
-   	$obj[1] = new PingRecupSpidTask();  
-	$obj[2] = new PingRecupRencontresTask();
+//	$obj[0] = new PingRecupFfttTask();
+// 	$obj[1] = new PingRecupSpidTask();  
+//	$obj[2] = new PingRecupRencontresTask();
 return $obj; 
 }
 

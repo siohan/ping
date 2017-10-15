@@ -93,7 +93,7 @@ $parms['type_compet']  = '+';
 			$onerow->valeur = $i;
 			
 			
-			$query2 = "SELECT ren.id AS ren_id, ren.equa,ren.uploaded, ren.equb, eq.id AS eq_id, eq.libequipe,eq.friendlyname, ren.scorea, ren.scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule AND (eq.libequipe = ren.equa OR eq.libequipe = ren.equb) AND ren.saison = eq.saison  AND ren.date_event = ? AND (ren.scorea !=0 OR scoreb !=0)";
+			$query2 = "SELECT ren.id AS ren_id, ren.equa,ren.uploaded, ren.equb, eq.id AS eq_id, eq.libequipe,eq.friendlyname, ren.scorea, ren.scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule AND (eq.libequipe = ren.equa OR eq.libequipe = ren.equb) AND ren.saison = eq.saison  AND ren.date_event = ? ";//AND (ren.scorea !=0 OR scoreb !=0)";
 			$parms2['date_event'] = $date_debut;
 			
 			if(isset($params['type_compet']) && $params['type_compet'])
@@ -202,11 +202,19 @@ $parms['type_compet']  = '+';
 				$rowarray[]  = $onerow;
 				$smarty->assign('items', $rowarray);
 			}// fin du if $dbresultat
+			else
+			{
+				echo 'Pas de résultats correspondant à votre demande. Consultez l\'aide si nécessaire...';
+			}
 			
 			
 		}//fin du premier while
 		
 	}//fin du premier if dbresult
+	else
+	{
+		echo 'Pas de résultats correspondant à votre demande. Consultez l\'aide si nécessaire...';
+	}
 
 echo $this->ProcessTemplate('details_rencontre.tpl');
 

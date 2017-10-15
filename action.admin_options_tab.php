@@ -12,24 +12,11 @@ if(!$this->CheckPermission('Ping Use') && !$this->CheckPermission('Ping Set Pref
 require_once(dirname(__file__).'/include/prefs.php');
 $mois_courant = date('m');
 $annee_courante = date('Y');
-$version = $this->GetVersion('Ping');
+//$version = $this->GetVersion('Ping');
 
-$smarty->assign('version', $version2);
-if($mois_courant >= 7)
-{
-	$annee_debut = $annee_courante;
-	$annee_fin = $annee_courante +1;
-	$phase = 1;
-}
-else
-{
-	$annee_debut = $annee_courante -1;
-	$annee_fin = $annee_courante;
-	$phase = 2;
-}
-
+//$smarty->assign('version', $version2);
 $smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve',$returnid,$contents='Récupérer les organismes',array("retrieve"=>"organismes")));
-$saison_actuelle = $annee_debut.'-'.$annee_fin;
+
 //$saisondropdown['.$saison_actuelle.'] = $saison_actuelle;
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));
 if(isset($params['stall']) && $params['stall'] =="1" )
@@ -42,10 +29,6 @@ else
 }
 $smarty->assign('stall', $this->CreateInputHidden($id,'stall',$value=$stall));
 $smarty->assign('endform', $this->CreateFormEnd ());
-$smarty->assign('title_club_number',$this->Lang('title_club_number'));
-
-$smarty->assign('input_club_number',$this->CreateInputText($id,'club_number',$this->GetPreference('club_number',''),50,255));
-
 // Construire la liste dynamiquement avec une requete
 $tableau = array('Z','L','D');//on oublie la Fédé qui est tjs à 100001
 foreach($tableau as $valeur)
@@ -70,55 +53,23 @@ foreach($tableau as $valeur)
 	  }
 	
 }
-/*
-$smarty->assign('input_ligue',$this->CreateInputDropdown($id, 'ligue', $listorga_L,-1,$this->GetPreference('ligue'),50,255));
-*/
+
 $smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listorga_Z,-1,$this->GetPreference('zone'),50,255));
-/*
-$smarty->assign('input_dep',$this->CreateInputDropdown($id, 'dep', $listorga_D,-1,$this->GetPreference('dep'),50,255));
-*/
 $saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
-//$smarty->assign('title_formsubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
 $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));
 //$smarty->assign('title_email_subject',$this->Lang('email_subject'));
 $items = array();
 $items['Oui'] = 'Oui';
 $items['Non'] = 'Non';
-//$saisondropdown = array();
 
-//$saisondropdown = array("2013-2014"=>"2013-2014", "2014-2015"=>"2014-2015", "2015-2016"=>"2015-2016", "2016-2017"=>"2016-2017", "2017-2018"=>"2017-2018");
-/*
-$saisondropdown['2015-2016'] = '2015-2016';
-$saisondropdown['2016-2017'] = '2016-2017';
-*/
 $smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
-$smarty->assign('input_nom_equipes', 
-		$this->CreateInputText($id, 'nom_equipes', $this->GetPreference('nom_equipes', ''), 50,250));
 $smarty->assign('jour_sit_mens',
 		$this->CreateInputText($id,'jour_sit_mens', $this->GetPreference('jour_sit_mens', ''), 5, 7));
-$smarty->assign('email_notification',
-			$this->CreateInputDropdown($id,'email_notification',$items,-1,$this->GetPreference('email_notification'),50,255));
-$smarty->assign('email_admin_ping',
-		$this->CreateInputText($id,'email_admin_ping', $this->GetPreference('email_admin_ping', ''), 25, 70));
-$smarty->assign('email_succes',
-		$this->CreateInputDropdown($id,'email_succes',$items,-1,$this->GetPreference('email_succes'),50,255));
+
 $smarty->assign('input_populate_calendar',$this->CreateInputDropdown($id,'populate_calendar',$items,-1,$this->GetPreference('populate_calendar'),50,255));
 $smarty->assign('input_affiche_club_uniquement',$this->CreateInputDropdown($id,'affiche_club_uniquement',$items,-1,$this->GetPreference('affiche_club_uniquement'),50,255));
-$valeurs_interval = array("1 jour"=>"1","2 jours"=>"2","3 jours"=>"3","Jamais"=>"365");
-$valeurs_nombres_spid = array("25 joueurs"=>"25", "50 joueurs"=>"50", "75 joueurs"=>"75","100 joueurs"=>"100");
-$valeurs_nombres_fftt = array("25 joueurs"=>"25", "50 joueurs"=>"50", "75 joueurs"=>"75","100 joueurs"=>"100");
-$smarty->assign('input_spid_interval',
-		$this->CreateInputDropdown($id, 'spid_interval',$valeurs_interval,-1,$this->GetPreference('spid_interval')));
-$smarty->assign('input_spid_nombres',
-		$this->CreateInputDropdown($id,'spid_nombres',$valeurs_nombres_spid,-1,$this->GetPreference('spid_nombres')));
-$smarty->assign('input_fftt_interval',
-		$this->CreateInputDropdown($id, 'fftt_interval',$valeurs_interval,-1,$this->GetPreference('fftt_interval')));
-$smarty->assign('input_fftt_nombres',
-		$this->CreateInputDropdown($id,'fftt_nombres',$valeurs_nombres_fftt,-1,$this->GetPreference('fftt_nombres')));
-/*
-$smarty->assign('jour_recup',
-		$this->CreateInputText($id,'jour_recup', $items,-1,$this->GetPreference('sitmens_ok_only'),50,255));
-*/
+
+
 $smarty->assign('submit', $this->CreateInputSubmit ($id, 'optionssubmitbutton', $this->Lang('submit')));
 
 // Display the populated template

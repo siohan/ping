@@ -1,0 +1,1 @@
+SELECT DISTINCT sp.epreuve, p.codechamp, p.coefchamp FROM cms_module_ping_parties as p, cms_module_ping_parties_spid as sp WHERE  p.date_event = sp.date_event AND p.advnompre = sp.nom AND p.licence = sp.licence

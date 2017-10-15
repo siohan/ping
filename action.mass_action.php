@@ -2,7 +2,7 @@
 //ce fichier fait des actions de masse, il est appelé depuis l'onglet de récupération des infos sur les joueurs
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
-//var_dump($params['sel']);
+var_dump($params['sel']);
 $db =& $this->GetDb();
 if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
   {
@@ -22,16 +22,14 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			break;
 	
 			case "situation" :
-			//les licences collectées sont supposées être actives
-			//que fait-on si elles ne le sont pas en réalité ?
-			//bonne question
-			//on prend les variables nécessaires
+			
 			$service = new retrieve_ops();
 			$message='Retrouvez toutes les infos dans le journal';
 			foreach( $params['sel'] as $licence )
 	  		{
 	
 	    			$retrieve = $service->retrieve_sit_mens( $licence );
+				sleep(1);
 	  		}
 			//$message.='</ul>';
 			$this->SetMessage("$message");
@@ -90,7 +88,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			$service = new retrieve_ops();
 			foreach( $params['sel'] as $licence )
 	  		{
-	    			$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
+	    			$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 				$dbretour = $db->Execute($query, array($licence));
 				if ($dbretour && $dbretour->RecordCount() > 0)
 				{
@@ -101,6 +99,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 						//return $player;
 						$service = new retrieve_ops();
 						$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+						sleep(1);
 						//var_dump($resultats);
 					}
 

@@ -1,7 +1,7 @@
 <?php
 
 if( !isset($gCms) ) exit;
-require_once(dirname(__file__).'/include/travaux.php');
+
 $db =& $this->GetDb();
 global $themeObject;
 
@@ -26,19 +26,21 @@ else
 {
 	$smarty->assign('affichage', TRUE);
 }
-/**/
-//$month = mois_francais("$mois_courant");
-//echo "le mois en français : ".$month;
-//$smarty->assign('mois-en-francais', "$month");
+
 $sit_courante = 'Juin 2014';
 $smarty->assign('sit_courante', "$sit_courante");
+$smarty->assign('retrieve_users', 
+		$this->CreateLink($id, 'retrieve', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_users'), '', '', 'systemicon')).
+$this->CreateLink($id, 'retrieve', $returnid, 
+		  $this->Lang('retrieve_users'), 
+		  array("retrieve"=>"users")));
 $smarty->assign('display_unable_players', 
 		$this->CreateLink($id,'display_unable_players', $returnid, 'liste des joueurs inactifs'));
 $smarty->assign('attention_img', '<img src="../modules/Ping/images/warning.gif" alt="'.$this->Lang('missing_sit_mens').'" title="'.$this->Lang('missing_sit_mens').'" width="16" height="16" />');
 
 $dbresult= array ();
 //SELECT * FROM ping_module_ping_recup_parties AS rec right JOIN ping_module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
-$query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence,rec.maj_spid, rec.maj_fftt, rec.sit_mens, rec.fftt, rec.spid,rec.spid_total, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_recup_parties AS rec ON j.licence = rec.licence WHERE j.actif = '1' ORDER BY joueur ASC";
+$query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence,rec.maj_spid, rec.maj_fftt, rec.sit_mens, rec.fftt, rec.spid,rec.spid_total,rec.spid_errors, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_recup_parties AS rec ON j.licence = rec.licence WHERE j.actif = '1' ORDER BY joueur ASC";
 
 $dbresult= $db->Execute($query);
 $rowclass= 'row1';
@@ -51,25 +53,24 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$licence = $row['licence'];
 	//$sit_mens = ping_admin_ops::$row['sit_mens'];
 	
-	$fftt = ping_admin_ops::compte_fftt($licence);
-	$spid = ping_admin_ops::compte_spid($licence);
-	$sit_mens = ping_admin_ops::sit_mens($licence);
-	$spid_errors = ping_admin_ops::compte_spid_errors($licence);
+	//$fftt = ping_admin_ops::compte_fftt($licence);
+	//$spid = ping_admin_ops::compte_spid($licence);
+	//$sit_mens = ping_admin_ops::sit_mens($licence);
+	//$spid_errors = ping_admin_ops::compte_spid_errors($licence);
 	//var_dump($sit_mens);
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->id= $row['id'];
 	$onerow->joueur= $row['joueur'];
 	$onerow->licence= $row['licence'];
-	//$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
-	$onerow->sit_mens= $sit_mens;//$row['sit_mens'];
-	$onerow->fftt= $fftt;
-	//$onerow->fftt= $row['fftt'];
+	$onerow->sit_mens= $row['sit_mens'];
+	$onerow->fftt= $row['fftt'];// $fftt;
 	$onerow->maj_fftt= $row['maj_fftt'];
-	//$onerow->spid= $row['spid'];
-	$onerow->spid= $spid;
+	$onerow->spid= $row['spid'];
+	$onerow->spid_errors= $row['spid_errors'];
+	//$onerow->spid= $spid;
 	//$onerow->error_link= $this->CreateLink($id, 'defaultadmin',$returnid, 'Corriger', array("active_tab"=>"spid","submitfilter"=>"Ok","curplayer"=>$row['licence'],"error_only"=>"0"));
-	$onerow->spid_errors = $spid_errors;
+	//$onerow->spid_errors = $spid_errors;
 	$onerow->spid_total= $row['spid_total'];
 	$onerow->maj_spid= $row['maj_spid'];
 	//$onerow->doedit= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']), $row);
@@ -87,9 +88,9 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	
 	$onerow->correction= $this->CreateLink($id, 'add_sit_mens', $returnid, 'Corriger',  array('licence'=>$row['licence']));
 	//$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, 'Désactiver',array('licence'=>$row['licence']));
-	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
-$this->CreateLink($id, 'retrieve_sit_mens', $returnid, 
-	  	$this->Lang('retrieve_sit_mens'), array('licence'=>$row['licence']),$warn_message='Attention ! Accès libre ?');
+	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
+$this->CreateLink($id, 'retrieve', $returnid, 
+	  	$this->Lang('retrieve_sit_mens'), array("retrieve"=>"sit_mens",'sel'=>$row['licence']));
 	$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_parties'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_parties', $returnid, 
 	  	$this->Lang('retrieve_parties'), array('licence'=>$row['licence']));

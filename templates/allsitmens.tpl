@@ -2,22 +2,8 @@
 <div class="pageoptions">
 {if $jour <10}
 <p class="warning">Attention ! L'accès n'est pas encore libre ! Vous ne pouvez pas récupérer les situations mensuelles automatiquement</p>{else}<p class="success">L'accès est désormais libre, vous pouvez  récupérer les situations mensuelles.</p>{/if}</div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieveallsitmens} | {$addallsitmenslink}</p></div>
-{if isset($formstart) }
-<fieldset>
-  <legend>Filtres</legend>
-  {$formstart}
-  <div class="pageoverflow">
-	<p class="pagetext">Mois:</p>
-    <p class="pageinput">{$input_month} </p>
-	<p class="pagetext">Joueur :</p>
-    <p class="pageinput">{$input_player} </p>
-    <p class="pagetext">&nbsp;</p>
-    <p class="pageinput">{$submitfilter}{$hidden|default:''}</p>
-  </div>
-  {$formend}
-</fieldset>
-{/if}
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieveallsitmens} </p></div>
+<h3>Les situations mensuelles du mois en cours</h3>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">

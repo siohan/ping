@@ -20,8 +20,9 @@ $mois_liste_tableau = $mois - 1;
 $mois_tableau = $mois_courts[$mois_liste_tableau];
 //$annee ='2014';
 //$mois ='4';
-if(($mois>=7 && $jour_courant >15)  && $mois <=12)
+if($mois>=7   && $mois <=12)
 {
+	//echo "case1";
 	$annee1 = $annee;
 	$annee2 = $annee+1;
 	$phase = 1;
@@ -32,6 +33,7 @@ if(($mois>=7 && $jour_courant >15)  && $mois <=12)
 }
 elseif($mois >=1 && $mois<7)
 {
+	//echo "case2";
 	$phase = 2;
 	$annee1 = $annee-1;
 	$annee2 = $annee;
@@ -39,6 +41,16 @@ elseif($mois >=1 && $mois<7)
 	$this->SetPreference('phase_en_cours', $phase);
 	$this->SetPreference('saison_en_cours', $saison_en_cours);
 	
+}
+else
+{
+	//echo "case3";
+	$phase = 2;
+	$annee1 = $annee-1;
+	$annee2 = $annee;
+	$saison_en_cours = $annee1.'-'.$annee2;
+	$this->SetPreference('phase_en_cours', $phase);
+	$this->SetPreference('saison_en_cours', $saison_en_cours);
 }
 $saisondropdown = array();
 for($i = 2013; $i<=$annee_courante; $i++)

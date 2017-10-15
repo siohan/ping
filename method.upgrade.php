@@ -865,6 +865,93 @@ case  "0.3.0.1" :
 		$query1 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = '1970-01-01' WHERE maj_fftt = '0000-00-00'";
 		$dbresult1 = $db->Execute($query1);
 	}
+	case "0.5.5" :
+	case "0.5.6" : 
+	case "0.5.7" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "
+			pts,
+			birthday,
+			sexe,
+			type,
+			certif,
+			validation,
+			echelon,
+			place,
+			point,
+			cat,
+			adresse,
+			ville,
+			codepostal";
+
+		// create it. 
+		$sqlarray = $dict->DropColumnSQL( cms_db_prefix()."module_ping_joueurs",
+						   $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		//on ajoute les nouvelles colonnes
+		$dict = NewDataDictionary( $db );
+		$flds = "
+			clast I(5),
+			club C(255),
+			nclub C(8)";
+
+		// create it. 
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_joueurs",
+						   $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		
+		
+		//on ajoute un champ à la table spid
+		//on ajoute les nouvelles colonnes
+		$dict = NewDataDictionary( $db );
+		$flds = "statut I(1)";
+
+		// create it. 
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_parties_spid",
+						   $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//on ajoute les nouvelles colonnes
+		$dict = NewDataDictionary( $db );
+		$flds = "spid_errors I(1)";
+
+		// create it. 
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_recup_parties",
+							   $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		
+		//On supprime tous les organismes à cause de la réforme territoriale
+		$query = "DELETE FROM ".cms_db_prefix()."module_ping_organismes";
+		$dbresult = $db->Execute($query);
+		
+		//on supprime la table ping_comm devenue obsolete
+		$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_comm",
+						   $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//On supprime tous les organismes à cause de la réforme territoriale
+		$query = "DELETE FROM ".cms_db_prefix()."module_ping_adversaires";
+		$dbresult = $db->Execute($query);
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'adversaires',
+			    cms_db_prefix().'module_ping_adversaires', 'mois, annee, licence',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		//
+		$query = "ALTER TABLE ".cms_db_prefix()."module_ping_div_tours CHANGE `saison` `saison` varchar(10)";
+		$dbresult = $db->Execute($query);
+		//On supprime des préférences devenues inutiles
+		$this->RemovePreference('LastRecupSpid');
+		$this->RemovePreference('LastRecupFftt');
+		$this->RemovePreference('LastRecupResults');
+		$this->RemovePreference('LastRecupRencontres');
+		$this->RemovePreference('defaultMonthSitMens');
+		$this->RemovePreference('email_admin_ping');
+		$this->RemovePreference('email_succes');
+		
+	}
 	
 
 	

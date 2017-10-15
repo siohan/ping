@@ -17,22 +17,10 @@ if( $jour < $this->GetPreference('jour_sit_mens'))
 	$this->SetMessage($designation);
 	$this->RedirectToAdminTab('situation');
 }
-/*
-$pong = cms_utils::get_module('CGCalendar', $version='1.15.8');
-var_dump($pong);
-if (NULL !== $pong)
-{
-	echo "Le module existe";
-}
-else
-{
-	echo "pas de chance";
-}
-*/
-/**/
+
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
-$db=$gCms->GetDb();
+$db=cmsms()->GetDb();
 //$db =& $this->GetDb();
 $mois_courant = date('n');
 //pour test, je change manuellement le mois courant
@@ -75,7 +63,7 @@ else
 {
 	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif=1 AND licence NOT IN ($licen)";
 }
-echo $query2;
+//echo $query2;
 
 $dbresult = $db->Execute($query2);
 
@@ -91,7 +79,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$compt++;
 		$licence2 = $row['licence'];
 			
-		$result = $service->retrieve_sit_mens("$licence2");
+		$result = $service->retrieve_sit_mens($licence2);
 		
 		if($compt % 2 == 0)
 		{

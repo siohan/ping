@@ -27,14 +27,14 @@ if (FALSE == empty($params['active_tab']))
 	
 	//echo $this->SetTabHeader('divisions', 'Divisions', ('divisions' == $tab)?true:false);	
 	//echo $this->SetTabHeader('poules', 'Résultats', ('resultats' == $tab)?true:false);
-	echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
+	//echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
 	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('situation' == $tab)?true:false);
 	echo $this->SetTabHeader('journal', 'Journal', ('Journal' == $tab)?true:false);
 	
 	if($this->CheckPermission('Ping Set Prefs'))
 	{
 		echo $this->SetTabHeader('configuration', 'Configuration' , ('configuration' == $tab)?true:false);
-		echo $this->SetTabHeader('compte', 'compte' , ('compte' == $tab)?true:false);
+	//	echo $this->SetTabHeader('compte', 'compte' , ('compte' == $tab)?true:false);
 	}
 
 echo $this->EndTabHeaders();
@@ -43,7 +43,8 @@ echo $this->StartTabContent();
 	
 	/**/
 	echo $this->StartTab('joueurs', $params);
-    	include(dirname(__FILE__).'/action.admin_joueurs_tab.php');
+	include(dirname(__FILE__).'/action.admin_recup_tab.php');
+    	//include(dirname(__FILE__).'/action.admin_joueurs_tab.php');
    	echo $this->EndTab();
 	/**/
 
@@ -71,22 +72,11 @@ echo $this->StartTabContent();
     	include(dirname(__FILE__).'/action.admin_spid_tab.php');
    	echo $this->EndTab();
 
-       
-
 	/*
-	echo $this->StartTab('divisions', $params);//le journal
-    	include(dirname(__FILE__).'/action.admin_divisions_tab.php');
-   	echo $this->EndTab();
-	
-
-	echo $this->StartTab('poules' , $params);//résultats des poules
-    	include(dirname(__FILE__).'/action.admin_poules_tab2.php');
-   	echo $this->EndTab();
-	*/
 	echo $this->StartTab('recup' , $params);
     	include(dirname(__FILE__).'/action.admin_recup_tab.php');
    	echo $this->EndTab();
-
+	*/
 	echo $this->StartTab('situation' , $params);//situation mensuelle
     	include(dirname(__FILE__).'/action.admin_situation_mensuelle_tab.php');
    	echo $this->EndTab();
@@ -98,9 +88,11 @@ if($this->CheckPermission('Ping Set Prefs')){
 	echo $this->StartTab('configuration' , $params);
 	include(dirname(__FILE__).'/action.admin_options_tab.php');
 	echo $this->EndTab();
+/*
 	echo $this->StartTab('compte' , $params);
 	include(dirname(__FILE__).'/action.admin_compte_tab.php');
 	echo $this->EndTab();
+	*/
 }
 echo $this->EndTabContent();
 //on a refermé les onglets

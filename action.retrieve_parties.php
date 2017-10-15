@@ -46,7 +46,7 @@ $dbretour = $db->Execute($query, array($licence));
 //on redirige vers la méthode ...
 $service = new retrieve_ops();
 //$service = new Servicen();
-$retrieve = $service->retrieve_parties_fftt("$licence");
+$retrieve = $service->retrieve_parties_fftt($licence);
 
 $this->SetMessage("$designation");
 $this->RedirectToAdminTab('recup');
