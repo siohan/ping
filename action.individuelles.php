@@ -41,6 +41,15 @@ if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 	$query1.= " AND tc.idepreuve = ?";
 	$parms['idepreuve'] = $idepreuve;
 }
+if(isset($params['tour']) && $params['tour'] !='')
+{
+	$parametres++;
+	$tour = $params['tour'];
+	
+	$query1.=" AND cal.tour = ?";
+	$parms['tour'] = $tour;
+}
+/*
 if(isset($params['date_debut']) && $params['date_debut'] !='')
 {
 	$parametres++;
@@ -57,7 +66,7 @@ if(isset($params['date_fin']) && $params['date_fin'] !='')
 	$query1.=" AND cal.date_fin = ?";
 	$parms['date_fin'] = $date_fin;
 }
-
+*/
 if(isset($params['tri']) && $params['tri'] !='')
 {
 	$parametres++;

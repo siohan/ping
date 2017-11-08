@@ -49,16 +49,7 @@ if(isset($params['idorga']) && $params['idorga'] != '')
 {
 	$idorga = $params['idorga'];
 }
-/*
-if(isset($params['indivs']) && $params['indivs'] != '')
-{
-	$indivs = $params['indivs'];
-}
-else
-{
-	$error++;
-}
-*/
+
 if($error >0)
 {
 	$designation.= "Paramètres manquants";
@@ -71,88 +62,8 @@ $service = new Servicen();
 	$page = "xml_result_indiv";
 	$var ="epr=".$idepreuve."&res_division=".$iddivision;
 	
-	if($direction =='tour')
-	{
-		//on doit récupérer le lien du groupe depuis la FFTT
-
-
-		$var.="&action=poule";
-
-		$lien = $service->GetLink($page, $var);
-		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		//var_dump($xml);
-		if($xml === FALSE)
-		{
-			//le service est coupé
-			$array = 0;
-			$lignes = 0;
-			$designation.="Tour(s) inséré(s)";
-			$this->SetMessage("$designation");
-		}
-		else
-		{
-			$array = json_decode(json_encode((array)$xml), TRUE);
-			$lignes = count($array['tour']);
-			
-			//echo "le nb de lignes est : ".$lignes;
-			foreach($xml as $value)
-			{
-				//$libelle = $tab['libelle'];
-				//$lien = $tab['lien'];
-				$libelle = htmlentities($value->libelle);
-				//on va extraire le tour
-				$tour1 = explode(" ",$libelle);
-				$tour2 = trim($tour1[0],'T');
-
-				$lien = htmlentities($value->lien);
-				$tab1 = explode("&",$value->lien);
-
-				$tableau = trim($tab1[2], 'cx_tableau=');
-				$i = 0; //on insère un compteur
-				if($tableau != '')
-				{
-
-					//On a récupéré les éléments, on peut faire l'insertion dans notre bdd
-					//on va d'abord vérifier si ces éléments sont présents ou on créé un index sur la table
-					$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_tours (id, idepreuve,iddivision,libelle, tour, tableau, lien,saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
-					$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle,$tour2, $tableau,$lien,$saison));
-					if($dbresult)
-					{
-						$i++;
-					}
-					//et si on continuait ?
-					//reprendre les infos ci dessus pour les traiter !
-					//on pourrait préparer les différents tags : poule, classement, partie.
-					//on met à jour la table divisions pour dire qu'on a bien uploadé
-					$uploaded = 1;
-					$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
-					$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
-				}
-
-
-
-
-			}
-			$designation.="Tour(s) inséré(s)";
-			$this->SetMessage("$designation");
-			if($i >0)
-			{
-				$this->Redirect($id,'admin_poules', $returnid, array("idepreuve"=>$idepreuve ,"iddivision"=>$iddivision,"idorga"=>$idorga));
-			}
-			else
-			{
-				$this->Redirect($id,'admin_divisions_tab', $returnid, array("idepreuve"=>$idepreuve, "idorga"=>$idorga));
-			}
-			
-			
-			
-		}
-		
-
-
-
-	}
-	elseif($direction == 'classement')
+	
+	if($direction == 'classement')
 	{
 		//on récupère le classement
 		$var.="&action=classement";
@@ -232,12 +143,7 @@ $service = new Servicen();
 			{
 				$designation .= $db->ErrorMsg();
 			}
-			else
-			{
-				//la requete a fonctionné. On met le classement comme uploadé
-				$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded_classement = '1' WHERE idepreuve = ? AND iddivision = ? AND tableau = ?";
-				$dbresult2 = $db->Execute($query2, array($idepreuve,$iddivision,$tableau));
-			}
+		
 
 
 		}

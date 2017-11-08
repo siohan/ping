@@ -411,11 +411,7 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",
 				$flds, 
 				$taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
-//on créé un index sur la table div_tours
-$idxoptarray = array('UNIQUE');
-$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
-	    cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau,saison',$idxoptarray);
-	       $dict->ExecuteSQLArray($sqlarray);
+
 #
 # create table div_classement//debut de la création
 // table schema description
@@ -468,13 +464,28 @@ $dict->ExecuteSQLArray($sqlarray);
 $dict = NewDataDictionary( $db );
 $flds = "
 	licence I(11),
-	type_compet C(3),
 	idepreuve I(11),
-	date_debut D,
-	date_fin D";
+	saison C(10)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_participe",
+				   $flds, 
+				   $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+//
+$dict = NewDataDictionary( $db );
+$flds = "
+	id I(11) AUTO KEY,
+	licence I(11),
+	idepreuve I(11),
+	iddivision I(11),
+	idorga I(11),
+	tour I(2),
+	tableau I(11),
+	saison C(10)";
+			
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_participe_tours",
 				   $flds, 
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
@@ -542,6 +553,13 @@ $db->execute($insert_sql, array( '1', 'Compte et test connexion', 0, 0));
 #
 # Les indexs
 //on créé un index sur la table div_tours
+
+//on créé un index sur la table div_tours
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
+	    cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau,saison',$idxoptarray);
+	       $dict->ExecuteSQLArray($sqlarray);
+
 $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'calendrier',
 	    cms_db_prefix().'module_ping_calendrier', 'idepreuve, date_debut',$idxoptarray);
@@ -561,6 +579,10 @@ $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'adversaires',
 	    cms_db_prefix().'module_ping_adversaires', 'mois, annee, licence',$idxoptarray);
 	       $dict->ExecuteSQLArray($sqlarray);
 #
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL('affectation',
+				    cms_db_prefix().'module_ping_participe_tours', 'licence, idepreuve, tour',$idxoptarray);
+$dict->ExecuteSQLArray($sqlarray);
 //mieux vaut créer un index sur la clé étrangère fk_id
 //$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
 #

@@ -1,18 +1,5 @@
-<div class="pageoptions"><p class="pageoptions">{$divisions_all}</p></div>
-	{if isset($formstart) }
-<fieldset>
-  <legend>Filtres</legend>
-  {$formstart}
-  <div class="pageoverflow">
-	<p class="pagetext">Type Compétition:</p>
-    <p class="pageinput">{$input_compet} </p>
-	<p class="pagetext">Indivs ou par équipes:</p>
-    <p class="pageinput">{$input_indivs} </p>
-    <p class="pageinput">{$submitfilter}{$hidden|default:''}</p>
-  </div>
-  {$formend}
-</fieldset>
-{/if}<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$inscriptions} - {$engagements} - {$tours_all}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
@@ -23,6 +10,8 @@
 	<th>Indivs</th>
 	<th>Echelon</th>
 	<th>Tag pour affichage</th>
+	<th>Inscrits</th>
+	<th>Ajouter</th>
 	<th colspan="3">Accéder aux divisions</th>
   </tr>
  </thead>
@@ -35,7 +24,9 @@
 	<td>{if $entry->indivs =='1'}Oui{else}Non{/if}</td>
 	<td>{$entry->orga}</td>
 	<td>{$entry->tag}</td>
-	<td>{$entry->natio}-{$entry->zone}-{$entry->ligue}-{$entry->dep}</td>
+	<td>{$entry->nb_participants}</td>
+	<td>{$entry->participants}</td>
+<!--	<td>{$entry->natio}-{$entry->zone}-{$entry->ligue}-{$entry->dep}</td>-->
 	<td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>
   </tr>
@@ -43,4 +34,3 @@
  </tbody>
 </table>
 {/if}
-<div class="pageoptions"><p class="pageoptions">{$createlink}</p></div>

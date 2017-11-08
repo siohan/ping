@@ -997,6 +997,113 @@ public static function sit_mens($licence)
 	return $retour_sit_mens;
 //end of function
 }
+public static function name($licence)
+{
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$query = "SELECT CONCAT_WS(' ',nom, prenom) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";//SELECT CONCAT_WS('/',mois, annee) AS sit_mens, DATEDIFF(NOW(),datemaj)  FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND DATEDIFF(NOW(),datemaj) IS NOT NULL ORDER BY DATEDIFF(NOW(),datemaj) ASC LIMIT 1";
+	//$db->debug=true;
+	$dbresult = $db->Execute($query, array($licence));
+	//si la situation mensuelle du joueur du club n'existe pas ?
+	//alors on n'enregistre pas le résultat et on le signale
+		if ($dbresult && $dbresult->RecordCount() == 0)
+		{
+			//$designation.="Ecart non calculé";
+			$joueur = false;
+		}
+		else
+		{
+			$row = $dbresult->FetchRow();
+			$joueur = $row['joueur'];
+		}
+	return $joueur;
+}
+public static function nb_participants($idepreuve, $saison)
+{
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$nb = 0;
+	$query = "SELECT count(*) AS participants FROM ".cms_db_prefix()."module_ping_participe WHERE idepreuve = ? AND saison = ?";
+	$dbresult = $db->Execute($query, array($idepreuve, $saison));
+	if($dbresult)
+	{
+		$row = $dbresult->FetchRow();
+		$nb = $row['participants'];
+		
+	}
+	return $nb;
+}
+public static function nb_participants_tableau($idepreuve,$idorga, $tour,$saison, $iddivision, $tableau)
+{
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$nb = 0;
+	$query = "SELECT count(*) AS participants FROM ".cms_db_prefix()."module_ping_participe_tours WHERE idepreuve = ? AND iddivision = ? AND idorga = ? AND tour = ? AND  saison = ?";
+	$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$idorga, $tour, $saison));
+	if($dbresult)
+	{
+		$row = $dbresult->FetchRow();
+		$nb = $row['participants'];
+		
+	}
+	return $nb;
+}
+public static function nom_division($idepreuve,$iddivision,$saison)
+{
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$query = "SELECT libelle FROM ".cms_db_prefix()."module_ping_divisions WHERE iddivision = ? AND idepreuve = ? AND saison = ?";
+	$dbresult = $db->Execute($query, array($iddivision,$idepreuve, $saison));
+	if($dbresult && $dbresult->RecordCount()>0)
+	{
+		$row = $dbresult->FetchRow();
+		$libelle = $row['libelle'];
+	}
+	return $libelle;
+	
+}
+	function tableau($idepreuve, $iddivision, $tour)
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		$ping = cms_utils::get_module('Ping');
+		$saison = $ping->GetPreference('saison_en_cours');
+		$query = "SELECT tableau FROM ".cms_db_prefix()."module_ping_div_tours WHERE idepreuve = ? AND iddivision = ? AND tour = ? AND saison = ?";
+		$dbresult = $db->Execute($query, array($idepreuve, $iddivision, $tour, $saison));
+		if($dbresult)
+		{
+			$row = $dbresult->FetchRow();
+			$tableau = $row['tableau'];
+			return $tableau;
+		}
+	}
+	function is_classement_uploaded($idepreuve,$iddivision,$tableau,$tour )
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND iddivision = ? AND tableau = ? AND tour = ?";
+		$dbresult = $db->Execute($query, array($idepreuve, $iddivision, $tableau, $tour));
+		if($dbresult)
+		{
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			if($nb > 0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		else
+		{
+			return false;
+		}	
+		
+		
+	}
 } // end of class
 
 #

@@ -65,7 +65,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 		$lien = $service->GetLink($page, $var);
 		//echo "<a href=".$lien.">".$lien."</a>";
 		$xml   = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		var_dump($xml);
+	//	var_dump($xml);
 		$array_points = array();
 
 		if($xml === FALSE)
@@ -82,19 +82,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 		}
 
 
-		//echo $spid." lignes dans le spid";
-
-			/*if(!is_array($array))
-			{
-
-				$message = "Service coupé pour ".$player; 
-				$status = 'Echec';
-				$designation = $message;
-				$action = "mass_action";
-				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
-
-			}
-			*/
+		
 			if($lignes < $spid)
 			{
 				$message = "Résultats SPID à jour pour ".$player." : ".$spid." en base de données ".$lignes." en ligne."; 
@@ -771,7 +759,7 @@ public function retrieve_sit_mens($licence, $ext="")
 				$lien = $service->GetLink($page,$var);
 				//var_dump($lien);
 				$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-				var_dump($xml);
+				//var_dump($xml);
 				if($xml === FALSE )
 				{
 					//le service est coupé
@@ -998,7 +986,7 @@ public function retrieve_sit_mens($licence, $ext="")
 		$lien = $service->GetLink($page, $var);
 		
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		//var_dump($xml);
+		var_dump($xml);
 		if($xml === FALSE )
 		{
 			//le service est coupé

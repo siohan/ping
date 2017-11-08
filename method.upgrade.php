@@ -952,6 +952,39 @@ case  "0.3.0.1" :
 		$this->RemovePreference('email_succes');
 		
 	}
+	case "0.6" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "
+			id I(11) AUTO KEY,
+			licence I(11),
+			idepreuve I(11),
+			iddivision I(11),
+			idorga I(11),
+			tour I(2),
+			tableau I(11),
+			saison C(10)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_participe_tours",
+						   $flds);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		$dict = NewDataDictionary( $db );
+		$flds = "saison C(10)";
+		// create it. 
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_participe", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$query = "UPDATE ".cms_db_prefix()."module_ping_participe SET saison = '2017-2018'";
+		$dbresult = $db->Execute($query);
+		
+		//on créé un index sur la table de dessus
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL('affectation',
+					    cms_db_prefix().'module_ping_participe_tours', 'licence, idepreuve, tour',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+	}
 	
 
 	

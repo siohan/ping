@@ -63,7 +63,8 @@ $smarty->assign('refresh',
 		$this->CreateLink($id, 'refresh',$returnid, $contents="Maj", array("idepreuve"=>$idepreuve)));
 $rowclass = '';
 //echo $query;
-$rowarray= array ();
+$rowarray= array();
+$ping_ops = new ping_admin_ops();
 if ($dbresult && $dbresult->RecordCount() > 0)
   {
     while ($row= $dbresult->FetchRow())
@@ -108,7 +109,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->uploaded_classement= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('already_downloaded'), '', '', 'systemicon');
 	}
 	$onerow->partie= $this->CreateLink($id, 'admin_div_parties', $returnid, 'Parties',array("direction"=>"partie","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"tableau"=>$row['tableau'],"tour"=>$row['tour'],"idorga"=>$idorga));
-	
+	$onerow->participants= $this->CreateLink($id,'participe_tours', $returnid, $ping_ops->nb_participants_tableau($idepreuve,$row['idorga'],$row['tour'], $saison,$row['iddivision'],$row['tableau']).' Participants', array('idepreuve'=>$idepreuve, 'iddivision'=>$iddivision, 'idorga'=>$idorga, 'tour'=>$row['tour'], 'tableau'=>$row['tableau']));
 	//$onerow->editlink = $this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
 	
 	if($this->CheckPermission('Ping Delete'))

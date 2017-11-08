@@ -78,7 +78,7 @@ $(document).ready(function(){
 		<td>{$entry->tableau}</td>
 		<td>{$entry->tour}</td>
 		<td>{$entry->date_debut}->{$entry->date_fin}</td>
-		<td>{$entry->uploaded_parties}{$entry->partie} - {$entry->uploaded_classement}{$entry->classement}</td>
+		<td>{$entry->uploaded_parties}{$entry->partie} - {$entry->uploaded_classement}{$entry->classement} - {$entry->participants}</td>
 		<td>{$entry->editlink}</td>
 		<td>{$entry->deletelink}</td>
 		<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->tableau}" class="select"></td>

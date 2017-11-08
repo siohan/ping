@@ -1,18 +1,10 @@
-<pre>{*$rowarray|var_dump*}</pre>
+{*<pre>{$rowarray|var_dump}</pre>*}
 {**}<div class="pageoverflow">
 {$formstart}
 
 <div class="pageoverflow">
     <p class="pagetext">Type Compétition:</p>
     <p class="pageinput">{$idepreuve}</p>
-  </div>
-<div class="pageoverflow">
-    <p class="pagetext">Date début:</p>
-    <p class="pageinput">{$date_debut}</p>
-  </div>
-<div class="pageoverflow">
-    <p class="pagetext">Date fin:</p>
-    <p class="pageinput">{$date_fin}</p>
   </div>
 {foreach from=$rowarray key=key item=entry}
 <div class="pageoverflow">

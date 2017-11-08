@@ -1,6 +1,6 @@
 <?php
 if( !isset($gCms) ) exit;
-require_once(dirname(__FILE__).'/include/travaux.php');
+//require_once(dirname(__FILE__).'/include/travaux.php');
 //debug_display($params,'Parameters');
 // les préférences nécessaires
 $saison = $this->GetPreference('saison_en_cours');
@@ -27,7 +27,7 @@ else
 {
 	$error++;
 }
-$date_debut = '';
+/*$date_debut = '';
 if(isset($params['date_debut']) && $params['date_debut'] !='')
 {
 	$date_debut = $params['date_debut'];
@@ -36,11 +36,12 @@ else
 {
 	$error++;
 }
+*/
 if($error == 0)
 {
 	//on fait une requete pour extraire toutes les infos afin de préparer une boucle
-	$query1 = "SELECT id AS tour_id FROM ".cms_db_prefix()."module_ping_div_tours WHERE idepreuve = ? AND date_debut = ? AND tour = ? AND saison = ? AND uploaded_classement IS NULL";
-	$dbresult1 = $db->Execute($query1,array($idepreuve,$date_debut,$tour,$saison));
+	$query1 = "SELECT id AS tour_id FROM ".cms_db_prefix()."module_ping_div_tours WHERE idepreuve = ? AND tour = ? AND saison = ? AND uploaded_classement IS NULL";
+	$dbresult1 = $db->Execute($query1,array($idepreuve,$tour,$saison));
 
 		if ($dbresult1 && $dbresult1->RecordCount() > 0)
 	  	{
