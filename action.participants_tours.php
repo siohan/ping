@@ -37,7 +37,7 @@ $smarty->assign('retour',
 		$this->CreateLink($id,'participants' , $returnid, '<= Retour', array("idepreuve"=>$idepreuve)));
 $smarty->assign('add', 
 			$this->CreateLink($id,'participants_tours' , $returnid, 'Ajouter un tour', array("idepreuve"=>$idepreuve, "licence"=>$licence,"add"=>"1")));
-$query = "SELECT CONCAT_WS(' ',j.nom, j.prenom) AS joueur , j.licence, part.iddivision, part.idorga, part.tour, part.tableau FROM ".cms_db_prefix()."module_ping_participe_tours AS part, ".cms_db_prefix()."module_ping_joueurs AS j WHERE j.licence = part.licence AND part.idepreuve = ? AND part.saison = ? AND j.licence = ?";
+$query = "SELECT part.id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur , j.licence, part.iddivision, part.idorga, part.tour, part.tableau FROM ".cms_db_prefix()."module_ping_participe_tours AS part, ".cms_db_prefix()."module_ping_joueurs AS j WHERE j.licence = part.licence AND part.idepreuve = ? AND part.saison = ? AND j.licence = ?";
 $query.=" ORDER BY part.tour ASC";//echo $query;
 $dbresult = $db->Execute($query, array($idepreuve, $saison,$licence));
 $rowarray = array();
@@ -54,7 +54,7 @@ if($dbresult && $dbresult->recordCount()>0 && $add !="1")
 		$onerow->idorga = $row['idorga'];
 		$onerow->tour = $row['tour'];
 		$onerow->tableau = $row['tableau'];
-		$onerow->parties = $this->CreateLink($id, 'admin',$returnid, 'Parties', array("idepreuve"=>$idepreuve, "iddivision"=>$row['iddivision'], "tableau"=>$row['tableau'], "tour"=>$row['tour'], "idorga"=>$row['idorga']) );
+		$onerow->parties = $this->CreateLink($id, 'admin_div_parties',$returnid, 'Parties', array("idepreuve"=>$idepreuve, "iddivision"=>$row['iddivision'], "tableau"=>$row['tableau'], "tour"=>$row['tour'], "idorga"=>$row['idorga'],"licence"=>$licence) );
 		$upload = $ping_ops->is_classement_uploaded($idepreuve,$row['iddivision'],$row['tableau'],$row['tour']);
 		if($upload === true)
 		{
@@ -64,8 +64,8 @@ if($dbresult && $dbresult->recordCount()>0 && $add !="1")
 		{
 			$onerow->uploaded_classement = $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('false'),'','','systemicon');
 		}
-		$onerow->classement = $this->CreateLink($id, 'admin_div_classement',$returnid, 'Classement', array("idepreuve"=>$idepreuve, "iddivision"=>$row['iddivision'], "tableau"=>$row['tableau'], "tour"=>$row['tour'], "idorga"=>$row['idorga']) );
-	//	$onerow->affectation = $this->CreateLink($id, 'participants_tours',$returnid, 'Tour suivant', array("licence"=>$row['licence'], "idepreuve"=>$idepreuve, "add"=>"1") );
+		$onerow->classement = $this->CreateLink($id, 'admin_div_classement',$returnid, 'Classement', array("idepreuve"=>$idepreuve, "iddivision"=>$row['iddivision'], "tableau"=>$row['tableau'], "tour"=>$row['tour'], "idorga"=>$row['idorga'], "licence"=>$licence) );
+		$onerow->delete = $this->CreateLink($id, 'delete',$returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'),'','','systemicon'), array("record_id"=>$row['id'], "type_compet"=>"participants_tours", "licence"=>$licence, "idepreuve"=>$idepreuve) );
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
 	}
@@ -81,7 +81,7 @@ elseif($dbresult->RecordCount()==0 || $add == 1)
 	$smarty->assign('formstart',
 			    $this->CreateFormStart( $id, 'affectation', $returnid ) );
 	$smarty->assign('licence',
-					$this->CreateInputText($id,'licence',$licence,12,15));
+					$this->CreateInputText($id,'licence',$licence,12,15);
 	$smarty->assign('step', $this->CreateInputHidden($id,'step',"1"));
 	$smarty->assign('idepreuve',
 			$this->CreateInputText($id,'idepreuve',$idepreuve,5,15));

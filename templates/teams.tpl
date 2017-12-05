@@ -52,7 +52,6 @@ $(document).ready(function(){
 		<th>Niveau</th>
 		<th>Nom court</th>
 		<th>Tag pour affichage</th>
-		<th>Calendrier</th>
 		<th colspan="4">Actions</th>
 	</tr>
  </thead>
@@ -63,7 +62,6 @@ $(document).ready(function(){
     <td>{$entry->libdivision}</td>
     <td>{$entry->friendlyname}</td>
 	<td>{$entry->tag}</td>
-	<td>{if $entry->calendrier==0}Non !!{else}Oui{/if}</td>
 	<td>{$entry->view}</td>
 	<td>{$entry->editlink}</td>
     <td>{$entry->deletelink}</td>

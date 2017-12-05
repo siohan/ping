@@ -123,7 +123,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
   }
 else
 {
-	$this->Redirect($id, 'retrieve_div_results',$returnid,array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision));
+	$this->Redirect($id, 'retrieve_div_results',$returnid,array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision,"licence"=>$licence));
 }
 
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));

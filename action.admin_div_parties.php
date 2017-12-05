@@ -16,6 +16,12 @@ $iddivision = '';
 $tableau = '';
 $tour = 0;
 $error = 0; //on instancie un compteur d'erreurs
+$licence = '';
+if(isset($params['licence']) && $params['licence'] != '')
+{
+	$licence = $params['licence'];
+	
+}
 if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 {
 	$idepreuve = $params['idepreuve'];
@@ -61,7 +67,7 @@ if(isset($params['idorga']) && $params['idorga'] != '')
 $smarty->assign('lien_retour',
 		$this->CreateReturnLink($id, $returnid,$contents='Retour'));
 $smarty->assign('recup_parties',
-		$this->CreateLink($id,'retrieve_div_results', $returnid, $contents='Récupérer les parties', array("direction"=>"partie","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga)));
+		$this->CreateLink($id,'retrieve_div_results', $returnid, $contents='Récupérer les parties', array("direction"=>"partie","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga, "licence"=>$licence)));
 $result= array ();
 $query = "SELECT * FROM ".cms_db_prefix()."module_ping_div_parties WHERE tableau = ?";
 

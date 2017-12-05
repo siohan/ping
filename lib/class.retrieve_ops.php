@@ -25,14 +25,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 	$annee_courante = date('Y');
 	#
 	#
-	#Première chose : si jour est inférieur à 10 on ne fait rien on quitte
-	if(date('d') < 10)
-	{
-		$designation.= "Résultats spid disponible à partir du 10 de chq mois !";
-		$error = 1;
-	}
-	else
-	{
+	
 		$ping_admin_ops = new ping_admin_ops();
 		$points = $ping_admin_ops->get_sit_mens($licence,$mois_courant,$annee_courante);
 
@@ -329,9 +322,155 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 
 			}//fin du if !is_array
 	//	}//fin du while
-	}
+	
   }//fin de la fonction
 ##
+	public function retrieve_parties_spid( $licence )
+	  {
+		global $gCms;
+		$db = cmsms()->GetDb();
+		
+		$ping = cms_utils::get_module('Ping');
+		$designation = "";
+		$saison_courante = $ping->GetPreference('saison_en_cours');
+		$now = trim($db->DBTimeStamp(time()), "'");
+		$aujourdhui = date('Y-m-d');
+		$mois_courant = date('m');
+		$annee_courante = date('Y');
+		$ping_admin_ops = new ping_admin_ops();
+		$spid = $ping_admin_ops->compte_spid($licence);
+		$spid_errors = $ping_admin_ops->compte_spid_errors($licence);
+		//$error = 0;//le compteur d'erreur
+		$service = new Servicen();
+
+		$page = "xml_partie";
+		$var = "numlic=".$licence;
+		$lien = $service->GetLink($page, $var);
+		//echo "<a href=".$lien.">".$lien."</a>";
+		$xml   = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+	//	var_dump($xml);
+		$array_points = array();
+
+		if($xml === FALSE)
+		{
+			//echo "le tableau renvoit une erreur";
+			$array = 0;
+		//	$lignes = 0;
+		}
+		else
+		{
+			$array = json_decode(json_encode((array)$xml), TRUE);
+			$lignes = count($array['resultat']);
+			echo "le nb de lignes est  :".$lignes;
+		}
+
+
+
+			if(!isset($lignes) || $lignes < $spid)
+			{
+				$message = "Résultats SPID à jour pour ".$player." : ".$spid." en base de données ".$lignes." en ligne."; 
+				$status = 'Echec';
+				$designation.= $message;
+				$action = "mass_action";
+				$ecrire_journal = $ping_admin_ops->ecrirejournal($now,$status, $designation,$action);
+
+				if(isset($lignes)){
+					$update_spid = $ping_admin_ops->update_recup_parties($licence);
+				}
+
+
+			}
+			else
+			{
+				$i = 0;
+				$compteur = 0;// ce compteur compte le nb total d'itération dans la boucle
+				$a = 0;//ce compteur sert au parties non récupérées par sit mens vide
+				//on va compter les erreurs
+				//on initialise un tableau pour éviter de faire des requetes redondantes
+				$array_classement = array();
+				//on va faire une nouvelle conditionnelle pour déterminer si on récupère les résultats du mois en cours seulement ou non
+				$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ? AND MONTH(date_event) = ? AND YEAR(date_event) = ?";
+				$dbresult1 = $db->Execute($query1, array($saison_courante, $licence,$mois_courant, $annee_courante));
+			//	foreach($array as $cle =>$tab)
+			 //si le jour courant est inférieur est inférieur à 10 on a une erreur douce
+				
+				foreach($xml as $cle=> $tab)
+				{
+					//var_dump($array);
+
+					$compteur++;
+					$error = 0;//on instancie un compteur d'erreurs
+
+					//on synthétise tous les éléments à récupérer
+					//on fera un éventuel traitement ensuite
+					$dateevent = (isset($tab->date)?"$tab->date":"");//$tab['date'];
+
+					$chgt = explode("/",$dateevent);
+					$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
+					$annee = '20'.$chgt[2];
+					$date_mysql = $annee.'-'.$chgt[1].'-'.$chgt[0];
+						if (substr($chgt[1], 0,1)==0)
+						{
+							$mois_event = substr($chgt[1], 1,1);
+							//echo "la date est".$date_event;
+						}
+						else
+						{
+							$mois_event = $chgt[1];
+						}
+					if($mois_event == $mois_courant && $annee == $annee_courante)
+					{
+						$nom = (isset($tab->nom)?"$tab->nom":"");//$tab['nom'];
+						$classement = (isset($tab->classement)?"$tab->classement":"");
+						$victoire = (isset($tab->victoire)?"$tab->victoire":"");
+						$forfait = (isset($tab->forfait)?"$tab->forfait":"");
+						$epreuve = (isset($tab->epreuve)?"$tab->epreuve":"");//$tab['epreuve'];
+
+							if ($victoire =='V')
+							{
+								$victoire = 1;
+							}
+							else 
+							{
+								$victoire = 0;
+							}
+
+						
+						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (saison, datemaj, licence, date_event,epreuve, nom,classement, victoire, forfait) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+						$i++;
+						//echo $query;
+						$dbresultat3 = $db->Execute($query3,array($saison_courante,$now, $licence, $date_event, $epreuve, $nom, $classement, $victoire, $forfait));
+
+						if(!$dbresultat3)
+							{
+								$message = $db->ErrorMsg(); 
+								$status = 'Echec';
+								$designation = $message;
+								$action = "mass_action";
+								ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+							}				
+
+							//on met à jour la date de maj des résultats SPID
+					//on détruit le nb d'erreur
+					unset($error);
+					}
+				}//fin du foreach
+				$comptage = $i;
+				$spid = $ping_admin_ops->maj_recup_parties($licence,$i,'SPID');
+				$status = 'Parties SPID';
+				$designation.= $comptage." parties Spid sur ".$compteur."  de ".$player;
+				if($a >0)
+				{
+					$designation.= " ".$a." parties Spid non récupérées (situation mensuelle manquante)";
+				}
+				$action = "mass_action";
+				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+
+
+			}//fin du if !is_array
+	//	}//fin du while
+
+  }//fin de la fonction
 ##
 #   Retrieve parties FFTT
 

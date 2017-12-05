@@ -24,18 +24,7 @@ $(document).ready(function(){
 });
 //]]>
 </script>
-{*
-<div id="filter_form"  title="Alertes du module">
-  <table>
-    <tr>
-      <td style="vertical-align: top;">
-        {if $alertCompte >0}
-		<div class="pageoverflow">
-          	<p class="pagetext">
-			Attention !! Vous devez renseigner vos paramètres dans l'onglet "Compte"
-			</p>
-        </div>
-		{/if}
+
 		
 		{if $alertConfig >0}
 		<div class="pageoverflow">
@@ -44,34 +33,6 @@ $(document).ready(function(){
 			</p>
         </div>
         {/if}
-
-		{if $nb_dep  == 0}
-		<div class="pageoverflow">
-          	<p class="pagetext">
-			{$compet_dep}
-			</p>
-        </div>
-        {/if}
-
-        
-      </td>
-
-    </tr>
-  </table>
- 
-</div>
-
-{if $alertCompte >0 || $alertConfig >0}
-<div class="pageoptions">
-  <a id="toggle_filter">Ouvrir les alertes du module</a>
-</div>
-{/if}
-*}
-{* les messages ci-dessous proviennent de la page action.updateoptions.php*}
-{if $msg =='Full'}
-<p>Cliquez ci-après pour finaliser le changement de saison {$delete_all}</p>
-{/if}
-
 
 {*Lien vers le formulaire de satisfaction *}
 

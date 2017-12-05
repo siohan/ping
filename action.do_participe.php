@@ -65,6 +65,6 @@ $saison = $this->GetPreference('saison_en_cours');
 		
 
 
-$this->RedirectToAdminTab('compets');
+$this->Redirect($id, 'participants', $returnid, array("idepreuve"=>$idepreuve));
 
 ?>

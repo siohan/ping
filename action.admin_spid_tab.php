@@ -27,7 +27,7 @@ while ($dbresult && $row = $dbresult->FetchRow())
     	$playerslist[$row['player']] = $row['licence'];
 	$typeCompet[$row['epreuve']] = $row['epreuve'];
   }
-
+$calcul = $this->GetPreference('spid_calcul');
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));	
 $smarty->assign('input_compet',
@@ -93,9 +93,12 @@ if ($dbresult2 && $dbresult2->RecordCount() > 0)
 	$onerow->name= $row['name'];
 	$onerow->classement= $row['classement'];
 	$onerow->victoire= $row['victoire'];
-	$onerow->ecart= $row['ecart'];
-	$onerow->coeff= $row['coeff'];
-	$onerow->pointres= $row['pointres'];
+	if($calcul == 1)
+	{
+		$onerow->ecart= $row['ecart'];
+		$onerow->coeff= $row['coeff'];
+		$onerow->pointres= $row['pointres'];
+	}
 	$onerow->forfait= $row['forfait'];
 	$onerow->editlink= $this->CreateLink($id, 'edit_player_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['record_id']));
 	
@@ -128,8 +131,14 @@ $smarty->assign('submit_massaction',
 			
 //faire apparaitre les points totaux et somme victoire en bas ? Ce serait pas mal
 /**/
-echo $this->ProcessTemplate('spid.tpl');
-
+if($calcul == 1)
+{
+	echo $this->ProcessTemplate('spid.tpl');
+}
+else
+{
+	echo $this->ProcessTemplate('spid_sans.tpl');
+}
 
 #
 # EOF

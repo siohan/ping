@@ -349,16 +349,6 @@ public function CalculPointsIndivs($ecart,$victoire) {
 
 }
 
-public static function unable_player($licence)
-  {
-    $db = cmsms()->GetDb();
-
-    //Now remove the entry
-    $query = "UPDATE ".cms_db_prefix()."module_ping_joueurs SET actif ='0'  WHERE licence = ?";
-    $db->Execute($query, array($licence));
-
-
-  }
 
 public static function supp_spid($record_id)
   {
@@ -397,7 +387,7 @@ public static function compte_spid($licence)
 	$dbresult = $db->Execute($query, array($licence,$saison));
 	$row = $dbresult->FetchRow();
 	$nb = $row['spid'];
-	$ping_ops->maj_recup_parties($licence,$nb,$table='SPID');
+//	$ping_ops->maj_recup_parties($licence,$nb,$table='SPID');
 	
 
 }
@@ -1081,8 +1071,10 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 	{
 		global $gCms;
 		$db = cmsms()->GetDb();
-		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND iddivision = ? AND tableau = ? AND tour = ?";
-		$dbresult = $db->Execute($query, array($idepreuve, $iddivision, $tableau, $tour));
+		$ping = cms_utils::get_module('Ping');
+		$saison = $ping->GetPreference('saison_en_cours');
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND iddivision = ? AND tableau = ? AND tour = ? AND saison = ?";
+		$dbresult = $db->Execute($query, array($idepreuve, $iddivision, $tableau, $tour, $saison));
 		if($dbresult)
 		{
 			$row = $dbresult->FetchRow();
@@ -1104,6 +1096,51 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 		
 		
 	}
+	
+	function has_affectations($idepreuve,$licence)
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		$ping = cms_utils::get_module('Ping');
+		$saison = $ping->GetPreference('saison_en_cours');
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_participe_tours WHERE idepreuve = ? AND licence = ? AND saison = ?";
+		$dbresult = $db->Execute($query, array($idepreuve, $licence, $saison));
+		if($dbresult)
+		{
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			if($nb > 0)
+			{
+				return $nb;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		
+		else
+		{
+			return false;
+		}
+		
+		
+	}
+	public static function nom_compet($idepreuve)
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		$query = "SELECT name FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+		$dbresult = $db->Execute($query, array($idepreuve));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			$row = $dbresult->FetchRow();
+			$libelle = $row['name'];
+		}
+		return $libelle;
+
+	}
+	
 } // end of class
 
 #

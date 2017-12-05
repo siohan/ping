@@ -37,10 +37,7 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 			$phase = $row['phase'];
 		}
 	}
-	else
-	{
-		
-	}
+	
 	
 }
 
@@ -78,13 +75,6 @@ if($dbresultat3 && $dbresultat3->RecordCount()>0)
 }
 $smarty->assign('items3',$rowarray3);
 $smarty->assign('itemcount3', count($rowarray3));
-//$libequipe2 = '';
-/*
-	$libequipe1 = trim($params['libequipe']);
-	//var_dump($libequipe1);
-	$libequipe2 = '%'.$libequipe1.'%';
-*/
-
 $smarty->assign('retour',
 	$this->CreateReturnLink($id, $returnid,$contents='Retour aux équipes'));
 $smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"equipes")));
@@ -112,17 +102,11 @@ if($dbresult2 && $dbresult2->RecordCount()>0)
 			$classement = '-';
 		}
 		$onerow2= new StdClass();
-		//$onerow2->rowclass2= $rowclass2;
-		//$poule = $row2['poule'];
-		//$onerow2->id= $row2['id'];
-		//$onerow2->idpoule = $row2['idpoule'];
-		//$onerow2->iddiv = $row2['iddiv'];
 		$onerow2->friendlyname= $row2['friendlyname'];
 		$onerow2->clt=  $classement;
 		$onerow2->equipe= $row2['equipe'];
 		$onerow2->joue= $row2['joue'];
 		$onerow2->pts= $row2['pts'];
-		//$onerow->type_compet = $row['code_compet'];
 		($rowclass2 == "row1" ? $rowclass2= "row2" : $rowclass2= "row1");
 		$onerow2->rowclass2= $rowclass2;
 		$rowarray[]= $onerow2;

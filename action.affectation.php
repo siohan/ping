@@ -13,6 +13,18 @@ $error = 0;
 $retrieve_ops = new retrieve_ops();
 $ping_ops = new ping_admin_ops();
 $saison = $this->GetPreference('saison_en_cours');
+
+if(isset($params['idepreuve']) && $params['idepreuve'] != '')
+{
+	$idepreuve = $params['idepreuve'];
+}
+else
+{
+	$error++;
+}
+if (isset($params['cancel']))
+    $this->Redirect($id, 'participants', $returnid, array("idepreuve"=>$idepreuve));
+
 if(isset($params['step']) && $params['step'] != '')
 {
 	$step = $params['step'];
@@ -29,14 +41,7 @@ else
 {
 	$error++;
 }
-if(isset($params['idepreuve']) && $params['idepreuve'] != '')
-{
-	$idepreuve = $params['idepreuve'];
-}
-else
-{
-	$error++;
-}
+
 if(isset($params['tour']) && $params['tour'] != '')
 {
 	$tour = $params['tour'];

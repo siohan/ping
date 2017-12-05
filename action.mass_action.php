@@ -86,25 +86,47 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			//$saison_courante = $this->GetPreference('saison_en_cours');
 			$message='Retrouvez toutes les infos dans le journal';
 			$service = new retrieve_ops();
-			foreach( $params['sel'] as $licence )
-	  		{
-	    			$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
-				$dbretour = $db->Execute($query, array($licence));
-				if ($dbretour && $dbretour->RecordCount() > 0)
-				{
-				    while ($row= $dbretour->FetchRow())
-				      	{
-						$player = $row['player'];
-						$cat = $row['cat'];
-						//return $player;
-						$service = new retrieve_ops();
-						$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
-						sleep(1);
-						//var_dump($resultats);
-					}
+			$i=0;
+			if($this->GetPreference('spid_calcul') == 1)
+			{
+				foreach( $params['sel'] as $licence )
+		  		{
+		    			$i++;
+					$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
+					$dbretour = $db->Execute($query, array($licence));
+					if ($dbretour && $dbretour->RecordCount() > 0)
+					{
+					    while ($row= $dbretour->FetchRow())
+					      	{
+							$player = $row['player'];
+							$cat = $row['cat'];
+							//return $player;
+							
+							$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+							if(($i %2) == 0)
+							{
+								sleep(1);
+							}
+							//var_dump($resultats);
+						}
 
+					}
+		  		}
+			}
+			else
+			{
+				foreach( $params['sel'] as $licence )				
+		  		{
+					$i++;
+					$resultats = $service->retrieve_parties_spid($licence);
+					if(($i %2) == 0)
+					{
+						sleep(1);
+					}
 				}
-	  		}
+			}
+			
+			
 			$this->SetMessage("$message");
 			$this->RedirectToAdminTab("recup");
 			break;

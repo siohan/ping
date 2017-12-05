@@ -61,11 +61,12 @@ $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this-
 $items = array();
 $items['Oui'] = 'Oui';
 $items['Non'] = 'Non';
+$choix['Sans'] = 'Sans';
+$choix['Avec'] = 'Avec';
 
 $smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
-$smarty->assign('jour_sit_mens',
-		$this->CreateInputText($id,'jour_sit_mens', $this->GetPreference('jour_sit_mens', ''), 5, 7));
 
+$smarty->assign('spid', $this->CreateInputDropdown($id,'spid',$choix,-1,$this->GetPreference('spid_calcul')));
 $smarty->assign('input_populate_calendar',$this->CreateInputDropdown($id,'populate_calendar',$items,-1,$this->GetPreference('populate_calendar'),50,255));
 $smarty->assign('input_affiche_club_uniquement',$this->CreateInputDropdown($id,'affiche_club_uniquement',$items,-1,$this->GetPreference('affiche_club_uniquement'),50,255));
 

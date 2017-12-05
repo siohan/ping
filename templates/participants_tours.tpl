@@ -24,7 +24,7 @@
 	<td>{$entry->uploaded_classement}{$entry->classement}</td>
 	<td>{$entry->affectation}</td>
 	<td>{$entry->editlink}</td>
-	<td>{$entry->deletelink}</td>
+	<td>{$entry->delete}</td>
   </tr>
 {/foreach}
  </tbody>

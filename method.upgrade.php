@@ -984,6 +984,9 @@ case  "0.3.0.1" :
 		$sqlarray = $dict->CreateIndexSQL('affectation',
 					    cms_db_prefix().'module_ping_participe_tours', 'licence, idepreuve, tour',$idxoptarray);
 		$dict->ExecuteSQLArray($sqlarray);
+		$this->RemovePreference('jour_sit_mens');
+		$this->SetPreference('spid_calcul', 0);
+		
 	}
 	
 

@@ -150,10 +150,12 @@ public function get_tasks()
 {
    $obj = array();
 //	$obj[0] = new PingRecupFfttTask();
-// 	$obj[1] = new PingRecupSpidTask();  
+	$obj[1] = new PingRecupSpidTask();  
 //	$obj[2] = new PingRecupRencontresTask();
 return $obj; 
 }
+
+
 
   function GetEventDescription ( $eventname )
   {

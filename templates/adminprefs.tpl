@@ -24,17 +24,16 @@
 <fieldset>
 	<legend>Autres options</legend>
 	<div class="pageoverflow">
+		<p class="pagetext">Spid avec ou sans estimation des points(recommandé sans){cms_help key='help_spid_calcul' title='Spid avec ou sans calcul'}</p>
+		<p class="pageinput">{$spid}</p>
+	</div>
+	<div class="pageoverflow">
 		<p class="pagetext">Le calendrier se remplit avec le résultats des poules (recommandé)</p>
 		<p class="pageinput">{$input_populate_calendar}</p>
 	</div>
 	<div class="pageoverflow">
-		<p class="pagetext">Afficher les résultats de mes équipes uniquement</p>
+		<p class="pagetext">Afficher les résultats de mes équipes uniquement{cms_help key='help_affiche_club_uniquement' title='Affichage des résultats des équipes'}</p>
 		<p class="pageinput">{$input_affiche_club_uniquement}</p>
-	</div>
-	
-	<div class="pageoverflow">
-		<p class="pagetext">Récupération du Spid le x jour du mois</p>
-		<p class="pageinput">{$jour_sit_mens}</p>
 	</div>
 
 	</fieldset>

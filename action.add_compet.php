@@ -54,6 +54,7 @@ $edit = 0;
 		{
 			while($row= $dbresult->FetchRow())
 			{
+				$type_compet['Aucune'] = "Non";
 				$type_compet[$row['name']] = $row['idepreuve'];
 				$indivs = $row['indivs'];
 			}

@@ -10,7 +10,7 @@ $smarty->assign('username', 'Joueur');
 $smarty->assign('points', 'Points');
 $saison = $this->GetPreference('saison_en_cours');
 /**/
-$journee_sit_mens = $this->GetPreference('jour_sit_mens');
+//$journee_sit_mens = $this->GetPreference('jour_sit_mens');
 $jour_sit_mens = (isset($journee_sit_mens)?$journee_sit_mens:'10');
 //echo $jour_sit_mens;
 /**/
@@ -18,7 +18,8 @@ $mois_courant = date('n');
 $annee_courante = date('Y');
 $jour_courant = date('d');
 /**/
-if($jour_courant < $jour_sit_mens)
+$calcul = $this->GetPreference('spid_calcul');
+if($calcul == 1)
 {
 	$smarty->assign('affichage', FALSE);
 }
@@ -27,8 +28,7 @@ else
 	$smarty->assign('affichage', TRUE);
 }
 
-$sit_courante = 'Juin 2014';
-$smarty->assign('sit_courante', "$sit_courante");
+
 $smarty->assign('retrieve_users', 
 		$this->CreateLink($id, 'retrieve', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_users'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve', $returnid, 
@@ -51,13 +51,6 @@ if ($dbresult && $dbresult->RecordCount() > 0)
       {
 	$actif = $row['actif'];
 	$licence = $row['licence'];
-	//$sit_mens = ping_admin_ops::$row['sit_mens'];
-	
-	//$fftt = ping_admin_ops::compte_fftt($licence);
-	//$spid = ping_admin_ops::compte_spid($licence);
-	//$sit_mens = ping_admin_ops::sit_mens($licence);
-	//$spid_errors = ping_admin_ops::compte_spid_errors($licence);
-	//var_dump($sit_mens);
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->id= $row['id'];
@@ -102,8 +95,7 @@ $this->CreateLink($id, 'retrieve_parties_spid', $returnid,
 	$rowarray[]= $onerow;
       }
   }
-$smarty->assign('barcharts',
-		$this->CreateLink($id, 'barcharts', $returnid, 'Voir graphique'));
+
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
@@ -117,7 +109,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation", "Récupérer les parties du Spid"=>"spid", "Récupérer les parties FFTT"=>"fftt_parties");
+$articles = array("Récupérer situation mensuelle"=>"situation", "Récupérer les parties du Spid"=>"spid", "Récupérer les parties FFTT"=>"fftt_parties");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

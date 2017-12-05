@@ -66,12 +66,7 @@ $saison = $this->GetPreference('saison_en_cours');
 $smarty->assign('saison',$saison);
 $mois_courant = date('n');
 $annee_courante = date('Y');
-//$month = mois_francais("$mois_courant");
-//echo "le mois en français : ".$month;
-//$smarty->assign('mois-en-francais', "$month");
-//$smarty->assign('sit_courante', $sit_courante);
-$smarty->assign('display_unable_players', 
-		$this->CreateLink($id,'display_unable_players', $returnid, 'liste des joueurs inactifs'));
+
 
 //on fait les requetes pour les compets !
 $query = "SELECT count(*) AS nombre, idorga FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idorga != '100001' GROUP BY idorga";

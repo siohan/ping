@@ -23,6 +23,7 @@ $query = "SELECT id, fk_id, xja, xca, xjb, xcb FROM ".cms_db_prefix()."module_pi
 $dbresult= $db->Execute($query, array($record_id));
 $lignes = $dbresult->RecordCount();
 $rowarray = array();
+$rowclass = 'row1';
 if($dbresult && $dbresult->RecordCount()>0)
 {
 	while($row = $dbresult->FetchRow())
@@ -60,8 +61,8 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 	{
 		$i++;
 		$id = $row2['id'];
-		$fk_id = $row2['idpoule'];
-		$iddiv = $row2['iddiv'];
+		//$fk_id = $row2['idpoule'];
+		//$iddiv = $row2['iddiv'];
 		$onerow2 = new StdClass();
 		$onerow2->rowclass =$rowclass;
 		$onerow2->id = $row2['id'];

@@ -85,12 +85,16 @@ $service = new Servicen();
 		{
 			$tour = $params['tour'];
 		}
+		if(isset($params['licence']) && $params['licence'] != '')
+		{
+			$licence = $params['licence'];
+		}
 		
 
 		$lien = $service->GetLink($page,$var);
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 		//echo "<pre>".var_dump($data)."</pre>";
-		//var_dump($xml);
+		var_dump($xml);
 		if($xml === FALSE)
 		{
 			$designation.="Pas encore de résultats disponibles";
@@ -107,7 +111,7 @@ $service = new Servicen();
 			$designation.="Pas encore de résultats disponibles";
 			$this->SetMessage("$designation");
 			//$this->Redirect($id,'defaultadmin2',$returnid);
-			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
+			$this->Redirect($id,'participants_tours',$returnid,array("idepreuve"=>$idepreuve,"licence"=>$licence));
 		}
 		
 		
@@ -157,7 +161,10 @@ $service = new Servicen();
 		$var.="&action=partie";
 		$tableau = '';
 		
-		
+		if(isset($params['licence']) && $params['licence'] != '')
+		{
+			$licence = $params['licence'];
+		}
 		if(isset($params['tableau']) && $params['tableau'] != '')
 		{
 			$tableau = $params['tableau'];
@@ -181,7 +188,7 @@ $service = new Servicen();
 		{
 			$designation.="Pas encore de parties disponibles";
 			$this->SetMessage("$designation");
-			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
+			$this->Redirect($id,'participants_tours',$returnid,array("idepreuve"=>$idepreuve,"licence"=>$licence));
 		}
 		
 			$array = json_decode(json_encode((array)$xml), TRUE);
@@ -192,7 +199,7 @@ $service = new Servicen();
 			$designation.="Pas encore de parties disponibles";
 			$this->SetMessage("$designation");
 			//$this->Redirect($id,'defaultadmin2',$returnid);
-			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
+			$this->Redirect($id,'participants_tours',$returnid,array("idepreuve"=>$idepreuve,"licence"=>$licence));
 		}
 		
 		

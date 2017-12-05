@@ -11,11 +11,11 @@
 $version = $this->GetVersion('Ping');
 //echo "la version est : ".$version;
 echo $this->StartTabheaders();
-if (FALSE == empty($params['active_tab']))
+if (FALSE == empty($params['__active_tab']))
   {
-    $tab = $params['active_tab'];
+    $tab = $params['__active_tab'];
   } else {
-  $tab = 'rencontres';
+  $tab = 'joueurs';
  }	
 	echo $this->SetTabHeader('joueurs', 'Joueurs', ('joueurs' == $tab)?true:false);
 	echo $this->SetTabHeader('equipes', 'Par Equipes', ('equipes' == $tab)?true:false);
@@ -69,7 +69,14 @@ echo $this->StartTabContent();
    	echo $this->EndTab();	
  
 	echo $this->StartTab('spid' , $params);//Spid
-    	include(dirname(__FILE__).'/action.admin_spid_tab.php');
+    	if($this->GetPreference('spid_calcul') == '1')
+	{
+		include(dirname(__FILE__).'/action.admin_spid_tab.php');
+	}
+	else
+	{
+		include(dirname(__FILE__).'/action.admin_spid_tab.php');	
+	}
    	echo $this->EndTab();
 
 	/*

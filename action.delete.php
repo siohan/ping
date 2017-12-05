@@ -151,6 +151,22 @@ $designation = '';
 					$this->SetMessage('Journal supprimé');
 					$this->Redirect('defaultadmin');
 				break;	
+				
+				case "participants_tours" : 
+				
+					if(isset($params['licence']) && $params['licence'] !='')
+					{
+						$licence = $params['licence'];
+					}
+					if(isset($params['idepreuve']) && $params['idepreuve'] !='')
+					{
+						$idepreuve = $params['idepreuve'];
+					}
+					$query = "DELETE FROM ".cms_db_prefix()."module_ping_participe_tours WHERE id = ?";
+					$db->Execute($query, array($record_id));
+					$this->SetMessage('Participation supprimée');
+					$this->Redirect($id,'participants_tours', $returnid, array("licence"=>$licence, "idepreuve"=>$idepreuve));
+				break;
 				/*
 				case "demo" :
 					$query = "TRUNCATE ".cms_db_prefix()."module_ping_joueurs";

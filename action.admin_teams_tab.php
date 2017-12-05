@@ -9,6 +9,7 @@ if (!$this->CheckPermission('Ping Use'))
 require_once(dirname(__FILE__).'/include/prefs.php');
 $db =& $this->GetDb();
 global $themeObject;
+$idepreuve= '';
 //debug_display($params, 'Parameters');
 $saison_courante = $this->GetPreference('saison_en_cours');
 $phase_courante = $this->GetPreference('phase_en_cours');

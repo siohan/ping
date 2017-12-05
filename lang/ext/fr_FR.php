@@ -19,9 +19,6 @@ $lang['add_type_compet'] = 'Ajouter une nouvelle compétition';
 $lang['addmanually'] = "ajouter manuellement";
 $lang['allplayers'] = 'Tous les joueurs';
 $lang['add_contact'] = 'Ajouter un contact';
-$lang['addnewsheet'] = 'Ajouter une rencontre';
-$lang['adversaire'] = 'Adversaire';
-$lang['adversaires'] = 'Adversaires';
 $lang['areyousure_deletemultiple'] = 'Etes vous certain de supprimer toute la sélection ?';
 $lang['areyousure_actionmultiple'] = 'Etes vous certain de faire cette action pour toute la sélection ?';
 $lang['apply_to_selection'] = 'Appliquer à la sélection ?';
@@ -142,6 +139,8 @@ $lang['help_coefficient'] = 'Utilisez le point (.) et non la virgule ex 1.25 et 
 $lang['help_description'] = 'Param&egrave;tres internes utilis&eacute;s lors de la cr&eacute;ation d&#039;un nouvel enregistrement';
 $lang['help_explanation'] = 'Param&egrave;tre interne utilis&eacute; pour passer des informations explicatives lorsque l&#039;on cr&eacute;&eacute; ou l&#039;on met &agrave; jour un enregistrement';
 $lang['help_module_message'] = 'Param&egrave;tre interne utilis&eacute; pour la transmission des messages &agrave; l&#039;utilisateur';
+$lang['help_spid_calcul'] = "Consultez l'aide sur le module pour utiliser le mode calcul du Spid";
+$lang['help_affiche_club_uniquement'] = "Choisissez d'afficher tous les résultats (y compris ceux des équipes adverses) ou seulement ceux des équipes de votre club";
 $lang['event_info_OnSkeletonPreferenceChange'] = 'Un &eacute;v&eacute;nement g&eacute;n&eacute;r&eacute; lorsque les pr&eacute;f&eacute;rences du module  sont chang&eacute;es';
 $lang['event_help_OnSkeletonPreferenceChange'] = '<p>An event generated when the preferences to the Skeleton Module get changed</p>
 <h4>Parameters</h4>
@@ -149,7 +148,7 @@ $lang['event_help_OnSkeletonPreferenceChange'] = '<p>An event generated when the
 <li><em>allow_add</em> - The new setting of the &quot;Allow Add&quot; preference; boolean</li>
 </ul> 
 ';
-$lang['moddescription'] = 'Entrez tous vos résultats de ping pour analyse rapide.';
+$lang['moddescription'] = 'Récupérez et afficher tous vos résultats de ping.';
 $lang['welcome_text'] = '<p>Bienvenue dans le module de gestion des résultats de votre club de ping</p>';
 $lang['changelog'] = '<ul>
 <li>Beta 3
@@ -179,13 +178,17 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 <p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (Voir feuille de route plus bas).</p>
 <h3>Comment l\'utiliser ?</h3>
 <h2>Première utilisation</h2>
-<ol><li>Ce module est dépendant du module Ahérents(T2T Adherents), dans l\'onglet "Compte" du module Adhérents, renseignez les identifiants fournis par la FFTT ainsi que le Numéro de votre club.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li>
+<ol><li>Ce module est dépendant du module Adhérents(T2T Adherents), dans l\'onglet "Compte" du module Adhérents, renseignez les identifiants fournis par la FFTT ainsi que le Numéro de votre club.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li>
 <li>Renseignez l\'onglet "Configuration" du module Ping, récupérez les compétitions de zone, ligue et comité (les nationales sont installées par défaut)</li><li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
 Un lien pour les équipes du championnat de France par équipes masculin, un autre pour les féminines et le dernier pour toutes les autres équipes, indiquez le type de compétitions auxquelles elles participent.</li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom.</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
 <h3>Spid</h3>
-<p>Récupérez les résultats du spid de différentes manières. La récupération de tous les résultats en une seule fois peut s\'avérer très longue (plusieurs minutes).<br />
+<p>Deux possibilités : le spid tel que la FFTT le procure dans son API , c\'est à dire sans calcul de points ou le spid avec calcul (estimation). </p>
+<h4>Spid avec calcul(estimation)</h4>
+<p>Le spid avec calcul est une estimation des points. Ce mode est plus glamour car il permet d\'estimer les points sans attendre la validation de la FFTT. Cependant, pour effectuer ces estimations, nous avons besoin de la situation mensuelle en cours de deux joueurs (disponible seulement après le 10 de chaque mois) et du coefficient de la compétition.</p>
+<h4>Spid sans calcul</h4>
+<p>Récupérez les résultats du spid indépendemment du coefficient et de la situation mensuelle. La récupération de tous les résultats en une seule fois peut s\'avérer très longue (plusieurs minutes).<br />
 Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensuelle du mois concerné n\'est pas renseignée.</p>
 <h3>Situation mensuelle</h3>
 <p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer la situation mensuelle en cours de tous les joueurs de votre club</p>
@@ -203,21 +206,12 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 </li>
 <li>"idepreuve" - le type de compétition à afficher ex : {Ping action=\'par-equipes\' idepreuve=\'1072\'} (disponibles ds l\'onglet "Compétitions")</li>
 </ul>
-<h3>CSS et Javascript</h3>
-<p>Une css est disponible dans le répertoire du même nom dans le module. Elle améliore le rendu visuel. Pour l\'utiliser, vous devez l\'inclure dans le design que vous utilisez par ailleurs.<br />Pour le javascript, idem un répertoire dédié et un script qui permet de modifier l\'ordre des tableaux en cliquant sur les entêtes de colonnes. Pour ce faire, en bas du gabarit utilisé (ex : simplex), vous avez ceci par défaut : <br /> {cms_jquery exclude=\'ui,nestedSortable,json,migrate\' append=\'uploads/simplex/js/jquery.sequence-min.js,uploads/simplex/js/functions.min.js\'}<br />
-Au final, vous devrez avoir ceci : <br />{cms_jquery exclude=\'ui,nestedSortable,json,migrate\' append=\'uploads/simplex/js/jquery.sequence-min.js,uploads/simplex/js/functions.min.js,modules/ping/js/jquery.tablesorter.min.js\'} </p>
-<h3>Feuille de route</h3>
-<ul>
-<li>Un front-office avec des graphiques dynamiques.</li>
-<li>Des templates pour vous aider à bâtir vos propres gabarits depuis ce module</li>
-</ul>
-<h3>Scripts automatiques (pseudo-cron)</h3>
-<p>Les tâches pseudo-cron s\'éxécutent automatiquement en fonction des visites sur votre site(internautes et admins du site)<br />
-Dans la version 0.2, les scripts automatiques concernent les résultats du Spid et de la FFTT. Ils s\'éxécutent tous les jours (si visites du site). Ils récupèrent les résultats de x joueurs dont la mise à jour date de x jours. Il est donc possible de configurer ces x.</p><p>Attention, des temps de latence peuvent être observés dûs à l\'éxécution des scripts.</p>
 <h3>Support</h3>
 <ul>
 <li>Pour obtenir la dernière version en cours (avant release officielle)
 <a href="https://github.com/siohan/ping">Version github</a>.</li>
+<li>Suivez-moi sur Twitter <a href="https://twitter.com/ModulePing">@ModulePing</a></li>
+<li><a href="https://www.facebook.com/modulesT2T/">Facebook</a></li>
 <li>L\'auteur peut aussi être contacté via skype sous le pseudo agiwebconseil.</li>
 <li>Enfin, vous pouvez aussi m\'envoyer un mail.</li>  
 </ul>

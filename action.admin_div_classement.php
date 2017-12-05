@@ -32,6 +32,12 @@ else
 {
 	$essai = 0;//Par défaut 0, si pas de résultats en bdd, recherche automatique
 }
+$licence = '';
+if(isset($params['licence']) && $params['licence'] != '')
+{
+	$licence = $params['licence'];
+	
+}
 if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 {
 	$idepreuve = $params['idepreuve'];
@@ -73,14 +79,15 @@ if(isset($params['idorga']) && $params['idorga'] != '')
 	$idorga = $params['idorga'];
 
 }
-$smarty->assign('returnlink', $this->CreateLink($id,'admin_poules',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"idorga"=>$params['idorga'])));
+$saison = $this->GetPreference('saison_en_cours');
+$smarty->assign('returnlink', $this->CreateLink($id,'participants_tours',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions","idepreuve"=>$idepreuve,"licence"=>$licence)));
 //on construit un lie de récupération des résultats
 $smarty->assign('recup_classement',
 		$this->CreateLink($id,'retrieve_div_results', $returnid, $contents='Récupérer le classement', array("direction"=>"classement","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga)));
 $result= array ();
-$query = "SELECT id, idepreuve,iddivision,tableau,tour,rang, nom,clt,club,points, saison FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND iddivision = ? AND tableau = ? ORDER BY id ASC";
+$query = "SELECT id, idepreuve,iddivision,tableau,tour,rang, nom,clt,club,points, saison FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND iddivision = ? AND tableau = ? AND saison = ? ORDER BY id ASC";
 
-$dbresult= $db->Execute($query,array($idepreuve,$iddivision, $tableau));
+$dbresult= $db->Execute($query,array($idepreuve,$iddivision, $tableau,$saison));
 // the top nav bar
 //$smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions")));
 //$this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/topfiles/template.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
@@ -136,7 +143,7 @@ else
 	//on regarde si l'essai est à 0 ou non
 	if($essai == '0')
 	{
-		$this->Redirect($id,'retrieve_div_results',$returnid, array("direction"=>"classement","idepreuve"=>$idepreuve, "iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
+		$this->Redirect($id,'retrieve_div_results',$returnid, array("direction"=>"classement","idepreuve"=>$idepreuve, "iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga,"licence"=>$licence));
 	}
 }
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));
