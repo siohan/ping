@@ -988,6 +988,31 @@ case  "0.3.0.1" :
 		$this->SetPreference('spid_calcul', 0);
 		
 	}
+	case "0.6.1" : 
+	{
+		//ON crée un nouveau champ numero_equipe d'abord
+		$dict = NewDataDictionary( $db );
+		$flds = "numero_equipe I(2)";
+		// create it. 
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_equipes", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$query = "SELECT id,libequipe FROM ".cms_db_prefix()."module_ping_equipes";
+		//on fait la recherche du numéro
+		$dbresult = $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$id = $row['id'];
+				$libequipe = $row['libequipe'];
+				$out = preg_replace('#[^0-9]#','',$libequipe);
+				//on fait l'update ds la base
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_equipes SET numero_equipe = ? WHERE id = ?";
+				$dbresult2 = $db->Execute($query2, array($out, $id));
+			}
+		}
+	}
 	
 
 	

@@ -101,7 +101,7 @@ $parms['saison'] = $saison_en_cours;
 		}//$query.=" ORDER BY joueur,pts.date_event ASC LIMIT 100";
 
 	}
-$query.=" ORDER BY eq.id";	
+$query.=" ORDER BY eq.idepreuve ASC,eq.numero_equipe ASC";	
 //echo $query;
 $dbresult= $db->Execute($query,$parms);
 

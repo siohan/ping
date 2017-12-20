@@ -48,7 +48,7 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 //on crée des liens pour naviguer d'une équipe l'autre
 $rowarray3 = array();
 $rowclass3 = '';
-$query3 = "SELECT id, libequipe, friendlyname FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ? AND idepreuve = ? ORDER BY id ASC";
+$query3 = "SELECT id, libequipe, friendlyname FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ? AND idepreuve = ? ORDER BY numero_equipe ASC";
 $dbresultat3 = $db->Execute($query3, array($saison,$phase,$idepreuve));
 if($dbresultat3 && $dbresultat3->RecordCount()>0)
 {

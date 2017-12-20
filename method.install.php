@@ -51,6 +51,7 @@ $dict = NewDataDictionary( $db );
 $flds= "id I(11) KEY AUTO,
         saison C(100),
 	phase I(1),
+	numero_equipe I(2),
 	libequipe C(255),
 	libdivision C(255),
 	friendlyname C(255),

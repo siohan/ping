@@ -1961,7 +1961,7 @@ public function retrieve_sit_mens($licence, $ext="")
 							$phase = substr($newphase[1], -1);
 							$new_equipe = trim(html_entity_decode($newphase[0]));
 							//echo "la phase est ".$phase;
-
+							$numero_equipe = preg_replace('#[^0-9]#','',$new_equipe);
 							$libdivision = (isset($tab->libdivision)?"$tab->libdivision":"");
 							$liendivision = (isset($tab->liendivision)?"$tab->liendivision":"");
 							$tableau = parse_str($liendivision, $output);
@@ -1991,10 +1991,10 @@ public function retrieve_sit_mens($licence, $ext="")
 									$record_id = $row['Auto_increment'];
 									$tag = $ping_admin_ops->tag_equipe($record_id);
 									$calendrier = 0;
-									$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+									$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_equipes (id, saison, phase,numero_equipe, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 									//echo $query2;
 									$compteur++;
-									$dbresultat = $db->Execute($query2,array($saison, $phase, $new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet, $tag,$idepreuve, $calendrier));
+									$dbresultat = $db->Execute($query2,array($saison, $phase, $numero_equipe,$new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet, $tag,$idepreuve, $calendrier));
 
 									if(!$dbresultat)
 									{

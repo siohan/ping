@@ -6,12 +6,12 @@
 		return;
 	}
 	
-
+//debug_display($params, 'Parameters');
 //on instancie les onglets
 $version = $this->GetVersion('Ping');
 //echo "la version est : ".$version;
 echo $this->StartTabheaders();
-if (FALSE == empty($params['__active_tab']))
+if (FALSE == !empty($params['__active_tab']))
   {
     $tab = $params['__active_tab'];
   } else {

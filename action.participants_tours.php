@@ -81,7 +81,7 @@ elseif($dbresult->RecordCount()==0 || $add == 1)
 	$smarty->assign('formstart',
 			    $this->CreateFormStart( $id, 'affectation', $returnid ) );
 	$smarty->assign('licence',
-					$this->CreateInputText($id,'licence',$licence,12,15);
+					$this->CreateInputText($id,'licence',$licence,12,15));
 	$smarty->assign('step', $this->CreateInputHidden($id,'step',"1"));
 	$smarty->assign('idepreuve',
 			$this->CreateInputText($id,'idepreuve',$idepreuve,5,15));
