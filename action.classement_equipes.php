@@ -5,13 +5,13 @@ $db =& $this->GetDb();
 //debug_display($params, 'Parameters');
 $saison = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 $phase = (isset($params['phase'])?$params['phase']:$this->GetPreference('phase_en_cours'));
-$nom_equipes = $this->GetPreference('nom_equipes');
+//$nom_equipes = $this->GetPreference('nom_equipes');
 $record_id = '';
 $parms = array();
 $equipes = "%$nom_equipes%";
-$query = "SELECT cl.id AS row_id,cl.idequipe,eq.friendlyname,eq.libequipe,cl.poule,cl.idpoule,cl.clt,cl.equipe,cl.joue,cl.pts FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe AND cl.equipe LIKE ? AND cl.equipe = eq.libequipe  AND cl.saison = ? AND phase = ?";
+$query = "SELECT cl.id AS row_id,cl.idequipe,eq.friendlyname,eq.libequipe,eq.equipe_numero,cl.poule,cl.idpoule,cl.clt,cl.equipe,cl.joue,cl.pts FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe AND cl.equipe LIKE ? AND cl.equipe = eq.libequipe  AND cl.saison = ? AND phase = ?";
 
-$parms['equipes'] = "%$nom_equipes%";
+//$parms['equipes'] = "%$nom_equipes%";
 $parms['saison'] = $saison;
 $parms['phase'] = $phase;
 //en parametres possibles : 
@@ -35,7 +35,7 @@ $parms['phase'] = $phase;
 	*/
 
 //on aordonne la table
-$query.= " ORDER BY cl.idequipe ASC";
+$query.= " ORDER BY eq.equipe_numero ASC";
 
 
 //on effectue la requete

@@ -210,8 +210,8 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 <ul>
 <li>Pour obtenir la dernière version en cours (avant release officielle)
 <a href="https://github.com/siohan/ping">Version github</a>.</li>
-<li>Suivez-moi sur Twitter <a href="https://twitter.com/ModulePing">@ModulePing</a></li>
-<li><a href="https://www.facebook.com/modulesT2T/">Facebook</a></li>
+<li>Suivez-moi sur Twitter <a href="https://twitter.com/ModulePing" target="_blank">@ModulePing</a></li>
+<li><a href="https://www.facebook.com/modulesT2T/" target="_blank">Facebook</a></li>
 <li>L\'auteur peut aussi être contacté via skype sous le pseudo agiwebconseil.</li>
 <li>Enfin, vous pouvez aussi m\'envoyer un mail.</li>  
 </ul>

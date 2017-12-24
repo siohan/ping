@@ -204,7 +204,7 @@ switch($params['retrieve'])
 		$service = new retrieve_ops();
 		$sit_mens = $service->retrieve_sit_mens($params['sel']);
 		//$this->SetMessage();
-		$this->RedirectToAdminTab('joueurs');
+		$this->RedirectToAdminTab('situation');
 		
 		
 	break;

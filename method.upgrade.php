@@ -1013,6 +1013,36 @@ case  "0.3.0.1" :
 			}
 		}
 	}
+	case "0.6.2" : 
+	{
+		//on fait un update sur une table à laquelle il manque la saison
+		$query = "UPDATE  ".cms_db_prefix()."module_ping_sit_mens SET saison= '2017-2018' WHERE annee = '2017' AND mois > 7";
+		//on fait la recherche du numéro
+		$dbresult = $db->Execute($query);
+		//
+		//ON crée un nouveau champ numero_equipe d'abord
+		$dict = NewDataDictionary( $db );
+		$flds = "idepreuve I(4)";
+		// create it. 
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_poules_rencontres", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		
+		$query = "SELECT DISTINCT iddiv, idpoule, saison, idepreuve FROM ".cms_db_prefix()."module_ping_equipes";
+		$dbresult = $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$idepreuve = $row['idepreuve'];
+				$iddiv = $row['iddiv'];
+				$idpoule = $row['idpoule'];
+				$saison = $row['saison'];
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET idepreuve = ? WHERE iddiv = ? AND idpoule = ? AND saison = ?";
+				$dbresult2 = $db->Execute($query2, array($idepreuve, $iddiv, $idpoule,$saison));
+			}
+		}
+	}
 	
 
 	

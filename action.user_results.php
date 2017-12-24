@@ -7,7 +7,10 @@ $db =& $this->GetDb();
 $licence = '';
 $date_event = '';
 $affiche = 1;//cette variable détermine l'affichage par mois
+$ok = 0;
 $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPreference('saison_en_cours');
+$phase = (isset($params['phase']))?$params['phase']:$this->GetPreference('phase_en_cours');
+//echo 'la phase est : '.$phase;
 	if(!isset($params['licence']) && $params['licence'] =='' )
 	{
 		echo "la licence est absente !";
@@ -55,9 +58,9 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 		
 		if($affiche ==1)
 		{
-			if($this->GetPreference('phase_en_cours') =='1' )
+			if($phase =='1' )
 			{
-				if($params['phase'] ==2)
+				if($phase ==2)
 				{
 					$query.= " AND MONTH(date_event) >= 1 AND MONTH(date_event) <=7"; 
 				}
@@ -66,9 +69,9 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 					$query.= " AND MONTH(date_event) > 7 AND MONTH(date_event) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
 				}
 			}
-			elseif( $this->GetPreference('phase_en_cours') == '2')
+			elseif( $phase == '2')
 			{
-				if($params['phase'] ==1)
+				if($phase ==1)
 				{
 					$query.= " AND MONTH(date_event) > 7 AND MONTH(date_event) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
 				}
@@ -86,7 +89,7 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 		
 
 		$dbresult = $db->Execute($query, $parms);
-
+		$rowclass = 'row1';
 			if($dbresult && $dbresult->RecordCount()>0)
 			{
 				while($row1 = $dbresult->FetchRow())
@@ -126,9 +129,9 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 		
 		if($affiche =='1')
 		{
-			if($this->GetPreference('phase_en_cours') =='1' )
+			if($phase =='1' )
 			{
-				if($params['phase'] ==2)
+				if($phase ==2)
 				{
 					$query3.= " AND MONTH(date_event) >= 1 AND MONTH(date_event) <=7"; 
 				}
@@ -137,9 +140,9 @@ $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPrefer
 					$query3.= " AND MONTH(date_event) > 7 AND MONTH(date_event) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
 				}
 			}
-			elseif( $this->GetPreference('phase_en_cours') == '2')
+			elseif( $phase == '2')
 			{
-				if($params['phase'] ==1)
+				if($phase ==1)
 				{
 					$query3.= " AND MONTH(date_event) > 7 AND MONTH(date_event) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
 				}
@@ -214,7 +217,7 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('ok',$ok);
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('retour',
- 		$this->CreateReturnLink($id, $returnid,'Retour'));
+ 		$this->CreateReturnLink($id, $returnid,'<= Retour'));
 $smarty->assign('items', $rowarray);
 $smarty->assign('affiche',$affiche);
 /*

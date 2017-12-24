@@ -1,4 +1,3 @@
-{*<pre>{$items|var_dump}</pre>*}
 <script type="text/javascript" src=" lib/jquery/js/ jquery.tablesorter.min.js  "/></script>
 {literal}
     <script type="text/javascript">
@@ -48,4 +47,3 @@
  </tbody>
 </table>
 {/if}
-<div class="pageoptions"><p class="pageoptions">{*$createlink*}</p></div>

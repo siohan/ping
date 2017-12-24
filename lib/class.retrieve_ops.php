@@ -647,6 +647,7 @@ public function retrieve_sit_mens($licence, $ext="")
 	global $gCms;
 	$ping = cms_utils::get_module('Ping'); 
 	$adherents = cms_utils::get_module('Adherents');
+	//$retrieve = new retrieve_ops();
 	$ping_admin_ops = new ping_admin_ops();
 	$db = cmsms()->GetDb();
 	$now = trim($db->DBTimeStamp(time()), "'");
@@ -657,8 +658,8 @@ public function retrieve_sit_mens($licence, $ext="")
 	$mois_sm = $mois_francais["$mois_reel"];
 	$mois_sit_mens = $mois_sm." ".$annee_courante;
 	$message = "";
-	$saison = $adherents->GetPreference('saison_en_cours');
-	$phase = $adherents->GetPreference('phase_en_cours');
+	$saison = $ping->GetPreference('saison_en_cours');
+	$phase = $ping->GetPreference('phase_en_cours');
 	//var_dump($ext);
 	//La situation mensuelle du mois en cours n'existe pas, on l'ajoute.
 	$service = new Servicen();
@@ -1225,13 +1226,10 @@ public function retrieve_sit_mens($licence, $ext="")
 			$array = json_decode(json_encode((array)$xml), TRUE);
 			$lignes = count($array['tour']);
 		}
-		//echo "le nb de lignes est : ".$lignes;
-		//$result = $service->getPouleRencontres($iddiv,$idpoule);
+		
 
 		$designation = '';
-		//var_dump($result);
-		//var_dump($xml);
-		/**/
+	
 		//on va tester la valeur de la variable $result
 		//cela permet d'éviter de boucler s'il n'y a rien dans le tableau
 		
@@ -1240,8 +1238,7 @@ public function retrieve_sit_mens($licence, $ext="")
 
 				//le tableau est vide, il faut envoyer un message pour le signaler
 				$designation.= "le service est coupé";
-				//$this->SetMessage("$designation");
-				//$this->RedirectToAdminTab('poules');
+			
 		}   
 		else
 		{

@@ -10,69 +10,26 @@ $result= array();
 $parms = array();
 $rowarray = array();
 //$rowarray1 = array();
-//on instancie une valeur pour savoir si des parametres sont introduits
-$para = 0;
+
 $i=0;
-$query = "SELECT *, ren.id AS ren_id FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_calendrier AS cal  WHERE ren.date_event = cal.date_debut ";//AND cal.date_debut<=NOW()";//GROUP BY date_debut ORDER BY date_debut DESC";
+$query = "SELECT DISTINCT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event<=NOW()";//GROUP BY date_debut ORDER BY date_debut DESC";
 
-if (isset($params['date_debut']) && $params['date_debut'] != '')
-{
-	$para++;
-	//on regarde si la date de fin est aussi spécifiée
-	if(isset($params['date_fin']) && $params['date_fin'] != '')
-	{
-		$date_fin = $params['date_fin'];
-		//on initialise une variable pour se souvenir de cette condition
-		$fill = 1;
-		$parms['date_fin'] = $date_fin;
 
-	}
-	
-	$date_debut = $params['date_debut'];
-	$parms['date_debut'] = $date_debut;
-	$query.= " AND cal.date_debut = ?";
-	$parms['date_debut'] = $date_debut;
-	
-	if($fill == 1)
-	{
-		$query.= " AND cal.date_fin = ?";
-	}
-
-	
-	
-		
-}
 if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 {
-	$para++;
 	$idepreuve = $params['idepreuve'];
-	$query.=" AND cal.idepreuve = ?";
+	$query.=" AND idepreuve = ?";
 	$parms['idepreuve'] = $idepreuve;
 }
 if(isset($params['saison']) && $params['saison'] != '')
 {
-	$para++;
 	$saison = $params['saison'];
-	$query.= " AND cal.saison = ?";
+	$query.= " AND saison = ?";
 	$parms['saison']  = $saison;
 }
-if($para>0)
-{
-	$query.=" GROUP BY ren.date_event ORDER BY ren.date_event DESC";
+
+	$query.=" GROUP BY date_event ORDER BY date_event DESC";
 	$dbresult = $db->Execute($query,$parms);
-}
-else
-{
-	$query.= " AND cal.date_debut<=NOW()";
-	$query.=" GROUP BY ren.date_event ORDER BY ren.date_event DESC";
-	$dbresult = $db->Execute($query);
-}
-/*
-$query.=" AND type_compet = ?";
-$parms['type_compet']  = '+';
-*/
-
-
 
 //$dbresult = $db->Execute($query);
 
@@ -96,11 +53,7 @@ $parms['type_compet']  = '+';
 			$query2 = "SELECT ren.id AS ren_id, ren.equa,ren.uploaded, ren.equb, eq.id AS eq_id, eq.libequipe,eq.friendlyname, ren.scorea, ren.scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule AND (eq.libequipe = ren.equa OR eq.libequipe = ren.equb) AND ren.saison = eq.saison  AND ren.date_event = ? ";//AND (ren.scorea !=0 OR scoreb !=0)";
 			$parms2['date_event'] = $date_debut;
 			
-			if(isset($params['type_compet']) && $params['type_compet'])
-			{
-					$query2.=" AND eq.type_compet = ?";
-					$parms2['type_compet'] = $params['type_compet'];
-			}
+			
 			if(isset($params['idepreuve']) && $params['idepreuve'])
 			{
 					$query2.=" AND eq.idepreuve = ?";
@@ -112,11 +65,9 @@ $parms['type_compet']  = '+';
 			{
 				$query2.=" AND (ren.club = '1' OR ren.affiche = '1')";
 			}
-		//	echo $query2;
 			$dbresultat = $db->Execute($query2, $parms2);
 			$rowarray2 = array();
-			//var_dump($parms2);
-		//	echo "essai !";	
+
 			if($dbresultat && $dbresultat->RecordCount()>0)
 			{
 				
@@ -148,21 +99,21 @@ $parms['type_compet']  = '+';
 					//$onerow->equipe= $row['equipe'];
 					$onerow2->libelle=  $row2['libelle'] ;
 					
-					if(isset($friendlyname) && $friendlyname !='')
-					{
+					
 						if (rtrim($libequipe) == $equa)
 						{
-							//$onerow2->equa= $row2['friendlyname'];
-							$onerow2->equa= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
-						}
-
-						else
-						{
-							$onerow2->equa= $row2['equa'];
-						}
+							if(isset($friendlyname) && $friendlyname !='')
+							{
+								$onerow2->equa= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
+							}
+							else
+							{
+								$onerow2->equa= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['equa'], array('record_id'=>$eq_id));//$row2['equb'];
+							}//$onerow2->equa= $row2['friendlyname'];
 
 					}
-					else{
+					else
+					{
 						$onerow2->equa= $row2['equa'];
 					}
 					
@@ -170,26 +121,24 @@ $parms['type_compet']  = '+';
 					$onerow2->scorea= $row2['scorea'];
 					$onerow2->scoreb= $row2['scoreb'];
 					
-					if(isset($friendlyname) && $friendlyname !='')
-					{
+					
 						if (rtrim($libequipe) == $equb)
 						{
-							//$onerow2->equa= $row2['friendlyname'];
-							$onerow2->equb= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
+								if(isset($friendlyname) && $friendlyname !='')
+								{
+									$onerow2->equb= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
+								}
+								else
+								{
+									$onerow2->equb= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['equb'], array('record_id'=>$eq_id));//$row2['equb'];
+								}
 						}
 
 						else
 						{
 							$onerow2->equb= $row2['equb'];
 						}
-
-					}
-					else{ 
-						$onerow2->equb= $row2['equb'];
-					}
 					
-					//$onerow2->equb= $row2['equb'];
-					//$onerow2->details= $this->CreateLink($id, 'retrieve_details_rencontres', $returnid, 'Détails', array('record_id'=>$row2['id'], 'template'=>'1'));
 					$onerow2->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row2['ren_id'], 'template'=>'1'));
 					$rowarray2[] = $onerow2;
 					

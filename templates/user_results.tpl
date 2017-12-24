@@ -1,7 +1,7 @@
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 <p>{$retour}</p>
 {if $affiche=='1'}
-<h3>Résumé des résultats</h3>
+<h3>Résumé des résultats de {$joueur}</h3>
 <p>{$phase1} | {$phase2}</p>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <tbody>
@@ -25,13 +25,13 @@
 {/if}
 {if $itemcount >0}
 	{if $affiche=='0'}
-	
+<h3>Résumé des résultats du mois précédent de {$joueur}	
 		<table class="table table-bordered">
 		 <thead>
 		  <tr>
+			<th>Date</th>
 			<th>Adv</th>
 			<th>Vic/Def</th>
-			<th>Coeff</th>
 			<th>Pts</th>
 		  </tr>
 		 </thead>

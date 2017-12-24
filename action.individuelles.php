@@ -6,10 +6,6 @@ if(!isset($gCms) )exit;
 ##############################################################################
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/include/prefs.php');
-if(!$this->CheckPermission('Ping Use'))
-{
-	
-}
 
 $db = cmsms()->GetDb();
 $ping_ops = new ping_admin_ops();
@@ -21,6 +17,11 @@ if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 {
 	$idepreuve = $params['idepreuve'];
 	$parms['idepreuve'] = $idepreuve;
+}
+else
+{
+	//il y a une erreur
+	echo 'il manque le paramètre de compétiton (idepreuve)';
 }
 
 $rowclass = '';
