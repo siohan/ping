@@ -3,7 +3,7 @@ if( !isset($gCms) ) exit;
 ####################################################################
 ##                                                                ##
 ####################################################################
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 
 $step = '';
 $licence= '';
@@ -23,7 +23,10 @@ else
 	$error++;
 }
 if (isset($params['cancel']))
-    $this->Redirect($id, 'participants', $returnid, array("idepreuve"=>$idepreuve));
+{
+	$this->Redirect($id, 'participants', $returnid, array("idepreuve"=>$idepreuve));
+}
+    
 
 if(isset($params['step']) && $params['step'] != '')
 {
@@ -134,6 +137,10 @@ if($error <1)
 		}
 		
 	}
+}
+else
+{
+	echo "des erreurs !";
 }
 
 #

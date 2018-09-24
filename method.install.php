@@ -190,7 +190,8 @@ $flds = "
 	equb C(255),
 	scorea I(2),
 	scoreb I(2),
-	lien C(255)";
+	lien C(255),
+	idepreuve I(4)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_poules_rencontres",
@@ -601,14 +602,14 @@ $this->CreatePermission('Ping Delete', 'Ping Delete');
 #
 #    Pour les tâches CRON
 #
-//$this->SetPreference('LastRecupSpid', '');
-//$this->SetPreference('LastRecupFftt', '');
+$this->SetPreference('LastRecupSpid', '');
+$this->SetPreference('LastRecupFftt', '');
 //$this->SetPreference('LastRecupResults', '');
 //$this->SetPreference('LastRecupRencontres', '');
 #
 
 // create a preference
-//$this->SetPreference('defaultMonthSitMens', '5');
+$this->SetPreference('annee_fin', '2018');
 $this->SetPreference('phase', '1');
 $this->SetPreference('populate_calendar', 'Oui');
 $this->SetPreference('jour_sit_mens', '10');

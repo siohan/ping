@@ -11,7 +11,7 @@ $db =& $this->GetDb();
 $aujourdhui = date('Y-m-d');
 $day = $this->GetPreference('jour_sit_mens');
 $jour = date('d');
-echo $aujourdhui;
+//echo $aujourdhui;
 $designation = '';
 //1ère condition : 
 //on prend les résultats d'une poule
@@ -25,7 +25,7 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 		{
 			$eq_id = $params['eq_id'];
 		}
-		$query = "SELECT saison, lien,idpoule, iddiv, date_event, tour FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE id = ?";
+		$query = "SELECT saison, lien,idpoule, iddiv, date_event, tour FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE renc_id = ?";
 		$dbresult = $db->Execute($query, array($record_id));
 		if($dbresult && $dbresult->RecordCount()>0)
 		{
@@ -89,11 +89,11 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 								$xja = 'xja'.$i;//ex : $xja = 'xja0';
 								$xca = 'xca'.$i; //on met aussi le classement du joueurex : xca0, xca1,xca2, etc...
 								$xjb = 'xjb'.$i;//ex : $xja = 'xja0';
-								$xca = 'xcb'.$i;
-								$$xja = $tab2[joueur][$i][xja];//ex : $xja0 = '';
-								$$xca = $tab2[joueur][$i][xca];
-								$$xjb = $tab2[joueur][$i][xjb];//ex : $xja0 = '';
-								$$xcb = $tab2[joueur][$i][xcb];
+								$xcb = 'xcb'.$i;
+								$$xja = $tab2['joueur'][$i]['xja'];//ex : $xja0 = '';
+								$$xca = $tab2['joueur'][$i]['xca'];
+								$$xjb = $tab2['joueur'][$i]['xjb'];//ex : $xja0 = '';
+								$$xcb = $tab2['joueur'][$i]['xcb'];
 								//on insère le tout dans la bdd
 								$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres (id, fk_id, xja, xca, xjb, xcb) VALUES ('', ?, ?, ?, ?, ?)";
 								$dbresult3 = $db->Execute($query3, array($record_id, $$xja,$$xca,$$xjb,$$xcb));
@@ -107,52 +107,18 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 								$scorea = 'scoreA'.$i;
 								$jb = 'jb'.$i;
 								$scoreb = 'scoreB'.$i;
-								$$ja = $tab3[partie][$i][ja];
-								$$scorea = $tab3[partie][$i][scorea];
-								$$jb = $tab3[partie][$i][jb];
-								$$scoreb = $tab3[partie][$i][scoreb];
+								$$ja = $tab3['partie'][$i]['ja'];
+								$$scorea = $tab3['partie'][$i]['scorea'];
+								$$jb = $tab3['partie'][$i]['jb'];
+								$$scoreb = $tab3['partie'][$i]['scoreb'];
 								//on insère aussi dans la bdd
 								$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_rencontres_parties (id, fk_id, joueurA, scoreA, joueurB, scoreB) VALUES ('', ?, ?, ?, ?, ?)";
 								$dbresult4 = $db->Execute($query4, array($record_id, $$ja,$$scorea, $$jb, $$scoreb));
 
-								$query2 = "SELECT licence, CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
-								//echo $query2;
-								$dbresult2 = $db->Execute($query2, array($$xjb,$$xja));
-
-									if($dbresult2 && $dbresult2->RecordCount()>0)
-									{
-										while($row2= $dbresult2->FetchRow())
-										{
-											$serv = new retrieve_ops();
-											$licence = $row2['licence'];
-											$player = $row['player'];
-											$cat = $row['cat'];
-											$retrieve = $serv->retrieve_parties_spid2($licence,$player, $cat);
-
-
-										}
-									}
-									else
-									{
-
-									}
-
-									//on pourrait aussi récupérer ces infos pour les mettre en bdd	
-									//echo $$xja;
+							
 							}
 
-		//on met la valeur uploaded à 1
-		$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET `uploaded` = 1 WHERE id = ?";
-		$dbresultat = $db->Execute($query3, array($record_id));				
-
-
-
-
-
-
-
-
-
+		
 					}//fin du else
 			}//fin du while
 		}
@@ -235,10 +201,10 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 								$xca = 'xca'.$i; //on met aussi le classement du joueurex : xca0, xca1,xca2, etc...
 								$xjb = 'xjb'.$i;//ex : $xja = 'xja0';
 								$xca = 'xcb'.$i;
-								$$xja = $tab2[joueur][$i][xja];//ex : $xja0 = '';
-								$$xca = $tab2[joueur][$i][xca];
-								$$xjb = $tab2[joueur][$i][xjb];//ex : $xja0 = '';
-								$$xcb = $tab2[joueur][$i][xcb];
+								$$xja = $tab2['joueur'][$i]['xja'];//ex : $xja0 = '';
+								$$xca = $tab2['joueur'][$i]['xca'];
+								$$xjb = $tab2['joueur'][$i]['xjb'];//ex : $xja0 = '';
+								$$xcb = $tab2['joueur'][$i]['xcb'];
 								//on insère le tout dans la bdd
 								$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres (id, fk_id, xja, xca, xjb, xcb) VALUES ('', ?, ?, ?, ?, ?)";
 								$dbresult3 = $db->Execute($query3, array($record_id, $$xja,$$xca,$$xjb,$$xcb));
@@ -252,19 +218,17 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 								$scorea = 'scoreA'.$i;
 								$jb = 'jb'.$i;
 								$scoreb = 'scoreB'.$i;
-								$$ja = $tab3[partie][$i][ja];
-								$$scorea = $tab3[partie][$i][scorea];
-								$$jb = $tab3[partie][$i][jb];
-								$$scoreb = $tab3[partie][$i][scoreb];
+								$$ja = $tab3['partie'][$i]['ja'];
+								$$scorea = $tab3['partie'][$i]['scorea'];
+								$$jb = $tab3['partie'][$i]['jb'];
+								$$scoreb = $tab3['partie'][$i]['scoreb'];
 								//on insère aussi dans la bdd
 								$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_rencontres_parties (id, fk_id, joueurA, scoreA, joueurB, scoreB) VALUES ('', ?, ?, ?, ?, ?)";
 								$dbresult4 = $db->Execute($query4, array($record_id, $$ja,$$scorea, $$jb, $$scoreb));
 
 								if($club == "1" && $jour >=10)
 								{
-									$query2 = "SELECT licence, CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE (CONCAT_WS(' ',nom, prenom) = ?) OR (CONCAT_WS(' ',nom, prenom) = ?)";
-									//echo $query2;
-									$dbresult2 = $db->Execute($query2, array($$xjb,$$xja));
+									 
 
 										if($dbresult2 && $dbresult2->RecordCount()>0)
 										{

@@ -9,7 +9,7 @@
 	<th>Niveau</th>
 	<th>Division</th>
 	<th>Tableau</th>
-	<th colspan="3">Actions</th>
+	<th colspan="4">Actions</th>
   </tr>
  </thead>
  <tbody>
@@ -23,6 +23,7 @@
 	<td>{$entry->parties}</td>
 	<td>{$entry->uploaded_classement}{$entry->classement}</td>
 	<td>{$entry->affectation}</td>
+	<td>{$entry->maintien}</td>
 	<td>{$entry->editlink}</td>
 	<td>{$entry->delete}</td>
   </tr>

@@ -7,7 +7,7 @@ if(!$this->CheckPermission('Ping Use'))
 	$this->RedirectToAdminTab('joueurs');
 }
 
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 //var_dump($params['sel']);
 $db =& $this->GetDb();
 $service = new retrieve_ops();
@@ -207,6 +207,32 @@ switch($params['retrieve'])
 		$this->RedirectToAdminTab('situation');
 		
 		
+	break;
+	
+	case "maintien" :
+		$ping_ops = new ping_admin_ops;
+		if(isset($params['licence']) && $params['licence'] != '')
+		{
+			$licence = $params['licence'];
+		}
+		if(isset($params['idepreuve']) && $params['idepreuve'] != '')
+		{
+			$idepreuve = $params['idepreuve'];
+		}
+		if(isset($params['iddivision']) && $params['iddivision'] != '')
+		{
+			$iddivision = $params['iddivision'];
+		}
+		if(isset($params['idorga']) && $params['idorga'] != '')
+		{
+			$idorga = $params['idorga'];
+		}
+		if(isset($params['tour']) && $params['tour'] != '')
+		{
+			$tour = $params['tour'];
+		}
+		
+		$maintien = $ping_ops->maintien($licence, $idepreuve, $iddivision, $tour, $idorga);
 	break;
 
 	

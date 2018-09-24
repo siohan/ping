@@ -11,9 +11,9 @@
 $version = $this->GetVersion('Ping');
 //echo "la version est : ".$version;
 echo $this->StartTabheaders();
-if(isset($params['active_tab']) && !empty($params['active_tab']))
+if(isset($params['__activetab']) && !empty($params['__activetab']))
   {
-    $tab = $params['active_tab'];
+    $tab = $params['__activetab'];
   } else {
   $tab = 'joueurs';
  }	

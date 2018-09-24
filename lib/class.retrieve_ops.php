@@ -23,23 +23,36 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 	$aujourdhui = date('Y-m-d');
 	$mois_courant = date('m');
 	$annee_courante = date('Y');
+	$retrieve_ops = new retrieve_ops;
+	$error_nb = '';//on va stocker les erreurs pour un traitement ultérieur
 	#
 	#
 	
-		$ping_admin_ops = new ping_admin_ops();
-		$points = $ping_admin_ops->get_sit_mens($licence,$mois_courant,$annee_courante);
+		$ping_ops = new ping_admin_ops;
+		$points = $ping_ops->get_sit_mens($licence,$mois_courant,$annee_courante);
 
 		if($points == FALSE)//la situation mensuelle du joueur du club n'est pas renseignée !!
 		{
-			//on va chercher la situation manquante
-			$sitMens = $this->retrieve_sit_mens($licence); //on va la chercher si possible
+			//on va chercher la situation manquante si le jour est supérieur ou égal à 10
+			if(date('d') >= 10)
+			{
+				$sitMens = $this->retrieve_sit_mens($licence); //on va la chercher si possible
+			}
+			else
+			{
+				$error_nb.= 'Pas de situation mensuelle ';
+			}
 
 
 		}
+		else
+		{
+			$error_nb = 1;
+		}
 		//on compte le nb de résultats du spid présent ds la bdd pour le joueur
-		$ping_admin_ops = new ping_admin_ops();
-		$spid = $ping_admin_ops->compte_spid($licence);
-		$spid_errors = $ping_admin_ops->compte_spid_errors($licence);
+		
+		$spid = $ping_ops->compte_spid($licence);
+		$spid_errors = $ping_ops->compte_spid_errors($licence);
 		//$error = 0;//le compteur d'erreurs
 
 		if(substr($cat,0,1) =='S' || substr($cat,0,1) =='V')
@@ -82,9 +95,9 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 				$status = 'Echec';
 				$designation.= $message;
 				$action = "mass_action";
-				$ecrire_journal = $ping_admin_ops->ecrirejournal($now,$status, $designation,$action);
+				$ecrire_journal = $ping_ops->ecrirejournal($now,$status, $designation,$action);
 
-				$update_spid = $ping_admin_ops->update_recup_parties($licence);
+				$update_spid = $ping_ops->update_recup_parties($licence);
 
 
 			}
@@ -101,10 +114,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 				$dbresult1 = $db->Execute($query1, array($saison_courante, $licence,$mois_courant, $annee_courante));
 			//	foreach($array as $cle =>$tab)
 			 //si le jour courant est inférieur est inférieur à 10 on a une erreur douce
-				if(date('d') < 10)
-				{
-					$error = 1;
-				}
+				
 				foreach($xml as $cle=> $tab)
 				{
 					//var_dump($array);
@@ -140,7 +150,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 
 						//echo "<br />le nom est : ".$nom;
 						//on adapte son nom d'abord
-						$nom_global = ping_admin_ops::get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
+						$nom_global = $ping_ops->get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
 						$nom_reel1 = $nom_global[0];
 						$nom_reel = addslashes($nom_global[0]);//le nom					
 						$prenom_reel = $nom_global[1];//le prénom
@@ -152,7 +162,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 							//Avec le nom on va aller chercher la situation mensuelle de l'adversaire
 							//on pourra la stocker pour qu'elle re-serve et l'utiliser pour affiner le calcul des points
 							//d'abord on va chercher ds la bdd si l'adversaire y est déjà pour le mois et la saison en question
-							$get_adv_pts = $ping_admin_ops->get_adv_pts($nom_reel1, $prenom_reel,$mois_event,$annee_courante);
+							$get_adv_pts = $ping_ops->get_adv_pts($nom_reel1, $prenom_reel,$mois_event,$annee_courante);
 
 
 							//deuxième cas : 
@@ -161,7 +171,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 							{
 								//on va chercher la sit mens du pongiste
 								// D'abord son numéro de licence
-								$resultat = retrieve_ops::advlicence($nom_reel, $prenom =$prenom_reel);
+								$resultat = $retrieve_ops->advlicence($nom_reel, $prenom =$prenom_reel);
 								//var_dump($resultat);
 								if($resultat === FALSE)
 								{
@@ -175,14 +185,14 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 									{
 										$newclass = $classement;
 									}
-
+									$error_nb.=' Pas de situation mensuelle du joueur adverse';
 								}
 								else
 								{
 									$licence_adv = $resultat;//on a bien un numéro de licence, on peut donc récupérer la situation mensuelle en cours
 									//echo "<br />".$licence_adv.'<br />';
 
-									$insert_adv = retrieve_ops::retrieve_sit_mens($licence_adv, $ext='True');
+									$insert_adv = $retrieve_ops->retrieve_sit_mens($licence_adv, $ext='True');
 									//var_dump($insert_adv);
 									//
 									if($insert_adv === FALSE)//pas de résultats !
@@ -196,6 +206,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 										{
 											$newclass = $classement;
 										}
+										$error_nb.=' Pas de situation mensuelle du joueur adverse';
 									}
 									else
 									{
@@ -216,18 +227,19 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 								{
 									$newclass = $classement;
 								}
+								$error_nb.=' Pas de situation mensuelle du joueur adverse';
 							}
 							//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
 
 						$ecart_reel = $points - $newclass;
 						//$coeff = "0.00";//on attribue une valeur par défaut
 						//on calcule l'écart selon la grille de points de la FFTT
-						$type_ecart = ping_admin_ops::CalculEcart($ecart_reel);
+						$type_ecart = $ping_ops->CalculEcart($ecart_reel);
 
 
 						//il faut maintenant récupérer le idepreuve et le coeff
 						//echo $epreuve;
-						$type_coeff = $ping_admin_ops->coeff($epreuve,$senior);
+						$type_coeff = $ping_ops->coeff($epreuve,$senior);
 						if($type_coeff == FALSE)
 						{
 							$error++;
@@ -236,7 +248,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 					
 						//2 - on récupére le tour s'il existe
 						//on va fdonc chercher dans la table calendrier
-						$idepreuve  = $ping_admin_ops->code_compet($epreuve);
+						$idepreuve  = $ping_ops->code_compet($epreuve);
 
 						$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE idepreuve = ? AND (date_debut = ? OR date_fin = ?)";
 						$resultat = $db->Execute($query, array($idepreuve, $date_mysql,$date_mysql));
@@ -256,7 +268,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 							{
 								//$idepreuve = $idepreuve_temp;
 								//on oublie pas le tag !
-								$tag = $ping_admin_ops->create_tag($idepreuve,$indivs, $date_mysql, $date_mysql);
+								$tag = $ping_ops->create_tag($idepreuve,$indivs, $date_mysql, $date_mysql);
 								$querycal = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,idepreuve,date_debut,date_fin,numjourn,tag, saison) VALUES ('', ?, ?, ?, ?, ?, ?)";
 								$req = $db->Execute($querycal,array($idepreuve,$date_mysql,$date_mysql,$numjourn,$tag, $saison_courante));
 							}
@@ -277,7 +289,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 
 						//on peut désormais calculer les points 
 
-						$points1 = $ping_admin_ops->CalculPointsIndivs($type_ecart, $victoire);
+						$points1 = $ping_ops->CalculPointsIndivs($type_ecart, $victoire);
 						$pointres = $points1*$type_coeff;
 						//$tab['forfait'];
 
@@ -300,7 +312,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 								$status = 'Echec';
 								$designation = $message;
 								$action = "mass_action";
-								ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+								$ping_ops->ecrirejournal($now,$status, $designation,$action);
 							}				
 
 							//on met à jour la date de maj des résultats SPID
@@ -318,7 +330,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 				}
 				$action = "mass_action";
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
-
+				$update_spid = $ping_ops->update_recup_parties($licence);
 
 			}//fin du if !is_array
 	//	}//fin du while
@@ -434,36 +446,13 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 							{
 								$victoire = 0;
 							}
-
+						$spid_ope = new spid_ops;
+						$spid_ope->add_spid($saison, $datemaj, $licence, $date_event,$epreuve, $nom,$classement, $victoire, $forfait);
 						
-						$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (saison, datemaj, licence, date_event,epreuve, nom,classement, victoire, forfait) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-						$i++;
-						//echo $query;
-						$dbresultat3 = $db->Execute($query3,array($saison_courante,$now, $licence, $date_event, $epreuve, $nom, $classement, $victoire, $forfait));
-
-						if(!$dbresultat3)
-							{
-								$message = $db->ErrorMsg(); 
-								$status = 'Echec';
-								$designation = $message;
-								$action = "mass_action";
-								ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
-							}				
-
-							//on met à jour la date de maj des résultats SPID
-					//on détruit le nb d'erreur
-					unset($error);
+				//	unset($error);
 					}
 				}//fin du foreach
 				$comptage = $i;
-				$spid = $ping_admin_ops->maj_recup_parties($licence,$i,'SPID');
-				$status = 'Parties SPID';
-				$designation.= $comptage." parties Spid sur ".$compteur."  de ".$player;
-				if($a >0)
-				{
-					$designation.= " ".$a." parties Spid non récupérées (situation mensuelle manquante)";
-				}
-				$action = "mass_action";
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 
 
@@ -1599,10 +1588,12 @@ public function retrieve_sit_mens($licence, $ext="")
 				$dbresult1 = $db->Execute($query1);
 				$row = $dbresult1->FetchRow();
 				$id_event = $row['id']+1;
+				//on met le statut à Publié 
+				$event_status = 'P';
 				$query_cal = "INSERT INTO ".cms_db_prefix()."module_cgcalendar_events
-				           (event_id, event_title, event_details, event_date_start, event_date_end)
-				            VALUES (?, ?, ? , ?, ?)";
-				$dbresult_cal = $db->Execute($query_cal, array($id_event,$name,$tag,$date_debut,$date_fin));
+				           (event_id, event_title, event_details, event_date_start, event_date_end, event_status)
+				            VALUES (?, ?, ? , ?, ?, ?)";
+				$dbresult_cal = $db->Execute($query_cal, array($id_event,$name,$tag,$date_debut,$date_fin, $event_status));
 				//on insère aussi l'événement dans une categorie par défaut la générale donc 1
 				$cat = 1;
 				$query_cat = "INSERT INTO ".cms_db_prefix()."module_cgcalendar_events_to_categories (category_id, event_id) VALUES (?,?)";
@@ -2160,6 +2151,7 @@ public function retrieve_sit_mens($licence, $ext="")
 		global $gCms;
 		$db = cmsms()->GetDb();
 		//echo "la valeur de cal est :".$cal;
+		
 		$ping = cms_utils::get_module('Ping');
 		//require_once(dirname(__FILE__).'/function.calculs.php');
 		//echo "glop2";	
@@ -2272,11 +2264,11 @@ public function retrieve_sit_mens($licence, $ext="")
 
 						if($dbresult->RecordCount() == 0) 
 						{
-							$query1 = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,renc_id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('',?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							$query1 = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,renc_id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien, idepreuve) VALUES ('',?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 							//echo $query;
 							$i++;
 							$uploaded = 0;
-							$dbresultat = $db->Execute($query1,array($renc_id,$saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
+							$dbresultat = $db->Execute($query1,array($renc_id,$saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien, $idepreuve));
 
 								if(!$dbresultat)
 								{

@@ -162,7 +162,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$i++;
 			$onerow->valeur = $i;
 			//on refait une requete pour extraire les rencontres
-			$query2 = "SELECT DISTINCT ren.id AS ren_id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname, ren.club,ren.uploaded,eq.libequipe,eq.id,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison";
+			$query2 = "SELECT DISTINCT ren.id AS ren_id,ren.renc_id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname, ren.club,ren.uploaded,eq.libequipe,eq.id,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison";
 			$query2.= "  AND ren.date_event = ?";
 			//$query2.= " AND eq.saison = ?";
 			$query2.=" AND eq.id = ?";
@@ -173,7 +173,8 @@ if($dbresult && $dbresult->RecordCount()>0)
 			//echo "le nb de lignes est : ".$nblignes;
 			if($dbresultat && $dbresultat->RecordCount()>0)
 			{
-				$nblignes = $dbresultat->RecordCount();
+				//on instancie la classe ping_admin_ops
+				$ping_ops = new ping_admin_ops;$nblignes = $dbresultat->RecordCount();
 				while($row2 = $dbresultat->FetchRow())
 				{
 					//$valeur = $i;
@@ -188,8 +189,9 @@ if($dbresult && $dbresult->RecordCount()>0)
 					$club = $row2['club'];
 					$date_event = $row2['date_event'];
 					$affiche = $row2['affiche'];
-					$uploaded = $row2['uploaded'];
-					$libequipe = $row2['libequipe'];
+					$uploaded = $ping_ops->is_uploaded($row2['renc_id']);//row2['uploaded'];
+					//var_dump($uploaded)
+;					$libequipe = $row2['libequipe'];
 					$friendlyname = $row2['friendlyname'];
 					$idepreuve = $row2['idepreuve'];
 					$onerow2->ren_id = $row2['ren_id'];
@@ -209,7 +211,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					{
 						$pb = 1;
 					}
-					if($uploaded == 0) 
+					if($uploaded === FALSE) 
 					{
 
 					 	if($pb==1) 
@@ -227,13 +229,13 @@ if($dbresult && $dbresult->RecordCount()>0)
 						if($date_event <= $date_courante)
 						{
 						
-							$onerow2->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres2', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('record_id'=>$row2['ren_id'],"eq_id"=>$eq_id));
+							$onerow2->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres2', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('record_id'=>$row2['renc_id'],"eq_id"=>$eq_id));
 						}
 						
 					}
 					else
 					{
-						$onerow2->viewdetails = $this->CreateLink($id, 'details',$returnid,$themeObject->DisplayImage('icons/system/view.gif', $this->Lang('viewdetails'), '', '', 'systemicon'), array('record_id'=>$row2['ren_id'],"eq_id"=>$eq_id));
+						$onerow2->viewdetails = $this->CreateLink($id, 'details',$returnid,$themeObject->DisplayImage('icons/system/view.gif', $this->Lang('viewdetails'), '', '', 'systemicon'), array('record_id'=>$row2['renc_id'],"eq_id"=>$eq_id));
 					}
 
 					if($this->CheckPermission('Ping Delete'))

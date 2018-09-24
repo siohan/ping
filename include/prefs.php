@@ -29,7 +29,7 @@ if($mois>=7   && $mois <=12)
 	$saison_en_cours = $annee1.'-'.$annee2;
 	$this->SetPreference('phase_en_cours', $phase);
 	$this->SetPreference('saison_en_cours', $saison_en_cours);
-	//$annee_precedente = ;
+	$annee_fin = $annee2;
 }
 elseif($mois >=1 && $mois<7)
 {
@@ -40,17 +40,14 @@ elseif($mois >=1 && $mois<7)
 	$saison_en_cours = $annee1.'-'.$annee2;
 	$this->SetPreference('phase_en_cours', $phase);
 	$this->SetPreference('saison_en_cours', $saison_en_cours);
+	$annee_fin = $annee2;
 	
 }
-else
+$this->GetPreference('annee_fin');
+if($annee_fin != $this->GetPreference('annee_fin'))
 {
-	//echo "case3";
-	$phase = 2;
-	$annee1 = $annee-1;
-	$annee2 = $annee;
-	$saison_en_cours = $annee1.'-'.$annee2;
-	$this->SetPreference('phase_en_cours', $phase);
-	$this->SetPreference('saison_en_cours', $saison_en_cours);
+	//ON change de saison !
+	
 }
 $saisondropdown = array();
 for($i = 2013; $i<=$annee_courante; $i++)

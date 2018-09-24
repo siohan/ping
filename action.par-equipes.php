@@ -2,7 +2,7 @@
    if (!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
-$nom_equipes = $this->GetPreference('nom_equipes');
+//$nom_equipes = $this->GetPreference('nom_equipes');
 $saison = $this->GetPreference('saison_en_cours');
 $db =& $this->GetDb();
 global $themeObject;
@@ -27,6 +27,7 @@ if(isset($params['saison']) && $params['saison'] != '')
 	$query.= " AND saison = ?";
 	$parms['saison']  = $saison;
 }
+
 
 	$query.=" GROUP BY date_event ORDER BY date_event DESC";
 	$dbresult = $db->Execute($query,$parms);

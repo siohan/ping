@@ -8,10 +8,12 @@ $phase = (isset($params['phase'])?$params['phase']:$this->GetPreference('phase_e
 //$nom_equipes = $this->GetPreference('nom_equipes');
 $record_id = '';
 $parms = array();
-$equipes = "%$nom_equipes%";
-$query = "SELECT cl.id AS row_id,cl.idequipe,eq.friendlyname,eq.libequipe,eq.equipe_numero,cl.poule,cl.idpoule,cl.clt,cl.equipe,cl.joue,cl.pts FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe AND cl.equipe LIKE ? AND cl.equipe = eq.libequipe  AND cl.saison = ? AND phase = ?";
 
-//$parms['equipes'] = "%$nom_equipes%";
+$query = "SELECT cl.id AS row_id,cl.idequipe,eq.friendlyname,eq.libequipe,cl.poule,cl.idpoule,cl.clt,cl.equipe,cl.joue,cl.pts, eq.numero_equipe FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe ";
+//$query.=" AND cl.equipe LIKE ? ";
+$query.= "AND cl.equipe = eq.libequipe  AND cl.saison = ? AND phase = ?";
+
+
 $parms['saison'] = $saison;
 $parms['phase'] = $phase;
 //en parametres possibles : 
@@ -22,20 +24,12 @@ $parms['phase'] = $phase;
 		$idepreuve = $params['idepreuve'];
 		$query.=" AND eq.idepreuve = ?";
 		$parms['idepreuve'] = $idepreuve;
-		//echo "epreuve est : ".$idepreuve;
+		
 	}
-	/*
-	if(isset($params['record_id']) && $params['record_id'] !='')
-	{
-			
-		$query.=" AND cl.idequipe = ?";
-		$parms['idequipe'] = $params['record_id'];
-	
-	}
-	*/
+
 
 //on aordonne la table
-$query.= " ORDER BY eq.equipe_numero ASC";
+$query.= " ORDER BY eq.numero_equipe ASC";
 
 
 //on effectue la requete

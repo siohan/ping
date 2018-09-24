@@ -25,14 +25,14 @@ if(isset($params['record_id']) && $params['record_id'] != '')
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
 		$row = $dbresult->FetchRow();
-		$idepreuve2 = $row['idepreuve'];
+		$idepreuve = $row['idepreuve'];
 		$iddiv = $row['iddiv'];
 		$idpoule = $row['idpoule'];
 		$libequipe = $row['libequipe'];
 		$cal =0;
 		//on envoie vres le fichier
 		$service = new retrieve_ops();
-		$retrieve = $service->calendrier($iddiv,$idpoule,$idepreuve2,$libequipe);
+		$retrieve = $service->calendrier($iddiv,$idpoule,$idepreuve,$libequipe);
 		
 		$this->SetMessage("$designation");
 		$this->Redirect($id, 'admin_poules_tab3',$returnid,array("record_id"=>$record_id));
@@ -64,9 +64,9 @@ elseif(isset($params['cal']) && $params['cal'] = 'all')
 	$cal = $params['cal'];
 	$i = 0; //on insère un compteur pour les boucles
 	//on récupère tts les iddivisions et idepreuve disponible en bdd.
-	$query = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND scorea = 0 AND scoreb = 0 AND date_event < ?";
+	$query = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND scorea = 0 AND scoreb = 0 AND date_event <= NOW()";
 //	$query = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ?";
-	$dbresult = $db->Execute($query, array($saison, $aujourdhui));
+	$dbresult = $db->Execute($query, array($saison));
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
 		while ($dbresult && $row = $dbresult->FetchRow())

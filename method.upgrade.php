@@ -1043,6 +1043,29 @@ case  "0.3.0.1" :
 			}
 		}
 	}
+	case "0.6.3" :
+	case "0.6.4" :
+	{
+		//on cherche à remplacer la valeur fk_id (aujourd'hui le id )ds les tables feuilles_rencontres
+		//et rencontres_parties par la valeur renc_id de la FFTT
+		$query= "SELECT renc_id, id AS row_id FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison = '2017-2018'";
+		$dbresult = $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$renc_id = $row['renc_id'];
+				$row_id = $row['row_id'];
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_feuilles_rencontres SET fk_id = ? WHERE fk_id = ?";
+				$dbresult2 = $db->Execute($query2, array($renc_id,$row_id ));
+				
+				$query3 = "UPDATE ".cms_db_prefix()."module_ping_rencontres_parties SET fk_id = ? WHERE fk_id = ?";
+				$dbresult3 = $db->Execute($query3, array($renc_id,$row_id ));
+			}
+		}
+		$this->SetPreference('LastRecupSpid', '');
+		$this->SetPreference('LastRecupFftt', '');
+	}
 	
 
 	

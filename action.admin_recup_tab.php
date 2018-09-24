@@ -21,11 +21,11 @@ $jour_courant = date('d');
 $calcul = $this->GetPreference('spid_calcul');
 if($calcul == 1)
 {
-	$smarty->assign('affichage', FALSE);
+	$smarty->assign('affichage', TRUE);
 }
 else
 {
-	$smarty->assign('affichage', TRUE);
+	$smarty->assign('affichage', FALSE);
 }
 
 

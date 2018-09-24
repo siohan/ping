@@ -9,7 +9,7 @@ class PingRecupSpidTask implements CmsRegularTask
 
    public function get_description()
    {
-      return 'Description de la tâche.';
+      return 'Récuperation du SPID.';
    }
 
    
@@ -17,7 +17,7 @@ class PingRecupSpidTask implements CmsRegularTask
    {
 
       // Instantiation du module
-      $ping = cms_utils::get_module('Ping');
+      $ping = \cms_utils::get_module('Ping');
 
       // Récupération de la dernière date d'exécution de la tâche
       if (!$time)
@@ -25,18 +25,21 @@ class PingRecupSpidTask implements CmsRegularTask
          $time = time();
       }
 
-      $last_execute = $ping->GetPreference('LastRecupSpid');
-      $interval = $ping->GetPreference('spid_interval');
+      $last_execute = (int) $ping->GetPreference('LastRecupSpid');
+      $interval = (int) $ping->GetPreference('spid_interval');
 	
 
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 30*60 ) >= $last_execute && $interval < 365 )//toutes les 24 heures  !!
+      	if( $last_execute >= ($time - 900) ) return FALSE; // hardcoded to 15 minutes
+      return TRUE;
+      /*if ( ($time - 5*60 ) >= $last_execute && $interval < 365 )//toutes les 5 minutes !!
 
       {
          return TRUE;
       }
       
       return FALSE;
+      */
       
    }
 
@@ -44,25 +47,27 @@ class PingRecupSpidTask implements CmsRegularTask
    public function execute($time = '')
    {
 
+      $db = \CmsApp::get_instance()->GetDb();
       if (!$time)
       {
          $time = time();
       }
 
-      $ping = cms_utils::get_module('Ping');
+      $ping = \cms_utils::get_module('Ping');
       //on vérifie qu'on peut récupérer les résultats
-      	if($this->GetPreference('spid_calcul') == 1 && date('j') >= 10)
+      /*	if($this->GetPreference('spid_calcul') == 1 && date('j') >= 10)
 	{
-		// Ce qu'il y a à exécuter ici
-			$db = $ping->GetDb();
+      */
+	// Ce qu'il y a à exécuter ici
+			
 			$saison_courante = $ping->GetPreference('saison_en_cours');
 			$now = trim($db->DBTimeStamp(time()), "'");
-			$query = "SELECT DISTINCT j.licence, CONCAT_WS( ' ', j.nom, j.prenom) AS player, j.cat FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' ";
-			$interval = $ping->GetPreference('spid_interval');
+			$query = "SELECT DISTINCT j.licence, CONCAT_WS( ' ', j.nom, j.prenom) AS player, j.cat FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_adherents_adherents AS j  WHERE j.licence = rp.licence AND j.actif = '1' ";
+			$interval = 3;//$ping->GetPreference('spid_interval');
 			$query.=" AND rp.maj_spid < NOW()-INTERVAL ".$interval." DAY ";
 			//$query.=" OR maj_spid = '000-00-00' ";
-			$query.=" ORDER BY rp.maj_spid DESC ";
-			$limit = $ping->GetPreference('spid_nombres');
+			$query.=" ORDER BY rp.maj_spid ASC ";
+			$limit = 5;
 			$query.= "LIMIT ".$limit;
 			//$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1' LIMIT 2";
 			$dbresult = $db->Execute($query);
@@ -85,18 +90,18 @@ class PingRecupSpidTask implements CmsRegularTask
 				}//fin du while
 
 			}
-	}
+/*	}
 	else
 	{
-		$db = $ping->GetDb();
+	
 		$saison_courante = $ping->GetPreference('saison_en_cours');
 		$now = trim($db->DBTimeStamp(time()), "'");
 		$query = "SELECT DISTINCT j.licence, CONCAT_WS( ' ', j.nom, j.prenom) AS player, j.cat FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' ";
-		$interval = $ping->GetPreference('spid_interval');
+		$interval = 3;//ping->GetPreference('spid_interval');
 		$query.=" AND rp.maj_spid < NOW()-INTERVAL ".$interval." DAY ";
 		//$query.=" OR maj_spid = '000-00-00' ";
 		$query.=" ORDER BY rp.maj_spid DESC ";
-		$limit = $ping->GetPreference('spid_nombres');
+		$limit = 5;
 		$query.= "LIMIT ".$limit;
 		//$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1' LIMIT 2";
 		$dbresult = $db->Execute($query);
@@ -119,11 +124,11 @@ class PingRecupSpidTask implements CmsRegularTask
 
 		}
 	}
-      
+  */    
 	
 //echo "coucou";
       
-      return true; // Ou false si ça plante
+      return TRUE; // Ou false si ça plante
 
    }
 

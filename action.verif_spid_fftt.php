@@ -5,7 +5,7 @@ global $themeObject;
 $designation = '';
 require_once(dirname(__FILE__).'/include/prefs.php');
 //$query = "SEL";
-$query = "SELECT DISTINCT sp.id AS record_id,p.date_event AS date_fftt,p.codechamp,sp.date_event AS date_spid,sp.licence as licence_spid,sp.epreuve, p.licence as licence_fftt,sp.nom as nom_spid, p.advnompre AS nom_fftt, sp.numjourn AS numjourn_spid, p.numjourn AS numjourn_fftt, sp.victoire AS victoire_spid, p.vd AS victoire_fftt, sp.coeff AS coeff_spid, p.coefchamp AS coeff_fftt, sp.pointres AS points_spid, p.pointres AS points_fftt FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_parties AS p WHERE sp.licence = p.licence AND sp.nom = p.advnompre AND sp.date_event = p.date_event AND sp.victoire = p.vd AND sp.saison = ? AND ((sp.pointres !=p.pointres)  OR (sp.coeff != p.coefchamp)) ORDER BY sp.id ASC";
+$query = "SELECT DISTINCT sp.id AS record_id,p.date_event AS date_fftt,p.codechamp,sp.date_event AS date_spid,sp.licence as licence_spid,sp.epreuve, p.licence as licence_fftt,sp.nom as nom_spid, p.advnompre AS nom_fftt, sp.numjourn AS numjourn_spid, p.numjourn AS numjourn_fftt, sp.victoire AS victoire_spid, p.vd AS victoire_fftt, sp.coeff AS coeff_spid, p.coefchamp AS coeff_fftt, sp.pointres AS points_spid, p.pointres AS points_fftt FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_parties AS p WHERE sp.licence = p.licence AND sp.nom = p.advnompre AND sp.date_event = p.date_event AND sp.victoire = p.vd AND sp.saison = ? AND sp.coeff != p.coefchamp ORDER BY sp.id ASC";
 $dbresult = $db->Execute($query, array($saison_courante));
 $rowarray = array();
 	if($dbresult && $dbresult->RecordCount()>0)

@@ -1140,6 +1140,143 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 		return $libelle;
 
 	}
+	//Cette fonction liste les épreuves par équipes
+	public function liste_epreuves_equipes()
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT name, idepreuve FROM  ".cms_db_prefix()."module_ping_type_competitions WHERE indivs = 0";
+		$dbresult = $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$epreuve[$row['name']] = $row['idepreuve'];
+				
+			}
+			return $epreuve;
+		}
+		
+	}
+	//Cette fonction compte le nb d'équipes par idepreuve, par saison et par phase.
+	public function teams_per_idepreuve($idepreuve, $saison,$phase)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT COUNT(*) AS nb FROM ".cms_db_prefix()."module_compositions_equipes WHERE idepreuve = ? AND saison = ? AND phase = ?";
+		$dbresult = $db->Execute($query, array($idepreuve,$saison, $phase));
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			//on retourne le nb d'équipes
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			return $nb;
+		}
+		else
+		{
+			//pas de résultats, on renvoit FALSE
+			return FALSE;
+		}
+		
+	}
+	public function get_friendlyname($saison, $phase, $idepreuve, $libequipe)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT friendlyname FROM ".cms_db_prefix()."module_ping_equipes WHERE saison LIKE ? AND phase = ? AND idepreuve = ? AND libequipe LIKE ?";
+		$dbresult = $db->Execute($query, array($saison, $phase,$idepreuve, $libequipe));
+		if($dbresult)
+		{
+			$row = $dbresult->FetchRow();
+			$friendlyname = $row['friendlyname'];
+			return $friendlyname;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+	public function is_uploaded($renc_id)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(id) AS nb FROM ".cms_db_prefix()."module_ping_rencontres_parties WHERE fk_id = ?";
+		$dbresult = $db->Execute($query, array($renc_id));
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			if($nb ==0)
+			{
+				return FALSE;
+			}
+			else
+			{
+				return TRUE;
+			}
+			
+		}
+		else
+		{
+			//pas de résultats, on renvoit FALSE
+			return FALSE;
+		}
+		
+	}
+	//Cette fonction va chercher le libellé d'une equipe (pour xibo)
+	public function libequipe($saison, $phase, $idepreuve, $numero_equipe)
+	{
+		$db = cmsms()->GetDb();
+		$res = array();
+		$query = "SELECT libequipe, iddiv, idpoule FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ? AND idepreuve = ? AND numero_equipe = ?";
+		$dbresult = $db->Execute($query, array($saison, $phase, $idepreuve, $numero_equipe));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$res[] = $row['libequipe'];
+				$res[] = $row['iddiv'];
+				$res[] = $row['idpoule'];
+				return $res;
+
+			}
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+	//cette fonction permet de trouvr le tour individuel suivant d'un joueur qui se maintient
+	function maintien ($licence, $idepreuve, $iddivision, $tour,$idorga)
+	{
+		//on va d'abord chercher la division du tour suivant
+		$db = cmsms()->GetDb();
+		$ping = cms_utils::get_module('Ping');
+		$saison = $ping->GetPreference('saison_en_cours');
+		$query = "SELECT tableau FROM ".cms_db_prefix()."module_ping_div_tours WHERE saison LIKE ? AND idepreuve = ? AND iddivision = ? AND tour = ?";
+		$dbresult =$db->Execute($query, array($saison, $idepreuve, $iddivision, $tour));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				
+				$row = $dbresult->FetchRow();
+				$tableau = $row['tableau'];
+				//echo $tableau;
+				
+				$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_participe_tours (licence, idepreuve, iddivision,idorga, tour, tableau, saison) VALUES (?, ?, ?, ?, ?, ?, ?)";
+				$dbresult2 = $db->Execute($query2, array($licence, $idepreuve, $iddivision, $idorga, $tour, $tableau, $saison));
+			}
+			else
+			{
+				return FALSE;
+			}
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+
+	
+
 	
 } // end of class
 

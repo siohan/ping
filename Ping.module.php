@@ -2,7 +2,7 @@
 
 #-------------------------------------------------------------------------
 # Module : Ping - 
-# Version : 0.2.5, Sc
+# Version : 0.6.3, Sc
 # Auteur : Claude SIOHAN
 #-------------------------------------------------------------------------
 /**
@@ -20,7 +20,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.6.3'; }  
+  function GetVersion() { return '0.6.5'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'Claude SIOHAN'; } 
   function GetAuthorEmail() { return 'claude.siohan@gmail.com'; }
@@ -41,7 +41,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-	return array('Adherents'=>'0.2.4.1','CGCalendar'=>'2.5');
+	return array('Adherents'=>'0.2.5','CGCalendar'=>'2.5', 'CGJobMgr'=>'1.3.6');
   }
 
   
@@ -126,6 +126,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('stall', CLEAN_INT);
 	$this->SetParameterType('retrieve', CLEAN_STRING);
 	$this->SetParameterType('direction', CLEAN_STRING);
+	$this->SetParameterType('numero_equipe', CLEAN_STRING);
 
 }
 
@@ -149,7 +150,7 @@ public function HasCapability($capability, $params = array())
 public function get_tasks()
 {
    $obj = array();
-//	$obj[0] = new PingRecupFfttTask();
+	$obj[0] = new PingRecupFfttTask();
 	$obj[1] = new PingRecupSpidTask();  
 //	$obj[2] = new PingRecupRencontresTask();
 return $obj; 

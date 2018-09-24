@@ -42,18 +42,31 @@ $this->SetPreference('spid_calcul', $spid_calcul);
 $this->SetMessage('Vos options ont été mises à jours');
 $this->Audit('', 'Ping',$club_number);
 //$this->RedirectToAdminTab('joueurs');
-/*
+
 $gettask = cms_utils::get_module('CGJobMgr');
 $job = new cgjobmgr_job($gettask->GetName().' Recup FFTT',get_userid(FALSE));
 $task = new cgjobmgr_iterativetask('recupfftt');
 
 // Specify which function this task will call to actually do the work
-$task->set_function(array('recupfftt_task','recup_fftt'));
+$task->set_function(array('PingRecupFfttTask','recup_fftt'));
 
 // Add the task to the job
 $job->add_task($task);
 $job->save();
-*/
+
+
+//et pour le spid
+$gettask = cms_utils::get_module('CGJobMgr');
+$job = new cgjobmgr_job($gettask->GetName().' Recup SPID',get_userid(FALSE));
+$task = new cgjobmgr_iterativetask('recupspid');
+
+// Specify which function this task will call to actually do the work
+$task->set_function(array('PingRecupSpidTask','recup_spid'));
+
+// Add the task to the job
+$job->add_task($task);
+$job->save();
+
 if(isset($params['demo']) && $params['demo'] === true)
 {
 	//il faut supprimer toutes les données de toutes les tables sauf compétitions genre uninstall

@@ -53,6 +53,7 @@ if($dbresult && $dbresult->recordCount()>0 && $add !="1")
 		$onerow->iddivision = $row['iddivision'];
 		$onerow->idorga = $row['idorga'];
 		$onerow->tour = $row['tour'];
+		$tour_suivant = $row['tour'] +1;
 		$onerow->tableau = $row['tableau'];
 		$onerow->parties = $this->CreateLink($id, 'admin_div_parties',$returnid, 'Parties', array("idepreuve"=>$idepreuve, "iddivision"=>$row['iddivision'], "tableau"=>$row['tableau'], "tour"=>$row['tour'], "idorga"=>$row['idorga'],"licence"=>$licence) );
 		$upload = $ping_ops->is_classement_uploaded($idepreuve,$row['iddivision'],$row['tableau'],$row['tour']);
@@ -65,6 +66,7 @@ if($dbresult && $dbresult->recordCount()>0 && $add !="1")
 			$onerow->uploaded_classement = $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('false'),'','','systemicon');
 		}
 		$onerow->classement = $this->CreateLink($id, 'admin_div_classement',$returnid, 'Classement', array("idepreuve"=>$idepreuve, "iddivision"=>$row['iddivision'], "tableau"=>$row['tableau'], "tour"=>$row['tour'], "idorga"=>$row['idorga'], "licence"=>$licence) );
+		$onerow->maintien = $this->CreateLink($id, 'retrieve', $returnid, 'Maintien', array("retrieve"=>"maintien", "idepreuve"=>$idepreuve, "iddivision"=>$row['iddivision'], "tour"=>$tour_suivant, "idorga"=>$row['idorga'], "licence"=>$licence));
 		$onerow->delete = $this->CreateLink($id, 'delete',$returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'),'','','systemicon'), array("record_id"=>$row['id'], "type_compet"=>"participants_tours", "licence"=>$licence, "idepreuve"=>$idepreuve) );
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
