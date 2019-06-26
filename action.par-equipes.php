@@ -10,9 +10,16 @@ $result= array();
 $parms = array();
 $rowarray = array();
 //$rowarray1 = array();
-
-$i=0;
 $query = "SELECT DISTINCT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event<=NOW()";//GROUP BY date_debut ORDER BY date_debut DESC";
+if(isset($params['date_debut']) && isset($params['date_fin']))
+{
+	$date_debut = $params['date_debut'];
+	$date_fin = $params['date_fin'];
+	$query = "SELECT  date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event = ? ";//GROUP BY date_debut ORDER BY date_debut DESC";
+	$parms['date_event'] = $date_debut;
+}
+$i=0;
+
 
 
 if(isset($params['idepreuve']) && $params['idepreuve'] != '')
@@ -27,7 +34,18 @@ if(isset($params['saison']) && $params['saison'] != '')
 	$query.= " AND saison = ?";
 	$parms['saison']  = $saison;
 }
-
+/*
+if(isset($params['date_debut']) && isset($params['date_fin']))
+{
+	$date_debut = $params['date_debut'];
+	$date_fin = $params['date_fin']
+}
+*/
+$template = "Ping Par Equipes";
+if(isset($params['template']) && $params['template'] !="")
+{
+	$template = $params['template'];
+}
 
 	$query.=" GROUP BY date_event ORDER BY date_event DESC";
 	$dbresult = $db->Execute($query,$parms);
@@ -51,7 +69,7 @@ if(isset($params['saison']) && $params['saison'] != '')
 			$onerow->valeur = $i;
 			
 			
-			$query2 = "SELECT ren.id AS ren_id, ren.equa,ren.uploaded, ren.equb, eq.id AS eq_id, eq.libequipe,eq.friendlyname, ren.scorea, ren.scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule AND (eq.libequipe = ren.equa OR eq.libequipe = ren.equb) AND ren.saison = eq.saison  AND ren.date_event = ? ";//AND (ren.scorea !=0 OR scoreb !=0)";
+			$query2 = "SELECT ren.id AS ren_id, ren.equa,ren.uploaded, ren.equb, eq.id AS eq_id, eq.libequipe,eq.friendlyname, ren.scorea, ren.scoreb, ren.renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.idpoule = ren.idpoule AND (eq.libequipe = ren.equa OR eq.libequipe = ren.equb) AND ren.saison = eq.saison  AND ren.date_event = ? ";//AND (ren.scorea !=0 OR scoreb !=0)";
 			$parms2['date_event'] = $date_debut;
 			
 			
@@ -73,7 +91,7 @@ if(isset($params['saison']) && $params['saison'] != '')
 			{
 				
 				$rowclass= 'row1';
-				
+				$renc_ops = new rencontres;
 				while($row2 = $dbresultat->FetchRow())
 				{
 					
@@ -94,7 +112,7 @@ if(isset($params['saison']) && $params['saison'] != '')
 					$onerow2->equa = $row2['equa'];
 					$onerow2->friendlyname = $row2['friendlyname'];
 					$onerow2->libequipe = $libequipe;
-					$onerow2->uploaded = $uploaded;
+					$onerow2->uploaded = $renc_ops->is_uploaded($row2['renc_id']);//$uploaded;
 					//echo "equipe B est : ".$equb;
 
 					//$onerow->equipe= $row['equipe'];
@@ -140,7 +158,7 @@ if(isset($params['saison']) && $params['saison'] != '')
 							$onerow2->equb= $row2['equb'];
 						}
 					
-					$onerow2->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row2['ren_id'], 'template'=>'1'));
+					$onerow2->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row2['renc_id']));
 					$rowarray2[] = $onerow2;
 					
 					
@@ -165,8 +183,9 @@ if(isset($params['saison']) && $params['saison'] != '')
 	{
 		echo 'Pas de résultats correspondant à votre demande. Consultez l\'aide si nécessaire...';
 	}
-
-echo $this->ProcessTemplate('details_rencontre.tpl');
+	$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+	$tpl->display();
+//echo $this->ProcessTemplate('details_rencontre.tpl');
 
 #
 ?>

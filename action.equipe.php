@@ -12,14 +12,29 @@ if(!isset($params['record_id']) || $params['record_id'] =='')
 else
 {
 	$record_id = $params['record_id'];
+	$eq_ops = new equipes_ping;
+	$details = $eq_ops->details_equipe($record_id);
+	$saison = $details['saison'];
 }
-
+//$template = "Ping Equipe Unique";
+if(isset($params['template']) && $params['template'] !="")
+{
+	$template = trim($params['template']);
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Résultats pour une équipe');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template résultats pour une équipe introuvable');
+        return;
+    }
+    $template = $tpl->get_name();
+}
 
 
 //le numéro de l'équipe est ok, on continue
 //on va d'abord récupérer le classement de cette équipe
-$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,eq.libequipe FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? ORDER BY cl.id ASC";
-$dbresult= $db->Execute($query, array($record_id));
+$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
+$dbresult= $db->Execute($query, array($record_id, $saison));
 
 $rowarray = array();
 if($dbresult && $dbresult->RecordCount()>0)
@@ -34,18 +49,19 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$classement = '-';
 		}
 		$onerow= new StdClass();
-		$onerow->rowclass= $rowclass;
-		$poule = $row['poule'];
-		$onerow->id= $row['id'];
-		$onerow->idpoule = $row['idpoule'];
-		$onerow->iddiv = $row['iddiv'];
 		$onerow->friendlyname= $row['friendlyname'];
 		$onerow->clt=  $classement;
 		$onerow->equipe= $row['equipe'];
 		$onerow->joue= $row['joue'];
 		$onerow->pts= $row['pts'];
-		//$onerow->type_compet = $row['code_compet'];
+		$onerow->vic= $row['vic'];
+		$onerow->nul= $row['nul'];
+		$onerow->def= $row['def'];
+		$onerow->pg= $row['pg'];
+		$onerow->pp= $row['pp'];
+		$onerow->pf= $row['pf'];
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
+		$onerow->rowclass= $rowclass;
 		$rowarray[]= $onerow;
 	}
 }
@@ -63,10 +79,11 @@ $smarty->assign('items', $rowarray);
 $query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv,eq.id as id_alias FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND eq.id = ? GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
 //$parms['saison'] = $saison;
 $parms['id_alias'] = $record_id;
-
+//$template = "Rookie Equipe Unique";
 $dbresultat = $db->Execute($query2,$parms);
 $rowarray2 = array();
 $i = 0;
+$renc_ops = new rencontres;
 if($dbresultat && $dbresultat->RecordCount()>0)
 {
 	
@@ -83,7 +100,7 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 		
 		
 			//on fait la deuxième requete dérivant de la première
-			$query3 = "SELECT ren.equa, ren.scorea, ren.equb, ren.scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE ren.date_event = ? AND idpoule = ? AND iddiv = ? ";
+			$query3 = "SELECT ren.equa, ren.scorea, ren.equb, ren.scoreb, ren.renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE ren.date_event = ? AND idpoule = ? AND iddiv = ? ";
 			$dbresult3 = $db->Execute($query3, array($date_event, $idpoule, $iddiv));
 			$rowarray3 = array();
 			
@@ -97,6 +114,8 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 						$onerow3->scorea = $row3['scorea'];
 						$onerow3->equb = $row3['equb'];
 						$onerow3->scoreb = $row3['scoreb'];
+						$onerow3->uploaded = $renc_ops->is_uploaded($row3['renc_id']);//$uploaded;
+						$onerow3->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row3['renc_id']));
 						$rowarray3[] = $onerow3;
 					}
 					$smarty->assign('prods_'.$i,$rowarray3);
@@ -110,7 +129,10 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 	$smarty->assign('itemcount2', count($rowarray2));
 	$smarty->assign('items2', $rowarray2);
 }
-echo $this->ProcessTemplate('equipe.tpl');
+
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+$tpl->display();
+//echo $this->ProcessTemplate('equipe.tpl');
 //echo $this->ProcessTemplate('details_rencontre.tpl');
 #
 #EOF

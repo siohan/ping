@@ -17,7 +17,7 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 //echo "l'année courante est : ".$annee_courante;
 
 
-$query = "SELECT *, sm.saison, sm.id,j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_sit_mens AS sm ON j.licence = sm.licence AND mois = ? AND annee = ?";//AND (sm.annee = ? OR sm.annee IS NULL) ";
+$query = "SELECT *, sm.saison, sm.id,j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_sit_mens AS sm WHERE j.licence = sm.licence AND sm.mois = ? AND sm.annee = ? AND j.actif = '1' AND j.type = 'T'";
 
 $query.=" ORDER BY joueur ASC,sm.id ASC";
 
@@ -58,7 +58,7 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('retrieveallsitmens',
-		$this->CreateLink($id,'retrieve_all_sit_mens', $returnid, $contents='Ajouter automatiquement les situations mensuelles','' ,$warn_message='Attention, ce script peut-être long Merci de patienter'));
+		$this->CreateLink($id,'retrieve', $returnid, $contents='Ajouter automatiquement les situations mensuelles',array("retrieve"=>"sit_mens_all") ,$warn_message='Attention, ce script peut-être long Merci de patienter'));
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',

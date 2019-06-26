@@ -53,7 +53,7 @@ $lang['error_insufficientparams'] = 'Parametres manquants';
 $lang['error_invalidnumber'] = 'Erreur : pas de num&eacute;ro fourni !';
 $lang['error_numberexists'] = 'Ce num&eacute;ro existe d&eacute;j&agrave;';
 $lang['filtres'] = 'Appliquer le filtre';
-$lang['friendlyname'] = 'T2T Sportif';
+$lang['friendlyname'] = 'Asso Ping';
 $lang['id'] = 'Id';
 $lang['installed'] = 'Module install&eacute; en version %s.';
 $lang['joueur'] = 'Joueur';
@@ -178,17 +178,13 @@ $lang['help'] = '<h3>Que fait ce module ?</h3>
 <p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (Voir feuille de route plus bas).</p>
 <h3>Comment l\'utiliser ?</h3>
 <h2>Première utilisation</h2>
-<ol><li>Ce module est dépendant du module Adhérents(T2T Adherents), dans l\'onglet "Compte" du module Adhérents, renseignez les identifiants fournis par la FFTT ainsi que le Numéro de votre club.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li>
-<li>Renseignez l\'onglet "Configuration" du module Ping, récupérez les compétitions de zone, ligue et comité (les nationales sont installées par défaut)</li><li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
+<ol><li>Dans l\'onglet "Compte", renseignez les identifiants fournis par la FFTT et suivez les instructions qui en découlent.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li>
+<li>Renseignez l\'onglet "Configuration" , indiquez comment vous voulez récupérez les rencontres</li><li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
 Un lien pour les équipes du championnat de France par équipes masculin, un autre pour les féminines et le dernier pour toutes les autres équipes, indiquez le type de compétitions auxquelles elles participent.</li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom.</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
-<h3>Spid</h3>
-<p>Deux possibilités : le spid tel que la FFTT le procure dans son API , c\'est à dire sans calcul de points ou le spid avec calcul (estimation). </p>
-<h4>Spid avec calcul(estimation)</h4>
-<p>Le spid avec calcul est une estimation des points. Ce mode est plus glamour car il permet d\'estimer les points sans attendre la validation de la FFTT. Cependant, pour effectuer ces estimations, nous avons besoin de la situation mensuelle en cours de deux joueurs (disponible seulement après le 10 de chaque mois) et du coefficient de la compétition.</p>
-<h4>Spid sans calcul</h4>
-<p>Récupérez les résultats du spid indépendemment du coefficient et de la situation mensuelle. La récupération de tous les résultats en une seule fois peut s\'avérer très longue (plusieurs minutes).<br />
+<h3>Spid (+estimation des points)</h3>
+<p>Le spid avec calcul est une estimation des points. Ce mode permet d\'estimer les points sans attendre la validation de la FFTT. Cependant, pour effectuer ces estimations, nous avons besoin de la situation mensuelle en cours de deux joueurs (disponible seulement après le 10 de chaque mois) et du coefficient de la compétition.</p>
 Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensuelle du mois concerné n\'est pas renseignée.</p>
 <h3>Situation mensuelle</h3>
 <p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer la situation mensuelle en cours de tous les joueurs de votre club</p>
@@ -204,13 +200,20 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 <li>sit_mens_provisoire - pour une situation mensuelle réévaluée après chaque compétition récupérée.</li>
 </ul>
 </li>
-<li>"idepreuve" - le type de compétition à afficher ex : {Ping action=\'par-equipes\' idepreuve=\'1072\'} (disponibles ds l\'onglet "Compétitions")</li>
+<li>idepreuve - le type de compétition à afficher ex : {Ping action=\'par-equipes\' idepreuve=\'1072\'} (disponibles ds l\'onglet "Compétitions")</li>
 </ul>
+<ul><li>template - le template(gabarit) que vous souhaitez utiliser (voir ci-dessous)</li></ul>
+<h3>Templates (gabarits)</h3>
+<p>Vous avez la possibilité de mettre en forme tous les gabarits de résultats. Par défaut, le module en propose que vous pouvez modifier à l\'envi depuis le DesignManager (Menu de gauche ->Disposition - Gabarits).</p>
+<h3>Export des données</h3>
+<p>Vous pouvez exporter certaines informations vers d\'autres modules de la suite notamment la liste de vos joueurs vers les membres du module Adhérents.</p>
+<h3>Les autres modules développés</h3>
+<p>Asso Simple est une suite de modules conçus pour vous aider à gérer votre association le plus simplement possible. Retrouvez tous les modules sur la page  <a href="http://www.agi-webconseil.fr" target="_blank">www.agi-webconseil.fr</a></p>  
 <h3>Support</h3>
 <ul>
 <li>Pour obtenir la dernière version en cours (avant release officielle)
 <a href="https://github.com/siohan/ping">Version github</a>.</li>
-<li>Suivez-moi sur Twitter <a href="https://twitter.com/ModulePing" target="_blank">@ModulePing</a></li>
+<li>Suivez-moi sur Twitter <a href="https://twitter.com/ModulePing" target="_blank">@AssoSimple</a></li>
 <li><a href="https://www.facebook.com/modulesT2T/" target="_blank">Facebook</a></li>
 <li>L\'auteur peut aussi être contacté via skype sous le pseudo agiwebconseil.</li>
 <li>Enfin, vous pouvez aussi m\'envoyer un mail.</li>  
@@ -220,7 +223,7 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 <p>Merci à ma femme et à mes enfants pour leur soutien toujours indéfectible.</p>
 <p>Un remerciement tout particulier à mon ami Eric Ponchant(ericfreelance) pour son soutien, sa bienveillance, sa patience, ses conseils toujours avisés et son expertise pour m\'aider à chaque fois à me sortir de l\'ornière..</p>
 <h3>Copyright et License</h3>
-<p>Copyright &amp;copy; 2014, Claude Siohan <a href="mailto:claude@agi-webconseil.fr">claude@agi-webconseil.fr</a>. Tous droits réservés.</p>
+<p>Copyright &amp;copy; 2014, Claude Siohan <a href="mailto:claude.siohan@gmail.com">claude.siohan@gmail.com</a>. Tous droits réservés.</p>
 <p>Ce module est sous licence <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. Vous devez accepter la licence avant d\'utiliser ce module.</p>
 <p>Ce module a été distribué dans l\'espoir d\'être utile, mais sans
 AUCUNE GARANTIE. Il vous appartient de le tester avant toute mise en
@@ -231,5 +234,17 @@ module. Pour plus d\'informations, <a
 href=\"http://www.gnu.org/licenses/licenses.html#GPL\" target=\"_blank\">consultez
 la licence GNU GPL</a>.</p>
 ';
+$lang['type_Ping'] = 'Ping';
+//$lang['type_Feuille de rencontre'] = 'Feuille de rencontre';
+$lang['type_feuille_rencontre'] = "Feuille de Rencontre";
+$lang['type_Top Flop'] = "Top Flop";
+$lang['type_Spid'] = "Spid";
+$lang['type_Résultats pour une équipe'] = "Résultats pour une équipe";
+$lang['type_Liste Joueurs'] = "Liste Joueurs";
+$lang['type_Résultats Par Equipes'] = "Résultats Par Equipe";
+$lang['type_Résultats par joueur'] = "Résultats Par Joueurs";
+$lang['type_Situation Mensuelle'] = "Situation Mensuelle";
+$lang['type_Classements Club'] = "Classements Des Equipes";
+$lang['type_Situation En Live'] = "Situation Mensuelle Live";
 
 ?>

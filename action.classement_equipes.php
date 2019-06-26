@@ -1,6 +1,5 @@
 <?php
 if( !isset( $gCms) ) exit;
-//require_once(dirname(__FILE__).'/include/prefs.php');
 $db =& $this->GetDb();
 //debug_display($params, 'Parameters');
 $saison = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
@@ -8,8 +7,19 @@ $phase = (isset($params['phase'])?$params['phase']:$this->GetPreference('phase_e
 //$nom_equipes = $this->GetPreference('nom_equipes');
 $record_id = '';
 $parms = array();
-
-$query = "SELECT cl.id AS row_id,cl.idequipe,eq.friendlyname,eq.libequipe,cl.poule,cl.idpoule,cl.clt,cl.equipe,cl.joue,cl.pts, eq.numero_equipe FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe ";
+if(isset($params['template']) && $params['template'] !="")
+{
+	$template = trim($params['template']);
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Résultats pour une équipe');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template résultats pour une équipe introuvable');
+        return;
+    }
+    $template = $tpl->get_name();
+}
+$query = "SELECT cl.id AS row_id,cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname, eq.numero_equipe, eq.idpoule FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe ";
 //$query.=" AND cl.equipe LIKE ? ";
 $query.= "AND cl.equipe = eq.libequipe  AND cl.saison = ? AND phase = ?";
 
@@ -40,40 +50,35 @@ if($dbresult && $dbresult->RecordCount()>0)
 {
 	while($row = $dbresult->FetchRow())
 	{
-		$row_id = $row['row_id'];
-		$clt = $row['clt'];
+		$classement = $row['clt'];
 		$idpoule = $row['idpoule'];
-		$id_equipe = $row['idequipe'];
-		$onerow = new StdClass();
-		$onerow->rowclass = $rowclass;
-		
-		if($clt == '0')
+		if($classement == '0' || $classement =='-')
 		{
 			//il faut sélectionner un id au dessus
 			$query2 = "SELECT clt FROM ".cms_db_prefix()."module_ping_classement WHERE id < ? AND idpoule = ? AND saison = ? AND clt !='0' ORDER BY id DESC LIMIT 1";
-			$dbresult2 = $db->Execute($query2, array($row_id,$idpoule,$saison));
+			$dbresult2 = $db->Execute($query2, array($row['row_id'],$idpoule,$saison));
 			$row2 = $dbresult2->FetchRow();
-			$clt = $row2['clt'];
+			$classement = $row2['clt'];
 		}
+		$joue = $row['joue'];
+		$friendlyname = $row['friendlyname'];
 		
-		$equipe = $row['friendlyname'];
-		//$onerow->friendlyname = $row['libequipe'];
-		
-		if($equipe !='')
+	
+		$onerow= new StdClass();
+		if($friendlyname !='')
 		{
-			$onerow->friendlyname = $this->CreateLink($id, 'equipe',$returnid,$contents=$row['friendlyname'], array("record_id"=>$id_equipe));//$row['friendlyname'];
-			//echo "est pas Null";
+			$onerow->equipe= $row['friendlyname'];
 		}
 		else
 		{
-			$onerow->friendlyname = $row['libequipe'];
+			$onerow->equipe= $row['equipe'];
 		}
-		
-		//var_dump($equipe);
-		
-		
-		
-		$onerow->clt = $clt;
+		$onerow->clt=  $classement;		
+		$onerow->joue= $row['joue'];
+		$onerow->pts= $row['pts'];
+		$onerow->vic= $row['vic'];
+		$onerow->nul= $row['nul'];
+		$onerow->def= $row['def'];
 		//$onerow->equipe = $row['equipe'];		
 		$rowarray[]  = $onerow;
 			
@@ -89,7 +94,8 @@ else
 
 $smarty->assign('items', $rowarray);
 $smarty->assign('itemcount', count($rowarray));
-echo $this->ProcessTemplate('classement.tpl');
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+$tpl->display();//echo $this->ProcessTemplate('classement.tpl');
 #
 #EOF
 #

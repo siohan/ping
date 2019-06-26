@@ -20,24 +20,21 @@ if(isset($params['cal']) && $params['cal'] = 'all')
 if(isset($params['record_id']) && $params['record_id'] != '')
 {
 	$record_id = $params['record_id'];
-	$query = "SELECT idepreuve, iddiv, idpoule, libequipe FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ?";
-	$dbresult = $db->Execute($query, array($record_id));
-	if($dbresult && $dbresult->RecordCount()>0)
-	{
-		$row = $dbresult->FetchRow();
-		$idepreuve = $row['idepreuve'];
-		$iddiv = $row['iddiv'];
-		$idpoule = $row['idpoule'];
-		$libequipe = $row['libequipe'];
-		$cal =0;
-		//on envoie vres le fichier
-		$service = new retrieve_ops();
-		$retrieve = $service->calendrier($iddiv,$idpoule,$idepreuve,$libequipe);
+	$eq = new equipes_ping;
+	$details = $eq->details_equipe($record_id);	
+	$idepreuve = $details['idepreuve'];
+	$iddiv = $details['iddiv'];
+	$idpoule = $details['idpoule'];
+	$libequipe = $details['libequipe'];
+	$cal =0;
+	//on envoie vres le fichier
+	$service = new retrieve_ops;
+	$retrieve = $service->calendrier($iddiv,$idpoule,$idepreuve,$libequipe);
 		
-		$this->SetMessage("$designation");
-		$this->Redirect($id, 'admin_poules_tab3',$returnid,array("record_id"=>$record_id));
+	$this->SetMessage("$designation");
+	$this->Redirect($id, 'admin_poules_tab3',$returnid,array("record_id"=>$record_id));
 		
-	}
+	
 }
 elseif(isset($params['cal']) && $params['cal'] == 'cal')
 {

@@ -7,7 +7,20 @@ require_once(dirname(__FILE__).'/include/prefs.php');
 $licence = '';
 $date_event = '';
 $affiche = 1;
-
+/*
+if(isset($params['template']) && $params['template'] !="")
+{
+	$template = trim($params['template']);
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template résultats pour une équipe introuvable');
+        return;
+    }
+    $template = $tpl->get_name();
+}
+*/
 	if(!isset($params['licence']) && $params['licence'] =='' )
 	{
 		echo "la licence est absente !";
@@ -166,34 +179,7 @@ $affiche = 1;
 		}
 		
 		$dbresult3 = $db->Execute($query3, $parms);
-		/*
-			if($dbresult3 && $dbresult3->RecordCount()>0)
-			{
-				while($row1 = $dbresult3->FetchRow())
-				{
-					$onerow1= new StdClass();
-					$onerow1->rowclass= $rowclass;
-					$onerow1->vic= $row1['vic'];
-					$onerow1->total= $row1['total'];
-					$onerow1->pts= $row1['pts'];
-			
-					($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
-					$rowarray1[]= $onerow1;
-				}
-			}//echo $query;
-		*/
-		/*
-		if($affiche ==1)
-		{
-			//On met un ordre particulier ou pas ?
-			$query3.=" ORDER BY date_event DESC";
-			$dbresult3= $db->Execute($query3, array($licence, $saison_courante));
-		}
-		else
-		{
-			$dbresult3= $db->Execute($query3, array($licence, $saison_courante,$date_debut, $date_fin));
-		}
-		*/
+	
 		$rowarray= array ();
 
 		if ($dbresult3 && $dbresult3->RecordCount() > 0)
@@ -224,10 +210,8 @@ $smarty->assign('retour',
  		$this->CreateReturnLink($id, $returnid,'Retour'));
 $smarty->assign('items', $rowarray);
 $smarty->assign('affiche',$affiche);
-/*
-$smarty->assign('resultats',
-		$this->CreateLink($id,'user_results',$returnid, array('licence'=>$licence)));
-*/
+//$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+//$tpl->display();
 echo $this->ProcessTemplate('user_results_prov.tpl');
 
 

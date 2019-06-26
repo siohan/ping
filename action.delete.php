@@ -2,7 +2,7 @@
 if (!isset($gCms)) exit;
 
 //debug_display($params, 'Parameters');
-$equipes_ops = new equipes();
+$equipes_ops = new equipes_ping;
 $ping_admin_ops = new ping_admin_ops();
 if (!$this->CheckPermission('Ping Delete'))
 	{
@@ -149,7 +149,7 @@ $designation = '';
 					$query = "DELETE FROM ".cms_db_prefix()."module_ping_recup";
 					$db->Execute($query);
 					$this->SetMessage('Journal supprimé');
-					$this->Redirect('defaultadmin');
+					$this->Redirect($id,'defaultadmin', $returnid);
 				break;	
 				
 				case "participants_tours" : 

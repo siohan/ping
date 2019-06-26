@@ -11,6 +11,7 @@ if(!$this->CheckPermission('Ping Use'))
 //mettre les autorisations
 //si pas de record_id redirection
 $saison = $this->GetPreference('saison_en_cours');
+$retrieve = new retrieve_ops;
 $designation = '';
 $idepreuve = '';
 $iddivision = '';
@@ -66,94 +67,19 @@ $service = new Servicen();
 	if($direction == 'classement')
 	{
 		//on récupère le classement
-		$var.="&action=classement";
-		$tableau = '';
-		//echo $var;
 		if(isset($params['tableau']) && $params['tableau'] != '')
 		{
 			$tableau = $params['tableau'];
-			$var.="&cx_tableau=".$tableau;
-			//echo $var;
+			$add_class = $retrieve->retrieve_div_classement($idepreuve, $iddivision, $tableau);
+			$this->Redirect($id,'admin_div_classement',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga,"essai"=>"1"));
 		}
 		else
 		{
 			$error++;
 		}
-		//echo "le tableau est : ".$tableau;
-		$tour = '';
-		if(isset($params['tour']) && $params['tour'] != '')
-		{
-			$tour = $params['tour'];
-		}
-		if(isset($params['licence']) && $params['licence'] != '')
-		{
-			$licence = $params['licence'];
-		}
 		
-
-		$lien = $service->GetLink($page,$var);
-		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		//echo "<pre>".var_dump($data)."</pre>";
-		var_dump($xml);
-		if($xml === FALSE)
-		{
-			$designation.="Pas encore de résultats disponibles";
-			$this->SetMessage("$designation");
-			//$this->RedirectToAdminTab('divisions');
-			$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
-		}
+	
 		
-			$array = json_decode(json_encode((array)$xml), TRUE);
-			$lignes = count($array['classement']);
-		
-		if($lignes == 0)
-		{
-			$designation.="Pas encore de résultats disponibles";
-			$this->SetMessage("$designation");
-			//$this->Redirect($id,'defaultadmin2',$returnid);
-			$this->Redirect($id,'participants_tours',$returnid,array("idepreuve"=>$idepreuve,"licence"=>$licence));
-		}
-		
-		
-		
-
-		foreach($xml as $value)
-		{
-			//$libelle = $tab['libelle'];
-			//$lien = $tab['lien'];
-			$rang = htmlentities($value->rang);
-			$nom = htmlentities($value->nom);
-			$clt = htmlentities($value->clt);
-			$club = htmlentities($value->club);
-			
-			//on fait une conditionnelle pour récupérer la licence du joueur du club
-			if($club == $this->GetPreference('nom_equipes'))
-			{
-				//ça match !!
-			}
-			$points = htmlentities($value->points);
-
-			//On a récupéré les éléments, on peut faire l'insertion dans notre bdd			
-			//On fait une conditionnelle pour inclure uniquement les gens du club ?
-			//il fait faire une nouvelle préférence
-			
-			
-			
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_classement (id, idepreuve,iddivision,tableau,tour,rang, nom,clt,club,points, saison) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			//echo $query;
-			$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$tour,$rang, $nom, $clt, $club, $points,$saison));
-
-			if(!$dbresult)
-			{
-				$designation .= $db->ErrorMsg();
-			}
-		
-
-
-		}
-		$designation.="Classement(s) inséré(s)";
-		$this->SetMessage("$designation");
-		$this->Redirect($id,'admin_div_classement',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga,"essai"=>"1"));
 
 	}
 	elseif($direction == 'partie')
@@ -234,8 +160,17 @@ $service = new Servicen();
 		$this->SetMessage("$designation");
 		//$this->Redirect($id,'defaultadmin2',$returnid);
 		$this->Redirect($id,'admin_div_parties',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
+	}	//on va utiliser cette variable (record_id) comme clé secondaire dans la nouvelle table
+	elseif($direction == 'tour')
+	{
+		
+		$add_tour = $retrieve->retrieve_div_tours($idepreuve, $iddivision);
+	
+		$this->Redirect($id,'admin_poules',$returnid,array("idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga));
+	
 	}
 	//on va utiliser cette variable (record_id) comme clé secondaire dans la nouvelle table
+	
 
 
 

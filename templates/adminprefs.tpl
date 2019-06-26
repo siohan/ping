@@ -5,10 +5,7 @@
 {$stall}
 <fieldset>
 <legend>Configuration principale</legend>
-	<div class="pageoverflow">
-		<p class="pagetext">Votre zone</p>
-		<p class="pageinput">{$input_zone}</p>
-	</div>
+	
 	<div class="pageoverflow">
 		<p class="pagetext">Phase en cours:</p>
 		<p class="pageinput">{$input_phase}</p>
@@ -23,10 +20,6 @@
 </fieldset>
 <fieldset>
 	<legend>Autres options</legend>
-	<div class="pageoverflow">
-		<p class="pagetext">Spid avec ou sans estimation des points(recommandé sans){cms_help key='help_spid_calcul' title='Spid avec ou sans calcul'}</p>
-		<p class="pageinput">{$spid}</p>
-	</div>
 	<div class="pageoverflow">
 		<p class="pagetext">Le calendrier se remplit avec le résultats des poules (recommandé)</p>
 		<p class="pageinput">{$input_populate_calendar}</p>
@@ -43,3 +36,18 @@
 		<p class="pageinput">{$submit}</p>
 	</div>
 {$endform}
+<fieldset>
+	<legend>Export vers d'autres modules (si installés et activés !)</legend>
+<fieldset>
+	<legend>Export des joueurs vers le module Adhérents</legend>
+	<p>Seuls les nouveaux joueurs sont exportés à chaque fois</p>
+	{$startformexport}
+	{$exportsubmit}
+	{$endformexport}
+</fieldset>
+<fieldset>
+	<legend>Export des épreuves vers le module Compositions</legend>
+	{$startformexport2}
+	{$exportsubmit2}
+	{$endformexport2}
+</fieldset>

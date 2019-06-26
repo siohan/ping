@@ -24,6 +24,12 @@ if (!isset($gCms)) exit;
  */
 
 $db = $gCms->GetDb();
+$uid = null;
+if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
+  $uid = 1; // hardcode to first user
+} else {
+  $uid = get_userid();
+}
 
 // mysql-specific, but ignored by other database
 $taboptarray = array( 'mysql' => 'ENGINE=MyISAM' );
@@ -33,13 +39,18 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
-	actif I(1),
-	licence I(11),
+	actif I(1) DEFAULT '1',
+	licence C(11),
 	nom C(255),
 	prenom C(255),
 	club C(255),
 	nclub C(8),
-	clast I(11)";
+	sexe C(1),
+	type C(1), 
+	certif C(255),
+	validation C(100),
+	cat C(20),
+	clast I(5)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_joueurs",
@@ -49,7 +60,7 @@ $dict->ExecuteSQLArray($sqlarray);
 #
 $dict = NewDataDictionary( $db );
 $flds= "id I(11) KEY AUTO,
-        saison C(100),
+        saison C(10),
 	phase I(1),
 	numero_equipe I(2),
 	libequipe C(255),
@@ -83,9 +94,9 @@ $dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
 	statut L,
-	saison C(255),
+	saison C(10),
 	datemaj ". CMS_ADODB_DT .",
-	licence I(11),
+	licence C(11),
 	date_event D,
 	epreuve C(255),
 	nom C(255),
@@ -96,7 +107,8 @@ $flds = "
 	type_ecart I(11),
 	coeff N(3.2),
 	pointres N(5.3),
-	forfait I(1) ";
+	forfait I(1),
+	idpartie I(11) ";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_parties_spid",
@@ -111,9 +123,9 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
 	id I(11)  AUTO KEY,
-	saison C(255),
-	licence I(11),
-	advlic I(11),
+	saison C(10),
+	licence C(11),
+	advlic C(11),
 	vd I,
 	numjourn I(2),
 	codechamp C(3),
@@ -122,7 +134,8 @@ $flds = "
 	advnompre C(255),
 	pointres N(6.3),
 	coefchamp N(3.2),
-	advclaof C(4)";
+	advclaof C(4),
+	idpartie I(11)";
 			
 // 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_parties",
@@ -152,16 +165,16 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
-	saison C(255),
+	saison C(10),
 	datemaj ". CMS_ADODB_DT .",
-	licence I(11),
+	licence C(11),
 	sit_mens C(200),
 	fftt I(11),
-	maj_fftt D,
+	maj_fftt I(11),
 	spid I(11),
 	spid_total I(11),
 	spid_errors I(11),
-	maj_spid D,
+	maj_spid I(11),
 	maj_total I(11)";
 			
 // create it. 
@@ -177,7 +190,7 @@ $dict = NewDataDictionary( $db );
 $flds = "
      id I(11) AUTO KEY,
 	renc_id I(11),
-	saison C(255),
+	saison C(10),
 	idpoule I(11),
 	iddiv I(11),
 	club I(1),
@@ -208,11 +221,11 @@ $flds = "
 	id I(11) AUTO KEY,
 	datecreated ". CMS_ADODB_DT .",
 	datemaj ". CMS_ADODB_DT .",
-	saison C(255),
+	saison C(10),
 	mois I(2),
 	annee I(4),
 	phase I(1),
-	licence I(11),
+	licence C(11),
 	categ C(10),
 	nom C(255),
 	prenom C(255),
@@ -246,7 +259,7 @@ $flds = "
 	mois I(2),
 	annee I(4),
 	phase I(1),
-	licence I(11),
+	licence C(11),
 	categ C(10),
 	nom C(255),
 	prenom C(255),
@@ -267,45 +280,9 @@ $dict = NewDataDictionary( $db );
 // table schema description
 $flds = "
 	id I(11) AUTO KEY,
-	saison C(255),
-	type_compet C(3),
-	date_debut D,
-	date_fin D,
-	iddiv I(11),
-	idpoule I(11),
-	numjourn I(11),
-	tag C(255),
-	idepreuve I(11)";
-			
-// create it. 
-$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_calendrier",
-				   $flds, 
-				   $taboptarray);
-$dict->ExecuteSQLArray($sqlarray);
-
-
-// table schema description
-$flds = "
-	id I(11) AUTO KEY,
-	datecreated ". CMS_ADODB_DT .",
-	datemaj ". CMS_ADODB_DT .",
-	licence I(11),
-	type_contact C(255),
-	contact C(255),
-	description C(255)";
-			
-// create it. 
-$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_comm",
-				   $flds, 
-				   $taboptarray);
-$dict->ExecuteSQLArray($sqlarray);
-
-// table schema description
-$flds = "
-	id I(11) AUTO KEY,
-	datecreated ". CMS_ADODB_DT .",
-	status C(255),
-	designation C(255),
+	datecreated D, 
+	status C(255), 
+	designation C(255), 
 	action C(255)";
 			
 // create it. 
@@ -331,35 +308,6 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competition
 				   $flds, 
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
-#On insère les données au niveau national
-$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (`id`, `name`, `code_compet`, `coefficient`, `indivs`, `tag`, `idepreuve`, `idorga`) VALUES ('', ?, ?, ?, ?, ?, ?, ?)";
-//$db->execute($insert_sql, array( 'Tournoi National et Internat.', NULL, '0.75', 1, '{Ping action=\'individuelles\' idepreuve=\'3064\'}', 3064, 100001));
-//$db->execute($insert_sql, array( 'CHAMPIONNAT POLICE', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3917\'}', 3917, 100001));
-$db->execute($insert_sql, array( 'Tournoi OPEN', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'4537\'}', 4537, 100001));
-$db->execute($insert_sql, array( 'Coupe Dom-Tom', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'4312\'}', 4312, 100001));
-$db->execute($insert_sql, array( 'Finales par classement', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3001\'}', 3001, 100001));
-$db->execute($insert_sql, array( 'Championnat FSGT', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3907\'}', 3907, 100001));
-$db->execute($insert_sql, array( 'Championnat de France Seniors', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3058\'}', 3058, 100001));
-$db->execute($insert_sql, array( 'Engagements Critérium Fédéral', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'4480\'}', 4480, 100001));
-$db->execute($insert_sql, array( 'Championnats de France Corpo.', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3062\'}', 3062, 100001));
-$db->execute($insert_sql, array( 'Championnats de France Jeunes', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3060\'}', 3060, 100001));
-$db->execute($insert_sql, array( 'Challenge Bernard Jeu', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3070\'}', 3070, 100001));
-$db->execute($insert_sql, array( 'Finales Individuelles', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3065\'}', 3065, 100001));
-$db->execute($insert_sql, array( 'Critérium fédéral', NULL, '1.00', 1, '{Ping action=\'individuelles\' idepreuve=\'1072\'}', 1072, 100001));
-$db->execute($insert_sql, array( 'Championnat des Jeunes FFTT', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'5721\'}', 5721, 100001));
-$db->execute($insert_sql, array( 'Championnat par équipes corpo', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'4544\'}', 4544, 100001));
-$db->execute($insert_sql, array( 'Changement de type', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'4972\'}', 4972, 100001));
-$db->execute($insert_sql, array( 'Interclubs Jeunes', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'3057\'}', 3057, 100001));
-$db->execute($insert_sql, array( 'Championnat France des Régions', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'3000\'}', 3000, 100001));
-$db->execute($insert_sql, array( 'Coupe Nationale Vétérans', NULL, '0.75', 0, '{Ping action=\'par-equipes\' idepreuve=\'3055\'}', 3055, 100001));
-$db->execute($insert_sql, array( 'Coupe de France des Clubs', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'5602\'}', 5602, 100001));
-$db->execute($insert_sql, array( 'Coupe Nationale Corporative', NULL, NULL, 0, '{Ping action=\'par-equipes\' idepreuve=\'3056\'}', 3056, 100001));
-$db->execute($insert_sql, array( 'Chpt France par équipes féminin', NULL, '1.00', 0, '{Ping action=\'par-equipes\' idepreuve=\'2012\'}', 2012, 100001));
-$db->execute($insert_sql, array( 'Chpt France par équipes masculin', NULL, '1.00', 0, '{Ping action=\'par-equipes\' idepreuve=\'1073\'}', 1073, 100001));
-$db->execute($insert_sql, array( 'Championnat de France FFSU/UNSS', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3874\'}', 3874, 100001));
-$db->execute($insert_sql, array( 'Challenge USCF', NULL, NULL, 1, '{Ping action=\'individuelles\' idepreuve=\'3884\'}', 3884, 100001));
-$db->execute($insert_sql, array( 'Championnats de France Vétérans', NULL, '1.00', 1, '{Ping action=\'individuelles\' idepreuve=\'3061\'}', 3061, 100001));
-
 #
 $dict = NewDataDictionary( $db );
 
@@ -429,7 +377,7 @@ $flds = "
 	clt C(255),
 	club C(255),
 	points N(6,3),
-	saison C(255),
+	saison C(10),
 	uploaded I(1)";
 
 // create it. 
@@ -453,7 +401,7 @@ $flds = "
 	vain C(255),
 	perd C(255),
 	forfait I(1), 
-	saison C(255),
+	saison C(10),
 	uploaded I(1)";
 
 // create it. 
@@ -465,7 +413,7 @@ $dict->ExecuteSQLArray($sqlarray);
 #
 $dict = NewDataDictionary( $db );
 $flds = "
-	licence I(11),
+	licence C(11),
 	idepreuve I(11),
 	saison C(10)";
 			
@@ -478,7 +426,7 @@ $dict->ExecuteSQLArray($sqlarray);
 $dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
-	licence I(11),
+	licence C(11),
 	idepreuve I(11),
 	iddivision I(11),
 	idorga I(11),
@@ -498,15 +446,25 @@ $dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
 	idequipe I(11),
-	saison C(255),
+	saison C(10),
 	code_compet C(3),
 	iddiv I(11),
 	idpoule I(11),
 	poule C(255),
-	clt I(2),
+	clt C(2),
 	equipe C(255),
 	joue I(4),
-	pts I(3) ";
+	pts I(3),
+	totvic I(3), 
+	totdef I(3), 
+	numero C(10), 
+	idclub I(10), 
+	vic I(3), 
+	def I(3), 
+	nul I(3), 
+	pf I(3), 
+	pg I(3), 
+	pp I(3)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_classement",
@@ -536,26 +494,414 @@ $flds = "
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 #
-/*
+
 #On créé une nouvelle table pour le tableau de bord
 #
-$flds = "
-	id I(11) AUTO KEY,
-	rank I(11),
-	name C(255),
-	status I(1),
-	hidden I(1)";
-$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_control_panel", $flds, $taboptarray);
-$dict->ExecuteSQLArray($sqlarray);
-# On insère des valeurs
-#On insère les valeurs dans la table
-$insert_sql = "INSERT INTO `demo_module_ping_control_panel` (`id`, `order`, `name`, `status`, `hidden`) VALUES (\', ?, ?, ?, ?)";
-$db->execute($insert_sql, array( '1', 'Compte et test connexion', 0, 0));
-*/
+		try {
+		    $ping_par_equipes_type = new CmsLayoutTemplateType();
+		    $ping_par_equipes_type->set_originator($this->GetName());
+		    $ping_par_equipes_type->set_name('Résultats Par Equipes');
+		    $ping_par_equipes_type->set_dflt_flag(TRUE);
+		    $ping_par_equipes_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_par_equipes_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_par_equipes_type->reset_content_to_factory();
+		    $ping_par_equipes_type->save();
+		}
+		   
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+		
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_par_equipes.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Par Equipes'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_par_equipes_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		//design pour les résultats d'une équipe
+		try {
+		    $ping_equipe_type = new CmsLayoutTemplateType();
+		    $ping_equipe_type->set_originator($this->GetName());
+		    $ping_equipe_type->set_name('Résultats pour une équipe');
+		    $ping_equipe_type->set_dflt_flag(TRUE);
+		    $ping_equipe_type->set_description('Tableau de classement et résultats de la poule');
+		    $ping_equipe_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_equipe_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_equipe_type->reset_content_to_factory();
+		    $ping_equipe_type->save();
+		}
+		   
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+		
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_equipe.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping clt et rslts pour une équipe'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_equipe_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		
+		//design pour tous les classements des équipes
+		try {
+		    $ping_clts_type = new CmsLayoutTemplateType();
+		    $ping_clts_type->set_originator($this->GetName());
+		    $ping_clts_type->set_name('Classements Club');
+		    $ping_clts_type->set_dflt_flag(TRUE);
+		    $ping_clts_type->set_description('Ping Classements des équipes du club');
+		    $ping_clts_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_clts_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_clts_type->reset_content_to_factory();
+		    $ping_clts_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_classements.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Classements des équipes du club'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_clts_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		
+		//design pour tous les classements des équipes
+		try {
+		    $ping_sitmens_type = new CmsLayoutTemplateType();
+		    $ping_sitmens_type->set_originator($this->GetName());
+		    $ping_sitmens_type->set_name('Situation Mensuelle');
+		    $ping_sitmens_type->set_dflt_flag(TRUE);
+		    $ping_sitmens_type->set_description('La situation mensuelle');
+		    $ping_sitmens_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_sitmens_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_sitmens_type->reset_content_to_factory();
+		    $ping_sitmens_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_sitmens.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Situation Mensuelle'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_sitmens_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+			
+		//Design pour la liste des joueurs
+		try {
+		    $ping_liste_type = new CmsLayoutTemplateType();
+		    $ping_liste_type->set_originator($this->GetName());
+		    $ping_liste_type->set_name('Liste Joueurs');
+		    $ping_liste_type->set_dflt_flag(TRUE);
+		    $ping_liste_type->set_description('Ping la liste des joueurs');
+		    $ping_liste_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_liste_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_liste_type->reset_content_to_factory();
+		    $ping_liste_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_liste_joueurs.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Liste Joueurs'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_liste_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		//fin de la liste des joueurs
+				
+		//Design pour les résultats de chaque joueur
+		try {
+		    $ping_playerresults_type = new CmsLayoutTemplateType();
+		    $ping_playerresults_type->set_originator($this->GetName());
+		    $ping_playerresults_type->set_name('Résultats par joueur');
+		    $ping_playerresults_type->set_dflt_flag(TRUE);
+		    $ping_playerresults_type->set_description('Ping Résultats Par Joueur');
+		    $ping_playerresults_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_playerresults_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_playerresults_type->reset_content_to_factory();
+		    $ping_playerresults_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_resultats_joueur.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Résultats Joueur'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_playerresults_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		//fin de la liste des joueurs
+					
+		//Design pour la situation mensuelle provisoire
+		try {
+		    $ping_sitprov_type = new CmsLayoutTemplateType();
+		    $ping_sitprov_type->set_originator($this->GetName());
+		    $ping_sitprov_type->set_name('Situation En Live');
+		    $ping_sitprov_type->set_dflt_flag(TRUE);
+		    $ping_sitprov_type->set_description('Ping Situation En Live');
+		    $ping_sitprov_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_sitprov_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_sitprov_type->reset_content_to_factory();
+		    $ping_sitprov_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_sitprov.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Situation En Live'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_sitprov_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		//fin de la situation mensuelle live
+						
+	//design pour les feuilles de rencontres
+
+	try {
+	    $ping_feuille_type = new CmsLayoutTemplateType();
+	    $ping_feuille_type->set_originator($this->GetName());
+	    $ping_feuille_type->set_name('feuille_rencontre');
+	    $ping_feuille_type->set_dflt_flag(TRUE);
+	    $ping_feuille_type->set_description('Ping Feuille Rencontre');
+	    $ping_feuille_type->set_lang_callback('Ping::page_type_lang_callback');
+	    $ping_feuille_type->set_content_callback('Ping::reset_page_type_defaults');
+	    $ping_feuille_type->reset_content_to_factory();
+	    $ping_feuille_type->save();
+	}
+
+	catch( CmsException $e ) {
+	    // log it
+	    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+	    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+	    return $e->GetMessage();
+	}
+
+	try {
+	    $fn = cms_join_path(dirname(__FILE__),'templates','orig_feuille_match.tpl');
+	    if( file_exists( $fn ) ) {
+	        $template = @file_get_contents($fn);
+	        $tpl = new CmsLayoutTemplate();
+	        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Feuille Rencontre'));
+	        $tpl->set_owner($uid);
+	        $tpl->set_content($template);
+	        $tpl->set_type($ping_feuille_type);
+	        $tpl->set_type_dflt(TRUE);
+	        $tpl->save();
+	    }
+	}
+	catch( \Exception $e ) {
+	  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+	  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+	  return $e->GetMessage();
+	}
+	//fin de la feuille de rencontre
+			
+		//design pour les tops flops	
+		try {
+		    $ping_topflop_type = new CmsLayoutTemplateType();
+		    $ping_topflop_type->set_originator($this->GetName());
+		    $ping_topflop_type->set_name('Top Flop');
+		    $ping_topflop_type->set_dflt_flag(TRUE);
+		    $ping_topflop_type->set_description('Ping Top Flop');
+		    $ping_topflop_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_topflop_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_topflop_type->reset_content_to_factory();
+		    $ping_topflop_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_topflop.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Top Flop'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_topflop_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		//fin des tops flops
+					
+		//design pour le SPID			
+		try {
+		    $ping_spid_type = new CmsLayoutTemplateType();
+		    $ping_spid_type->set_originator($this->GetName());
+		    $ping_spid_type->set_name('Spid');
+		    $ping_spid_type->set_dflt_flag(TRUE);
+		    $ping_spid_type->set_description('Ping Résultats Spid');
+		    $ping_spid_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_spid_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_spid_type->reset_content_to_factory();
+		    $ping_spid_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_spid.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Résultats Spid'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_spid_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}
+		//fin des résultats SPID
 #
 # Les indexs
 //on créé un index sur la table div_tours
-
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fftt_idpartie',
+	    cms_db_prefix().'module_ping_parties', 'idpartie',$idxoptarray);
+	       $dict->ExecuteSQLArray($sqlarray);
+#
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'spid_idpartie',
+		    cms_db_prefix().'module_ping_parties_spid', 'idpartie',$idxoptarray);
+		       $dict->ExecuteSQLArray($sqlarray);
 //on créé un index sur la table div_tours
 $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
@@ -583,10 +929,25 @@ $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'adversaires',
 #
 $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL('affectation',
-				    cms_db_prefix().'module_ping_participe_tours', 'licence, idepreuve, tour',$idxoptarray);
+				    cms_db_prefix().'module_ping_participe_tours', 'licence, idepreuve, tableau',$idxoptarray);
 $dict->ExecuteSQLArray($sqlarray);
-//mieux vaut créer un index sur la clé étrangère fk_id
-//$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
+#
+#
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL('unicite',
+				cms_db_prefix().'module_ping_recup_parties', 'licence',$idxoptarray);
+$dict->ExecuteSQLArray($sqlarray);
+#
+#
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL('id_compet',
+					    cms_db_prefix().'module_ping_type_competitions', 'idepreuve, idorga',$idxoptarray);
+$dict->ExecuteSQLArray($sqlarray);
+#
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL('unicite',
+				cms_db_prefix().'module_ping_equipes', 'numero_equipe, iddiv, idpoule',$idxoptarray);
+$dict->ExecuteSQLArray($sqlarray);
 #
 #
 // create a permission
@@ -595,15 +956,11 @@ $this->CreatePermission('Ping Set Prefs','Ping Set Prefs');
 $this->CreatePermission('Ping Manage user', 'Ping Manage user');
 $this->CreatePermission('Ping Delete', 'Ping Delete');
 #
-// create a preference
-//$this->SetPreference("mini_trancheA', '0');
-/* les victoires normales */
-
-#
 #    Pour les tâches CRON
 #
 $this->SetPreference('LastRecupSpid', '');
 $this->SetPreference('LastRecupFftt', '');
+$this->SetPreference('LastVerifAdherents', time());
 //$this->SetPreference('LastRecupResults', '');
 //$this->SetPreference('LastRecupRencontres', '');
 #
@@ -614,16 +971,7 @@ $this->SetPreference('phase', '1');
 $this->SetPreference('populate_calendar', 'Oui');
 $this->SetPreference('jour_sit_mens', '10');
 $this->SetPreference('affiche_club_uniquement', 'Oui');
-//$this->SetPreference('email_admin_ping','admin@localhost.com');
-//$this->SetPreference('email_succes', 'Oui');
-#
-#Préférences de l'application
-#
-#
-#Setup events
-//$this->CreateEvent('OnUserAdded');
-//$this->CreateEvent('OnUserDeleted');
-#
+
 //on insère les éléments par défaut
 #indexes
 

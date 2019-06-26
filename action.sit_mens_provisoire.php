@@ -7,7 +7,18 @@ global $themeObject;
 
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 $phase = $this->GetPreference('phase_en_cours');
-
+if(isset($params['template']) && $params['template'] != '')
+{
+	$template = $params['template'];
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Situation Mensuelle Live');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template situation provisoire introuvable');
+        return;
+    }
+    $template = $tpl->get_name();
+}
 $mois_courant = date('n');
 $jour_courant = date('j');
 
@@ -16,13 +27,9 @@ if($jour_courant < 10)
 	$mois_courant = $mois_courant-1;
 }
 
-//$mois_courant = 3;
 
-$query="SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence FROM ".cms_db_prefix()."module_ping_joueurs AS j  WHERE  j.actif='1' ";	
-
-//$query.=" GROUP BY joueur ORDER BY Total DESC";
+$query="SELECT CONCAT_WS(' ', j.nom, j.prenom) AS joueur, j.licence FROM ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.type='T' AND  j.actif='1' ";	
 $dbresult = $db->Execute($query);
-//echo $query;
 $rowclass= 'row1';
 $rowarray= array ();
 
@@ -73,7 +80,9 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 
-echo $this->ProcessTemplate('sitmens_prov.tpl');
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), null, null, $smarty);
+$tpl->display();
+//echo $this->ProcessTemplate('sitmens_prov.tpl');
 
 
 #

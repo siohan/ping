@@ -10,6 +10,18 @@ if(isset($params['saison']) && $params['saison'] !='')
 {
 	$saison_courante = $params['saison'];
 }
+if(isset($params['template']) && $params['template'] !="")
+{
+	$template = trim($params['template']);
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Top Flop');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template topflop introuvale');
+        return;
+    }
+    $template = $tpl->get_name();
+}
 //echo "la saison en paramètre : ".$params['saison'];
 //$saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 //on commence direct par la requete
@@ -99,7 +111,9 @@ $smarty->assign('items', $rowarray);
 $smarty->assign('getmore',$getmore);
 $smarty->assign('more',
 	$this->CreateFrontendLink($id, $returnid,'topFlop',$contents='Plus',array("perf"=>"top"),'','', $inline='true','',$targetcontentonly='true'));
-echo $this->ProcessTemplate('topflop.tpl');
+	$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+	$tpl->display();
+	//echo $this->ProcessTemplate('topflop.tpl');
 
 #
 #EOF

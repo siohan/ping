@@ -61,17 +61,14 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->maj_fftt= $row['maj_fftt'];
 	$onerow->spid= $row['spid'];
 	$onerow->spid_errors= $row['spid_errors'];
-	//$onerow->spid= $spid;
-	//$onerow->error_link= $this->CreateLink($id, 'defaultadmin',$returnid, 'Corriger', array("active_tab"=>"spid","submitfilter"=>"Ok","curplayer"=>$row['licence'],"error_only"=>"0"));
-	//$onerow->spid_errors = $spid_errors;
 	$onerow->spid_total= $row['spid_total'];
 	$onerow->maj_spid= $row['maj_spid'];
-	//$onerow->doedit= $this->CreateLink($id, 'edit_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']), $row);
+
 	if($row['actif'] =='1'){
-		$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('unable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
+		$onerow->editlink= $this->CreateLink($id, 'retrieve', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('unable'), '', '', 'systemicon'),array('retrieve'=>'desactivate','licence'=>$row['licence']));
 	} 
 	else {
-		$onerow->editlink= $this->CreateLink($id, 'enable_player', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('enable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
+		$onerow->editlink= $this->CreateLink($id, 'retrieve', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('enable'), '', '', 'systemicon'),array('retrieve'=>'activate','licence'=>$row['licence']));
 	}
 	
 	if($row['sit_mens'] =='')
@@ -80,7 +77,6 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	}
 	
 	$onerow->correction= $this->CreateLink($id, 'add_sit_mens', $returnid, 'Corriger',  array('licence'=>$row['licence']));
-	//$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, 'Désactiver',array('licence'=>$row['licence']));
 	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve', $returnid, 
 	  	$this->Lang('retrieve_sit_mens'), array("retrieve"=>"sit_mens",'sel'=>$row['licence']));
@@ -90,7 +86,7 @@ $this->CreateLink($id, 'retrieve_parties', $returnid,
 	$onerow->getpartiesspid= $this->CreateLink($id, 'retrieve_parties_spid', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_parties_spid'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_parties_spid', $returnid, 
 	  	$this->Lang('retrieve_parties_spid'), array('licence'=>$row['licence']));
-	//$onerow->deletelink= $this->CreateLink($id, 'delete_joueur', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
+	
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }

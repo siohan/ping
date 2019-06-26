@@ -29,7 +29,7 @@ $rowclass = '';
 $rowarray= array();
 $rowarray2 = array();
 $i = 0;
-$query = "SELECT DISTINCT iddivision FROM ".cms_db_prefix()."module_ping_participe_tours WHERE idepreuve = ?";//" AND tour = ? 
+$query = "SELECT DISTINCT iddivision, idorga FROM ".cms_db_prefix()."module_ping_participe_tours WHERE idepreuve = ?";//" AND tour = ? 
 if(isset($params['tour']) && $params['tour'] != '')
 {
 	$tour = $params['tour'];

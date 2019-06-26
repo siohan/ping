@@ -77,7 +77,7 @@ $smarty->assign('items3',$rowarray3);
 $smarty->assign('itemcount3', count($rowarray3));
 $smarty->assign('retour',
 	$this->CreateReturnLink($id, $returnid,$contents='Retour aux équipes'));
-$smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"equipes")));
+$smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("__activetab"=>"equipes")));
 $smarty->assign('all_results', 
 		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid, 'Récupérer tous les résultats', array("record_id"=>$record_id)));
 		
@@ -85,7 +85,7 @@ $smarty->assign('all_results',
 $smarty->assign('refresh_class',
 		$this->CreateLink($id, 'retrieve', $returnid,$contents="Récupérer ou mettre le classement à jour",array("retrieve"=>"classement_equipes","record_id"=>$record_id)));	
 //le classement de l'équipe
-$query2 = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
+$query2 = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
 $dbresult2= $db->Execute($query2, array($record_id,$saison));
 
 $rowarray = array();
@@ -107,6 +107,12 @@ if($dbresult2 && $dbresult2->RecordCount()>0)
 		$onerow2->equipe= $row2['equipe'];
 		$onerow2->joue= $row2['joue'];
 		$onerow2->pts= $row2['pts'];
+		$onerow2->vic= $row2['vic'];
+		$onerow2->nul= $row2['nul'];
+		$onerow2->def= $row2['def'];
+		$onerow2->pg= $row2['pg'];
+		$onerow2->pp= $row2['pp'];
+		$onerow2->pf= $row2['pf'];
 		($rowclass2 == "row1" ? $rowclass2= "row2" : $rowclass2= "row1");
 		$onerow2->rowclass2= $rowclass2;
 		$rowarray[]= $onerow2;

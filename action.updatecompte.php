@@ -14,8 +14,7 @@ $designation = '';//on initialise les messages d'erreurs
 
 if(isset($params['idAppli']) && $params['idAppli'] !='')
 {
-	$idAppli = $params['idAppli'];
-	
+	$idAppli = $params['idAppli'];	
 }
 else
 {
@@ -26,26 +25,22 @@ if(isset($params['motdepasse']) && $params['motdepasse'] !='')
 {
 	$motdepasse = $params['motdepasse'];
 	//on crypte le mot de passe 
-	$cde = hash('md5', $motdepasse, FALSE);
-		
+	$cde = hash('md5', $motdepasse, FALSE);		
 }
 else
 {
 	$error++;
-	$designation.=" Votre mot de passe est manquant.";
-	
+	$designation.=" Votre mot de passe est manquant.";	
 }
 
 
 if($this->GetPreference('serie') =='')
-{
-	
+{	
 	$serie = ping_admin_ops::random_serie(15);
 }
 else
 {
-		$serie = $this->GetPreference('serie');	
-	
+		$serie = $this->GetPreference('serie');		
 }
 if($error>0)
 {

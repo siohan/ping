@@ -1,144 +1,78 @@
 <?php
+
 if( !isset($gCms) ) exit;
-##############################################################
-#              SPID                                          #
-##############################################################
-//debug_display($params, 'Parameters');
 
-require_once(dirname(__FILE__).'/function.calculs.php');
-$saison = $this->GetPreference('saison_en_cours');
-
-$db = cmsms()->GetDb();
+$db =& $this->GetDb();
 global $themeObject;
+
+$smarty->assign('id', $this->Lang('id'));
+$smarty->assign('username', 'Joueur');
+$smarty->assign('points', 'Points');
+$saison = $this->GetPreference('saison_en_cours');
+/**/
+//$journee_sit_mens = $this->GetPreference('jour_sit_mens');
+$jour_sit_mens = (isset($journee_sit_mens)?$journee_sit_mens:'10');
+//echo $jour_sit_mens;
+/**/
 $mois_courant = date('n');
-/* on fait un formulaire de filtrage des résultats*/
-$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'spid')));
-//$smarty->assign('formstart',$this->CreateFormStart($id,'admin_spid_tab'));
-$error_only = '';
-$playerslist[$this->Lang('allplayers')] = '';
-$typeCompet = array();
-$typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT pts.epreuve, pts.date_event, j.licence,pts.numjourn , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties_spid AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY pts.date_event ASC,player ASC, pts.numjourn ASC";//"";
-//echo $query;
-$dbresult = $db->Execute($query, array($saison));
-while ($dbresult && $row = $dbresult->FetchRow())
-  {
-    	//$datelist[$row['date_event']] = $row['date_event'];
-    	$playerslist[$row['player']] = $row['licence'];
-	$typeCompet[$row['epreuve']] = $row['epreuve'];
-  }
-$calcul = $this->GetPreference('spid_calcul');
-$smarty->assign('prompt_tour',
-		$this->Lang('tour'));	
-$smarty->assign('input_compet',
-		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,(!empty($params['typeCompet'])?$params['typeCompet']:"")));
-$smarty->assign('input_player',
-		$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
-$smarty->assign('input_error_only',
-		$this->CreateInputCheckbox($id,'error_only',1,0));
-$smarty->assign('submitfilter',
-		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
-$smarty->assign('formend',$this->CreateFormEnd());
+$annee_courante = date('Y');
+$jour_courant = date('d');
+/**/
+$spid_ops = new spid_ops;
 
-$result= array();
-$parms = array();
-$query2 = "SELECT sp.id as record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur,sp.licence, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement,sp.statut, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
+$smarty->assign('attention_img', '<img src="../modules/Ping/images/warning.gif" alt="'.$this->Lang('missing_sit_mens').'" title="'.$this->Lang('missing_sit_mens').'" width="16" height="16" />');
 
-$parms['saison'] = $saison;
+$dbresult= array ();
+//SELECT * FROM ping_module_ping_recup_parties AS rec right JOIN ping_module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
+$query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence,rec.maj_spid, rec.maj_fftt, rec.sit_mens, rec.fftt, rec.spid,rec.spid_total,rec.spid_errors, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_recup_parties AS rec WHERE j.licence = rec.licence AND j.actif = '1' AND j.type = 'T' ORDER BY joueur ASC";
 
-if( isset($params['submitfilter'] ))
-{
-	
-	if ($curplayer !='')
-	{
-		$query2.=" AND sp.licence = ?";
-		$parms['licence'] = $curplayer;
-		
-	}
-	if( isset( $params['typeCompet']) && $params['typeCompet'] !='' )
-	{ 
-		//$this->SetPreference ( 'competChoisie', $params['typeCompet']);
-		$query2.=" AND sp.epreuve LIKE ?";
-		$parms['epreuve'] = $params['typeCompet'];
-	}
-	
-	if(isset($params['error_only']) && $params['error_only'] !='')
-	{
-		$query2.=" AND sp.classement = -sp.ecart OR sp.statut = '0'";
-	}
-	$query2.=" ORDER BY joueur ASC, sp.date_event ASC";
-}
-else
-{
-	$query2.=" AND MONTH(sp.date_event) = $mois_courant ";
-	$query2.=" ORDER BY joueur ASC, sp.date_event ASC";
-}
-
-$dbresult2= $db->Execute($query2, $parms);
-//echo $query2;
+$dbresult= $db->Execute($query);
 $rowclass= 'row1';
 $rowarray= array ();
-if ($dbresult2 && $dbresult2->RecordCount() > 0)
+if ($dbresult && $dbresult->RecordCount() > 0)
   {
-    while ($row= $dbresult2->FetchRow())
+    while ($row= $dbresult->FetchRow())
       {
+	$actif = $row['actif'];
 	$licence = $row['licence'];
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
-	$onerow->statut= $row['statut'];
-	$onerow->record_id= $row['record_id'];
+	$onerow->id= $row['id'];
 	$onerow->joueur= $row['joueur'];
-	$onerow->date_event= $row['date_event'];
-	$onerow->epreuve= $row['epreuve'];
-	$onerow->name= $row['name'];
-	$onerow->classement= $row['classement'];
-	$onerow->victoire= $row['victoire'];
-	if($calcul == 1)
-	{
-		$onerow->ecart= $row['ecart'];
-		$onerow->coeff= $row['coeff'];
-		$onerow->pointres= $row['pointres'];
-	}
-	$onerow->forfait= $row['forfait'];
-	$onerow->editlink= $this->CreateLink($id, 'edit_player_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['record_id']));
-	
-	if($this->CheckPermission('Ping Delete'))
-	{
-		$onerow->deletelink= $this->CreateLink($id, 'delete', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['record_id'], "type_compet"=>"spid", "licence"=>$row['licence']), $this->Lang('delete_confirm'));
-	}
-	
+	$onerow->licence= $row['licence'];
+	$onerow->spid= $row['spid'];
+	$onerow->spid_errors= $row['spid_errors'];
+	$onerow->spid_total= $row['spid_total'];
+	$onerow->points = $spid_ops->compte_spid_points($licence);
+	$onerow->maj_spid= date('d/m à H:i:s',$row['maj_spid']);	
+	$onerow->getpartiesspid= $this->CreateLink($id, 'retrieve', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('import'), '', '', 'systemicon'), array('retrieve'=>'spid_seul','licence'=>$row['licence']));
+	$onerow->view= $this->CreateLink($id, 'admin_details_spid', $returnid,$themeObject->DisplayImage('icons/system/view.gif', $this->Lang('view'), '', '', 'systemicon'), array("licence"=>$licence));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
       }
   }
-/**/
 
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 
+$smarty->assign('rafraichir', 
+		$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid,'Rafraichir les parties SPID', array("retrieve"=>"spid_all")));
+
+
+
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Mettre le Coeff à 0,5"=>"coeff05","Mettre le Coeff à 0,75"=>"coeff075","Mettre le Coeff à 1"=>"coeff1","Mettre le Coeff à 1,25"=>"coeff125","Mettre le Coeff à 1,5"=>"coeff15", "Récupérer situation mensuelle"=>"situation","Récupérer les parties du Spid"=>"spid_plus","Supprimer"=>"supp_spid");
-
+$articles = array("Récupérer situation mensuelle"=>"situation", "Récupérer les parties du Spid"=>"spid");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',
 		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
 
-			
-//faire apparaitre les points totaux et somme victoire en bas ? Ce serait pas mal
-/**/
-if($calcul == 1)
-{
-	echo $this->ProcessTemplate('spid.tpl');
-}
-else
-{
-	echo $this->ProcessTemplate('spid_sans.tpl');
-}
+echo $this->ProcessTemplate('recupparties.tpl');
+
 
 #
 # EOF

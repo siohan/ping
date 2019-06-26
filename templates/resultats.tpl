@@ -46,7 +46,14 @@ $(document).ready(function(){
 		<th>Clt</th>
 		<th>Equipe</th>
 		<th>Joués</th>
+		<th>G</th>
+		<th>N</th>
+		<th>P</th>
+		<th>PG</th>
+		<th>PP</th>
+		<th>PF</th>
 		<th>Pts</th>
+		
 	</tr>
  </thead>
  <tbody>
@@ -55,7 +62,13 @@ $(document).ready(function(){
 	<td>{$entry->clt}</td>
     <td>{$entry->equipe}</td>
     <td>{$entry->joue}</td>
-	<td>{$entry->pts}</td>
+<td>{$entry->vic}</td>
+<td>{$entry->nul}</td>
+<td>{$entry->def}</td>
+<td>{$entry->pg}</td>
+<td>{$entry->pp}</td>
+<td>{$entry->pf}</td>
+<td>{$entry->pts}</td>
     
   </tr>
 {/foreach}

@@ -3,6 +3,11 @@
 ###           RECUPERATION DES PARTIES SPID                                   ###
 #################################################################################
 if( !isset($gCms) ) exit;
+if (!$this->CheckPermission('Ping Use'))
+{
+	echo $this->ShowErrors($this->Lang('needpermission'));
+	return;
+}
 //debug_display($params, 'Parameters');
 $compteur = 0;
 $licence = '';
@@ -27,14 +32,21 @@ if($spid_calcul == 1)
 	$dbretour = $db->Execute($query, array($licence));
 	if ($dbretour && $dbretour->RecordCount() > 0)
 	{
-	    while ($row= $dbretour->FetchRow())
+	    	$service = new retrieve_ops;
+		$ping_ops = new ping_admin_ops;
+		$spid_ops = new spid_ops;
+		while ($row= $dbretour->FetchRow())
 	      	{
 			$compteur++;
 			$player = $row['player'];
 			$cat = $row['cat'];
 			//return $player;
-			$service = new retrieve_ops();
-			$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+			
+			$resultats = $service->spid_sans_calcul($licence);//,$player,$cat);
+			$ping_ops->compte_spid($licence);
+			$ping_ops->compte_spid_errors($licence);
+			$spid_ops->recalcul($licence);
+			
 			//var_dump($resultats);
 		}
 

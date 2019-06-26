@@ -2,7 +2,7 @@
 //ce fichier fait des actions de masse, il est appelé depuis l'onglet de récupération des infos sur les joueurs
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
-var_dump($params['sel']);
+//var_dump($params['sel']);
 $db =& $this->GetDb();
 if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
   {
@@ -13,9 +13,12 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 		switch($params['actiondemasse'])
 		{
 			case "unable" :
+			
+			$joueurs = new Joueurs;
 			foreach( $params['sel'] as $licence )
 	  		{
-	    			ping_admin_ops::unable_player( $licence );
+	    			$joueurs->desactivate($licence);
+			//	$ping_admin_ops::unable_player( $licence );
 	  		}
 			$this->SetMessage('Joueurs désactivés');
 			$this->RedirectToAdminTab('joueurs');
@@ -23,7 +26,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	
 			case "situation" :
 			
-			$service = new retrieve_ops();
+			$service = new retrieve_ops;
 			$message='Retrouvez toutes les infos dans le journal';
 			foreach( $params['sel'] as $licence )
 	  		{
@@ -85,7 +88,8 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			case "spid" :
 			//$saison_courante = $this->GetPreference('saison_en_cours');
 			$message='Retrouvez toutes les infos dans le journal';
-			$service = new retrieve_ops();
+			$service = new retrieve_ops;
+			$ping_ops = new ping_admin_ops;
 			$i=0;
 			if($this->GetPreference('spid_calcul') == 1)
 			{
@@ -103,11 +107,9 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 							//return $player;
 							
 							$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
-							if(($i %2) == 0)
-							{
-								sleep(1);
-							}
-							//var_dump($resultats);
+							$ping_ops->compte_spid($licence);
+							$ping_ops->compte_spid_errors($licence);
+							
 						}
 
 					}
@@ -173,6 +175,17 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			$this->SetMessage("$message");
 			$this->RedirectToAdminTab("spid");
 			break;
+			
+			case "spid_calcul" :
+			
+				$spid_ops = new spid_ops;
+				foreach( $params['sel'] as $record_id )
+		  		{
+					$spid_ops->recalcul_spid($record_id);
+				}
+				//$this->SetMessage("$message");
+				$this->RedirectToAdminTab("spid");
+			break;
 	
 			case "fftt_parties" :
 			//$saison_courante = $this->GetPreference('saison_en_cours');
@@ -230,7 +243,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			case "supp_spid" :
 			foreach( $params['sel'] as $record_id)
 			{
-				ping_admin_ops::supp_spid( $record_id );
+				$spid_ops = new spid_ops;$spid_ops->supp_spid( $record_id );
 			}
 			$message = 'Parties(s) SPID supprimée(s)';
 			$this->SetMessage("$message");

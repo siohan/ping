@@ -112,6 +112,6 @@ $saison = $this->GetPreference('saison_en_cours');
 		
 
 
-$this->Redirect($id,'participants', $returnid,array("idepreuve"=>$idepreuve));
+$this->Redirect($id,'admin_poules', $returnid,array("idepreuve"=>$idepreuve, "iddivision"=>$iddivision, "idorga"=>$idorga));
 
 ?>

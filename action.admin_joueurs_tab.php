@@ -34,7 +34,8 @@ $club_number = $this->GetPreference('club_number');
 $ligue = $this->GetPreference('ligue');
 $zone = $this->GetPreference('zone');
 $dep = $this->GetPreference('dep');
-
+$smarty->assign('inactifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Inactifs', array('actif'=>'0', "active_tab"=>"joueurs")));
+$smarty->assign('actifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Actifs', array('actif'=>'1', "active_tab"=>"joueurs")));
 if($club_number =='')
 {
 	$error_config++;
@@ -56,6 +57,7 @@ if($saison_courante != $saison_en_cours)
 	$error_config++;
 }
 //echo $error_config;
+//$smarty->assign('club', $this->CreateLink($id, 'retrieve', $returnid, 'infos club', array("retrieve"=>"club")));
 $smarty->assign('alertConfig', $error_config);
 $smarty->assign('alertCompte', $error_compte);
 $smarty->assign('saison_en_cours', $saison_en_cours);
@@ -68,27 +70,22 @@ $mois_courant = date('n');
 $annee_courante = date('Y');
 
 
-//on fait les requetes pour les compets !
-$query = "SELECT count(*) AS nombre, idorga FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idorga != '100001' GROUP BY idorga";
-$dbresult = $db->Execute($query);
-if ($dbresult && $dbresult->RecordCount() == 0)
-  {
-	
-    while ($row= $dbresult->FetchRow())
-      {
-	//echo $row['idorga'];
-	if($row['idorga'] == $dep && $row['nombre'] == 0)
-	{
-		$smarty->assign('compet_dep', $this->CreateLink($id, 'retrieve_compet', $returnid, $contents='Récupérer les compétitons départementales',array('idorga'=>$row['idorga'])));
-		$smarty->assign('nb_dep', '0');
-	}
-	
-      }
-  }
-
 $result= array ();
 //SELECT * FROM ".cms_db_prefix()."module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
-$query= "SELECT id, CONCAT_WS(' ',nom, prenom) AS joueur, licence, actif, sexe, birthday FROM ".cms_db_prefix()."module_ping_joueurs  ORDER BY joueur ASC";
+$query= "SELECT id,CONCAT_WS(' ',nom, prenom) AS joueur, licence, actif, sexe, type, certif, validation,cat FROM ".cms_db_prefix()."module_ping_joueurs ";
+$actif = 1;
+if(isset($params['actif']) && $params['actif'] == 0)
+{
+	$query.=" WHERE actif = 0";
+	$act = 0;
+}
+else
+{
+	$query.=" WHERE actif = 1";
+	$act = 1;
+}
+$query.=" ORDER BY joueur ASC";
+$smarty->assign('act', $act);
 $dbresult= $db->Execute($query);
 $rowclass= 'row1';
 $rowarray= array();
@@ -100,23 +97,22 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$actif = $row['actif'];
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
-	$onerow->id= $row['id'];
 	$onerow->licence= $row['licence'];
 	$onerow->joueur= $row['joueur'];
 	$onerow->actif= $row['actif'];
+	$onerow->type= $row['type'];
 	$onerow->sexe= $row['sexe'];
-	$onerow->birthday= $row['birthday'];
-	$onerow->view_contacts= $this->CreateLink($id,'view_contacts', $returnid,$themeObject->DisplayImage('icons/topfiles/myaccount.gif', $this->Lang('view_contacts'), '', '', 'systemicon'),array('licence'=>$row['licence']));
-	$onerow->doedit= $this->CreateLink($id, 'add_joueur', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array('licence'=>$row['licence']));
-	
-		if($row['actif'] =='1')
-		{
-			$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('unable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
-		}
-		else 
-		{
-			$onerow->editlink= $this->CreateLink($id, 'enable_player', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('enable'), '', '', 'systemicon'),array('licence'=>$row['licence']));
-		}
+	$onerow->certif= $row['certif'];
+	$onerow->validation= $row['validation'];
+	$onerow->cat= $row['cat'];
+	if($row['actif'] =='1')
+	{
+		$onerow->actif= $this->CreateLink($id, 'retrieve', $returnid, $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('unable'), '', '', 'systemicon'),array('retrieve'=>'desactivate','licence'=>$row['licence']));
+	}
+	else 
+	{
+		$onerow->actif= $this->CreateLink($id, 'retrieve', $returnid, $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('enable'), '', '', 'systemicon'),array('retrieve'=>'activate','licence'=>$row['licence']));
+	}
 	//$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, 'Désactiver',array('licence'=>$row['licence']));
 	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, 'Situation mensuelle', array('licence'=>$row['licence']));
 	$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, 'Parties disputées', array('licence'=>$row['licence']));
@@ -134,15 +130,6 @@ $smarty->assign('retrieve_users',
 $this->CreateLink($id, 'retrieve', $returnid, 
 		  $this->Lang('retrieve_users'), 
 		  array("retrieve"=>"users")));
-
-$msg = '';
-if(isset($params['message']) && $params['message'] !='')
-{
-	$message = $params['message'];
-	$msg = $message;
-	$smarty->assign('msg',$message);
-}
-
 
 
 $smarty->assign('form2start',

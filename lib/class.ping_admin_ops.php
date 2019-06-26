@@ -22,13 +22,13 @@ class ping_admin_ops
 {
    function __construct() {}
 
-  public static function ecrirejournal($now,$status, $designation,$action)
+  public static function ecrirejournal($status, $designation,$action)
   {
     $db = cmsms()->GetDb();
 	
     //Now remove the article
-    $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status,designation, action) VALUES ('', ?, ?, ?, ?)";
-    $db->Execute($query, array($now, $status, $designation,$action));
+    $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup ( datecreated, status,designation, action) VALUES ( NOW(), ?, ?, ?)";
+    $db->Execute($query, array($status, $designation,$action));
     
     
   }
@@ -350,85 +350,10 @@ public function CalculPointsIndivs($ecart,$victoire) {
 }
 
 
-public static function supp_spid($record_id)
-  {
-    $db = cmsms()->GetDb();
-	$ping = cms_utils::get_module('Ping');
-	$saison = $ping->GetPreference('saison_en_cours');
-    	//on fait la maj dans la table recup_parties, donc on récupère le N° de licence
-	$query2 = "SELECT licence FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
-	$dbresult2 = $db->Execute($query2,array($record_id));
-	$row2 = $dbresult2->FetchRow();
-	$licence2 = $row2['licence'];
-    	//Now remove the entry
-    	$query = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
-    	$result = $db->Execute($query, array($record_id));
-		//si la requete fonctionne on met la table recup_parties à jour
-		if($result)
-		{
-			$query3 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET spid = spid-1 WHERE licence = ? AND saison = ?";
-			$db->Execute($query3, array($licence2, $saison));
-		}
-    
 
 
-
-  }
-
-
-public static function compte_spid($licence)
-{
-	global $gCms;
-	$db = cmsms()->GetDb();
-	$ping_ops = new ping_admin_ops();
-	$ping = cms_utils::get_module('Ping');
-	$saison = $ping->GetPreference('saison_en_cours');
-	$query = "SELECT count(*) AS spid FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND saison = ?";
-	$dbresult = $db->Execute($query, array($licence,$saison));
-	$row = $dbresult->FetchRow();
-	$nb = $row['spid'];
-//	$ping_ops->maj_recup_parties($licence,$nb,$table='SPID');
-	
-
-}
-public static function compte_spid_errors($licence)
-{
-	global $gCms;
-	$db = cmsms()->GetDb();
-	$mois_courant = date('m');
-	$ping = cms_utils::get_module('Ping');
-	$ping_ops = new ping_admin_ops();
-	$saison = $ping->GetPreference('saison_en_cours');
-	$query = "SELECT count(*) AS spid_errors FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND saison = ? AND MONTH(date_event) = ? AND statut = 0";
-	$dbresult = $db->Execute($query, array($licence,$saison,$mois_courant));
-	if($dbresult && $dbresult->RecordCount()>0)
-	{
-		$row = $dbresult->FetchRow();
-		$spid_errors = $row['spid_errors'];
-		$nb = $spid_errors;
-		$ping_ops->maj_recup_parties($licence,$nb,$table='SPID_ERRORS');
-		return $spid_errors;
-	}
-	
-
-}
 ##
-public static function compte_fftt($licence)
-{
-	global $gCms;
-	$db = cmsms()->GetDb();
-	$ping = cms_utils::get_module('Ping');
-	$ping_ops = new ping_admin_ops();
-	$saison = $ping->GetPreference('saison_en_cours');
-	$query = "SELECT count(*) AS fftt FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ?";
-	$dbresult = $db->Execute($query, array($licence,$saison));
-	$row = $dbresult->FetchRow();
-	$nb = $row['fftt'];
-	$ping_ops->maj_recup_parties($licence,$nb,$table='FFTT');
-	//return $fftt;
 
-}
-##
 public static function player_exists($licence)
 {
 	global $gCms;
@@ -448,12 +373,23 @@ public static function player_exists($licence)
 	{
 		global $gCms;
 		$db = cmsms()->GetDb();
-		
-		$aujourdhui = date('Y-m-d');
+		$ping_ops = new ping_admin_ops;
+		$player = $ping_ops->player_exists($licence);
+		$aujourdhui = time();
+		$ping = cms_utils::get_module('Ping');
+		$saison = $ping->GetPreference('saison_en_cours');
 		if($table == 'SPID')
 		{
-			$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ?, spid = ? WHERE licence= ?";
-			$dbresult = $db->Execute($query, array($aujourdhui,$nb,$licence));			
+			if(true == $player)
+			{
+				$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ?, spid = ? WHERE licence= ?";
+				$dbresult = $db->Execute($query, array($aujourdhui,$nb,$licence));
+			}
+			else
+			{
+				$query = "INSERT INTO  ".cms_db_prefix()."module_ping_recup_parties (saison, licence, maj_spid, spid) VALUES (?, ?, ?, ?, ?)";
+				$dbresult = $db->Execute($query, array($saison, $licence,$nb,$aujourdhui));
+			}			
 		}
 		elseif($table == 'FFTT')
 		{
@@ -476,11 +412,6 @@ public static function player_exists($licence)
 
 	}
 ##
-public static function search_player_licence($name)
-{
-	
-//end of function
-}
 
 public static function get_name($nom)
 {
@@ -549,43 +480,7 @@ public static function get_name($nom)
 }
 // cette fonction recherche les points de la situation mensuelle d'un joueur du club ds la bdd
 
-/*
-public static function array_code_compet($idepreuve,$date_debut,$date_fin)
-{
-	global $gCms;
-	$db = cmsms()->GetDb();
-	$ping = cms_utils::get_module('Ping');
-	
-		$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE idepreuve = ? AND date_debut BETWEEN  ? AND ?";
-		$dbresultat4 = $db->Execute($query4,array($idepreuve, $date_debut,$date_fin));
-	
-	
-	$row4 = $dbresultat4->GetRows();
-	$lignes = $dbresultat4->RecordCount();
-	if($lignes >0)
-	{
-		
-	
-		//echo $lignes."<br />";
-		//echo $row4[1][licence];
-		$lic = array();
-		$i=0;
 
-		for($i=0;$i<=$lignes;$i++)
-		{
-			$tab[$i] = $row4[$i]['licence'];
-		
-			array_push($lic,$tab[$i]);
-			//$licen = array();
-			//$licen = substr(implode(", ", $lic), 0, -3);
-			//$licen = implode(", ", $lic);
-		}
-		return $lic;
-	}
-//end of function
-
-}
-*/
 public static function delete_teamresult($record_id)
   {
     $db = cmsms()->GetDb();
@@ -641,7 +536,7 @@ public static function CalculEcart($ecart)
 	elseif($ecart <= -400 && $ecart > -500){$ecart = -8; return $ecart; }
 	elseif($ecart <= -500){$ecart = -9; return $ecart; }
 }
-function tag($id,$idepreuve,$indivs,$date_debut ='',$date_fin='')
+function tag($idepreuve,$indivs,$date_debut ='',$date_fin='')
 {
 	
 			$db  = cmsms()->GetDb();
@@ -657,19 +552,17 @@ function tag($id,$idepreuve,$indivs,$date_debut ='',$date_fin='')
 			}
 			$tag.=" idepreuve='$idepreuve'";
 			
-				if(isset($date_debut) && $date_debut !='')
-				{
-					$tag.= " date_debut='$date_debut'";
-				}
-				if(isset($date_fin) && $date_fin !='')
-				{
-					$tag.= " date_fin='$date_fin'";
-				}
+			if(isset($date_debut) && $date_debut !='')
+			{
+				$tag.= " date_debut='$date_debut'";
+			}
+			if(isset($date_fin) && $date_fin !='')
+			{
+				$tag.= " date_fin='$date_fin'";
+			}
 			$tag.="}";
 			
-			$sqlarray = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET tag = ? WHERE id = ?";
-			$db->Execute($sqlarray, array($tag,$id));
-			//unset($tag);
+			
 			return $tag;
 		
 
@@ -720,7 +613,7 @@ function tag_equipe($record_id)
 			return $tag;		
 	
 }
-
+//détermine le coefficient d'une épreuve
 public function coeff ($epreuve,$senior)
 {
 	$db  = cmsms()->GetDb();
@@ -828,6 +721,7 @@ public static function delete_journal($journalid)
 
     
   }
+//récupère les données d'un jour depuis la bdd adversaires
 function get_adv_pts($nom_reel1,$prenom_reel,$mois_event,$annee_courante)
 {
 	$db = cmsms()->GetDb();
@@ -850,15 +744,15 @@ function get_adv_pts($nom_reel1,$prenom_reel,$mois_event,$annee_courante)
 	}
 		
 }
-
+//met à jour la date de dernière mise à jour des parties spid
 function update_recup_parties ($licence)
 {
 	$db = cmsms()->GetDb();
-	$aujourdhui = date('Y-m-d');
+	$aujourdhui = time();
 	$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ? WHERE licence = ?";
 	$dbresult = $db->Execute($query,array($aujourdhui,$licence));
 }
-
+//retourne le code d'une compétition depuis son nom
 function code_compet($epreuve)
 {
 	$db = cmsms()->GetDb();
@@ -929,7 +823,7 @@ function add_sit_mens ($licence2, $nom, $prenom, $categ, $point,$apoint,$clglob,
 		$status = 'Ok';
 		$designation = "Situation ok pour ".$nom." ".$prenom;
 		$action = 'mass_action';
-		$journal = $this->ecrirejournal($now,$status, $designation,$action);
+		$journal = $this->ecrirejournal($status, $designation,$action);
 		return true;
 
 	}
@@ -938,27 +832,24 @@ function add_sit_mens ($licence2, $nom, $prenom, $categ, $point,$apoint,$clglob,
 		return false;
 	}
 }
-public static function get_sit_mens($licence, $mois_event, $annee_courante)
+//récupère les points de la situation mensuelle d'un joueur pour le mois et l'année courante
+public static function get_sit_mens($licence)
 {
 	global $gCms;
 	$db = cmsms()->GetDb();
-	$adherents = cms_utils::get_module('adherents');
-	$ping = cms_utils::get_module('Ping');
-	$saison = $ping->GetPreference('saison_en_cours');
+	$mois_event = date('m');
+	$annee_courante = date('Y');
 	$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND annee = ?";
 	$dbresult = $db->Execute($query, array($licence,$mois_event,$annee_courante));
-	//si la situation mensuelle du joueur du club n'existe pas ?
-	//alors on n'enregistre pas le résultat et on le signale
-		if ($dbresult && $dbresult->RecordCount() > 0)
-		{
-			$row = $dbresult->FetchRow();
-			$retour_sit_mens = $row['points'];
-			
-		}
-		else
-		{
-			$retour_sit_mens = FALSE;
-		}
+	if ($dbresult && $dbresult->RecordCount() > 0)
+	{
+		$row = $dbresult->FetchRow();
+		$retour_sit_mens = $row['points'];			
+	}
+	else
+	{
+		$retour_sit_mens = FALSE;
+	}
 	return $retour_sit_mens;
 //end of function
 }
@@ -1126,6 +1017,7 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 		
 		
 	}
+//retourne le nom de la compet depuis son code
 	public static function nom_compet($idepreuve)
 	{
 		global $gCms;
@@ -1136,8 +1028,10 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 		{
 			$row = $dbresult->FetchRow();
 			$libelle = $row['name'];
+			
+				return $libelle;
 		}
-		return $libelle;
+	
 
 	}
 	//Cette fonction liste les épreuves par équipes
@@ -1273,7 +1167,32 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 			return FALSE;
 		}
 	}
-
+	//détermine si la compétiton est individuelle ou non
+	function is_indivs($idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT indivs, name FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+		$dbresult = $db->Execute($query, array($idepreuve));
+		if($dbresult)
+		{
+			$row = $dbresult->FetchRow();
+			$indivs = $row['indivs'];
+			$name = $row['name'];
+			if ($indivs == 1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
 
 	
 

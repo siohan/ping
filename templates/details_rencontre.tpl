@@ -13,12 +13,13 @@
 {else}
 <!-- début du deuxième gabarit-->
 {* ceci est le gabarit pour les autres conditions *}
-{foreach from=$items  item=entry}
 
-	<h3>Les résultats du {$entry->date_event|date_format:"%d/%m/%Y"}</h3>
-		<table id="tableau" class="table table-bordered">
+{foreach from=$items  item=entry}
+<h3>Les résultats du {$entry->date_event|date_format:"%d/%m/%Y"}</h3>
+		<table  class="table table-bordered">
+			
 			{foreach from=$prods_{$entry->valeur} item=donnee}
-				<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td>{if $donnee->uploaded == '1'}<td>{$donnee->details}</td>{/if}</tr>
+				<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td>{if true == $donnee->uploaded}<td>{$donnee->details}</td>{/if}</tr>
 			{/foreach}
 		</table>
 	

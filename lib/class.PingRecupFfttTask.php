@@ -15,9 +15,9 @@ class PingRecupFfttTask implements CmsRegularTask
    public function test($time = '')
    {
 
-      // Instantiation du module
-      $ping = cms_utils::get_module('Ping');
-$interval =  $ping->GetPreference('fftt_interval');
+      	// Instantiation du module
+      	$ping = cms_utils::get_module('Ping');
+	//$interval =  $ping->GetPreference('fftt_interval');
 
       // Récupération de la dernière date d'exécution de la tâche
       if (!$time)
@@ -28,7 +28,7 @@ $interval =  $ping->GetPreference('fftt_interval');
       $last_execute = $ping->GetPreference('LastRecupFftt');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 30*60 ) >= $last_execute && $interval < 365)//toutes les dix minutes
+      if( $last_execute >= ($time - 900) ) return FALSE; // hardcoded to 15 minutes
       {
          return TRUE;
       }
@@ -50,10 +50,11 @@ $interval =  $ping->GetPreference('fftt_interval');
       	// Ce qu'il y a à exécuter ici
 	//echo "coucou";
 	//on récupère la saison en cours
-	$db = $ping->GetDb();
+	$db = cmsms()->GetDb();
 	$saison = $ping->GetPreference('saison_en_cours');
-	$query = "SELECT j.licence FROM ".cms_db_prefix()."module_ping_recup_parties AS rp,".cms_db_prefix()."module_ping_joueurs AS j WHERE j.licence = rp.licence AND j.actif='1' AND rp.maj_fftt < NOW()-INTERVAL 3 DAY AND rp.saison = ? ORDER BY rp.maj_fftt DESC LIMIT 25 ";
-      	$dbresult = $db->Execute($query, array($saison));
+	//$query = "SELECT j.licence FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j WHERE j.licence = rp.licence AND j.actif='1' AND rp.maj_fftt < NOW()-INTERVAL 3 DAY AND rp.saison = ? ORDER BY rp.maj_fftt DESC LIMIT 25 ";
+      	$query = "SELECT licence  FROM ".cms_db_prefix()."module_ping_recup_parties WHERE maj_fftt < UNIX_TIMESTAMP()-25 AND saison = ? ORDER BY maj_fftt DESC LIMIT 25 ";
+	$dbresult = $db->Execute($query, array($saison));
 	//on a donc les n licences pour faire la deuxième requete
 	//on commence à boucler
 	if($dbresult && $dbresult->RecordCount()>0)  //la requete est ok et il y a des résultats
@@ -61,7 +62,7 @@ $interval =  $ping->GetPreference('fftt_interval');
 		//on instancie la classe Service
 		
 		
-		$service = new retrieve_ops();
+		$service = new retrieve_ops;
 
 		while($row = $dbresult->FetchRow())
 		{
@@ -69,9 +70,13 @@ $interval =  $ping->GetPreference('fftt_interval');
 			$retrieve = $service->retrieve_parties_fftt($licence);
 			sleep(1);
 		}
-		
+		return true; // Ou false si ça plante	
 	}
-	return true; // Ou false si ça plante
+	else
+	{
+		return false;
+	}
+	//return true; // Ou false si ça plante
 	
 	
 	
@@ -96,7 +101,8 @@ $interval =  $ping->GetPreference('fftt_interval');
 
    public function on_failure($time = '')
    {
-      $ping->Audit('','Ping','Pas de récup FFTT');
+      $ping = cms_utils::get_module('Ping');
+	$ping->Audit('','Ping','Pas de récup FFTT');
    }
 
 }

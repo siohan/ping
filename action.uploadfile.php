@@ -6,7 +6,7 @@
  
 if (!isset($gCms)) 
 	exit ();
-
+debug_display($params, 'Parameters');
 /**
 * This module
 */
@@ -27,7 +27,7 @@ if (!$this->CheckPermission($sMod .' Add') || !$this->CheckPermission($sMod .' E
 
 $aConfig = cmsms()->GetConfig();
 
-$sSelectFile = (isset($params['file'])) ? $params['file'] : -1;	
+$sSelectFile = (isset($params['newfile'])) ? $params['newfile'] : -1;	
 
 $bError = 0;
 $sResponse = '';

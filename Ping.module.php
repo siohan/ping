@@ -2,13 +2,13 @@
 
 #-------------------------------------------------------------------------
 # Module : Ping - 
-# Version : 0.6.3, Sc
+# Version : 0.7, Sc
 # Auteur : Claude SIOHAN
 #-------------------------------------------------------------------------
 /**
  *
  * @author Claude SIOHAN
- * @since 0.3
+ * @since 0.1
  * @version $Revision: 3827 $
  * @modifiedby $LastChangedBy: Claude
  * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 28 Juil 2015) $
@@ -20,7 +20,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.6.5'; }  
+  function GetVersion() { return '0.7'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'Claude SIOHAN'; } 
   function GetAuthorEmail() { return 'claude.siohan@gmail.com'; }
@@ -41,7 +41,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-	return array('Adherents'=>'0.2.5','CGCalendar'=>'2.5', 'CGJobMgr'=>'1.3.6');
+	return array('CGCalendar'=>'2.6', 'CGJobMgr'=>'1.3.6', 'CGSimpleSmarty'=>'2.2.1');
   }
 
   
@@ -127,6 +127,8 @@ class Ping extends CMSModule
 	$this->SetParameterType('retrieve', CLEAN_STRING);
 	$this->SetParameterType('direction', CLEAN_STRING);
 	$this->SetParameterType('numero_equipe', CLEAN_STRING);
+	$this->SetParameterType('template',CLEAN_STRING);
+	$this->SetParameterType('display',CLEAN_STRING);
 
 }
 
@@ -156,7 +158,51 @@ public function get_tasks()
 return $obj; 
 }
 
+final public static function page_type_lang_callback($str)
+    {
+        $mod = cms_utils::get_module(__CLASS__);
+        if( is_object($mod) ) return $mod->Lang('type_'.$str);
+    }
 
+    public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
+    {
+        if( $type->get_originator() != __CLASS__ ) throw new CmsLogicException('Cannot reset contents for this template type');
+
+        $fn = null;
+        switch( $type->get_name() ) {
+        case 'feuille_rencontre':
+            $fn = 'orig_feuille_match.tpl';
+            break;
+        case 'Top Flop':
+            $fn = 'orig_topflop.tpl';
+            break;
+	case 'Résultats Par Equipes':
+            $fn = 'orig_par_equipes.tpl';
+            break;
+	case 'Résultats pour une équipe':
+            $fn = 'orig_equipe.tpl';
+            break;
+	case 'Classements Club':
+            $fn = 'orig_classements.tpl';
+            break;
+	case 'Situation Mensuelle':
+            $fn = 'orig_sitmens.tpl';
+            break;
+	case 'Liste Joueurs':
+            $fn = 'orig_liste_joueurs.tpl';
+            break;
+	case 'Résultats par joueur':
+            $fn = 'orig_resultats_joueur.tpl';
+            break;
+	case 'Spid':
+            $fn = 'orig_spid.tpl';
+            break;
+
+        }
+
+        $fn = cms_join_path(dirname(__FILE__),'templates',$fn);
+        if( file_exists($fn) ) return @file_get_contents($fn);
+    }
 
   function GetEventDescription ( $eventname )
   {

@@ -24,35 +24,35 @@ $result= array ();
 $query = "SELECT pou.id AS tour_id, dv.libelle,dv.idorga,pou.idepreuve,pou.iddivision, pou.tour, pou.tableau, pou.date_debut, pou.date_fin,pou.uploaded_parties,pou.uploaded_classement FROM ".cms_db_prefix()."module_ping_divisions AS dv, ".cms_db_prefix()."module_ping_div_tours AS pou WHERE dv.idepreuve = pou.idepreuve AND dv.iddivision = pou.iddivision AND dv.saison = pou.saison AND pou.saison = ?";//" ORDER BY dv.iddivision,pou.tour ASC";
 $parms['saison'] = $saison;
 	
-	if (isset($params['idepreuve']) && $params['idepreuve'] !='')
-	{
-		$nb_params++;
-		$idepreuve = $params['idepreuve'];
-		$query.=" AND pou.idepreuve = ?";
-		$parms['idepreuve'] = $idepreuve;
-	}
-	if(isset($params['iddivision']) && $params['iddivision'] != '')
-	{
-		$iddivision = $params['iddivision'];
-		$query.=" AND pou.iddivision = ?";
-		$parms['iddivision'] = $iddivision;
-		$nb_params++;
-	}
-	if(isset($params['idorga']) && $params['idorga'] != '')
-	{
-		$idorga = $params['idorga'];
-		$nb_params++;
-	}
+if (isset($params['idepreuve']) && $params['idepreuve'] !='')
+{
+	$nb_params++;
+	$idepreuve = $params['idepreuve'];
+	$query.=" AND pou.idepreuve = ?";
+	$parms['idepreuve'] = $idepreuve;
+}
+if(isset($params['iddivision']) && $params['iddivision'] != '')
+{
+	$iddivision = $params['iddivision'];
+	$query.=" AND pou.iddivision = ?";
+	$parms['iddivision'] = $iddivision;
+	$nb_params++;
+}
+if(isset($params['idorga']) && $params['idorga'] != '')
+{
+	$idorga = $params['idorga'];
+	$nb_params++;
+}
 $query.=" ORDER BY pou.tour ASC";	
-	
-	if($nb_params >0)
-	{
-		$dbresult= $db->Execute($query, $parms);
-	}
-	else
-	{
-		$dbresult= $db->Execute($query);
-	}
+
+if($nb_params >0)
+{
+	$dbresult= $db->Execute($query, $parms);
+}
+else
+{
+	$dbresult= $db->Execute($query);
+}
 	
 $smarty->assign('recup_tours',
 		$this->CreateLink($id, 'retrieve_div_results',$returnid, $contents="Récupération", array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision)));
@@ -69,17 +69,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
   {
     while ($row= $dbresult->FetchRow())
       {
-	/*
-	$indivs = $row['indivs'];
-	if($indivs==1){$type='I';}else{$type='E';}
-	*/
 	$idorga = $row['idorga'];
-	/*
-	if($idorga == $fede){$orga = 'Fédération';}
-	if($idorga == $zone){$orga = 'Zone';}
-	if($idorga == $ligue){$orga = 'Ligue';}
-	if($idorga == $dep){$orga = 'Comité';}
-	*/
 	$uploaded_parties = $row['uploaded_parties'];
 	$uploaded_classement = $row['uploaded_classement'];
 	$onerow= new StdClass();
@@ -89,16 +79,10 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->iddivision= $row['iddivision'];
 	$onerow->tour= $row['tour'];
 	$onerow->tableau = $row['tableau'];
-	$onerow->libelle= $row['libelle'];
-	
+	$onerow->libelle= $row['libelle'];	
 	$onerow->date_debut = $row['date_debut'];
 	$onerow->date_fin = $row['date_fin'];
-	//$onerow->uploaded_parties= $row['uploaded_parties'];
-	//$onerow->indivs= $row['indivs'];
-	//$onerow->orga = $orga;
-	//$onerow->idepreuve = $row['idepreuve'];
-	
-	//$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poule',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision']));
+	$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poule',array("direction"=>"Poule","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision']));
 	$onerow->classement= $this->CreateLink($id, 'admin_div_classement', $returnid, 'Classement',array("idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"tableau"=>$row['tableau'],"tour"=>$row['tour'],"idorga"=>$idorga));
 	if($uploaded_parties ==1)
 	{
@@ -123,7 +107,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
   }
 else
 {
-	$this->Redirect($id, 'retrieve_div_results',$returnid,array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision,"licence"=>$licence));
+	$this->Redirect($id, 'retrieve_div_results',$returnid,array("direction"=>"tour","idepreuve"=>$idepreuve, "iddivision"=>$iddivision,"id_orga"=>$idorga));
 }
 
 $smarty->assign('itemsfound', $this->Lang('resultsfound'));

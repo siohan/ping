@@ -14,7 +14,18 @@ else
 {
 	$message = 'Un pb est survenu';
 }
-
+if(isset($params['template']) && $params['template'] !="")
+{
+	$template = trim($params['template']);
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::feuille_rencontre');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template résultats pour une équipe introuvable');
+        return;
+    }
+    $template = $tpl->get_name();
+}
 
 
 //le numéro de l'équipe est ok, on continue
@@ -39,6 +50,11 @@ if($dbresult && $dbresult->RecordCount()>0)
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
 	}
+}
+else
+{
+	//pas de résultats ? on télécharge celui-ci ?
+	
 }
 
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
@@ -77,8 +93,8 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 	$smarty->assign('itemcount2', count($rowarray2));
 	$smarty->assign('items2', $rowarray2);
 }
-/**/
-echo $this->ProcessTemplate('details.tpl');
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+$tpl->display();
 #
 #EOF
 #

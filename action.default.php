@@ -2,6 +2,35 @@
    if (!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
+$template = null;
+if( isset($params['template']) ) {
+    $template = trim($params['template']);
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Résultats Par Equipes');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'No default template found');
+        return;
+    }
+    $template = $tpl->get_name();
+}
+$display = "default";
+if(isset($params['display']) && $params['display'] != "")
+{
+	$display = $params['display'];
+}
+switch($display)
+{
+	case "default":
+		require(__DIR__.'/action.par-equipes.php');
+	break;
+	
+	case "equipe":
+		
+		require(__DIR__.'/action.equipe.php');
+	break;
+}
+/*
 $nom_equipes = $this->GetPreference('nom_equipes');
 $saison = $this->GetPreference('saison_en_cours');
 $db =& $this->GetDb();
@@ -112,5 +141,6 @@ if(isset($params['template']) && $params['template'] == '1')
 {
 echo $this->ProcessTemplate('details_rencontre.tpl');
 }
+*/
 #
 ?>

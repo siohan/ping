@@ -22,39 +22,23 @@ $(document).ready(function(){
 //]]>
 </script>
 
-{if isset($formstart) }
-<fieldset>
-  <legend>Filtres</legend>
-  {$formstart}
-  <div class="pageoverflow">
-	<p class="pagetext">Type Compétition:</p>
-    <p class="pageinput">{$input_compet} </p>
-    <p class="pagetext">Date:</p>
-    <p class="pageinput">{$input_date} </p>
-	<p class="pagetext">Joueur :</p>
-    <p class="pageinput">{$input_player} </p>
-    <p class="pagetext">&nbsp;</p>
-    <p class="pageinput">{$submitfilter}{$hidden|default:''}</p>
-  </div>
-  {$formend}
-</fieldset>
-{/if}
-<div class="pageoptions"><p class="pageoptions">{$retrieve_all_parties}</p></div>
+
+<div class="pageoptions"><p class="pageoptions">{$retour} | {$rafraichir} | {$retrieve_fftt}</p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
-{$form2start}
+<h3>Parties validées de {$joueur}</h3>
+
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
   <tr>
 	<th>Id</th>
 	<th>N° Journée</th>
 	<th>Date</th>
-	<th>Joueur</th>
 	<th>Vic/def</th>
 	<th>Adversaire</th>
 	<th>Points</th>
-	<th colspan="2">Actions</th>
-  <th><input type="checkbox" id="selectall" name="selectall"></th>
+	<th>Coeff</th>
+	<th>Code</th> 
   </tr>
  </thead>
  <tbody>
@@ -63,20 +47,14 @@ $(document).ready(function(){
     <td>{$entry->id}</td>
 	<td>{$entry->numjourn}</td>
 	<td>{$entry->date_event|date_format:"%d/%m"}
-    <td>{$entry->joueur}</td>
     <td>{$entry->vd}</td>
     <td>{$entry->advnompre} </td>
 	<td>{$entry->pointres} </td>
-    <td>{$entry->editlink}</td>
-    <td>{$entry->deletelink}</td>
-	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" class="select"></td>
+    <td>{$entry->coefchamp}</td>
+    <td>{$entry->codechamp}</td>
   </tr>
 {/foreach}
  </tbody>
 </table>
-<!-- SELECT DROPDOWN -->
-<div class="pageoptions" style="float: right;">
-<br/>{$actiondemasse}{$submit_massaction}
-  </div>
-{$form2end}
+
 {/if}

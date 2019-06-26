@@ -10,45 +10,15 @@ $fede = '100001';
 $zone = $this->GetPreference('zone');
 $ligue = $this->GetPreference('ligue');
 $dep = $this->GetPreference('dep');
-$typeCompet = array("Toutes"=>0,"Nationales"=>$fede,"Zone"=>$zone,"Régionales"=>$ligue, "Départementales"=>$dep);
-$indivOrNot = array("Indifférent"=>10,"Par équipes"=>0,"Individuelles"=>1);
-$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'', array('active_tab'=>'compets')));
-$smarty->assign('input_compet',
-		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,(!empty($params['typeCompet'])?$params['typeCompet']:"")));
-$smarty->assign('input_indivs',
-		$this->CreateInputDropdown($id,'indivOrNot',$indivOrNot,-1,(!empty($params['indivOrNot'])?$params['indivOrNot']:"")));
-		$smarty->assign('submitfilter',
-		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
-$smarty->assign('formend',$this->CreateFormEnd());
 
 $smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Zone indivs', array("retrieve"=>"compets","idorga"=>$zone,"type"=>"I")));
-$smarty->assign('zone_equipes', $this->CreateLink($id, 'retrieve',$returnid,'Zone Equipes', array("retrieve"=>"compets","idorga"=>$zone,"type"=>"E")));
 $smarty->assign('Nat_indivs', $this->CreateLink($id, 'retrieve',$returnid,'National indivs', array("retrieve"=>"compets","idorga"=>$fede,"type"=>"I")));
-$smarty->assign('Nat_equipes', $this->CreateLink($id, 'retrieve',$returnid,'National Equipes', array("retrieve"=>"compets","idorga"=>$fede,"type"=>"E")));
 $smarty->assign('ligue_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Ligue indivs', array("retrieve"=>"compets","idorga"=>$ligue,"type"=>"I")));
-$smarty->assign('ligue_equipes', $this->CreateLink($id, 'retrieve',$returnid,'Ligue Equipes', array("retrieve"=>"compets","idorga"=>$ligue,"type"=>"E")));
 $smarty->assign('dep_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Dép indivs', array("retrieve"=>"compets","idorga"=>$dep,"type"=>"I")));
-$smarty->assign('dep_equipes', $this->CreateLink($id, 'retrieve',$returnid,'Dép Equipes', array("retrieve"=>"compets","idorga"=>$dep,"type"=>"E")));
 $parms = array();
-$result= array ();
+$result= array();
 $query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE id > ?";
 $parms['id'] = 0;
-if( isset($params['submitfilter'] ))
-{
-	if (isset( $params['typeCompet']) && $params['typeCompet'] !='' && $params['typeCompet'] != 0)
-	{
-		$query.=" AND idorga = ? ";
-		$parms['typeCompet'] = $params['typeCompet'];
-		
-	}
-	if(isset( $params['indivOrNot']) && $params['indivOrNot'] !='' && $params['indivOrNot'] != 10)
-	{
-		$query.=" AND indivs = ?";
-		$parms['indivOrNot'] = $params['indivOrNot'];
-	}
-	
-
-}
 
 	$query.=" ORDER BY name ASC";
 //echo $query;

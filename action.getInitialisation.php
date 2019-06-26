@@ -17,17 +17,15 @@ $stall= 1; //on est dans l'installation
 	//step=1 Installation du compte et test de la connexion FFTT
 	//step=2 On récupère le numéro du club, on déduit la ligue, la zone et le comité ? Oui !
 	
-$zone = $this->GetPreference('zone');
-$ligue = $this->GetPreference('ligue');
-$dep = $this->GetPreference('dep');
 	
-		
+	
 if(isset($params['step']) && $params['step'] != '')
 {
 	$step = $params['step'];
 }	
 $smarty->assign('step', $step);
-$service = new Servicen();
+$service = new Servicen;
+$ret_ops = new retrieve_ops;
 //echo $step;
 switch($step)
 {
@@ -45,10 +43,10 @@ switch($step)
 		}
 		elseif($initialisation == '1')
 		{
-
-					$smarty->assign('reussite', TRUE);
-					$smarty->assign('lien',
-							$this->CreateLink($id,'defaultadmin',$returnid, $contents='Continuez', array("active_tab"=>"configuration", "stall"=>$stall, "step"=>"2")));
+					//on récupère les organismes pour préparer le formulaire avec la zone
+					$ret_ops->organismes();
+					$this->SetMessage('La FFTT a acceptée votre identification');
+					$this->Redirect($id, 'add_edit_club_number', $returnid);
 		}
 		else
 		{
@@ -57,48 +55,41 @@ switch($step)
 							$this->CreateLink($id,'defaultadmin',$returnid, $contents='Revenir', array("active_tab"=>"compte")));
 		}
 	break;
+	
 	case "2" : 
 		//on va récupérer les épreuves des différentes ligues, zones et comités
-		//on prend donc les préférences obtenues précédemment
 		//on a le numéro du club avec lequel on peut faire bcp de choses...
+		//récupération des données utiles
+		$club_number = $this->GetPreference('club_number');
+		$ligue = substr($club_number, 0,2);
+		$departement = substr($club_number, 2, 2);
+		$ping_admin_ops = new ping_admin_ops();
+		$chercher_ligue = $ping_admin_ops->chercher_ligue($ligue);
+		$chercher_departement = $ping_admin_ops->chercher_departement($departement);	
+		$retrieve_club_detail = $ret_ops->retrieve_detail_club($club_number);
+		$this->SetPreference('ligue', $chercher_ligue);
+		$this->SetPreference('dep', $chercher_departement);
+		//on commence par les compets 
+		
+		$comp_dep_eq = $ret_ops->retrieve_compets($departement,$type="E");
+		$comp_dep_indivs = $ret_ops->retrieve_compets($departement,$type="I");
+		$comp_ligue_eq = $ret_ops->retrieve_compets($ligue,$type="E");
+		$comp_dep = $ret_ops->retrieve_compets($ligue,$type="I");
+		$comp_fftt_eq = $ret_ops->retrieve_compets($idorga='100001',$type="E");
+		$comp_fftt_indivs = $ret_ops->retrieve_compets($idorga='100001',$type="I");
 		
 		
-		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de zone",array("idorga"=>$zone,"stall"=>"1","step"=>"2") ));
+		$this->RedirectToAdminTab('adherents');//>assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de zone",array("idorga"=>$zone,"stall"=>"1","step"=>"2") ));
 		
 		
 	
 	break;
-	case "3" : 
-		//on va récupérer les épreuves des différentes ligues, zones et comités
-		//on prend donc les préférences obtenues précédemment
-		
-		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de ligue",array("idorga"=>$ligue,"stall"=>"1","step"=>"3") ));
-		
-		
 	
-	break;
-	case "4" : 
-		//on va récupérer les épreuves des différentes ligues, zones et comités
-		//on prend donc les préférences obtenues précédemment
-		
-		$smarty->assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de département",array("idorga"=>$dep,"stall"=>"1","step"=>"4") ));
-		
-		
-	
-	break;
-	case "5":
-		$smarty->assign('retourAdmin', $this->CreateLink($id, 'defaultadmin',$returnid,$contents="Retour à l'administration du module"));
-};
-
-
-
-
-
-	
-
+}
 
 
 echo $this->ProcessTemplate('initialisation.tpl');
+
 #
 #EOF
 #

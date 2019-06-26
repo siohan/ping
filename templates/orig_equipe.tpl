@@ -6,7 +6,13 @@
 	<tr>
 		<th>Clt</th>
 		<th>Equipe</th>
-		<th>Joue</th>
+		<th>Joués</th>
+		<th>G</th>
+		<th>N</th>
+		<th>P</th>
+		<th>PG</th>
+		<th>PP</th>
+		<th>PF</th>
 		<th>Pts</th>
 	</tr>
  </thead>
@@ -16,6 +22,12 @@
 	<td>{$entry->clt}</td>
     <td>{$entry->equipe}</td>
     <td>{$entry->joue}</td>
+	<td>{$entry->vic}</td>
+	<td>{$entry->nul}</td>
+	<td>{$entry->def}</td>
+	<td>{$entry->pg}</td>
+	<td>{$entry->pp}</td>
+	<td>{$entry->pf}</td>
 	<td>{$entry->pts}</td>
     
   </tr>
@@ -30,7 +42,13 @@
 {if $itemscount_{$entry->valeur} >0 }
   	<table class="table table-bordered">
 		{foreach from=$prods_{$entry->valeur} item=donnee}
-		{*<pre>{$prods_{$entry->valeur}|var_dump}</pre>*}	<tr><td>{$donnee->equa}</td><td>{$donnee->scorea}</td><td>{$donnee->scoreb}</td><td>{$donnee->equb}</td></tr>
+			<tr>
+				<td>{$donnee->equa}</td>
+				<td>{$donnee->scorea}</td>
+				<td>{$donnee->scoreb}</td>
+				<td>{$donnee->equb}</td>
+				{if true == $donnee->uploaded}<td>{$donnee->details}</td>{/if}
+			</tr>
 		{/foreach}
 		</table>
 		
@@ -41,4 +59,3 @@
  </tbody>
 </table>
 {/if}
-

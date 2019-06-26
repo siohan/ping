@@ -19,42 +19,11 @@ $smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve',$returnid,$conte
 
 //$saisondropdown['.$saison_actuelle.'] = $saison_actuelle;
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));
-if(isset($params['stall']) && $params['stall'] =="1" )
-{
-	$stall = $params['stall'];	
-}
-else
-{
-	$stall = '0';
-}
-$smarty->assign('stall', $this->CreateInputHidden($id,'stall',$value=$stall));
+
+
 $smarty->assign('endform', $this->CreateFormEnd ());
 // Construire la liste dynamiquement avec une requete
-$tableau = array('Z','L','D');//on oublie la Fédé qui est tjs à 100001
-foreach($tableau as $valeur)
-{
-	$query = "SELECT idorga, libelle FROM ".cms_db_prefix()."module_ping_organismes WHERE scope = ?";
-	$dbresult = $db->Execute($query,array($valeur));
-	while ($dbresult && $row = $dbresult->FetchRow())
-	  {
-		if($valeur =='L')
-		{
-			$listorga_L[$row['libelle']] = $row['idorga'];
-		}
-		elseif($valeur =='Z')
-		{
-			$listorga_Z[$row['libelle']] = $row['idorga']; 
-		}
-		else
-		{
-			$listorga_D[$row['libelle']] = $row['idorga']; 
-		}
-	    	
-	  }
-	
-}
 
-$smarty->assign('input_zone',$this->CreateInputDropdown($id, 'zone', $listorga_Z,-1,$this->GetPreference('zone'),50,255));
 $saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
 $smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));
 //$smarty->assign('title_email_subject',$this->Lang('email_subject'));
@@ -66,13 +35,28 @@ $choix['Avec'] = '1';
 
 $smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
 
-$smarty->assign('spid', $this->CreateInputDropdown($id,'spid',$choix,-1,$selectedvalue=$this->GetPreference('spid_calcul')));
+//$smarty->assign('spid', $this->CreateInputDropdown($id,'spid',$choix,-1,$selectedvalue=$this->GetPreference('spid_calcul')));
 $smarty->assign('input_populate_calendar',$this->CreateInputDropdown($id,'populate_calendar',$items,-1,$selectedvalue=$this->GetPreference('populate_calendar'),50,255));
 $smarty->assign('input_affiche_club_uniquement',$this->CreateInputDropdown($id,'affiche_club_uniquement',$items,-1,$this->GetPreference('affiche_club_uniquement'),50,255));
-
-
 $smarty->assign('submit', $this->CreateInputSubmit ($id, 'optionssubmitbutton', $this->Lang('submit')));
 
+//on teste si le module Adhérents est présent et activé!
+
+
+$smarty->assign('startformexport', $this->CreateFormStart ($id, 'admin_export_adherents', $returnid, array("obj"=>"export_members")));
+$smarty->assign('exportsubmit', $this->CreateInputSubmit ($id, 'exportsubmitbutton', 'Exporter les joueurs vers le module Adhérents'));
+$smarty->assign('endformexport', $this->CreateFormEnd ());
+
+//un autre formulaire d'export pour les convocations
+$smarty->assign('startformexport2', $this->CreateFormStart ($id, 'admin_export_compos', $returnid, array("obj"=>"export_epreuves")));
+$smarty->assign('exportsubmit2', $this->CreateInputSubmit ($id, 'exportsubmitbutton2', 'Exporter les épreuves'));
+$smarty->assign('endformexport2', $this->CreateFormEnd ());
+
+//formulaire d'exportation des équipes vers le module compositions
+//un autre formulaire d'export pour les convocations
+$smarty->assign('startformexport3', $this->CreateFormStart ($id, 'admin_export_compos', $returnid, array("obj"=>"export_epreuves")));
+$smarty->assign('exportsubmit3', $this->CreateInputSubmit ($id, 'exportsubmitbutton2', 'Exporter les équipes'));
+$smarty->assign('endformexport3', $this->CreateFormEnd ());
 // Display the populated template
 echo $this->ProcessTemplate ('adminprefs.tpl');
 

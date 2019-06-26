@@ -107,7 +107,32 @@ $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_control_panel" );
 $dict->ExecuteSQLArray($sqlarray);
 
+// templates
+$this->DeleteTemplate();
 
+// preferences
+$this->RemovePreference();
+
+
+
+try {
+    $types = CmsLayoutTemplateType::load_all_by_originator($this->GetName());
+    if( is_array($types) && count($types) ) {
+        foreach( $types as $type ) {
+            $templates = $type->get_template_list();
+            if( is_array($templates) && count($templates) ) {
+                foreach( $templates as $template ) {
+                    $template->delete();
+                }
+            }
+            $type->delete();
+        }
+    }
+}
+catch( Exception $e ) {
+    // log it
+    audit('',$this->GetName(),'Uninstall Error: '.$e->GetMessage());
+}
 
 // remove the sequence
 $db->DropSequence( cms_db_prefix()."module_ping_seq" );
@@ -117,15 +142,6 @@ $this->RemovePermission('Ping Use');
 $this->RemovePermission('Ping Set Prefs');
 $this->RemovePermission('Ping Manage user');
 $this->RemovePermission('Ping Delete');
-
-// remove the preference
-$this->RemovePreference();
-
-
-// Events
-$this->RemoveEvent( 'OnUserAdded' );
-$this->RemoveEvent( 'OnUserDeleted' );
-
 
 
 // put mention into the admin log

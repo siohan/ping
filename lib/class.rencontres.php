@@ -139,5 +139,20 @@ class rencontres
 			return FALSE;
 		}
 	}
+	//détermine si les détails d'une rencontre ont été uploadé
+	function is_uploaded($renc_id)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT fk_id FROM ".cms_db_prefix()."module_ping_feuilles_rencontres WHERE fk_id = ?";
+		$dbresult = $db->Execute($query, array($renc_id));
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }//end of class
 ?>

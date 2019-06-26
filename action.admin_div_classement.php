@@ -80,7 +80,7 @@ if(isset($params['idorga']) && $params['idorga'] != '')
 
 }
 $saison = $this->GetPreference('saison_en_cours');
-$smarty->assign('returnlink', $this->CreateLink($id,'participants_tours',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("active_tab"=>"divisions","idepreuve"=>$idepreuve,"licence"=>$licence)));
+$smarty->assign('returnlink', $this->CreateLink($id,'admin_poules',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("idepreuve"=>$idepreuve, "iddivision"=>$iddivision, "idorga"=>$idorga)));
 //on construit un lie de récupération des résultats
 $smarty->assign('recup_classement',
 		$this->CreateLink($id,'retrieve_div_results', $returnid, $contents='Récupérer le classement', array("direction"=>"classement","idepreuve"=>$idepreuve,"iddivision"=>$iddivision,"tableau"=>$tableau,"tour"=>$tour,"idorga"=>$idorga)));
@@ -100,7 +100,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
     while ($row= $dbresult->FetchRow())
       {
 	$club = $row['club'];
-	if(substr_count($club,$nom_equipes)>0)
+	if(substr_count($club,'Fouesnant')>0)
 	{
 		$mon_club = 1;
 	}

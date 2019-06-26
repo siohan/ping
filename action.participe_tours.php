@@ -3,7 +3,7 @@ if( !isset($gCms) ) exit;
 ####################################################################
 ##                                                                ##
 ####################################################################
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 $type_compet = '';
 $idepreuve = '';
 $designation = '';
@@ -45,9 +45,10 @@ $saison = $this->GetPreference('saison_en_cours');
 	}
 	
 $db = $this->GetDb();
+/*
 //on va d'abord sélectionner ceux qui sont déjà affectés pour alléger la liste
 $exclus = array();
-$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe_tours WHERE  tour = ? AND saison = ?";
+$query = "SELECT licence, count(*) AS nb FROM ".cms_db_prefix()."module_ping_participe_tours WHERE  tour = ? AND saison = ?";
 $dbresult = $db->Execute($query, array($tour, $saison));
 $compte = $dbresult->RecordCount();
 if($dbresult && $dbresult->RecordCount()>0)
@@ -60,13 +61,15 @@ if($dbresult && $dbresult->RecordCount()>0)
 var_dump($exclus);
 $licences = implode(',', $exclus);
 echo $licences;
-$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe  WHERE idepreuve = ? AND saison = ?";
+*/
+//$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe  WHERE idepreuve = ? AND saison = ?";
+$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs  WHERE actif = 1 AND type = 'T'";//" = ? AND saison = ?";
 if($compte >0)
 {
-	$query.= "AND licence NOT IN ($licences)";
+	$query.= " AND licence NOT IN ($licences)";
 }
-echo $query;
-$dbresult = $db->Execute($query, array($idepreuve, $saison));
+//echo $query;
+$dbresult = $db->Execute($query);//, array($idepreuve, $saison));
 
 	if(!$dbresult)
 	{

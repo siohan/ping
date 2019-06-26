@@ -10,17 +10,17 @@ $fede = '100001';
 $zone = $this->GetPreference('zone');
 $ligue = $this->GetPreference('ligue');
 $dep = $this->GetPreference('dep');
-
+$saison = $this->GetPreference('saison_en_cours');
 
 $smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Récupérer les compétitions individuelles', array("type"=>"I")));
 $smarty->assign('divisions_all',
 		$this->CreateLink($id,'retrieve_divisions',$returnid,'Récuperer toutes les divisions', array("all"=>TRUE)));
 $smarty->assign('tours_all', $this->CreateLink($id, 'retrieve_div_tours',$returnid,'Récupérer tous les tours ou poules', array("all"=>"1"),'', '', '',$addtext="class=\"button\""));
 $result= array ();
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE indivs = '1' ORDER BY name ASC";
+$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE id >0";//indivs = '1' ORDER BY name ASC";
 
 $dbresult= $db->Execute($query);
-$ping_ops = new ping_admin_ops();
+$ping_ops = new ping_admin_ops;
 
 //echo $query;
 $rowarray= array();
@@ -44,12 +44,18 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow->indivs= $row['indivs'];
 	$onerow->orga = $idorga;
 	$onerow->idepreuve = $row['idepreuve'];
-	$onerow->participants = $this->CreateLink($id, 'participe', $returnid, $themeObject->DisplayImage('icons/system/groupassign.gif', $this->Lang('groupassign'), '', '', 'systemicon'), array("idepreuve"=>$row['idepreuve']));
-	$onerow->nb_participants = $this->CreateLink($id, 'participants', $returnid, $ping_ops->nb_participants($row['idepreuve'], $saison), array("idepreuve"=>$row['idepreuve']));
+	if(true ==$indivs)
+	{
+		$onerow->participants = $this->CreateLink($id, 'participe', $returnid, $themeObject->DisplayImage('icons/system/groupassign.gif', $this->Lang('groupassign'), '', '', 'systemicon'), array("idepreuve"=>$row['idepreuve']));
+		$onerow->nb_participants = $this->CreateLink($id, 'participants', $returnid, $ping_ops->nb_participants($row['idepreuve'], $saison), array("idepreuve"=>$row['idepreuve']));
+	}
+	
+	
 	$onerow->natio = $this->CreateLink($id, 'retrieve',$returnid,$contents='National', array("retrieve"=>"divisions","idepreuve"=>$row['idepreuve'],"idorga"=>$fede));
 	$onerow->zone = $this->CreateLink($id, 'retrieve',$returnid,$contents='Zone', array("retrieve"=>"divisions","idepreuve"=>$row['idepreuve'],"idorga"=>$zone));
 	$onerow->ligue = $this->CreateLink($id, 'retrieve',$returnid,$contents='Ligue', array("retrieve"=>"divisions","idepreuve"=>$row['idepreuve'],"idorga"=>$ligue));
 	$onerow->dep = $this->CreateLink($id, 'retrieve',$returnid,$contents='Dép', array("retrieve"=>"divisions","idepreuve"=>$row['idepreuve'],"idorga"=>$dep));
+	/**/
 	//
 	$onerow->editlink = $this->CreateLink($id, 'edit_type_compet',$returnid,$themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'),array("record_id"=>$row['id']));
 	

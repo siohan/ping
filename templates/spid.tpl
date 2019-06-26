@@ -21,6 +21,9 @@ $(document).ready(function(){
 });
 //]]>
 </script>
+<div class="pageoptions"><p><span class="pageoptions warning">{$retour}</span></p></div>
+<div class="pageoptions"><p><span class="pageoptions warning">{$recup_all} | {$recalcul} | {$raz}</span></p></div>
+<div class="pageoptions"><p><span class="pageoptions warning">Merci de bien avoir récupérer les situations mensuelles en amont !</span></p></div>
 {if isset($formstart) }
 <fieldset>
   <legend>Filtres</legend>

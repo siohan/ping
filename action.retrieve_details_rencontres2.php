@@ -95,7 +95,7 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 								$$xjb = $tab2['joueur'][$i]['xjb'];//ex : $xja0 = '';
 								$$xcb = $tab2['joueur'][$i]['xcb'];
 								//on insère le tout dans la bdd
-								$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres (id, fk_id, xja, xca, xjb, xcb) VALUES ('', ?, ?, ?, ?, ?)";
+								$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_feuilles_rencontres ( fk_id, xja, xca, xjb, xcb) VALUES ( ?, ?, ?, ?, ?)";
 								$dbresult3 = $db->Execute($query3, array($record_id, $$xja,$$xca,$$xjb,$$xcb));
 							}
 							for($i=0;$i<$compteur_parties;$i++)
@@ -112,7 +112,15 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 								$$jb = $tab3['partie'][$i]['jb'];
 								$$scoreb = $tab3['partie'][$i]['scoreb'];
 								//on insère aussi dans la bdd
-								$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_rencontres_parties (id, fk_id, joueurA, scoreA, joueurB, scoreB) VALUES ('', ?, ?, ?, ?, ?)";
+								if($$scorea == '-')
+								{
+									$$scorea = 0;
+								}
+								if($$scoreb == '-')
+								{
+									$$scoreb = 0;
+								}
+								$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_rencontres_parties ( fk_id, joueurA, scoreA, joueurB, scoreB) VALUES ( ?, ?, ?, ?, ?)";
 								$dbresult4 = $db->Execute($query4, array($record_id, $$ja,$$scorea, $$jb, $$scoreb));
 
 							

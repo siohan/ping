@@ -125,14 +125,9 @@ if($error <1)
 			}
 			$query = "INSERT INTO ".cms_db_prefix()."module_ping_participe_tours(licence, idepreuve, iddivision,idorga, tour, tableau, saison) VALUES (?, ?, ?, ?, ?, ?, ?) ";
 			$dbresult = $db->Execute($query, array($licence, $idepreuve, $iddivision,$idorga, $tour, $tableau,$saison));
-			if($dbresult)
-			{
+			
 				$this->Redirect($id, 'participants_tours', $returnid, array("licence"=>$licence, "idepreuve"=>$idepreuve));
-			}
-			else
-			{
-				echo "Ko";
-			}
+			
 			
 		}
 		

@@ -21,7 +21,7 @@ $rowarray = array();
 	
 	
 $db = $this->GetDb();
-$query = "SELECT j.licence, CONCAT_WS(' ',j.nom, j.prenom ) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs AS j ORDER BY j.nom ASC ";
+$query = "SELECT j.licence, CONCAT_WS(' ',j.nom, j.prenom ) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs AS j WHERE actif = 1 AND type = 'T' ORDER BY j.nom ASC ";
 //echo $query;
 $dbresult = $db->Execute($query);
 
@@ -49,7 +49,7 @@ $dbresult = $db->Execute($query);
 			$rowarray[$licence]['participe'] = false;
 			
 			//on va chercher si le joueur est déjà dans la table participe
-			$query2 = "SELECT licence, idepreuve FROM ".cms_db_prefix()."module_ping_participe WHERE licence = ? AND idepreuve = ?";
+			$query2 = "SELECT licence, idepreuve FROM ".cms_db_prefix()."module_ping_participe_tours WHERE licence = ? AND idepreuve = ?";
 			//echo $query2;
 			$dbresultat = $db->Execute($query2, array($licence, $idepreuve));
 			

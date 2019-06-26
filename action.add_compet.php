@@ -27,7 +27,7 @@ $edit = 0;
 	if(isset($params['record_id']) && $params['record_id'] !="")
 	{
 		$record_id = $params['record_id'];
-		$edit = 1;//on est bien en trai d'éditer un enregistrement
+		$edit = 1;//on est bien en train d'éditer un enregistrement
 		//ON VA CHERCHER l'enregistrement en question
 		$query = "SELECT cal.id, tc.id AS index1, tc.idepreuve, tc.name,tc.indivs, cal.date_debut, cal.date_fin, cal.numjourn FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE cal.idepreuve = tc.idepreuve AND cal.id = ?";
 		$dbresult = $db->Execute($query, array($record_id));

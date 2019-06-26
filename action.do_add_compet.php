@@ -12,17 +12,26 @@ if (!isset($gCms)) exit;
 //pour l'instant pas d'erreur
 $error = 0;
 $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
+$redir = 0;
+$ping_ops = new ping_admin_ops;
 		$saison = $this->GetPreference('saison_en_cours');
 		$idepreuve = '';
 		if (isset($params['idepreuve']) && $params['idepreuve'] != '')
 		{
 			$idepreuve = $params['idepreuve'];
+			
 			//epreuve individuelle ou par équipes ?
-			$query = "SELECT indivs, name FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
-			$dbresult = $db->Execute($query, array($idepreuve));
-			$row = $dbresult->FetchRow();
-			$indivs = $row['indivs'];
-			$name = $row['name'];
+			if (true === $ping_ops->is_indivs($idepreuve))
+			{
+				//on choisit une autre redirection à la fin du fichier
+				$redir = 1;
+				$indivs = 1;
+			}
+			else
+			{
+				$indivs = 0;
+			}
+			
 		}
 		else
 		{
@@ -65,7 +74,7 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 			$record_id = $params['record_id'];
 			$edit = 1;//c'est un update
 		}
-		$tag = ping_admin_ops::tag($record_id,$idepreuve,$indivs,$date_debut,$date_fin);
+		$tag = $ping_ops->tag($record_id,$idepreuve,$indivs,$date_debut,$date_fin);
 		
 		//on calcule le nb d'erreur
 		if($error>0)
@@ -76,11 +85,12 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 		
 		if($edit == 0)
 		{
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (id,saison, idepreuve, date_debut, date_fin, numjourn,tag) VALUES ('',?,?, ?, ?, ?,?)";
+			$query = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (saison, idepreuve, date_debut, date_fin, numjourn,tag) VALUES (?, ?, ?, ?, ?,?)";
 			$dbresult = $db->Execute($query, array($saison,$idepreuve,$date_debut, $date_fin, $numjourn,$tag));
 			
 			//on insert aussi dans le module Calendrier
-			$calendar = retrieve_ops::insert_cgcalendar($name,$tag,$date_debut,$date_fin);
+			
+			//$calendar = $ping_ops->insert_cgcalendar($name,$tag,$date_debut,$date_fin);
 		}
 		else
 		{
@@ -111,13 +121,21 @@ $edit = 0;//pour savoir si on fait un update ou un insert; 0 = insert
 					$status = 'Ok';
 					$designation = "Une nouvelle date du calendrier a été entrée";
 					$action = 'do_add_compet';
-					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+					$ping_ops->ecrirejournal($now,$status, $designation,$action);
 				}
 			}
 			
 		
 
 $this->SetMessage('Date enregistrée ! Pensez à récupérer les divisions, poules et tours !');
-$this->RedirectToAdminTab('calendrier');
+if($redir == 1)
+{
+	$this->Redirect($id, 'indivs_divisions', $returnid, array("idepreuve"=>$idepreuve, "tour"=>$numjourn));
+}
+else
+{
+	$this->RedirectToAdminTab('calendrier');
+}
+
 
 ?>

@@ -8,8 +8,21 @@ $mois_courant = date('n');
 $annee_choisie = date('Y');
 $mois_choisi = '';
 $jour = date('d');
+$mois_maxi = date('m');
 $phase = $this->GetPreference('phase_en_cours');
 $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
+if(isset($params['template']) && $params['template'] !='')
+{
+	$template = $params['template'];
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Situation Mensuelle');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template situation mensuelle introuvable');
+        return;
+    }
+    $template = $tpl->get_name();
+}
 	if(isset($params['mois']) && $params['mois'] !='')
 	{
 		$mois_choisi = $params['mois'];
@@ -46,9 +59,9 @@ $saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPrefere
 	}
 
 	$smarty->assign('mois_precedent',
-			$this->CreateLink($id,'sit_mens',$returnid, '<< Précédent',array("mois"=>"$mois_precedent","saison"=>$saison_courante)));
+			$this->CreateLink($id,'sit_mens',$returnid, '<< Précédent',array("mois"=>"$mois_precedent","saison"=>$saison_courante, "template"=>$template)));
 	$smarty->assign('mois_suivant',
-			$this->CreateLink($id,'sit_mens',$returnid, 'Suivant >>', array("mois"=>"$mois_suivant","saison"=>$saison_courante) ));
+			$this->CreateLink($id,'sit_mens',$returnid, 'Suivant >>', array("mois"=>"$mois_suivant","saison"=>$saison_courante, "template"=>$template) ));
 
 
 $jour = date('j');
@@ -107,8 +120,9 @@ $smarty->assign('mois_choisi', $mois_en_fr);
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
-
-echo $this->ProcessTemplate('sitmens.tpl');
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+$tpl->display();
+//echo $this->ProcessTemplate('sitmens.tpl');
 
 
 #

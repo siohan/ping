@@ -3,7 +3,7 @@ if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/function.calculs.php');
 require_once(dirname(__FILE__).'/include/prefs.php');
-
+$retrieve = new retrieve_ops;
 $now = trim($db->DBTimeStamp(time()), "'");
 $query = "SELECT licence, CONCAT_WS(' ', nom, prenom) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif = '1'";
 $dbresult = $db->Execute($query);
@@ -19,8 +19,8 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$service = new retrieve_ops();
 		$licence = $row['licence'];
 		$joueur = $row['joueur'];
-		retrieve_ops::retrieve_parties_fftt("$licence");
-		sleep(1);
+		$ret = $retrieve->retrieve_parties_fftt("$licence");
+		//sleep(1);
      	}
 		
 		

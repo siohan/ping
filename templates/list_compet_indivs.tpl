@@ -1,6 +1,5 @@
-<div class="pageoptions"><p class="pageoptions">{$inscriptions} - {$engagements} - {$tours_all}</p></div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
   <tr>	
@@ -26,7 +25,7 @@
 	<td>{$entry->tag}</td>
 	<td>{$entry->nb_participants}</td>
 	<td>{$entry->participants}</td>
-<!--	<td>{$entry->natio}-{$entry->zone}-{$entry->ligue}-{$entry->dep}</td>-->
+	<td>{$entry->natio}-{$entry->zone}-{$entry->ligue}-{$entry->dep}</td>
 	<td>{$entry->editlink}</td>
 	<td>{$entry->deletelink}</td>
   </tr>
