@@ -115,7 +115,7 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 						$onerow3->equb = $row3['equb'];
 						$onerow3->scoreb = $row3['scoreb'];
 						$onerow3->uploaded = $renc_ops->is_uploaded($row3['renc_id']);//$uploaded;
-						$onerow3->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row3['renc_id']));
+						$onerow3->details= $this->CreateLink($id, 'details', $returnid, $contents='Détails', array('record_id'=>$row3['renc_id']));
 						$rowarray3[] = $onerow3;
 					}
 					$smarty->assign('prods_'.$i,$rowarray3);

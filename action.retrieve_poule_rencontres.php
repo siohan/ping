@@ -19,6 +19,7 @@ if(isset($params['cal']) && $params['cal'] = 'all')
 */
 if(isset($params['record_id']) && $params['record_id'] != '')
 {
+	$this->SetCurrentTab('equipes');
 	$record_id = $params['record_id'];
 	$eq = new equipes_ping;
 	$details = $eq->details_equipe($record_id);	
@@ -113,9 +114,10 @@ else
 
 	if($error >0)
 	{
+		$this->SetCurrentTab('equipes');
 		$message.="Paramètres manquants";
 		$this->Setmessage("$message");
-		$this->RedirectToAdminTab('equipes');
+		$this->RedirectToAdminTab();
 	}
 	else
 	{
@@ -125,7 +127,7 @@ else
 		$comptage = $i;
 		$status = 'Poules';
 		$designation.= "Mise à jour de ".$comptage." rencontres de la poule ".$idpoule;
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (datecreated, status, designation, action) VALUES (?, ?, ?, ?)";
 		$action = "retrieve_poules_rencontres";
 		$dbresult = $db->Execute($query, array($now,$status, $designation,$action));
 		if(!$dbresult)

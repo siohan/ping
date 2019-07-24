@@ -76,7 +76,7 @@ if($dbresultat3 && $dbresultat3->RecordCount()>0)
 $smarty->assign('items3',$rowarray3);
 $smarty->assign('itemcount3', count($rowarray3));
 $smarty->assign('retour',
-	$this->CreateReturnLink($id, $returnid,$contents='Retour aux équipes'));
+	$this->CreateLink($id, $returnid,$contents='Retour aux équipes'));
 $smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("__activetab"=>"equipes")));
 $smarty->assign('all_results', 
 		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid, 'Récupérer tous les résultats', array("record_id"=>$record_id)));

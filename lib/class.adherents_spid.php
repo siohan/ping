@@ -31,7 +31,6 @@ function liste_adherents_spid()
 		//paramètres nécessaires 
 		$var="club=".$club_number;
 		$lien = $service->GetLink($page,$var);
-		//var_dump( $lien );
 		//var_dump($lien);
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 		//var_dump($xml);
@@ -81,7 +80,8 @@ function liste_adherents_spid()
 		}
 }//fin de la fonction
 //génère un identifiant aléatoire de format integer
-function random_int($car) {
+function random_int($car) 
+{
 	$string = "";
 	$chaine = "123456789";
 	srand((double)microtime()*1000000);
@@ -89,7 +89,7 @@ function random_int($car) {
 		$string .= $chaine[rand()%strlen($chaine)];
 	}
 	return $string;
-  }
+}
 function ajouter_adherent_spid ($licence,$nom, $prenom)
 {
 	global $gCms;
@@ -232,7 +232,7 @@ function VerifyClub($club_number)
 			
 			$array = json_decode(json_encode((array)$xml), TRUE);
 			$lignes = count($array['club']);
-			echo $lignes;
+			//echo $lignes;
 			//return TRUE;
 			
 			///on initialise un compteur général $i
@@ -269,6 +269,7 @@ function VerifyClub($club_number)
 					$libelle = (isset($tab->libelle)?"$tab->libelle":"");
 					*/
 				}
+			return true;
 		}
 		
     }
@@ -330,13 +331,13 @@ function get_cat($genid)
 		return FALSE;
 	}
 }
-//récupère le nom et prénom du joueur
-function get_name($genid)
+//récupère le nom et prénom du joueur depuis la table joueurs du module Ping
+function get_name($licence)
 {
 	global $gCms;
 	$db = cmsms()->GetDb();
-	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS joueur FROM ".cms_db_prefix()."module_adherents_adherents WHERE genid = ?";
-	$dbresult = $db->Execute($query, array($genid));
+	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
+	$dbresult = $db->Execute($query, array($licence));
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
 		$row = $dbresult->FetchRow();

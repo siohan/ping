@@ -79,7 +79,7 @@ switch($step)
 		$comp_fftt_indivs = $ret_ops->retrieve_compets($idorga='100001',$type="I");
 		
 		
-		$this->RedirectToAdminTab('adherents');//>assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de zone",array("idorga"=>$zone,"stall"=>"1","step"=>"2") ));
+		$this->RedirectToAdminTab('joueurs');//>assign('compet_zone', $this->CreateLink($id, 'retrieve_compets', $returnid,$contents="récupérer les compétitons de zone",array("idorga"=>$zone,"stall"=>"1","step"=>"2") ));
 		
 		
 	
@@ -88,7 +88,7 @@ switch($step)
 }
 
 
-echo $this->ProcessTemplate('initialisation.tpl');
+//echo $this->ProcessTemplate('initialisation.tpl');
 
 #
 #EOF

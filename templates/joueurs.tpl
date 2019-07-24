@@ -36,7 +36,7 @@ $(document).ready(function(){
 
 {*Lien vers le formulaire de satisfaction *}
 
-<div class="pageoptions"><p class="pageoptions">{$club} - {$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;{$retrieve_users} | {if $act ==0}{$actifs}{else} {$inactifs}{/if}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$club} - {$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;{$retrieve_users} | <a href="{cms_action_url action=delete_all}">{admin_icon icon=delete}</a> {if $act ==0}{$actifs}{else} {$inactifs}{/if}</p></div>
 {if $itemcount > 0}
 	{$form2start}
 	<table border="0" cellspacing="0" cellpadding="0" class="pagetable">

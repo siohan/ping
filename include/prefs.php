@@ -58,6 +58,8 @@ for($i = 2013; $i<=$annee_courante; $i++)
 	$saison = $annee1.'-'.$annee2;
 	$saisondropdown[$saison]=$saison;
 }
+
+
 //var_dump($saisondropdown);
 //echo "année déduite : ". $saison_en_cours;
 #

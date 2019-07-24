@@ -344,7 +344,7 @@ class spid_ops
 		global $gCms;
 		$db = cmsms()->GetDb();
 		$ping = cms_utils::get_module('Ping');
-		$ping_ops = new ping_admin_ops();
+		$ping_ops = new ping_admin_ops;
 		$saison = $ping->GetPreference('saison_en_cours');
 		$query = "SELECT count(*) AS fftt FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ?";
 		$dbresult = $db->Execute($query, array($licence,$saison));

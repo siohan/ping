@@ -751,7 +751,7 @@ $dict->ExecuteSQLArray($sqlarray);
 		}
 
 		try {
-		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_sitprov.tpl');
+		    $fn = cms_join_path(dirname(__FILE__),'templates','orig_sit_prov.tpl');
 		    if( file_exists( $fn ) ) {
 		        $template = @file_get_contents($fn);
 		        $tpl = new CmsLayoutTemplate();

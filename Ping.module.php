@@ -38,12 +38,12 @@ class Ping extends CMSModule
 	
   }
   
-  
+  /*
   function GetDependencies()
   {
 	return array('CGCalendar'=>'2.6', 'CGJobMgr'=>'1.3.6', 'CGSimpleSmarty'=>'2.2.1');
   }
-
+*/
   
 
   function MinimumCMSVersion()
@@ -132,9 +132,11 @@ class Ping extends CMSModule
 
 }
 
-function InitializeAdmin()
+public function InitializeAdmin()
 {
-  	$this->SetParameters();
+  
+	 return parent::InitializeAdmin();
+	$this->SetParameters();
 	//$this->CreateParameter('pagelimit', 100000, $this->Lang('help_pagelimit'));
 	$this->CreateParameter('tour', 1, $this->Lang('help_tour'));
 	$this->CreateParameter('type_compet', 1, $this->Lang('help_type_compet'));
@@ -187,6 +189,9 @@ final public static function page_type_lang_callback($str)
             break;
 	case 'Situation Mensuelle':
             $fn = 'orig_sitmens.tpl';
+            break;
+	case 'Situation En Live':
+            $fn = 'orig_sit_prov.tpl';
             break;
 	case 'Liste Joueurs':
             $fn = 'orig_liste_joueurs.tpl';

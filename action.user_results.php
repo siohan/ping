@@ -29,6 +29,9 @@ else {
 	else
 	{
 		$licence = $params['licence'];
+		$adh_ops = new adherents_spid;
+		$joueur = $adh_ops->get_name($licence);
+		$smarty->assign('joueur', $joueur);
 		$parms = array();
 	
 		
@@ -83,7 +86,7 @@ else {
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('retour',
- 		$this->CreateReturnLink($id, $returnid,'<= Retour'));
+ 		$this->CreateLink($id, 'sit_mens', $returnid,$contents='<= Retour'));
 $smarty->assign('items', $rowarray);
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), null, null, $smarty);
 $tpl->display();

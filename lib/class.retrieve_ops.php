@@ -308,7 +308,7 @@ public function retrieve_parties_spid2( $licence, $player,$cat )
 		$status = 'Echec';
 		$designation.= $message;
 		$action = "mass_action";
-		ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+		ping_admin_ops::ecrirejournal($status, $designation,$action);
 	}
 	else
 	{
@@ -1072,7 +1072,8 @@ public function retrieve_sit_mens($licence, $ext="")
 			$array = json_decode(json_encode((array)$xml), TRUE);
 			$lignes = count($array['classement']);
 		}
-	var_dump($xml);//$result = $service->getPouleClassement($iddiv, $idpoule);
+		//	var_dump($xml);
+		//$result = $service->getPouleClassement($iddiv, $idpoule);
 		//var_dump($result);
 
 		//on vérifie que le resultat est bien un array
@@ -1667,6 +1668,7 @@ public function retrieve_sit_mens($licence, $ext="")
 		$lien = $service->GetLink($page, $var);
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
 		//echo "la valeur de cal est :".$cal;
+		var_dump($xml);
 		if($xml === FALSE)
 		{
 			//le service est coupé
@@ -1678,15 +1680,9 @@ public function retrieve_sit_mens($licence, $ext="")
 			$array = json_decode(json_encode((array)$xml), TRUE);
 			$lignes = count($array['tour']);
 		}
-		//echo "le nb de lignes est : ".$lignes;
-		//$result = $service->getPouleRencontres($iddiv,$idpoule);
+	
 
 		$designation = '';
-		//var_dump($result);
-		var_dump($xml);
-		/**/
-		//on va tester la valeur de la variable $result
-		//cela permet d'éviter de boucler s'il n'y a rien dans le tableau
 		
 		if(!is_array($array))
 		{ 
@@ -1702,12 +1698,10 @@ public function retrieve_sit_mens($licence, $ext="")
 
 				
 				$libelle = (isset($tab->libelle)?"$tab->libelle":"");
-				//echo $libelle;
 				$extraction = substr($libelle,-8);
 				$date_extract = explode('/', $extraction);
 				$annee_date = $date_extract[2] + 2000;
 				$date_event = $annee_date."-".$date_extract[1]."-".$date_extract[0];				
-				//var_dump( $date_event);
 				$equa = (isset($tab->equa)?"$tab->equa":"");
 				$equb = (isset($tab->equb)?"$tab->equb":"");
 
@@ -1753,8 +1747,8 @@ public function retrieve_sit_mens($licence, $ext="")
 			
 					//on récupère tout sans rien mettre à jour
 					//on vérifie si l'enregistrement est déjà là
-					$query = "SELECT id,lien, scorea, scoreb, renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv = ? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
-					$dbresult = $db->Execute($query, array($iddiv,$idpoule, $date_event,$equa,$equb));
+					$query = "SELECT id,lien, scorea, scoreb, renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE renc_id = ?";
+					$dbresult = $db->Execute($query, array($renc_id));
 
 					//il n'y a pas d'enregistrement auparavant, on peut continuer
 						
@@ -1790,25 +1784,7 @@ public function retrieve_sit_mens($licence, $ext="")
 							$tag.="}";
 							//On fait l'inclusion ds la bdd
 							// on vérifie d'abord que l'enregistrement n'est pas déjà en bdd
-							$query2 = "SELECT numjourn, date_debut, date_fin, idepreuve FROM ".cms_db_prefix()."module_ping_calendrier WHERE  numjourn = ? AND date_debut = ? AND date_fin =? AND idepreuve = ? ";//AND scorea !=0 AND scoreb !=0";
-							$dbresult2 = $db->Execute($query2, array($tour, $date_event, $date_event,$idepreuve));
-
-								if ($dbresult2->RecordCount()==0)
-								{
-
-
-
-										$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_calendrier (date_debut,date_fin,idepreuve, numjourn,tag,saison) VALUES ( ?, ?, ?, ?, ?, ?)";
-										$dbresult3 = $db->Execute($query3, array($date_event,$date_event,$idepreuve,$tour,$tag,$saison));
-
-										if($dbresult3)
-										{
-											$designation.= $db->ErrorMsg();
-										}
-										
-										
-			
-								}
+						
 								// on insert aussi dans CGCalendar ?
 								// Chiche !
 								$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
@@ -1816,9 +1792,9 @@ public function retrieve_sit_mens($licence, $ext="")
 								$row = $dbresult->FetchRow();
 								$name = $row['name'];
 								
-								retrieve_ops::insert_cgcalendar($name,$tag,$date_event,$date_event);
+							//	retrieve_ops::insert_cgcalendar($name,$tag,$date_event,$date_event);
 						}
-						elseif($dbresult->RecordCount()>0)
+						elseif($dbresult->RecordCount() > 0)
 						{
 								//il y a déjà un enregistrement, le score est-il à jour ?
 								$row = $dbresult->FetchRow();
@@ -1830,7 +1806,7 @@ public function retrieve_sit_mens($licence, $ext="")
 									if($scoA == 0 && $scoB == 0)
 									{
 										$query5 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE renc_id = ?";
-										$dbresultA = $db->Execute($query5, array($scorea, $scoreb, $renc_id));
+										$dbresultA = $db->Execute($query5, array($scoA, $scoB, $renc_id));
 										$i++;
 										if(!$dbresultA)
 										{
@@ -1839,7 +1815,7 @@ public function retrieve_sit_mens($licence, $ext="")
 									}
 									else
 									{
-										echo "rien à mettre à jour !";
+									//	echo "rien à mettre à jour !";
 									}
 						}
 							
@@ -1848,6 +1824,8 @@ public function retrieve_sit_mens($licence, $ext="")
 				
         	}//fin du if is_array($result)
 	}//fin de la fonction
+	
+	
 } // end of class
 
 #
