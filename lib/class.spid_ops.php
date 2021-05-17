@@ -9,7 +9,7 @@ class spid_ops
 		global $gCms;
 		$db = cmsms()->GetDb();
 		$now = trim($db->DBTimeStamp(time()), "'");
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (statut, saison, datemaj, licence, date_event,epreuve, nom,classement, victoire, ecart, type_ecart, coeff, pointres,forfait, idpartie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_parties_spid (statut, saison, datemaj, licence, date_event,epreuve, nom,classement, victoire, ecart, type_ecart, coeff, pointres,forfait, idpartie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$dbresult = $db->Execute($query, array($statut,$saison_courante,$now, $licence, $date_event, $epreuve, $nom, $newclass, $victoire,$ecart,$type_ecart, $coeff,$pointres, $forfait, $idpartie));
 
 		if(!$dbresult)
@@ -255,7 +255,7 @@ class spid_ops
 	function delete_spid()
 	{
 		$db = cmsms()->GetDb();
-		$mois = date('m')-1;
+		$mois = date('n')-1;
 		//$mois_courant = $mois-1;
 		$annee_courante = date('Y');
 		$day = '31';
@@ -306,6 +306,7 @@ class spid_ops
 			}		
 		}
 	}
+	//vérifie si la partie existe dans la table Spid
 	function spid_exists($idpartie)
 	{
 		$db = cmsms()->GetDb();
@@ -318,15 +319,42 @@ class spid_ops
 		else
 		{return false;}
 	}
+	//met la somme des points spid à jour pour un joueur donné
+	function maj_points_spid($licence, $points)
+	{
+		$db = cmsms()->GetDb();
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET pts_spid = ? WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($points, $licence));
+	}
 	
-	
+	//on créé un compte si le joueur n'en a pas
+	function create_spid_account($licence)
+	{
+		$db = cmsms()->GetDb();
+		$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_recup_parties (saison, datemaj, licence, sit_mens,fftt,maj_fftt,spid,maj_spid,maj_total,spid_total, pts_spid) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$dbresult = $db->Execute($query, array('2020-2021',date('Y-m-d H:i:s'),$licence,'Janvier 2000',0,time(),0,time(),0,0, 0));
+		if($dbresult)
+		{
+			return true; 
+		}
+		else
+		{
+			return false;
+		}
+	}
+	function delete_partie_spid ($idpartie)
+	{
+		$db = cmsms()->GetDb();
+		$query = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE idpartie = ?";
+		$dbresult = $db->Execute($query, array($idpartie));
+	}
 	////FFTT
 	function add_fftt($saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof, $idpartie)
 	{
 		global $gCms;
 		$db = cmsms()->GetDb();
 		$now = trim($db->DBTimeStamp(time()), "'");
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof, idpartie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_parties (saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof, idpartie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$dbresult = $db->Execute($query, array($saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof, $idpartie));
 
 		if($dbresult)
@@ -365,10 +393,63 @@ class spid_ops
 
 
 	}
+	//compte le nb de points FFTT d'une personne
+	public static function pts_fftt($licence)
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		$ping = cms_utils::get_module('Ping');
+		$ping_ops = new ping_admin_ops;
+		$saison = $ping->GetPreference('saison_en_cours');
+		$query = "SELECT count(pointres) AS fftt FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ?";
+		$dbresult = $db->Execute($query, array($licence,$saison));
+
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$nb = $row['fftt'];
+				return $nb;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+
+
+	}
+	//compte le nb de points FFTT d'une personne
+	public static function maj_pts_fftt($licence,$nb)
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET pts_fftt = ? WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($licence,$nb));
+
+		if($dbresult)
+		{
+			return true;
+		}
+		
+		else
+		{
+			return false;
+		}
+
+
+	}
 	function verif_spid_fftt()
 	{
 		$db = cmsms()->GetDb();
-		$this->GetPreference('saison_en_cours');
+		$ping = cms_utils::get_module('Ping');
+		
+		$saison = $ping->GetPreference('saison_en_cours');
 		$query = "SELECT DISTINCT sp.id AS record_id,p.date_event AS date_fftt,p.codechamp,sp.date_event AS date_spid,sp.licence as licence_spid,sp.epreuve, p.licence as licence_fftt,sp.nom as nom_spid, p.advnompre AS nom_fftt, sp.numjourn AS numjourn_spid, p.numjourn AS numjourn_fftt, sp.victoire AS victoire_spid, p.vd AS victoire_fftt, sp.coeff AS coeff_spid, p.coefchamp AS coeff_fftt, sp.pointres AS points_spid, p.pointres AS points_fftt FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_parties AS p WHERE sp.idpartie = p.idpartie  AND sp.saison = ? ORDER BY sp.id ASC";
 		$dbresult = $db->Execute($query, array($saison_courante));
 		$rowarray = array();
@@ -388,6 +469,54 @@ class spid_ops
 		}
 	}
 	##
+	//vérifie si le joueur a un compte situation mensuelle
+	function has_sitmens_account($licence)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($licence));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	//créé un compte pour les situations mensuelles
+	//on créé un compte si le joueur n'en a pas
+	function create_sitmens_account($licence)
+	{
+		$db = cmsms()->GetDb();
+		$add_sitMens = $ping_admin_ops->add_sit_mens($licence2, $nom, $prenom, $categ, $point,$apoint,$clglob, $aclglob, $clnat, $rangreg, $rangdep, $progmoisplaces, $progmois, $progann,$valinit, $valcla, $saison);
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup_sit_mens (saison, datemaj, licence, sit_mens,fftt,maj_fftt,spid,maj_spid,maj_total,spid_total) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$dbresult = $db->Execute($query, array('2019-2020',NOW(),$licence,'Janvier 2000',0,time(),0,time(),0,0));
+		if($dbresult)
+		{
+			return true; 
+		}
+		else
+		{
+			return false;
+		}
+	}
+	//supprime les parties spid sélectionnées
+	function supp_spid($record_id)
+	{
+		$db = cmsms()->GetDb();
+		$query = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE id = ?";
+		$dbresult = $db->Execute($query, array($record_id));
+	}
+	
+
 	
 #End of class
 }

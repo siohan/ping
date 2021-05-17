@@ -34,8 +34,8 @@ $club_number = $this->GetPreference('club_number');
 $ligue = $this->GetPreference('ligue');
 $zone = $this->GetPreference('zone');
 $dep = $this->GetPreference('dep');
-$smarty->assign('inactifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Inactifs', array('actif'=>'0', "active_tab"=>"joueurs")));
-$smarty->assign('actifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Actifs', array('actif'=>'1', "active_tab"=>"joueurs")));
+$smarty->assign('inactifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Inactifs', array('actif'=>'0', "activetab"=>"joueurs")));
+$smarty->assign('actifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Actifs', array('actif'=>'1', "activetab"=>"joueurs")));
 if($club_number =='')
 {
 	$error_config++;

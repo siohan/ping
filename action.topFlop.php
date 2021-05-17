@@ -1,4 +1,4 @@
-<?php
+ <?php
 if(!isset( $gCms) ) exit;
 #################################################################
 ###           Top ou flop                                     ###
@@ -26,7 +26,7 @@ else {
 //$saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 //on commence direct par la requete
 //echo $saison_courante;
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 $titletable = '';//Ceci est le titre de la balise H1
 $getmore === FALSE;//pour afficher ou non le lien plus par défaut non.
 $parms = array();
@@ -73,10 +73,10 @@ $parms['saison'] = $saison_courante;
 		$parms['mois'] = $mois_choisi;
 	}
 $query1.= " ORDER BY sp.pointres DESC";	
-	if(isset($params['limit']) && $params['limit']>0)
+	if(isset($params['number']) && $params['number']>0)
 	{
 		$query1.= " LIMIT 0, ?";
-		$parms['limit'] = $params['limit'];
+		$parms['number'] = $params['number'];
 		$getmore = 'True';
 	}
 	

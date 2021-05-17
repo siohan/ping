@@ -2,16 +2,16 @@
 
 #-------------------------------------------------------------------------
 # Module : Ping - 
-# Version : 0.7, Sc
-# Auteur : Claude SIOHAN
+# Version : 0.8.0.2, Sc
+# Auteur : AssoSimple
 #-------------------------------------------------------------------------
 /**
  *
- * @author Claude SIOHAN
+ * @author AssoSimple
  * @since 0.1
  * @version $Revision: 3827 $
  * @modifiedby $LastChangedBy: Claude
- * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 28 Juil 2015) $
+ * @lastmodified $Date: 2020-25-10 11:56:16 +0200 (Mon, 25 oct 2020) $
  * @license GPL
  **/
 
@@ -20,10 +20,10 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.7'; }  
+  function GetVersion() { return '0.8.0.2'; }  
   function GetHelp() { return $this->Lang('help'); }   
-  function GetAuthor() { return 'Claude SIOHAN'; } 
-  function GetAuthorEmail() { return 'claude.siohan@gmail.com'; }
+  function GetAuthor() { return 'AssoSimple'; } 
+  function GetAuthorEmail() { return 'contact@assosimple.fr'; }
   function GetChangeLog() { return $this->Lang('changelog'); }
     
   function IsPluginModule() { return true; }
@@ -38,12 +38,12 @@ class Ping extends CMSModule
 	
   }
   
-  /*
+  
   function GetDependencies()
   {
-	return array('CGCalendar'=>'2.6', 'CGJobMgr'=>'1.3.6', 'CGSimpleSmarty'=>'2.2.1');
+	return array('CGSmartImage'=>'1.22.7');
   }
-*/
+
   
 
   function MinimumCMSVersion()
@@ -97,6 +97,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('template', CLEAN_INT);
 	$this->SetParameterType('edit', CLEAN_STRING);
 	$this->SetParameterType('limit', CLEAN_INT);
+	$this->SetParameterType('step', CLEAN_NONE);
 	//
 	$this->SetParameterType('datecreated', CLEAN_STRING);
 	$this->SetParameterType('datemaj', CLEAN_STRING);
@@ -119,7 +120,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('type', CLEAN_STRING);
 	$this->SetParameterType('idpoule', CLEAN_INT);
 	$this->SetParameterType('iddiv', CLEAN_INT);
-	$this->SetParameterType('idepreuve', CLEAN_INT);
+	$this->SetParameterType('idepreuve', CLEAN_NONE);
 	$this->SetParameterType('tableau', CLEAN_INT);
 	$this->SetParameterType('lien', CLEAN_STRING);
 	$this->SetParameterType('message', CLEAN_STRING);
@@ -129,6 +130,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('numero_equipe', CLEAN_STRING);
 	$this->SetParameterType('template',CLEAN_STRING);
 	$this->SetParameterType('display',CLEAN_STRING);
+	$this->SetParameterType('number', CLEAN_INT);
 
 }
 
@@ -154,9 +156,15 @@ public function HasCapability($capability, $params = array())
 public function get_tasks()
 {
    $obj = array();
+   /*
 	$obj[0] = new PingRecupFfttTask();
 	$obj[1] = new PingRecupSpidTask();  
-//	$obj[2] = new PingRecupRencontresTask();
+	$obj[2] = new PingRefreshFfttTask();
+	$obj[3] = new PingRecupRencontresTask();
+	$obj[4] = new PingRecupUsersTask();
+	$obj[5] = new PingDetailsRencontresTask();
+	$obj[6] = new PingClassementsTask();
+	*/
 return $obj; 
 }
 
@@ -202,6 +210,9 @@ final public static function page_type_lang_callback($str)
 	case 'Spid':
             $fn = 'orig_spid.tpl';
             break;
+    case 'Countdown' :
+    		$fn = 'displaycountdown.tpl';
+    		break;
 
         }
 

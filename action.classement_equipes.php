@@ -1,6 +1,6 @@
 <?php
 if( !isset( $gCms) ) exit;
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 //debug_display($params, 'Parameters');
 $saison = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 $phase = (isset($params['phase'])?$params['phase']:$this->GetPreference('phase_en_cours'));
@@ -12,7 +12,7 @@ if(isset($params['template']) && $params['template'] !="")
 	$template = trim($params['template']);
 }
 else {
-    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Résultats pour une équipe');
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Classements Club');
     if( !is_object($tpl) ) {
         audit('',$this->GetName(),'Template résultats pour une équipe introuvable');
         return;
@@ -40,7 +40,12 @@ $parms['phase'] = $phase;
 
 //on aordonne la table
 $query.= " ORDER BY eq.numero_equipe ASC";
-
+if(isset($params['number']) && $params['number'] > 0)
+{
+	$number = (int) $params['number'];
+	$query.=" LIMIT ?";
+	$parms['number'] = $number;
+}
 
 //on effectue la requete
 $dbresult = $db->Execute($query,$parms);//array($equipes,$saison,$phase,$idepreuve));
@@ -79,6 +84,9 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$onerow->vic= $row['vic'];
 		$onerow->nul= $row['nul'];
 		$onerow->def= $row['def'];
+		$onerow->pg= $row['pg'];//points gagnés
+		$onerow->pp= $row['pp'];//points perdus
+		$onerow->diff = $row['pg'] - $row['pp'];
 		//$onerow->equipe = $row['equipe'];		
 		$rowarray[]  = $onerow;
 			

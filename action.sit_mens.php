@@ -1,16 +1,17 @@
 <?php
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
-require_once(dirname(__FILE__).'/include/prefs.php');
-$db =& $this->GetDb();
+//require_once(dirname(__FILE__).'/include/prefs.php');
+$db = cmsms()->GetDb();
 global $themeObject;
 $mois_courant = date('n');
-$annee_choisie = date('Y');
+$annee_courante = date('Y');
 $mois_choisi = '';
-$jour = date('d');
-$mois_maxi = date('m');
+
+
+$liste_mois_fr = array("Janvier", "Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre", "Décembre");
 $phase = $this->GetPreference('phase_en_cours');
-$saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
+$saison_courante = $this->GetPreference('saison_en_cours');
 if(isset($params['template']) && $params['template'] !='')
 {
 	$template = $params['template'];
@@ -22,46 +23,86 @@ else {
         return;
     }
     $template = $tpl->get_name();
-}
-	if(isset($params['mois']) && $params['mois'] !='')
+} 
+
+	if($params['mois'] !='' )
 	{
-		$mois_choisi = $params['mois'];
+		$mois_choisi = (int) $params['mois'];		
 	}
 	else
 	{
-		if($jour < $this->GetPreference('jour_sit_mens'))
+		//pas de mois choisi on prend par défaut
+		if(date('d') < 10 )
 		{
-			$mois_choisi = $mois_courant-1;
+			if(date('n') == 1)
+			{
+				//on est début janvier, on veut afficher la situation de décembre
+				//pour les liens suivants
+				$mois_choisi = 12;
+			}
+			else
+			{
+				$mois_choisi = date('n') -1;
+			}
+
 		}
 		else
 		{
-			$mois_choisi = $mois_courant;
+			$mois_choisi = date('n');
 		} 
-	}
-
-	if($mois_choisi ==1)
+	}	
+	
+	//pour les liens précédent et suivant :	
+	if(date('d') < 10 )
 	{
-		$mois_precedent = 12;
-		$annee_choisie = $annee_choisie;
+			if($mois_choisi == 1)
+			{
+				//on est début janvier, on veut afficher la situation de décembre
+				//pour les liens suivants
+				$mois_suivant = 1;
+				$mois_precedent = 11;
+				
+			}
+			elseif($mois_choisi == 12)
+			{
+				$mois_suivant = 12;
+				$mois_precedent = 11;
+			}
+			else
+			{
+				$mois_precedent = $mois_choisi - 1;
+				$mois_suivant = $mois_choisi +1;
+			}
 	}
 	else
 	{
-		$mois_precedent = $mois_choisi -1;
-	}
-	if($mois_choisi==12)
-	{
-		$mois_suivant = 1;
-		$annee_choisie = $annee_choisie - 1;
-	}
-	else
-	{
-		$mois_suivant = $mois_choisi + 1;
-	}
+			if($mois_choisi == 1)
+			{
+				//on est début janvier, on veut afficher la situation de décembre
+				//pour les liens suivants
+				$mois_suivant = 2;
+				$mois_precedent = 12;
+				
+			}
+			elseif($mois_choisi == 12)
+			{
+				$mois_suivant = 1;
+				$mois_precedent = 11;
+			}
+			else
+			{
+				$mois_precedent = $mois_choisi - 1;
+				$mois_suivant = $mois_choisi +1;
+			}
+			//$mois_precedent = $mois_choisi - 1;
+			//$mois_suivant = $mois_choisi +1;
+	} 
+	
 
-	$smarty->assign('mois_precedent',
-			$this->CreateLink($id,'sit_mens',$returnid, '<< Précédent',array("mois"=>"$mois_precedent","saison"=>$saison_courante, "template"=>$template)));
-	$smarty->assign('mois_suivant',
-			$this->CreateLink($id,'sit_mens',$returnid, 'Suivant >>', array("mois"=>"$mois_suivant","saison"=>$saison_courante, "template"=>$template) ));
+	$smarty->assign('mois_precedent',$mois_precedent);
+	$smarty->assign('mois_suivant', $mois_suivant);
+	
+			
 
 
 $jour = date('j');
@@ -71,7 +112,7 @@ $phase_courante = $this->GetPreference('phase');
 
 $query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep,sm.progann, sm.progmois,sm.clglob, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens sm, ".cms_db_prefix()."module_ping_joueurs j WHERE sm.licence  = j.licence";//" WHERE annee = ? AND mois = ?";
 
-	if(isset($params['mois']) && $params['mois'] !='')
+	if(isset($params['mois']) && $params['mois'] >0)
 	{
 		$query.=" AND mois = ?";
 		$parms['mois'] = $mois_choisi;
@@ -85,6 +126,13 @@ $query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep
 	
 	$query.=" AND saison = ?";
 	$parms['saison'] = $saison_courante;
+	
+	if(isset($params['number']) && $params['number'] >0)
+	{
+		$query.= " LIMIT ?";
+		$parms['number'] = $params['number'];
+	}
+	
 	//echo $query;
 	$dbresult = $db->Execute($query, $parms);
 
@@ -93,7 +141,7 @@ $rowarray= array ();
 
 if ($dbresult && $dbresult->RecordCount() > 0)
 {
-    	while ($row= $dbresult->FetchRow())
+    while ($row= $dbresult->FetchRow())
 	{
 	
 		$onerow= new StdClass();
@@ -109,17 +157,14 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
 	}
-}
-else
-{
-	echo "<p>Pas de résultats disponibles.</p>";
+	$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
+$smarty->assign('itemcount', count($rowarray));
+$smarty->assign('items', $rowarray);
 }
 $mois_def = $mois_choisi -1;
 $mois_en_fr = $liste_mois_fr[$mois_def];
 $smarty->assign('mois_choisi', $mois_en_fr);
-$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
-$smarty->assign('itemcount', count($rowarray));
-$smarty->assign('items', $rowarray);
+
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();
 //echo $this->ProcessTemplate('sitmens.tpl');

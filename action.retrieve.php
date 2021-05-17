@@ -33,32 +33,6 @@ switch($params['retrieve'])
 		$this->RedirectToAdminTab('equipes');
 	break;
 	
-	
-	case "divisions" :
-	
-		if(isset($params['idorga']) && $params['idorga'] != '')
-		{
-			$idorga = $params['idorga'];
-		}
-		if(isset($params['idepreuve']) && $params['idepreuve'] != '')
-		{
-			$idepreuve = $params['idepreuve'];
-		}
-		if(isset($params['type']) && $params['type'] != '')
-		{
-			$type = $params['type'];
-		}
-		else
-		{
-			$type = '';
-		}
-		$retrieve = $service->retrieve_divisions($idorga,$idepreuve,$type="");
-		$message='Retrouvez toutes les infos dans le journal';
-		$this->SetMessage($message);
-		$this->Redirect($id, 'admin_divisions_tab', $returnid, array("idepreuve"=>$idepreuve, "idorga"=>$idorga, "essai"=>"1"));
-	
-	break;
-	
 	case "compets" :
 	
 		if(isset($params['idorga']) && $params['idorga'] !='')
@@ -84,57 +58,14 @@ switch($params['retrieve'])
 	
 	case "classement_equipes" :
 		
-		$saison = $this->GetPreference('saison_en_cours');
-		$phase = $this->GetPreference('phase_en_cours');
-		$error = 0;
-		$designation = '';
-		$full = 0;//variable pour récupérer l'ensemble des résultats ou une seule, par défaut 0 cad toutes
-		$record_id = '';
-		$lignes = 0;
-
-		//on fait une requete générale et on affine éventuellement
-		$query = "SELECT iddiv, idpoule, id as id_equipe FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? ";//AND phase = ?";
-		$parms['saison'] = $saison;
-		//$parms['phase']  = $phase;
-
-		if(isset($params['record_id']) && $params['record_id'] !='')
+		
+		if(isset($params['record_id']) && $params['record_id'] >0)
 		{
-			$record_id = $params['record_id'];
-			$query.=" AND id = ?";
-			$parms['id'] = $record_id;
-			$full = 1;
+			$record_id = (int)$params['record_id'];			
 		}
-
-		$dbresult = $db->Execute($query, $parms);
-
-		//bon tt va bien, tt est Ok
-		//on fait la boucle
-		if($dbresult && $dbresult->RecordCount()>0)
-		{
-			while( $dbresult && $row = $dbresult->FetchRow())
-			{
-				$iddiv = $row['iddiv'];
-				$idpoule = $row['idpoule'];
-				$id_equipe = $row['id_equipe'];		
-				$service = new retrieve_ops();
-				if($full == '0')//toutes les équipes sont sélectionnées
-				{
-					$retrieve = $service->retrieve_all_classements($iddiv,$idpoule,$record_id=$id_equipe);
-					sleep(1);
-				}
-				else
-				{
-					$retrieve = $service->retrieve_all_classements($iddiv,$idpoule,$record_id=$params['record_id']);
-				}
-				//$idequipe = $row['id']
-
-			}
-			$this->Redirect($id,'admin_poules_tab3',$returnid, array("record_id"=>$record_id));
-		}
-		else
-		{
-			echo "Pas de résultats ou requete incorrecte";
-		}
+		$retrieve = $service->retrieve_all_classements($record_id);
+		
+		$this->Redirect($id,'admin_poules_tab3',$returnid, array("record_id"=>$record_id));
 		
 	break;
 	case "spid" :
@@ -181,7 +112,7 @@ switch($params['retrieve'])
 	
 	case "fftt" :
 		$service = new retrieve_ops();
-		$ping_ops = new ping_admin_ops();
+		$ping_ops = new spid_ops();
 		foreach( $params['sel'] as $licence )
   		{
     			$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player, cat FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ? AND actif = '1'";
@@ -194,8 +125,9 @@ switch($params['retrieve'])
 					$cat = $row['cat'];
 					//return $player;
 					$service = new retrieve_ops();
-					$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
-					$maj_spid = $ping_ops->compte_spid($licence);
+					$resultats = $service->retrieve_parties_fftt($licence,$player,$cat);
+					//var_dump($resultats);
+					$maj_spid = $ping_ops->compte_fftt($licence);
 					//var_dump($resultats);
 				}
 
@@ -205,7 +137,8 @@ switch($params['retrieve'])
 	//récupère les parties FFTT d'un seul joueur
 	case "fftt_seul" :
 		$service = new retrieve_ops;
-		$ping_ops = new spid_ops;
+		$spid_ops = new spid_ops;
+		$ping_ops = new ping_admin_ops;
 		if(isset($params['licence']) && $params['licence'] !='')
 		{
 			$licence = $params['licence'];
@@ -220,13 +153,19 @@ switch($params['retrieve'])
 					//return $player;
 					$service = new retrieve_ops();
 					$resultats = $service->retrieve_parties_fftt($licence);
-					$maj_fftt = $ping_ops->compte_fftt($licence);
+				
+					$player = $ping_ops->name($licence);
+					$status = 'OK';
+					$designation = $resultats.' parties fftt pour '.$player;
+					$action = 'FFTT Seul';
+					$ping_ops->ecrirejournal($status,$designation, $action);
+					$maj_fftt = $spid_ops->compte_fftt($licence);
 						//var_dump($resultats);
 			           }
 
 
 	  		}
-			$this->Redirect($id, 'defaultadmin', $returnid, array("_activetab"=>"fftt"));
+			$this->RedirectToAdminTab("fftt");
 		}
     		
 	break;
@@ -250,13 +189,18 @@ switch($params['retrieve'])
 					//return $player;
 					$service = new retrieve_ops;
 					$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
+					var_dump($resultats);
+					$status = 'OK';
+					$designation = $resultats.' parties spid pour '.$player;
+					$action = 'Spid Seul';
+					$ping_ops->ecrirejournal($status,$designation, $action);
 					$maj_spid = $spid_ops->compte_spid($licence);
 						//var_dump($resultats);
 			           }
 
 
 	  		}
-			$this->Redirect($id, 'defaultadmin', $returnid, array("_activetab"=>"spid"));
+			$this->RedirectToAdminTab("spid");
 		}
     		
 	break;
@@ -331,12 +275,12 @@ switch($params['retrieve'])
 		{
 			   while ($row= $dbretour->FetchRow())
 			   {
-				$licence = $row['licence'];
-				$service = new retrieve_ops;
-				$resultats = $service->retrieve_sit_mens($licence);
-		           }
+					$licence = $row['licence'];
+					$service = new retrieve_ops;
+					$resultats = $service->retrieve_sit_mens($licence, $ext='false');
+		       }
   		}
-		$this->Redirect($id, 'defaultadmin', $returnid, array("_activetab"=>"situation"));
+		$this->RedirectToAdminTab("situation");
 		
     		
 	break;
@@ -365,32 +309,6 @@ switch($params['retrieve'])
 		$this->RedirectToAdminTab('situation');
 		
 		
-	break;
-	
-	case "maintien" :
-		$ping_ops = new ping_admin_ops;
-		if(isset($params['licence']) && $params['licence'] != '')
-		{
-			$licence = $params['licence'];
-		}
-		if(isset($params['idepreuve']) && $params['idepreuve'] != '')
-		{
-			$idepreuve = $params['idepreuve'];
-		}
-		if(isset($params['iddivision']) && $params['iddivision'] != '')
-		{
-			$iddivision = $params['iddivision'];
-		}
-		if(isset($params['idorga']) && $params['idorga'] != '')
-		{
-			$idorga = $params['idorga'];
-		}
-		if(isset($params['tour']) && $params['tour'] != '')
-		{
-			$tour = $params['tour'];
-		}
-		
-		$maintien = $ping_ops->maintien($licence, $idepreuve, $iddivision, $tour, $idorga);
 	break;
 	
 	//supprime les parties devenues obsolete et les adversaires aussi
@@ -467,6 +385,48 @@ switch($params['retrieve'])
 		}
 		
 	break;
+	
+	case "details_rencontre" :
+	
+		if(isset($params['record_id']) && $params['record_id'] >0)
+		{
+			$renc_id = $params['record_id'];
+		}
+		if(isset($params['lien']) && $params['lien'] != '')
+		{
+			$link = $params['lien'];
+		}
+		$details = $service->details_rencontre($renc_id, $link);
+		
+	
+	break;
+	//récupère une poule entière
+	case "retrieve_rencontre" : 
+		if(isset($params['record_id']) && $params['record_id'] != '')
+		{
+			$this->SetCurrentTab('equipes');
+			$record_id = $params['record_id'];
+			$eq = new equipes_ping;
+			$details = $eq->details_equipe($record_id);	
+			$idepreuve = $details['idepreuve'];
+			$iddiv = $details['iddiv'];
+			$idpoule = $details['idpoule'];
+			$libequipe = $details['libequipe'];
+			$cal =0;
+			//on envoie vres le fichier
+			$service = new retrieve_ops;
+			$retrieve = $service->retrieve_poule_rencontres($record_id,$iddiv, $idpoule, $idepreuve);				
+		}
+		$this->Redirect($id, 'admin_poules_tab3', $returnid, array('record_id'=>$record_id));
+	break;
+	
+	case "details_club" :
+	{
+		//On récupère les coordonnées de la salle et du correspondant
+		$r_ops = new retrieve_ops;
+		$details_club = $r_ops->retrieve_detail_club($this->GetPreference('club_number'));
+	}
+	
+	break;
 }
-
 ?>

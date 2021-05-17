@@ -25,7 +25,7 @@ class EpreuvesIndivs
 	function add_competition($libelle, $indivs,$idepreuve, $tag, $idorga)
 	{
 		$db = cmsms()->GetDb();
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (name, indivs, idepreuve,tag, idorga) VALUES (?, ?, ?, ?, ?)";
+		$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_type_competitions (name, indivs, idepreuve,tag, idorga) VALUES (?, ?, ?, ?, ?)";
 		$dbresult = $db->Execute($query,array($libelle,$indivs,$idepreuve,$tag,$idorga));
 		if($dbresult)
 		{

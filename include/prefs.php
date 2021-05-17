@@ -27,8 +27,8 @@ if($mois>=7   && $mois <=12)
 	$annee2 = $annee+1;
 	$phase = 1;
 	$saison_en_cours = $annee1.'-'.$annee2;
-	$this->SetPreference('phase_en_cours', $phase);
-	$this->SetPreference('saison_en_cours', $saison_en_cours);
+	//$this->SetPreference('phase_en_cours', $phase);
+	//$this->SetPreference('saison_en_cours', $saison_en_cours);
 	$annee_fin = $annee2;
 }
 elseif($mois >=1 && $mois<7)
@@ -38,8 +38,8 @@ elseif($mois >=1 && $mois<7)
 	$annee1 = $annee-1;
 	$annee2 = $annee;
 	$saison_en_cours = $annee1.'-'.$annee2;
-	$this->SetPreference('phase_en_cours', $phase);
-	$this->SetPreference('saison_en_cours', $saison_en_cours);
+//	$this->SetPreference('phase_en_cours', $phase);
+//	$this->SetPreference('saison_en_cours', $saison_en_cours);
 	$annee_fin = $annee2;
 	
 }

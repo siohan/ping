@@ -1,7 +1,7 @@
 <?php
 if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 $saison_en_cours = $this->GetPreference('saison_en_cours');
 $saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
 $record_id = '';
@@ -30,7 +30,7 @@ else {
 
 //le numéro de l'équipe est ok, on continue
 //on va d'abord récupérer la feuille de match
-$query = "SELECT id, fk_id, xja, xca, xjb, xcb FROM ".cms_db_prefix()."module_ping_feuilles_rencontres  WHERE fk_id = ?";
+$query = "SELECT id, fk_id, xja, xca, xjb, xcb FROM ".cms_db_prefix()."module_ping_feuilles_rencontres  WHERE fk_id = ? ORDER BY id ASC";
 $dbresult= $db->Execute($query, array($record_id));
 $lignes = $dbresult->RecordCount();
 $rowarray = array();
@@ -64,7 +64,7 @@ $smarty->assign('items', $rowarray);
 
 /**/
 
-$query2 = "SELECT id, fk_id, joueurA, scoreA, joueurB, scoreB FROM ".cms_db_prefix()."module_ping_rencontres_parties WHERE fk_id = ?";
+$query2 = "SELECT id, fk_id, joueurA, scoreA, joueurB, scoreB, detail FROM ".cms_db_prefix()."module_ping_rencontres_parties WHERE fk_id = ? ORDER BY id ASC";
 $parms['fk_id'] = $record_id;
 
 $dbresultat = $db->Execute($query2,$parms);
@@ -87,6 +87,7 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 		$onerow2->scoreA = $row2['scoreA'];
 		$onerow2->joueurB = $row2['joueurB'];
 		$onerow2->scoreB = $row2['scoreB'];
+		$onerow2->detail = $row2['detail'];
 		$rowarray2[]  = $onerow2;
 	}
 	

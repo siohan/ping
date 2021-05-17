@@ -35,7 +35,7 @@ if(isset($params['exportsubmitbutton2']) && $params['exportsubmitbutton2'] != ''
 		$dbresult = $db->Execute($query);
 		if($dbresult && $dbresult->RecordCount()>0)
 		{
-			$compo_ops = new Compositionsbis;
+			$compo_ops = new compositionsbis;
 			while($row = $dbresult->FetchRow())
 			{
 				$nom = $row['name'];
@@ -48,7 +48,7 @@ if(isset($params['exportsubmitbutton2']) && $params['exportsubmitbutton2'] != ''
 		$dbresult = $db->Execute($query, array($saison_en_cours));
 		if($dbresult && $dbresult->RecordCount()>0)
 		{
-			$compo_ops = new Compositionsbis;
+			$compo_ops = new compositionsbis;
 			while($row = $dbresult->FetchRow())
 			{
 		

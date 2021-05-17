@@ -14,13 +14,9 @@ if(isset($params['licence']) && $params['licence'] != '')
 	global $themeObject;
 	$mois_courant = date('n');
 	$jour = date('d');
-	if($jour <=30)
-	{
-		$smarty->assign('raz', $this->CreateLink($id, 'supp_spid', $returnid, 'Effacer les données obsoletes'));
-	}
+
 	$smarty->assign('recalcul', $this->CreateLink($id, 'recalcul_spid', $returnid, 'Recalculer tout'));
-	$smarty->assign('retour', $this->CreateLink($id, 'defaultadmin', $returnid, '<= Revenir', array("active_tab"=>"spid")));
-	$smarty->assign('recup_all', $this->CreateLink($id, 'retrieve_all_parties_spid', $returnid, 'Récupérer tout'));
+	$smarty->assign('retour', $this->CreateLink($id, 'defaultadmin', $returnid, '<= Revenir', array("activetab"=>"spid")));
 
 	$parms = array();
 	$query = "SELECT sp.id as record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur,sp.licence, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement,sp.statut, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND j.licence = ? AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";

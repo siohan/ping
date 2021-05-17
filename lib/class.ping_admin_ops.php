@@ -27,10 +27,8 @@ class ping_admin_ops
     $db = cmsms()->GetDb();
 	
     //Now remove the article
-    $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup ( datecreated, status,designation, action) VALUES ( NOW(), ?, ?, ?)";
+    $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup ( datecreated, status,designation, action) VALUES ( UNIX_TIMESTAMP(), ?, ?, ?)";
     $db->Execute($query, array($status, $designation,$action));
-    
-    
   }
 function random($car) {
 $string = "";
@@ -569,6 +567,50 @@ function tag($idepreuve,$indivs,$date_debut ='',$date_fin='')
 		
 	
 }
+
+ 
+function seasons_list()
+{
+	$db = cmsms()->GetDb();
+	$query = "SELECT saison FROM ".cms_db_prefix()."module_ping_poules_rencontres";
+	$dbresult = $db->Execute($query);
+	if($dbresult && $dbresult->RecordCount() >0)
+	{
+		$liste = array();
+		while($row = $dbresult->FetchRow())
+		{
+			$liste[$row['saison']] = $row['saison'];
+		}
+		return $liste;
+	}
+	else
+	{
+		return false;
+	}
+	
+}
+
+function liste_epreuves()
+{
+	$db = cmsms()->GetDb();
+	$query = "SELECT tc.name, tc.idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions AS tc, ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE tc.idepreuve = ren.idepreuve";
+	$dbresult = $db->Execute($query);
+	if($dbresult && $dbresult->RecordCount() >0)
+	{
+		$liste = array();
+		while($row = $dbresult->FetchRow())
+		{
+			$liste[$row['idepreuve']] = $row['name'];
+		}
+		return $liste;
+	}
+	else
+	{
+		return false;
+	}
+	
+}
+
 function create_tag($idepreuve,$indivs,$date_debut,$date_fin)
 {
 	
@@ -618,35 +660,35 @@ public function coeff ($epreuve,$senior)
 {
 	$db  = cmsms()->GetDb();
 	$query ="SELECT coefficient FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
-		$dbretour = $db->Execute($query, array($epreuve));
+	$dbretour = $db->Execute($query, array($epreuve));
 
-			if ($dbretour && $dbretour->RecordCount() > 0)
-		  	{
-		    		while ($row= $dbretour->FetchRow())
-		      		{
-					if($epreuve == 'Critérium fédéral')
-					{
-						if($senior == 1)
-						{
-							$coefficient ="1.25";
+	if ($dbretour && $dbretour->RecordCount() > 0)
+	{
+		while ($row= $dbretour->FetchRow())
+      		{
+			if($epreuve == 'Critérium fédéral')
+			{
+				if($senior == 1)
+				{
+					$coefficient ="1.25";
 
-						}
-						else
-						{
-							$coefficient = "1.00";
-						}
-					}
-					else
-					{
-						$coefficient = $row['coefficient'];
-					}
 				}
-	
+				else
+				{
+					$coefficient = "1.00";
+				}
 			}
 			else
 			{
-				$coefficient === FALSE;
+				$coefficient = $row['coefficient'];
 			}
+		}
+	
+	}
+	else
+	{
+		$coefficient = FALSE;
+	}
 			
 	
 	return $coefficient;		
@@ -808,7 +850,7 @@ function add_sit_mens ($licence2, $nom, $prenom, $categ, $point,$apoint,$clglob,
 	$now = trim($db->DBTimeStamp(time()), "'");
 	$mois_courant = date('m');
 	$annee_courante = date('Y');
-	$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (datemaj, mois, annee, licence, nom, prenom, categ,points, apoint,clglob, aclglob, clnat, rangreg, rangdep, progmoisplaces, progmois, progann, valinit, valcla,saison) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_sit_mens (datemaj, mois, annee, licence, nom, prenom, categ,points, apoint,clglob, aclglob, clnat, rangreg, rangdep, progmoisplaces, progmois, progann, valinit, valcla,saison) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	//echo $query;
 	$dbresult = $db->Execute($query,array($now,$mois_courant, $annee_courante, $licence2, $nom, $prenom, $categ, $point,$apoint,$clglob, $aclglob, $clnat, $rangreg, $rangdep, $progmoisplaces, $progmois, $progann,$valinit, $valcla, $saison));
 
@@ -1050,6 +1092,26 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 			return $epreuve;
 		}
 		
+	}
+	//liste les épreuves par équipes où des équipes du club jouent et renvoi le idepreuve
+	function liste_epreuves_equipes2($saison, $phase)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT DISTINCT idepreuve FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ?";
+		$dbresult = $db->Execute($query, array($saison, $phase));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			$epreuves = array();
+			while($row = $dbresult->FetchRow())
+			{
+				$epreuves[] = $row['idepreuve'];
+			}
+			return $epreuves;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	//Cette fonction compte le nb d'équipes par idepreuve, par saison et par phase.
 	public function teams_per_idepreuve($idepreuve, $saison,$phase)

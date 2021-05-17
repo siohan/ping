@@ -1,34 +1,8 @@
-<script type="text/javascript">
-//<![CDATA[
-$(document).ready(function(){
-  $('#selectall').click(function(){
-    var v = $(this).attr('checked');
-    if( v == 'checked' ) {
-      $('.select').attr('checked','checked');
-    } else {
-      $('.select').removeAttr('checked');
-    }
-  });
-  $('.select').click(function(){
-    $('#selectall').removeAttr('checked');
-  });
-  $('#toggle_filter2').click(function(){
-    $('#filter_form2').dialog({
-      modal: true,
-      width: 'auto',
-    });
-  });
-  {if isset($tablesorter)}
-  if( typeof($.tablesorter) != 'undefined' ) $('#articlelist').tablesorter({ sortList:{$tablesorter} });
-  {/if}
-});
-//]]>
-</script>
-<div class="pageoptions"><p><span class="pageoptions warning">Récupérez les {$retrieve_teams} | {$retrieve_teams_fem} | {$retrieve_teams_autres}</span> </p></div>
+<div class="pageoptions"><p><span class="pageoptions warning"><a href="{cms_action_url action=retrieve retrieve=teams type=M}">{admin_icon icon="import.gif"}Equipes Masculines</a> | {$retrieve_teams_fem} | {$retrieve_teams_autres}</span> </p></div>
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 
 	{if $itemcount > 0}
-<div class="pageoptions"><p><span class="pageoptions warning">{$retrieve_all} | {$retrieve_calendriers} | {$classements}</span></p></div>
+{$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
 	<tr>
@@ -36,8 +10,10 @@ $(document).ready(function(){
 		<th>Niveau (idepreuve)</th>
 		<th>Phase</th>
 		<th>Nom court</th>
+		<th>Horaire</th>
 		<th>Tag pour affichage</th>
-		<th colspan="4">Actions</th>
+		<th colspan="3">Actions</th>
+		<th><input type="checkbox" id="selectall" name="selectall"></th>
 	</tr>
  </thead>
  <tbody>
@@ -47,14 +23,21 @@ $(document).ready(function(){
     <td>{$entry->libdivision} ({$entry->idepreuve})</td>
 	<td>{$entry->phase}</td>
     <td>{$entry->friendlyname}</td>
+	<td>{$entry->horaire}</td>
 	<td>{$entry->tag}</td>
-	<td>{$entry->view}</td>
-	<td>{$entry->editlink}</td>
+	<td><a href="{cms_action_url action=admin_poules_tab3 record_id=$entry->eq_id}">{admin_icon icon="view.gif"}</a></td>
+	<td><a href="{cms_action_url action=edit_team record_id=$entry->eq_id}">{admin_icon icon="edit.gif"}</td>
     <td>{$entry->deletelink}</td>
+<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->eq_id}"
   </tr>
 {/foreach}
  </tbody>
 </table>
+	<!-- SELECT DROPDOWN -->
+<div class="pageoptions" style="float: right;">
+<br/>{$actiondemasse}{$submit_massaction}
+</div>
+{$form2end}
 {/if}
 
 

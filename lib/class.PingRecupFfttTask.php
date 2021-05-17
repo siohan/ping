@@ -25,15 +25,18 @@ class PingRecupFfttTask implements CmsRegularTask
          $time = time();
       }
 
-      $last_execute = $ping->GetPreference('LastRecupFftt');
+      $last_execute = (int) $ping->GetPreference('LastRecupFftt');
       
-      // Définition de la périodicité de la tâche (24h ici)
-      if( $last_execute >= ($time - 900) ) return FALSE; // hardcoded to 15 minutes
+      // Définition de la périodicité de la tâche 
+      if( $time - $last_execute >= 7*24*3600 )  // Tous les 7 jours
       {
          return TRUE;
       }
+      else
+	{
+		return FALSE;
+	}
       
-      return FALSE;
       
    }
 
@@ -46,15 +49,16 @@ class PingRecupFfttTask implements CmsRegularTask
       	}
 
       	$ping = cms_utils::get_module('Ping');
-      
+        $spid_ops = new spid_ops;
+	$ping_ops = new ping_admin_ops;
       	// Ce qu'il y a à exécuter ici
 	//echo "coucou";
 	//on récupère la saison en cours
 	$db = cmsms()->GetDb();
 	$saison = $ping->GetPreference('saison_en_cours');
 	//$query = "SELECT j.licence FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j WHERE j.licence = rp.licence AND j.actif='1' AND rp.maj_fftt < NOW()-INTERVAL 3 DAY AND rp.saison = ? ORDER BY rp.maj_fftt DESC LIMIT 25 ";
-      	$query = "SELECT licence  FROM ".cms_db_prefix()."module_ping_recup_parties WHERE maj_fftt < UNIX_TIMESTAMP()-25 AND saison = ? ORDER BY maj_fftt DESC LIMIT 25 ";
-	$dbresult = $db->Execute($query, array($saison));
+    $query = "SELECT licence  FROM ".cms_db_prefix()."module_ping_recup_parties WHERE maj_fftt < UNIX_TIMESTAMP() ORDER BY maj_fftt ASC LIMIT 5";
+	$dbresult = $db->Execute($query);
 	//on a donc les n licences pour faire la deuxième requete
 	//on commence à boucler
 	if($dbresult && $dbresult->RecordCount()>0)  //la requete est ok et il y a des résultats
@@ -68,7 +72,18 @@ class PingRecupFfttTask implements CmsRegularTask
 		{
 			$licence = $row['licence'];
 			$retrieve = $service->retrieve_parties_fftt($licence);
-			sleep(1);
+			//on envoie qqch au journal ?
+			$player = $ping_ops->name($licence);
+			$status = 'OK';
+			$designation = $retrieve.' nouvelles parties fftt pour '.$player.'(Auto)';
+			$action = 'FFTT Task';
+			$ping_ops->ecrirejournal($status,$designation, $action);
+			$maj_fftt = $spid_ops->compte_fftt($licence);
+			$pts_fftt = $spid_ops->pts_fftt($licence);
+			if(false != $pts_fftt)
+			{
+				$spid_ops->maj_pts_fftt($licence,$pts_fftt);
+			}
 		}
 		return true; // Ou false si ça plante	
 	}

@@ -6,39 +6,40 @@ if(!$this->CheckPermission('Ping Use') && !$this->CheckPermission('Ping Set Pref
 	$this->SetMessage("$message");
 	$this->RedirectToAdminTab('joueurs');
 }
-  // CreateFormStart sets up a proper form tag that will cause the submit to
-  // return control to this module for processing.
+
 //debug_display($params, 'Parameters');
-require_once(dirname(__file__).'/include/prefs.php');
-$mois_courant = date('m');
-$annee_courante = date('Y');
-//$version = $this->GetVersion('Ping');
+if(!empty($_POST))
+{
+	debug_display($_POST, 'Parameters');
+	$this->SetPreference('phase_en_cours', $_POST['phase_en_cours']);
+	$this->SetPreference('saison_en_cours', $_POST['saison_en_cours']);
+	$this->SetPreference('populate_calendar', $_POST['populate_calendar']);
+	$this->SetPreference('affiche_club_uniquement', $_POST['affiche_club_uniquement']);
+	$this->SetPreference('interval_classement', $_POST['interval_classement']);
+	$this->SetPreference('interval_joueurs', $_POST['interval_joueurs']);
+	$this->SetPreference('interval_equipes', $_POST['interval_equipes']);
+	$this->SetPreference('interval_feuille_parties', $_POST['interval_feuille_parties']);
+	$this->SetPreference('details_rencontre_page', $_POST['details_rencontre_page']);
 
-//$smarty->assign('version', $version2);
-$smarty->assign('recup_orga', $this->CreateLink($id, 'retrieve',$returnid,$contents='Récupérer les organismes',array("retrieve"=>"organismes")));
+	$this->SetMessage('Vos options ont été mises à jours');
+	//$this->Audit('', 'Ping',$club_number);
+	//$this->RedirectToAdminTab('joueurs');
 
-//$saisondropdown['.$saison_actuelle.'] = $saison_actuelle;
-$smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));
-
-
-$smarty->assign('endform', $this->CreateFormEnd ());
-// Construire la liste dynamiquement avec une requete
-
-$saison_encours = ($this->GetPreference('saison_reference')) ?  '2013-2014' : $this->GetPreference('saison_reference');
-$smarty->assign('input_phase',$this->CreateInputText($id,'phase_en_cours',$this->GetPreference('phase_en_cours','1'),50,255));
-//$smarty->assign('title_email_subject',$this->Lang('email_subject'));
-$items = array();
-$items['Oui'] = 'Oui';
-$items['Non'] = 'Non';
-$choix['Sans'] = '0';
-$choix['Avec'] = '1';
-
-$smarty->assign('input_saison_en_cours',$this->CreateInputDropdown($id,'saison_en_cours',$saisondropdown,-1,$this->GetPreference('saison_en_cours'),50,255));
-
-//$smarty->assign('spid', $this->CreateInputDropdown($id,'spid',$choix,-1,$selectedvalue=$this->GetPreference('spid_calcul')));
-$smarty->assign('input_populate_calendar',$this->CreateInputDropdown($id,'populate_calendar',$items,-1,$selectedvalue=$this->GetPreference('populate_calendar'),50,255));
-$smarty->assign('input_affiche_club_uniquement',$this->CreateInputDropdown($id,'affiche_club_uniquement',$items,-1,$this->GetPreference('affiche_club_uniquement'),50,255));
-$smarty->assign('submit', $this->CreateInputSubmit ($id, 'optionssubmitbutton', $this->Lang('submit')));
+$this->RedirectToAdminTab('joueurs');
+}
+else
+{
+	require_once(dirname(__file__).'/include/prefs.php');
+	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('adminprefs.tpl'), null, null, $smarty);
+	$tpl->assign('saison_en_cours', $this->GetPreference('saison_en_cours'));
+	$tpl->assign('phase_en_cours', $this->GetPreference('phase_en_cours'));
+	$tpl->assign('populate_calendar', $this->GetPreference('populate_calendar'));
+	$tpl->assign('affiche_club_uniquement', $this->GetPreference('affiche_club_uniquement'));
+	$tpl->assign('interval_classement', $this->GetPreference('interval_classement'));
+	$tpl->assign('interval_joueurs', $this->GetPreference('interval_joueurs'));
+	$tpl->assign('interval_equipes', $this->GetPreference('interval_equipes'));
+	$tpl->display();
+}
 
 //on teste si le module Adhérents est présent et activé!
 
@@ -58,6 +59,6 @@ $smarty->assign('startformexport3', $this->CreateFormStart ($id, 'admin_export_c
 $smarty->assign('exportsubmit3', $this->CreateInputSubmit ($id, 'exportsubmitbutton2', 'Exporter les équipes'));
 $smarty->assign('endformexport3', $this->CreateFormEnd ());
 // Display the populated template
-echo $this->ProcessTemplate ('adminprefs.tpl');
+//echo $this->ProcessTemplate ('adminprefs.tpl');
 
 ?>

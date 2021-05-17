@@ -2,13 +2,23 @@
 ######################################################################
 ###                   L'onglet de la situation mensuelle           ###
 #                                                                  ###
-# Auteur : Claude SIOHAN                                           ###
+# Auteur : AssoSimple                                              ###
 ######################################################################
 if( !isset($gCms) ) exit;
 $db = cmsms()->GetDb();
 global $themeObject;
 //debug_display($params,'Parameters');
-$mois_courant = date('n');//Mois au format 1, 2, 3 etc....
+$mois_courant = (isset($params['mois']) ? $params['mois'] : date('n'));//Mois au format 1, 2, 3 etc....
+$annee_courante = (isset($params['annee']) ? $params['annee'] : date('Y'));
+$mois_suivant = $mois_courant + 1;
+$mois_prec = $mois_courant - 1;
+if(date('d') <10)
+{
+	
+}
+$smarty->assign('mois_courant', $mois_courant);
+$smarty->assign('mois_suivant', $mois_suivant);
+$smarty->assign('mois_prec', $mois_prec);
 $now = trim($db->DBTimeStamp(time()), "'");
 $annee_courante = date('Y');
 $jour = date('j');
@@ -17,7 +27,7 @@ $saison_courante = $this->GetPreference('saison_en_cours');
 //echo "l'année courante est : ".$annee_courante;
 
 
-$query = "SELECT *, sm.saison, sm.id,j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_sit_mens AS sm WHERE j.licence = sm.licence AND sm.mois = ? AND sm.annee = ? AND j.actif = '1' AND j.type = 'T'";
+$query = "SELECT *, sm.saison, sm.id,j.licence,sm.id,sm.mois,sm.points, sm.annee, CONCAT_WS(' ', j.nom, j.prenom) AS joueur, sm.progmois, sm.clnat, sm.rangreg, sm.rangdep  FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_sit_mens AS sm ON j.licence = sm.licence WHERE sm.mois = ? AND sm.annee = ? AND j.actif = '1' ";//" AND j.type = 'T'";
 
 $query.=" ORDER BY joueur ASC,sm.id ASC";
 

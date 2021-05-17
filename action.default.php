@@ -29,6 +29,22 @@ switch($display)
 		
 		require(__DIR__.'/action.equipe.php');
 	break;
+	
+	case "countdown" : 
+		require(__DIR__.'/action.displaycountdown.php');
+	break;
+	
+	case "affiche" : 
+		require(__DIR__.'/action.displayaffiche.php');
+	break;
+	
+	case "start_demo" : 
+		require(__DIR__.'/action.start_demo.php');
+	break;
+	
+	case "scores" : 
+		require(__DIR__.'/action.displayscores.php');
+	break;
 }
 /*
 $nom_equipes = $this->GetPreference('nom_equipes');

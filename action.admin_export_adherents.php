@@ -15,7 +15,7 @@ $message = '';
 $db = cmsms()->GetDb();
 $saison_en_cours = $this->GetPreference('saison_en_cours');
 
-if(isset($params['exportsubmitbutton']) && $params['exportsubmitbutton'] != '')
+if(isset($params['obj']) && $params['obj'] == 'export_members')
 {
 	
 	$adherents = 'Adherents';

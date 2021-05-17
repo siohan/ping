@@ -27,7 +27,7 @@ class PingRecupRencontresTask implements CmsRegularTask
       $last_execute = $ping->GetPreference('LastRecupRencontres');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 30*60 ) >= $last_execute )//toutes les 24 heures  !!
+      if ( $time - $last_execute >= 24*3600 )//tous les 15 minutes !!
 
       {
          return TRUE;
@@ -44,135 +44,40 @@ class PingRecupRencontresTask implements CmsRegularTask
       {
          $time = time();
       }
-
-      $ping = cms_utils::get_module('Ping');
+	$db = cmsms()->GetDb();
+      	$ping = cms_utils::get_module('Ping');
+	$ping_ops = new ping_admin_ops;
+	$retrieve_ops = new retrieve_ops;
       
       // Ce qu'il y a à exécuter ici
-	$db = $ping->GetDb();
+	
 	$saison = $ping->GetPreference('saison_en_cours');
-	$phase = $ping->GetPreference('phase_en_cours');
-	$aujourdhui = date('Y-m-d');
-	$now = trim($db->DBTimeStamp(time()), "'");
-	$query = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres` WHERE `date_event` < ? AND (scorea = 0 AND scoreb = 0) AND saison = ? AND phase = ?";
-	$dbresult = $db->Execute($query, array($aujourdhui,$saison));
+	
+	$query = "SELECT DISTINCT iddiv, idpoule,idepreuve, eq_id FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE `date_event` < CURRENT_DATE() AND (scorea = 0 AND scoreb = 0) AND saison = ? ";
+	$dbresult = $db->Execute($query, array($saison));
 	if($dbresult && $dbresult->RecordCount() > 0)
 	{
 
-		while ($dbresult1 && $row = $dbresult1->FetchRow())
-      		{
-			
+		while ($row = $dbresult->FetchRow())
+      		{			
 			$iddiv = $row['iddiv'];
 			$idpoule = $row['idpoule'];
-			$service = new Servicen();
-			$page = "xml_result_equ";
-			$var = "auto=1&D1=".$iddiv."&cx_poule=".$idpoule;
-			$lien = $service->GetLink($page, $var);
-			//echo $lien;
-			$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-			
-			if($xml === FALSE)
-			{
-				//Le lien ne retourne rien le service est coupé
-				//le tableau est vide, il faut envoyer un message pour le signaler
-				$designation.= "le service est coupé";
-				$result = 0;
-				//$this->SetMessage("$designation");
-				//$this->RedirectToAdminTab('poules');
-			}
-			else
-			{
-				$array = json_decode(json_encode((array)$xml),TRUE);
-				$lignes = count($array['tour']);
-				//echo "Ok on continue";
-			}
-
-			//il faut tester si le tableau est vide ou non
-			if(!is_array($array) || $lignes ==0)
-			{
-				//echo "Ca ne marche pas !";
-			}
-			else
-			{
-				//tt va bien on continue
-			
-				//var_dump($xml);	
-				//echo "Ok on continue encore";
-				$i=0;
-				foreach($xml as $cle =>$tab)
-				{
-
-
-					$libelle = (isset($tab->libelle)?"$tab->libelle":"");
-					$equa = (isset($tab->equa)?"$tab->equa":"");
-					$equb = (isset($tab->equb)?"$tab->equb":"");
-
-					//on fait quelque transformations des infos recueillies
-					preg_match_all('#[0-9]+#',$libelle,$extract);
-					$tour = $extract[0][0];
-
-					$extraction = substr($libelle,-8);
-					$date_extract = explode('/', $extraction);
-					$annee_date = $date_extract[2] + 2000;
-					$date_event = $annee_date."-".$date_extract[1]."-".$date_extract[0];
-					$uploaded = 0;
-
-					$cluba = strpos($equa,$nom_equipes);
-					$clubb = strpos($equb,$nom_equipes);
+			$idepreuve = $row['idepreuve'];
+			$record_id = $row['eq_id'];
+			$retrieve = $retrieve_ops->retrieve_poule_rencontres($record_id,$iddiv, $idpoule, $idepreuve);
+			$status = 'OK';
+			$designation = $retrieve.' nouveaux scores par équipes (Auto)';
+			$action = 'Rencontres auto';
+			$ping_ops->ecrirejournal($status, $designation, $action);		
 				
-						if ($cluba !== false || $clubb !== false)
-						{
-							$club = 1;
-							$affichage = 1;
-						}
-						else
-						{
-							$club = 0;
-						}
-					
-					$scorea = (isset($tab->scorea)?"$tab->scorea":"");
-					$scoreb = (isset($tab->scoreb)?"$tab->scoreb":"");
-					$lien = (isset($tab->lien)?"$tab->lien":"");	
-					//
-				
-					$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_poules_rencontres (id,saison,idpoule, iddiv, club, tour, date_event, uploaded, libelle, equa, equb, scorea, scoreb, lien) VALUES ('', ? ,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-					//	echo $query;
-					$i++;
-					$uploaded = 0;
-					$dbresultat = $db->Execute($query3,array($saison,$idpoule, $iddiv, $club, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien));
-
-					if(!$dbresultat)
-					{
-						$designation .= $db->ErrorMsg(); 
-					}
-						
-							
-						
-							
-					
-					
-				
-					}//fin du foreach
-				
-				}//fin du if !is_array vérification du tableau
-			$comptage = $i;
-			$status = 'Cron';
-			$designation = "Mise à jour de ".$comptage." rencontres de la poule ".$idpoule;
-			$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
-			$action = "retrieve_poules_rencontres";
-			$dbresult4 = $db->Execute($query4, array($now,$status, $designation,$action));
-			
-				if(!$dbresult4)
-				{
-					$designation.= $db->ErrorMsg(); 
-				}
-			
-		}//fin du while
-
+		}//fin du while	
+		return true; // Ou false si ça plante
+	}
+	else
+	{
+		return false; // Ou false si ça plante
 	}
 	
-//echo "coucou";
-      
-      return true; // Ou false si ça plante
 
    }
 
@@ -193,7 +98,7 @@ class PingRecupRencontresTask implements CmsRegularTask
 
    public function on_failure($time = '')
    {
-      $ping->Audit('','Ping','Pas de récup SPID');
+      $ping->Audit('','Ping','Pas de récup de rencontres');
    }
 
 }

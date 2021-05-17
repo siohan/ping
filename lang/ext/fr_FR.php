@@ -41,6 +41,7 @@ $lang['delete_selected'] = 'Supprimer la sélection';
 $lang['delete_result_confirm'] = 'Voulez-vous vraiment supprimer ce résultat ? Tous les résultats individuels liés seront également supprimés';
 $lang['delete_confirm'] = 'Voulez vous supprimer cet enregistrement ?';
 $lang['delete_user_confirm'] = 'Voulez-vous vraiment supprimer cet utilisateur ?';
+$lang['download'] = 'Télécharger';
 $lang['download_poule_results'] = 'Télécharger les résultats de la poule';
 $lang['download_all_poule_results'] = 'Télécharger les résultats de toutes les poules';
 $lang['duplicate'] = 'Dupliquer';
@@ -54,7 +55,9 @@ $lang['error_invalidnumber'] = 'Erreur : pas de num&eacute;ro fourni !';
 $lang['error_numberexists'] = 'Ce num&eacute;ro existe d&eacute;j&agrave;';
 $lang['filtres'] = 'Appliquer le filtre';
 $lang['friendlyname'] = 'Asso Ping';
+$lang['groupassign'] ='Assigner au groupe';
 $lang['id'] = 'Id';
+$lang['import'] = 'Importer';
 $lang['installed'] = 'Module install&eacute; en version %s.';
 $lang['joueur'] = 'Joueur';
 $lang['long_import'] = "Cette opération peut durer plusieurs minutes !";
@@ -118,6 +121,7 @@ $lang['usersfoundtext'] = 'utilisateur(s) trouv&eacute;(s)';
 $lang['user_deleted'] = 'Utilisateur supprimé';
 $lang['user_updated'] = 'Utilisateur modifi&eacute;';
 $lang['vic_def'] = 'Victoire ou défaite';
+$lang['view'] = 'Voir';
 $lang['view_contacts'] = 'Voir les contacts';
 $lang['view_results'] = 'Voir les résulats';
 $lang['yes'] = 'Oui';
@@ -137,12 +141,14 @@ $lang['help_limit'] = 'Pour limiter le nb à x résultats';
 $lang['help_code_compet'] = 'Ce code se trouve dans les résultats FFTT';
 $lang['help_coefficient'] = 'Utilisez le point (.) et non la virgule ex 1.25 et non pas 1,25';
 $lang['help_description'] = 'Param&egrave;tres internes utilis&eacute;s lors de la cr&eacute;ation d&#039;un nouvel enregistrement';
+$lang['help_details_rencontre_page'] = 'Indiquez l\'alias de la page où s\'affichera le détail de la rencontre (voir Contenu->Gestionnaire de contenu puis colonne alias)';
 $lang['help_explanation'] = 'Param&egrave;tre interne utilis&eacute; pour passer des informations explicatives lorsque l&#039;on cr&eacute;&eacute; ou l&#039;on met &agrave; jour un enregistrement';
 $lang['help_module_message'] = 'Param&egrave;tre interne utilis&eacute; pour la transmission des messages &agrave; l&#039;utilisateur';
 $lang['help_spid_calcul'] = "Consultez l'aide sur le module pour utiliser le mode calcul du Spid";
 $lang['help_affiche_club_uniquement'] = "Choisissez d'afficher tous les résultats (y compris ceux des équipes adverses) ou seulement ceux des équipes de votre club";
 $lang['event_info_OnSkeletonPreferenceChange'] = 'Un &eacute;v&eacute;nement g&eacute;n&eacute;r&eacute; lorsque les pr&eacute;f&eacute;rences du module  sont chang&eacute;es';
 $lang['event_help_OnSkeletonPreferenceChange'] = '<p>An event generated when the preferences to the Skeleton Module get changed</p>
+
 <h4>Parameters</h4>
 <ul>
 <li><em>allow_add</em> - The new setting of the &quot;Allow Add&quot; preference; boolean</li>
@@ -245,6 +251,12 @@ $lang['type_Résultats Par Equipes'] = "Résultats Par Equipe";
 $lang['type_Résultats par joueur'] = "Résultats Par Joueurs";
 $lang['type_Situation Mensuelle'] = "Situation Mensuelle";
 $lang['type_Classements Club'] = "Classements Des Equipes";
-$lang['type_Situation En Live'] = "Situation Mensuelle Live";
+$lang['type_Situation Mensuelle Live'] = "Situation Mensuelle Live";
+$lang['type_Classements Des Equipes'] = 'Classements des équipes';
+$lang['type_Countdown'] = 'Countdown';
+$lang['type_Coordonnees'] = 'Coordonnées';
+$lang['type_Adherents'] = 'Adhérents';
+$lang['type_Situation En Live'] = 'Situation En Live';
+
 
 ?>

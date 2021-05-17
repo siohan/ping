@@ -4,6 +4,8 @@ if (!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 $equipes_ops = new equipes_ping;
 $ping_admin_ops = new ping_admin_ops();
+$spid_ops = new spid_ops;
+$ren = new rencontres;
 if (!$this->CheckPermission('Ping Delete'))
 	{
 	$params = array('message'=>Lang('needpermission'), 'active_tab' => 'users');
@@ -52,7 +54,7 @@ $designation = '';
 						{
 								 $licence = $params['licence'];
 						}
-						$ping_admin_ops->compte_spid($licence);
+						$spid_ops->compte_spid($licence);
 						$designation.="Résultat supprimé";
 						$this->SetMessage("$designation");
 						$this->RedirectToAdminTab('spid');
@@ -85,6 +87,7 @@ $designation = '';
 					$message = '';//on instancie un message de sortie
 					$del_class = $equipes_ops->delete_classement($record_id);
 					$supp_eq = $equipes_ops->delete_team($record_id);
+					$ren->delete_team_matches($record_id);
 					
 					$message.=" Equipe supprimée. ";
 					
@@ -106,7 +109,7 @@ $designation = '';
 					$db->Execute($query, array($record_id));
 
 					$this->SetMessage('Match supprimé');
-					$this->RedirectToAdminTab('poules');
+					$this->Redirect($id,'admin_poules_tab3', $returnid, array("record_id"=>$equipe_id));
 				break;
 				
 				case "sit_mens" :
@@ -149,7 +152,7 @@ $designation = '';
 					$query = "DELETE FROM ".cms_db_prefix()."module_ping_recup";
 					$db->Execute($query);
 					$this->SetMessage('Journal supprimé');
-					$this->Redirect($id,'defaultadmin', $returnid);
+					$this->RedirectToAdminTab('journal');
 				break;	
 				
 				case "participants_tours" : 

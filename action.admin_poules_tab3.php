@@ -5,87 +5,23 @@
 //les compétitions à venir
 if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
-require_once(dirname(__FILE__).'/include/prefs.php');
-$date_courante = date('Y-m-d');
-//echo "la date courante : ".$date_courante;
-//on teste un affichage par mois
-$mois_courant = date('n');
-$mois_choisi = '';
-$phase_choisie = '';
-$phase = (isset($params['phase'])?$params['phase']:$this->GetPreference('phase_en_cours'));
-$saison = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
-
+global $themeObject;
 //le record_id est défini, on peut récupérer toutes les variables nécessaires
 if(isset($params['record_id']) && $params['record_id'] !='')
 {
 	$record_id = $params['record_id'];
-	//on fait donc la requete pour extraire tout ce dont on a besoin
-	$query = "SELECT * FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ? ";
-	$dbresult = $db->Execute($query,array($record_id));
-	
-	if($dbresult && $dbresult->RecordCount()>0)
-	{
-		while($row = $dbresult->FetchRow())
-		{
-			$idepreuve = $row['idepreuve'];
-			$iddiv = $row['iddiv'];
-			$idpoule = $row['idpoule'];
-			$libequipe = $row['libequipe'];
-			$libequipe1 = trim($libequipe);
-			//var_dump($libequipe1);
-			$libequipe2 = '%'.$libequipe1.'%';
-			$phase = $row['phase'];
-		}
-	}
-	
-	
+	$eq_ops = new equipes_ping;
+	$details = $eq_ops->details_equipe($record_id);
+	$friendlyname = $details['friendlyname'];	
+	$saison = $details['saison'];
+	$idepreuve = $details['idepreuve'];
+	$phase = $details['phase'];
 }
+include 'include/action.navigation.php';
 
 
 
-//echo "la saison est : ".$saison;
-//echo "la phase est : ".$phase;
-//on crée des liens pour naviguer d'une équipe l'autre
-$rowarray3 = array();
-$rowclass3 = '';
-$query3 = "SELECT id, libequipe, friendlyname FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ? AND idepreuve = ? ORDER BY numero_equipe ASC";
-$dbresultat3 = $db->Execute($query3, array($saison,$phase,$idepreuve));
-if($dbresultat3 && $dbresultat3->RecordCount()>0)
-{
-	while($row3 = $dbresultat3->FetchRow())
-	{
-		$friendlyname = $row3['friendlyname'];
-		if(null !==$friendlyname)
-		{
-			$libequipe = $friendlyname;
-		}
-		else
-		{
-			$libequipe = $row3['libequipe'];
-		}
-		$onerow3= new StdClass();
-
-		$onerow3->lien_nav= $this->CreateLink($id, 'admin_poules_tab3', $returnid, $contents=$libequipe, array("record_id"=>$row3['id'], "libequipe"=>$libequipe, "idepreuve"=>$idepreuve));
-		//$onerow3->libequipe= $row3['libequipe'];
-		($rowclass3 == "row1" ? $rowclass3= "row2" : $rowclass3= "row1");
-		$onerow3->rowclass3= $rowclass3;
-		$rowarray3[]= $onerow3;
-	}
-	
-}
-$smarty->assign('items3',$rowarray3);
-$smarty->assign('itemcount3', count($rowarray3));
-$smarty->assign('retour',
-	$this->CreateLink($id, $returnid,$contents='Retour aux équipes'));
-$smarty->assign('returnlink', $this->CreateLink($id,'defaultadmin',$returnid,$themeObject->DisplayImage('icons/system/back.gif', $this->Lang('back'), '', '', 'systemicon'),array("__activetab"=>"equipes")));
-$smarty->assign('all_results', 
-		$this->CreateLink($id, 'retrieve_poule_rencontres', $returnid, 'Récupérer tous les résultats', array("record_id"=>$record_id)));
-		
-//on prépare un lien pour récupérer le classement ou le mette à jour
-$smarty->assign('refresh_class',
-		$this->CreateLink($id, 'retrieve', $returnid,$contents="Récupérer ou mettre le classement à jour",array("retrieve"=>"classement_equipes","record_id"=>$record_id)));	
-//le classement de l'équipe
-$query2 = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
+$query2 = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname, cl.num_equipe, cl.idclub FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
 $dbresult2= $db->Execute($query2, array($record_id,$saison));
 
 $rowarray = array();
@@ -101,6 +37,20 @@ if($dbresult2 && $dbresult2->RecordCount()>0)
 		{
 			$classement = '-';
 		}
+		//on va vérifier si un logo existe
+		$idclub = $row2['idclub'];
+		
+		$img= '';
+		$dir = '../modules/Ping/images/logos/';
+		$ext_list = array('.gif', '.jpg', '.png','.jpeg');
+		foreach($ext_list as $ext)
+		{
+ 			if(true == file_exists($dir.$idclub.$ext))
+ 			{
+  				$img = $idclub.$ext;
+ 			}
+		}
+		
 		$onerow2= new StdClass();
 		$onerow2->friendlyname= $row2['friendlyname'];
 		$onerow2->clt=  $classement;
@@ -113,6 +63,8 @@ if($dbresult2 && $dbresult2->RecordCount()>0)
 		$onerow2->pg= $row2['pg'];
 		$onerow2->pp= $row2['pp'];
 		$onerow2->pf= $row2['pf'];
+		$onerow2->idclub= $row2['idclub'];
+		$onerow2->logo = $img;
 		($rowclass2 == "row1" ? $rowclass2= "row2" : $rowclass2= "row1");
 		$onerow2->rowclass2= $rowclass2;
 		$rowarray[]= $onerow2;
@@ -131,25 +83,9 @@ $smarty->assign('items2', $rowarray);
 		
 		
 //la requete
-//$query = "SELECT tc.coefficient,cal.date_debut, DAY(cal.date_debut) AS jour_compet,cal.date_fin, tc.idepreuve,tc.name, tc.indivs FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS tc  WHERE tc.idepreuve = cal.idepreuve AND MONTH(cal.date_debut) = ? AND cal.saison = ?";
-$query = "SELECT DISTINCT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv = ? AND idpoule = ? AND saison = ? ";
-/*
-if($phase == 1)
-{
-	$query.=" AND MONTH(date_event) >7";
-}
-else
-{
-	$query.=" AND MONTH(date_event) < 7";
-}
-*/
-$query.=" AND (equa LIKE ?  OR equb LIKE ?)";
-$query.=" ORDER BY date_event ASC";
-//echo $query;
-$dbresult = $db->Execute($query, array($iddiv, $idpoule,$saison,$libequipe2,$libequipe2));//,array($mois_choisi,$saison));
 
-
-
+$query = "SELECT DISTINCT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? ORDER BY date_event ASC ";
+$dbresult = $db->Execute($query, array($record_id));
 $rowarray = array();
 $rowclass = '';
 $i=0;
@@ -168,7 +104,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$i++;
 			$onerow->valeur = $i;
 			//on refait une requete pour extraire les rencontres
-			$query2 = "SELECT DISTINCT ren.id AS ren_id,ren.renc_id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname, ren.club,ren.uploaded,eq.libequipe,eq.id,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison";
+			$query2 = "SELECT DISTINCT ren.id AS ren_id,ren.renc_id,ren.eq_id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname, ren.club,ren.uploaded,eq.libequipe,eq.id,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison";
 			$query2.= "  AND ren.date_event = ?";
 			//$query2.= " AND eq.saison = ?";
 			$query2.=" AND eq.id = ?";
@@ -185,69 +121,21 @@ if($dbresult && $dbresult->RecordCount()>0)
 				{
 					//$valeur = $i;
 					$onerow2 = new StdClass();
-					$eq_id = $row2['id'];
-					$equa = $row2['equa'];
-					$equb = $row2['equb'];
-					$iddiv = $row2['iddiv'];
-					$idpoule = $row2['idpoule'];
-					$scorea = $row2['scorea'];
-					$scoreb = $row2['scoreb'];
-					$club = $row2['club'];
-					$date_event = $row2['date_event'];
-					$affiche = $row2['affiche'];
-					$uploaded = $ping_ops->is_uploaded($row2['renc_id']);//row2['uploaded'];
-					//var_dump($uploaded)
-;					$libequipe = $row2['libequipe'];
+					$onerow2->eq_id = $row2['eq_id'];
+					//$onerow2->eq_id = $row2['id'];
+					$onerow2->iddiv = $row2['iddiv'];
+					$onerow2->idpoule = $row2['idpoule'];
+					$onerow2->scorea = $row2['scorea'];
+					$onerow2->scoreb = $row2['scoreb'];
+					$onerow2->club = $row2['club'];
+					$onerow2->date_event = $row2['date_event'];
+					$onerow2->affiche = $row2['affiche'];
+					$onerow2->uploaded = $row2['uploaded'];//$ping_ops->is_uploaded($row2['renc_id']);//row2['uploaded'];
+					$onerow2->libequipe = $row2['libequipe'];
 					$friendlyname = $row2['friendlyname'];
-					$idepreuve = $row2['idepreuve'];
-					$onerow2->ren_id = $row2['ren_id'];
-					if($affiche ==1 || $club == 1)
-					{
-						$onerow2->display= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('do_not_display'), '', '', 'systemicon');
-						//$onerow2->display= $this->CreateLink($id,)$themeObject->DisplayImage('icons/system/true.gif', $this->Lang('do_not_display'), '', '', 'systemicon');
-					}
-					else
-					{
-						$onerow2->display= $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('display_on_frontend'), '', '', 'systemicon');
-					}
+					$onerow2->idepreuve = $row2['idepreuve'];
+					$onerow2->renc_id = $row2['renc_id'];
 					
-					$pb = 0;
-					
-					if($scorea ==0 && $scoreb == 0)
-					{
-						$pb = 1;
-					}
-					if($uploaded === FALSE) 
-					{
-
-					 	if($pb==1) 
-						{
-							
-							if($date_event <= $date_courante)
-							{
-							
-								$onerow2->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents = 'MAJ', array('idpoule'=>$row2['idpoule'], 'iddiv'=>$row2['iddiv'], 'idepreuve'=>$idepreuve));
-							
-							}
-							
-						}
-						
-						if($date_event <= $date_courante)
-						{
-						
-							$onerow2->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres2', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('record_id'=>$row2['renc_id'],"eq_id"=>$eq_id));
-						}
-						
-					}
-					else
-					{
-						$onerow2->viewdetails = $this->CreateLink($id, 'details',$returnid,$themeObject->DisplayImage('icons/system/view.gif', $this->Lang('viewdetails'), '', '', 'systemicon'), array('record_id'=>$row2['renc_id'],"eq_id"=>$eq_id));
-					}
-
-					if($this->CheckPermission('Ping Delete'))
-					{
-						$onerow2->deletelink= $this->CreateLink($id, 'delete', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row2['ren_id'], 'type_compet'=>'poules'), $this->Lang('delete_confirm'));
-					}
 					if(isset($friendlyname) && $friendlyname !='')
 					{
 						if ($libequipe == $equa && isset($friendlyname) && $friendlyname !='' )
@@ -278,11 +166,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					else{
 						$onerow2->equb= $row2['equb'];
 					}
-					$onerow2->scorea = $scorea;
-					$onerow2->scoreb = $scoreb;
-					$onerow2->club = $row2['club'];
-					$onerow->ren_id = $id;
-					//$onerow2->valeur = $valeur;
+					
 					$rowarray2[] = $onerow2;
 					
 				}
@@ -298,11 +182,11 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$rowarray[]  = $onerow;
 		$smarty->assign('items', $rowarray);
 		$smarty->assign('itemcount', count($rowarray));
-		$smarty->assign('date_courante', $date_courante);
+		$smarty->assign('date_courante', date('Y-m-d'));
 		
 	}
 }
-
+/*
 $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
@@ -312,6 +196,7 @@ $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',
 		$this->CreateInputSubmit($id,'submit_massaction',$this->Lang('apply_to_selection'),'','',$this->Lang('areyousure_actionmultiple')));
+*/
 echo $this->ProcessTemplate('resultats.tpl');
 #
 #EOF

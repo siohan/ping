@@ -27,7 +27,7 @@ class PingRecupResultsTask implements CmsRegularTask
       $last_execute = $ping->GetPreference('LastRecupResults');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 30*60 ) >= $last_execute )//toutes les 24 heures  !!
+      if ( ($time - $last_execute >= 24*3600 )//toutes les 24 heures  !!
 
       {
          return TRUE;
@@ -50,7 +50,7 @@ class PingRecupResultsTask implements CmsRegularTask
       // Ce qu'il y a à exécuter ici
 	$db = $ping->GetDb();
 	$saison_courante = $ping->GetPreference('saison_en_cours');
-	$now = trim($db->DBTimeStamp(time()), "'");
+
 	$query = "SELECT idepreuve, tour FROM ".cms_db_prefix()."module_ping_div_tours AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' ";
 	$interval = $ping->GetPreference('spid_interval');
 	$query.=" AND maj_spid < NOW()-INTERVAL ".$interval." DAY AND saison = ? ORDER BY maj_spid DESC ";

@@ -4,22 +4,13 @@
 require_once(dirname(__FILE__).'/include/prefs.php');
 //$nom_equipes = $this->GetPreference('nom_equipes');
 $saison = $this->GetPreference('saison_en_cours');
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 global $themeObject;
 $result= array();
 $parms = array();
 $rowarray = array();
 //$rowarray1 = array();
 $query = "SELECT DISTINCT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event<=NOW()";//GROUP BY date_debut ORDER BY date_debut DESC";
-if(isset($params['date_debut']) && isset($params['date_fin']))
-{
-	$date_debut = $params['date_debut'];
-	$date_fin = $params['date_fin'];
-	$query = "SELECT  date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event = ? ";//GROUP BY date_debut ORDER BY date_debut DESC";
-	$parms['date_event'] = $date_debut;
-}
-$i=0;
-
 
 
 if(isset($params['idepreuve']) && $params['idepreuve'] != '')
@@ -34,17 +25,18 @@ if(isset($params['saison']) && $params['saison'] != '')
 	$query.= " AND saison = ?";
 	$parms['saison']  = $saison;
 }
-/*
-if(isset($params['date_debut']) && isset($params['date_fin']))
-{
-	$date_debut = $params['date_debut'];
-	$date_fin = $params['date_fin']
-}
-*/
-$template = "Ping Par Equipes";
+
 if(isset($params['template']) && $params['template'] !="")
 {
 	$template = $params['template'];
+}
+else {
+    $tpl = CmsLayoutTemplate::load_dflt_by_type('Ping::Résultats Par Equipes');
+    if( !is_object($tpl) ) {
+        audit('',$this->GetName(),'Template résultats des équipes introuvable');
+        return;
+    }
+    $template = $tpl->get_name();
 }
 
 	$query.=" GROUP BY date_event ORDER BY date_event DESC";
@@ -106,6 +98,8 @@ if(isset($params['template']) && $params['template'] !="")
 					$friendlyname = $row2['friendlyname'];
 					$onerow2 = new StdClass();
 					$onerow2->rowclass =$rowclass;
+					$onerow2->eq_id = $row2['eq_id'];
+					$onerow2->renc_id = $row2['renc_id'];
 					$onerow2->ren_id= $row2['ren_id'];
 					$onerow2->date_event= $row2['date_event'];
 					$onerow2->equb = $row2['equb'];
@@ -158,7 +152,7 @@ if(isset($params['template']) && $params['template'] !="")
 							$onerow2->equb= $row2['equb'];
 						}
 					
-					$onerow2->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row2['renc_id']));
+					//$onerow2->details= $this->CreateFrontendLink($id, $returnid,'details', $contents='Détails', array('record_id'=>$row2['renc_id']));
 					$rowarray2[] = $onerow2;
 					
 					

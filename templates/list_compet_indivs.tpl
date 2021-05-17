@@ -1,4 +1,15 @@
-{if $itemcount > 0}
+<p>Récupérez les compétitions :</p>
+<p> 
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=10001 type=E }">{admin_icon icon="import.gif"}Nationales Equipes</a> | 
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=10001 type=I}">{admin_icon icon="import.gif"}Nationales indivs</a> | 
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=$zone type=E}">{admin_icon icon="import.gif"}Zone Equipes</a> | 
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=$zone type=I}">{admin_icon icon="import.gif"}Zone indivs</a> | 
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=$ligue type=E}">{admin_icon icon="import.gif"}Ligue Equipes</a> | 
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=ligue type=I}">{admin_icon icon="import.gif"}Ligue indivs</a> |
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=$dep type=E}">{admin_icon icon="import.gif"}Dép Equipes</a> | 
+	<a href="{cms_action_url action='retrieve' retrieve=compets idorga=dep type=I}">{admin_icon icon="import.gif"}Dép indivs</a> |
+</p>
+	{if $itemcount > 0}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
@@ -6,12 +17,8 @@
   	<th>{$id}</th>
   	<th>Nom</th>
   	<th>Coefficient</th>
-	<th>Indivs</th>
-	<th>Echelon</th>
 	<th>Tag pour affichage</th>
-	<th>Inscrits</th>
-	<th>Ajouter</th>
-	<th colspan="3">Accéder aux divisions</th>
+	<th colspan="2">Actions</th>
   </tr>
  </thead>
  <tbody>
@@ -20,14 +27,7 @@
     <td>{$entry->id}</td>
     <td>{$entry->name} ({$entry->idepreuve})</td>
    	<td>{$entry->coefficient}</td>
-	<td>{if $entry->indivs =='1'}Oui{else}Non{/if}</td>
-	<td>{$entry->orga}</td>
 	<td>{$entry->tag}</td>
-	<td>{$entry->nb_participants}</td>
-	<td>{$entry->participants}</td>
-	<td>{$entry->natio}-{$entry->zone}-{$entry->ligue}-{$entry->dep}</td>
-	<td>{$entry->editlink}</td>
-	<td>{$entry->deletelink}</td>
   </tr>
 {/foreach}
  </tbody>

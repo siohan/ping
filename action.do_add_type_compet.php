@@ -10,6 +10,7 @@ if (!isset($gCms)) exit;
 	}
 //on récupère les valeurs
 //pour l'instant pas d'erreur
+$ping_ops = new ping_admin_ops;
 $designation = '';
 $error = 0;
 		$name = '';
@@ -75,7 +76,7 @@ $error = 0;
 				$record_id= $params['record_id'];
 			}
 			//il faut aussi créer un tag
-			$tag = ping_admin_ops::tag($record_id,$idepreuve, $indivs);
+			$tag = $ping_ops->tag($idepreuve, $indivs);
 			$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET name = ?, coefficient = ?, indivs = ?,tag = ?,idorga = ? WHERE id = ?";
 			$dbresult = $db->Execute($query, array($name, $coefficient, $indivs,$tag, $idorga,$record_id));
 			$designation.="Compétition modifiée";

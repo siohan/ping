@@ -1,76 +1,67 @@
 <?php
 
 if( !isset($gCms) ) exit;
-//require_once(dirname(__FILE__)'')
 if (!$this->CheckPermission('Ping Use'))
-  {
+{
     echo $this->ShowErrors($this->Lang('needpermission'));
 	return;
-   
-  }
+}
 
-$db =& $this->GetDb();
-$saison = $this->GetPreference('saison_en_cours');
-$phase = $this->GetPreference('Phase_en_cours');
-if( isset( $params['record_id'] ) && $params['record_id'] != '')    
+$db = cmsms()->GetDb();
+$eq_ops = new equipes_ping;
+$ren = new rencontres;
+if(!empty($_POST))
 {
-	
-	$record_id = $params['record_id'];
-	    
-
-
-    // find the user
-    $query = "SELECT eq.libequipe,eq.libdivision,eq.friendlyname FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE  eq.id = ?";
-    $dbresult = $db->GetRow($query, array( $record_id ));
-    if($dbresult)
-      
+	debug_display($_POST, 'Parameters');
+	if(isset($_POST['record_id']) && $_POST['record_id'] >0)
 	{
-		//liste des données a afficher dans le formulaire
-		//saison, phase, libequipe,libdivision friendlyname
-		
-		$libequipe = $dbresult['libequipe'];
-		$libdivision = $dbresult['libdivision'];		
-		$friendlyname = $dbresult['friendlyname'];
-		
-		
+		$record_id = (int) $_POST['record_id'];
 	}
+	if(isset($_POST['friendlyname']))
+	{
+		$friendlyname = $_POST['friendlyname'];
+	}
+	if(isset($_POST['hor_Hour']) && $_POST['hor_Hour'] != '')
+	{
+		$hor_Hour = $_POST['hor_Hour'];
+	}
+	if(isset($_POST['hor_Minute']) && $_POST['hor_Minute'] != '')
+	{
+		$hor_Minute = $_POST['hor_Minute'];
+	}
+	$horaire = $hor_Hour.':'.$hor_Minute;
+	
+	$update_team = $eq_ops->update_team($record_id, $friendlyname, $horaire);
+	if(true == $update_team)
+	{
+		//on modifie les horaires des rencontres pour la poule de cette équipe
+		$ren->update_fixture($record_id, $horaire);
+	}
+	$this->RedirectToAdminTab('equipes');
+	
 }
 else
 {
-	//pas de record_id ? on redirige !
-	$this->SetMessage("Le numéro de l\'équipe est manquant ! ");
-	$this->RedirectToAdminTab('equipes');
-}
+	
+	
+	
+	if( isset( $params['record_id'] ) && $params['record_id'] != '')    
+	{
+		$record_id = $params['record_id'];
+		//on va chercher les détails de cette équipe
+		$details = $eq_ops->details_equipe($record_id);
+		
+	}
+	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('editteam.tpl'), null, null, $smarty);
+	$tpl->assign('record_id', $record_id);
+	$tpl->assign('libequipe', $details['libequipe']);
+	$tpl->assign('friendlyname', $details['friendlyname']);
+	$tpl->assign('horaire', $details['horaire']);
+	$tpl->display();
 
   
-$smarty->assign('formstart',
-		 $this->CreateFormStart( $id, 'do_edit_team', $returnid ) );
-$smarty->assign('record_id',
-		$this->CreateInputHidden( $id, 'record_id', 
-			(isset($params['record_id'])?$params['record_id']:"")));
-
-$smarty->assign('libequipe',
-		$this->CreateInputText($id, 'libequipe',
-		(isset($libequipe)?$libequipe:""),30,150));
-$smarty->assign('libdivision',
-		$this->CreateInputText($id, 'libdivision',
-		(isset($libdivision)?$libdivision:""),50,150));
-$smarty->assign('friendlyname',
-		$this->CreateInputText($id, 'friendlyname',
-		(isset($friendlyname)?$libdivision:""),10,80));
-				
-$smarty->assign('submit',
-		$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
-$smarty->assign('cancel',
-		$this->CreateInputSubmit($id,'cancel', $this->Lang('cancel')));
-$smarty->assign('back',
-		$this->CreateInputSubmit($id,'back', $this->Lang('back')));
-$smarty->assign('formend',
-		$this->CreateFormEnd());
-
-
-echo $this->ProcessTemplate('editteam.tpl');
-
+	
+}
 #
 # EOF
 #

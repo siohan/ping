@@ -14,8 +14,7 @@
     </script>
 {/literal}
 
-<div class="pageoptions"><p class="pageoptions">{$mois_precedent}&nbsp;{$mois_suivant} </p></div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} </p></div>
+<div class="pageoptions"><p class="pageoptions"><a href="{cms_action_url action='sit_mens' }">{$mois_precedent}&nbsp;{$mois_suivant} </p></div>
 {if $itemcount > 0}
 <h3> Situation officielle du mois de {$mois_choisi}</h3>
 <table class="tablesorter table table-bordered" id="tablesorter">

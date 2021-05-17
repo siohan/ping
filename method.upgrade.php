@@ -19,7 +19,12 @@ if (!isset($gCms)) exit;
 
 $db = $this->GetDb();			/* @var $db ADOConnection */
 $dict = NewDataDictionary($db); 	/* @var $dict ADODB_DataDict */
-/**
+$uid = null;
+if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
+  $uid = 1; // hardcode to first user
+} else {
+  $uid = get_userid();
+}/**
  * After this, the code is identical to the code that would otherwise be
  * wrapped in the Upgrade() method in the module body.
  */
@@ -1652,6 +1657,185 @@ case  "0.3.0.1" :
 			$this->SetPreference('club_number', $club_number);
 			
 			
+	}
+	case "0.7" :
+	case "0.7.1" :
+	{
+		//on va aussi faire du ménage ds les préférences obsolètes
+		
+		//
+		
+		//licence pour la table ping_participe
+		$sqlarray = $dict->AlterColumnSQL(cms_db_prefix()."module_ping_recup", "datecreated I(11)");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->DropIndexSQL('unicite', cms_db_prefix().'module_ping_equipes');
+		$dict->ExecuteSQLArray($sqlarray);
+		$sqlarray = $dict->CreateIndexSQL('unicite', cms_db_prefix().'module_ping_equipes', 'saison, phase, idepreuve, numero_equipe');//, array('UNIQUE'));
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		$this->SetPreference('LastRecupRencontres', time());
+		$this->SetPreference('LastRecupUsers', time());
+		$this->SetPreference('LastRecupClassements', time());
+	
+		//on ajoute d'autres champs dans la table classement des équipes
+		$dict = NewDataDictionary( $db );
+		$flds = "eq_id I(11), countdown I(1) DEFAULT 0, horaire C(5) DEFAULT '14:00'";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_poules_rencontres", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );		
+		
+		$flds = "idequipe I(11), maj_class I(11) DEFAULT 0";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_equipes", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$flds = "detail C(255)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_rencontres_parties", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );	
+		
+		$flds = "pts_spid N(6.3), pts_fftt N(6.3)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_recup_parties", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );	
+		
+		//DESIGN POUR LE COMPTE A REBOURS			
+		try {
+		    $ping_countdown_type = new CmsLayoutTemplateType();
+		    $ping_countdown_type->set_originator($this->GetName());
+		    $ping_countdown_type->set_name('Countdown');
+		    $ping_countdown_type->set_dflt_flag(TRUE);
+		    $ping_countdown_type->set_description('Countdown');
+		    $ping_countdown_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_countdown_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_countdown_type->reset_content_to_factory();
+		    $ping_countdown_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','displaycountdown.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Countdown'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_countdown_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}	
+		
+			
+	}
+	case "0.8" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "num_equipe I(11) DEFAULT 0";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_classement", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );	
+		
+		//on créé une nouvelle table pour les coordonnées du correspondant et de la salle
+		$flds = "idclub I(11) KEY,
+				numero C(10),
+				nom C(255),
+				nomsalle C(255),
+				adressesalle1 C(255),
+				adressesalle2 C(255),
+				codepsalle C(6),
+				villesalle C(255),
+				web C(255),
+				nomcor C(255),
+				prenomcor C(255),
+				mailcor C(255),
+				telcor C(10),
+				lat N(10.8),
+				lng N(11.8)";
+				
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_coordonnees",$flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//on ajoute qqs preferences
+		$this->SetPreference('interval_classement', 604800);
+		$this->SetPreference('interval_joueurs', 604800);
+		$this->SetPreference('interval_equipes', 604800);
+		$this->SetPreference('interval_feuille_parties', 604800);
+		//$this->SetPreference('details_rencontre_page','');
+		
+		//DESIGN POUR LES COORDONNEES			
+		try {
+		    $ping_coordonnees_type = new CmsLayoutTemplateType();
+		    $ping_coordonnees_type->set_originator($this->GetName());
+		    $ping_coordonnees_type->set_name('Coordonnees');
+		    $ping_coordonnees_type->set_dflt_flag(TRUE);
+		    $ping_coordonnees_type->set_description('Coordonnées salle et correspondant');
+		    $ping_coordonnees_type->set_lang_callback('Ping::page_type_lang_callback');
+		    $ping_coordonnees_type->set_content_callback('Ping::reset_page_type_defaults');
+		    $ping_coordonnees_type->reset_content_to_factory();
+		    $ping_coordonnees_type->save();
+		}
+
+		catch( CmsException $e ) {
+		    // log it
+		    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		    return $e->GetMessage();
+		}
+
+		try {
+		    $fn = cms_join_path(dirname(__FILE__),'templates','coordonnees.tpl');
+		    if( file_exists( $fn ) ) {
+		        $template = @file_get_contents($fn);
+		        $tpl = new CmsLayoutTemplate();
+		        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Coordonnees'));
+		        $tpl->set_owner($uid);
+		        $tpl->set_content($template);
+		        $tpl->set_type($ping_coordonnees_type);
+		        $tpl->set_type_dflt(TRUE);
+		        $tpl->save();
+		    }
+		}
+		catch( \Exception $e ) {
+		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+		  return $e->GetMessage();
+		}	
+	}
+	
+	case "0.8.0.1" :
+	{
+		
+		//on créé deux nouveaux champs
+		$dict = NewDataDictionary( $db );
+		$flds = "equip_id1 I(11), equip_id2 I(11)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_poules_rencontres", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//On fait la requete pour que les nouveaux champs soient remplis
+		//il faut actualiser tous les classements et toutes les rencontres (poules_rencontres)
+		$query = "SELECT id, iddiv, idpoule, idepreuve FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = '2020-2021'";
+		$dbresult = $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			$r_ops = new retrieve_ops;
+			while($row = $dbresult->FetchRow())
+			{
+				$r_ops->retrieve_all_classements($row['id']);
+				$r_ops->retrieve_poule_rencontres( $row['id'],$row['iddiv'],$row['idpoule'],$row['idepreuve']);
+			}
+		}
+		
+		
 	}
 	
 

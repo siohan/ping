@@ -31,7 +31,6 @@ if($dbresult && $dbresult->RecordCount() > 0)
 		$licence = $row['licence'];		
 		$player = $row['player'];
 		$cat = $row['cat'];
-		echo $player;
 		
 		$retrieve_spid = $service->retrieve_parties_spid2($licence, $player, $cat);
 		$spid_ops->compte_spid($licence);

@@ -1,12 +1,13 @@
 <?php
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 //global $themeObject;
 require_once(dirname(__FILE__).'/include/prefs.php');
 $licence = '';
 $date_event = '';
 $affiche = 1;
+$saison = $this->GetPreference('saison_en_cours');
 /*
 if(isset($params['template']) && $params['template'] !="")
 {
@@ -54,9 +55,9 @@ else {
 		}
 		
 		$rowarray1 = array();
-		$query = "SELECT SUM(victoire) AS vic, count(victoire) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ? AND statut = '1'";
+		$query = "SELECT SUM(victoire) AS vic, count(victoire) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
 		//qqs paramètres
-		$parms['saison'] = $saison_courante;
+		$parms['saison'] = $saison;
 		$parms['licence'] = $licence;
 		//on presente phase par phase ?
 		if($affiche ==1)
@@ -125,9 +126,9 @@ else {
 		$joueur = $row1['joueur'];
 		$smarty->assign('joueur', $joueur);
 		$result= array ();
-		$query3= "SELECT nom, classement,pointres, victoire,date_event,epreuve,numjourn FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ? AND statut = 1";//" ORDER BY date_event ASC";
+		$query3= "SELECT nom, classement,pointres, victoire,date_event,epreuve,numjourn FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";//" ORDER BY date_event ASC";
 		$parms['licence'] = $licence;
-		$parms['saison'] = $saison_courante;
+		$parms['saison'] = $saison;
 		if($affiche =='1')
 		{
 			if($this->GetPreference('phase_en_cours') =='1' )

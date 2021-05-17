@@ -1,6 +1,6 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: Newsletter Made Simple (c) 2008-2014 by Robert Campbell
+# Module: Ping Par AssoSimple
 #         (calguy1000@cmsmadesimple.org)
 #  An addon module for CMS Made Simple to provide a flexible
 #  mailing list solution.
@@ -104,8 +104,9 @@ $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_participe_tours" );
 $dict->ExecuteSQLArray($sqlarray);
 
-$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_control_panel" );
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_coordonnees" );
 $dict->ExecuteSQLArray($sqlarray);
+
 
 // templates
 $this->DeleteTemplate();

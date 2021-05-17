@@ -209,18 +209,19 @@ function infos_adherent_spid ($licence)
 }//fin de la fonction
 //vérifie le numéro d'un club
 function VerifyClub($club_number)
-    {
-		global $gCms;
-		$db = cmsms()->GetDb();
-		$now = trim($db->DBTimeStamp(time()), "'");
-		$adherents = cms_utils::get_module('Adherents'); 
-		$servicen = new Servicen();
-		$page = "xml_club_detail";
-		$var = "club=".$club_number;
-		$lien = $servicen->GetLink($page,$var);
-		//echo $lien;
-		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		//var_dump($xml);
+{
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$now = trim($db->DBTimeStamp(time()), "'");
+	$adherents = cms_utils::get_module('Ping'); 
+	$servicen = new Servicen();
+	$adh_ops = new adherents_spid;
+	$page = "xml_club_detail";
+	$var = "club=".$club_number;
+	$lien = $servicen->GetLink($page,$var);
+	//echo $lien;
+	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+		var_dump($xml);
 		
 		if($xml === FALSE)
 		{
@@ -246,6 +247,18 @@ function VerifyClub($club_number)
 					$i++;
 					$idclub = (isset($tab->idclub)?"$tab->idclub":"");
 					$numero  = (isset($tab->numero)?"$tab->numero":"");
+					$nom = (isset($tab->nom)?"$tab->nom":"");
+					$nomsalle = (isset($tab->nomsalle)?"$tab->nomsalle":"");
+					$adressesalle1 = (isset($tab->adressesalle1)?"$tab->adressesalle1":"");
+					$adressesalle2 = (isset($tab->adressesalle2)?"$tab->adressesalle2":"");
+					$codepsalle = (isset($tab->codepsalle)?"$tab->codepsalle":"");
+					$villesalle = (isset($tab->villesalle)?"$tab->villesalle":"");
+					$web = (isset($tab->web)?"$tab->web":"");
+					$nomcor = (isset($tab->nomcor)?"$tab->nomcor":"");
+					$prenomcor = (isset($tab->prenomcor)?"$tab->prenomcor":"");
+					$mailcor = (isset($tab->mailcor)?"$tab->mailcor":"");
+					$telcor = (isset($tab->telcor)?"$tab->telcor":"");
+					$adh_ops->add_club($idclub, $numero, $nom, $nomsalle, $adressesalle1, $adressesalle2, $codepsalle, $villesalle, $web, $nomcor, $prenomcor, $mailcor, $telcor);
 					if($numero == $club_number)
 					{
 						return true;
@@ -349,14 +362,16 @@ function get_name($licence)
 		return FALSE;
 	}
 }
-function random_serie($car) {
-$string = "";
-$chaine = "ABCDEFGHIJKLMOPQRSTUVWXYZ0123456789";
-srand((double)microtime()*1000000);
-for($i=0; $i<$car; $i++) {
-$string .= $chaine[rand()%strlen($chaine)];
-}
-return $string;
+function random_serie($car) 
+{
+	$string = "";
+	$chaine = "ABCDEFGHIJKLMOPQRSTUVWXYZ0123456789";
+	srand((double)microtime()*1000000);
+	for($i=0; $i<$car; $i++) 
+	{
+		$string .= $chaine[rand()%strlen($chaine)];
+	}
+	return $string;
 }
 function maj_seq()
 {
@@ -447,7 +462,13 @@ function saison_dropdown()
 	}
 	return $saisondropdown;
 }
-#
+//uniquement pour démo
+function add_club($idclub, $numero, $nom, $nomsalle, $adressesalle1, $adressesalle2, $codepsalle, $villesalle, $web, $nomcor, $prenomcor, $mailcor, $telcor)
+{
+	$db = cmsms()->GetDb();
+	$query = "INSERT INTO ".cms_db_prefix()."module_ping_cor (idclub, numero, nom, nomsalle, adressesalle1, adressesalle2, codepsalle, villesalle, web, nomcor, prenomcor, mailcor, telcor) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	$dbresult = $db->Execute($query, array($idclub, $numero, $nom, $nomsalle, $adressesalle1, $adressesalle2, $codepsalle, $villesalle, $web, $nomcor, $prenomcor, $mailcor, $telcor));
+}
 #
 #
 }//end of class

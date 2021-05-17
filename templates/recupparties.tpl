@@ -22,7 +22,7 @@ $(document).ready(function(){
 //]]>
 </script>
 <h2>Tableau de récupération des parties SPID</h2>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$rafraichir}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$rafraichir} {$Verif}</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">

@@ -1,7 +1,7 @@
 <?php
 if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 $saison_en_cours = $this->GetPreference('saison_en_cours');
 //$saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
 $record_id = '';
@@ -11,12 +11,14 @@ if(!isset($params['record_id']) || $params['record_id'] =='')
 }
 else
 {
-	$record_id = $params['record_id'];
+	$record_id = (int) $params['record_id'];
 	$eq_ops = new equipes_ping;
 	$details = $eq_ops->details_equipe($record_id);
 	$saison = $details['saison'];
+	$titre = $details['friendlyname']." : Le championnat";
+	$smarty->assign('titre', $titre);
 }
-//$template = "Ping Equipe Unique";
+
 if(isset($params['template']) && $params['template'] !="")
 {
 	$template = trim($params['template']);
@@ -30,11 +32,15 @@ else {
     $template = $tpl->get_name();
 }
 
+//Qqs valeurs par défaut pour les images
+$dir = 'modules/Ping/images/logos/';
+$ext_list = array('.gif', '.jpg', '.png','.jpeg');
 
 //le numéro de l'équipe est ok, on continue
 //on va d'abord récupérer le classement de cette équipe
-$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? AND cl.saison = ? ORDER BY cl.id ASC";
-$dbresult= $db->Execute($query, array($record_id, $saison));
+$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf, num_equipe FROM ".cms_db_prefix()."module_ping_classement AS cl  WHERE  cl.idequipe = ? ORDER BY cl.id ASC";
+//$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? ORDER BY cl.id ASC";
+$dbresult= $db->Execute($query, array($record_id));
 
 $rowarray = array();
 if($dbresult && $dbresult->RecordCount()>0)
@@ -49,7 +55,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$classement = '-';
 		}
 		$onerow= new StdClass();
-		$onerow->friendlyname= $row['friendlyname'];
+		//$onerow->friendlyname= $row['friendlyname'];
 		$onerow->clt=  $classement;
 		$onerow->equipe= $row['equipe'];
 		$onerow->joue= $row['joue'];
@@ -60,25 +66,33 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$onerow->pg= $row['pg'];
 		$onerow->pp= $row['pp'];
 		$onerow->pf= $row['pf'];
-		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
-		$onerow->rowclass= $rowclass;
+		$eq1 = $eq_ops->idclub($row['num_equipe']);//eq1 = le numéro du club
+		foreach($ext_list as $ext)
+		{
+			if(true == file_exists($dir.$eq1.$ext))
+			{
+				$img_club = $eq1.$ext;
+			}
+		}
+		
+		$onerow->img_club =$img_club;
 		$rowarray[]= $onerow;
 	}
 }
 else
 {
-	//pas de résultats ?
+	echo 'Pas encore de résultats';//pas de résultats ?
 }
-$smarty->assign('libequipe', $friendlyname);
+//$smarty->assign('libequipe', $friendlyname);
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 
 
 
-$query2 = "SELECT ren.date_event, ren.idpoule, ren.iddiv,eq.id as id_alias FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.idpoule = eq.idpoule AND ren.iddiv = eq.iddiv AND eq.id = ? GROUP BY ren.date_event ORDER BY ren.date_event ASC ";
+$query2 = "SELECT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE eq_id = ? GROUP BY date_event ORDER BY date_event ASC ";
 //$parms['saison'] = $saison;
-$parms['id_alias'] = $record_id;
+$parms['eq_id'] = $record_id;
 //$template = "Rookie Equipe Unique";
 $dbresultat = $db->Execute($query2,$parms);
 $rowarray2 = array();
@@ -100,22 +114,47 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 		
 		
 			//on fait la deuxième requete dérivant de la première
-			$query3 = "SELECT ren.equa, ren.scorea, ren.equb, ren.scoreb, ren.renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE ren.date_event = ? AND idpoule = ? AND iddiv = ? ";
-			$dbresult3 = $db->Execute($query3, array($date_event, $idpoule, $iddiv));
+			$query3 = "SELECT ren.equa, ren.scorea, ren.equb, ren.scoreb, ren.renc_id, ren.equip_id1, ren.equip_id2, ren.uploaded FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE ren.date_event = ? AND eq_id = ?";
+			$dbresult3 = $db->Execute($query3, array($date_event, $record_id));
 			$rowarray3 = array();
 			
 				if($dbresult3 && $dbresult3->RecordCount()>0)
 				{
+					
+					$img1= '';
+					$img2 = '';
 					while($row3 = $dbresult3->FetchRow())
 					{
+						
+						$eq1 = $eq_ops->idclub($row3['equip_id1']);//eq1 = le numéro du club
+	
+						foreach($ext_list as $ext)
+						{
+							if(true == file_exists($dir.$eq1.$ext))
+							{
+								$img1 = $eq1.$ext;
+							}
+						}
+						$eq2 = $eq_ops->idclub($row3['equip_id2']);//eq1 = le numéro du club
+	
+						foreach($ext_list as $ext)
+						{
+							if(true == file_exists($dir.$eq2.$ext))
+							{
+								$img2 = $eq2.$ext;
+							}
+						}
+						
 						$onerow3  = new StdClass();
 						$onerow3->rowclass = $rowclass;
 						$onerow3->equa = $row3['equa'];
 						$onerow3->scorea = $row3['scorea'];
 						$onerow3->equb = $row3['equb'];
 						$onerow3->scoreb = $row3['scoreb'];
-						$onerow3->uploaded = $renc_ops->is_uploaded($row3['renc_id']);//$uploaded;
-						$onerow3->details= $this->CreateLink($id, 'details', $returnid, $contents='Détails', array('record_id'=>$row3['renc_id']));
+						$onerow3->img1 =$img1;
+						$onerow3->img2 =$img2;
+						$onerow3->uploaded = $row3['uploaded'];//$renc_ops->is_uploaded($row3['renc_id']);//$uploaded;
+						$onerow3->renc_id = $row3['renc_id'];
 						$rowarray3[] = $onerow3;
 					}
 					$smarty->assign('prods_'.$i,$rowarray3);
@@ -125,15 +164,14 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 				}
 		$rowarray2[]  = $onerow2;
 	}
-	
+	 
 	$smarty->assign('itemcount2', count($rowarray2));
 	$smarty->assign('items2', $rowarray2);
 }
 
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();
-//echo $this->ProcessTemplate('equipe.tpl');
-//echo $this->ProcessTemplate('details_rencontre.tpl');
+
 #
 #EOF
 #
