@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: Ping
-# Version: 0.4.6
+# Version: 0.9
 # Method: Upgrade
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2008 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -1685,7 +1685,7 @@ case  "0.3.0.1" :
 		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_poules_rencontres", $flds);
 		$dict->ExecuteSQLArray( $sqlarray );		
 		
-		$flds = "idequipe I(11), maj_class I(11) DEFAULT 0";
+		$flds = "idequipe I(11), maj_class I(11) DEFAULT 0, horaire C(5) DEFAULT '14:00'";
 		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_equipes", $flds);
 		$dict->ExecuteSQLArray( $sqlarray );
 		
@@ -1835,6 +1835,41 @@ case  "0.3.0.1" :
 			}
 		}
 		
+		
+	}
+	
+	case "0.8.0.2" :
+	 
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "actif I(11) DEFAULT 1";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_type_competitions", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );	
+		
+		//on supprime la table adversaires aujourd'hui obsolete
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_divisions");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//on supprime la table adversaires aujourd'hui obsolete
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_div_tours");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//on supprime la table adversaires aujourd'hui obsolete
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_div_classement");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//on supprime la table adversaires aujourd'hui obsolete
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_div_parties");
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		//on ajoute un champ saison à la table compétitions pour pouvoir afficher d'anciennes compets
+		$flds = "saison C(11) ";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_type_competitions", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
 		
 	}
 	

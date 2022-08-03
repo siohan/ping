@@ -35,6 +35,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->coefficient= $row['coefficient'];
 		$onerow->indivs= $row['indivs'];
 		$onerow->idepreuve = $row['idepreuve'];
+		$onerow->actif = $row['actif'];
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
       }

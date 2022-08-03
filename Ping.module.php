@@ -2,12 +2,12 @@
 
 #-------------------------------------------------------------------------
 # Module : Ping - 
-# Version : 0.8.0.2, Sc
-# Auteur : AssoSimple
+# Version : 0.9, Sc
+# Auteur  Claude SIOHAN
 #-------------------------------------------------------------------------
 /**
  *
- * @author AssoSimple
+ * @author Claude SIOHAN
  * @since 0.1
  * @version $Revision: 3827 $
  * @modifiedby $LastChangedBy: Claude
@@ -20,10 +20,10 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.8.0.2'; }  
+  function GetVersion() { return '0.9'; }  
   function GetHelp() { return $this->Lang('help'); }   
-  function GetAuthor() { return 'AssoSimple'; } 
-  function GetAuthorEmail() { return 'contact@assosimple.fr'; }
+  function GetAuthor() { return 'Claude Siohan'; } 
+  function GetAuthorEmail() { return 'claude.siohan@gmail.com'; }
   function GetChangeLog() { return $this->Lang('changelog'); }
     
   function IsPluginModule() { return true; }
@@ -41,7 +41,7 @@ class Ping extends CMSModule
   
   function GetDependencies()
   {
-	return array('CGSmartImage'=>'1.22.7');
+	//return array('CGSmartImage'=>'1.22.7');
   }
 
   
@@ -156,7 +156,7 @@ public function HasCapability($capability, $params = array())
 public function get_tasks()
 {
    $obj = array();
-   /*
+   
 	$obj[0] = new PingRecupFfttTask();
 	$obj[1] = new PingRecupSpidTask();  
 	$obj[2] = new PingRefreshFfttTask();
@@ -164,7 +164,9 @@ public function get_tasks()
 	$obj[4] = new PingRecupUsersTask();
 	$obj[5] = new PingDetailsRencontresTask();
 	$obj[6] = new PingClassementsTask();
-	*/
+	$obj[7] = new PingResetSpidTask();
+	$obj[8] = new PingSitMensTask();
+	
 return $obj; 
 }
 

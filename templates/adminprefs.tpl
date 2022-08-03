@@ -17,10 +17,7 @@
 		<p class="pagetext">Affiche les résultats du club uniquement:{cms_help key='help_affiche_club_uniquement' title='Affichage des résultats des équipes'}</p>
 		<p class="pageinput"><select name="affiche_club_uniquement">{cms_yesno selected=1}</select></p>
 	</div>
-	<div class="pageoverflow">
-		<p class="pagetext">inclus les dates des rencontres ds le module calendrier :</p>
-		<p class="pageinput"><select name="populate_calendar">{cms_yesno selected=0}</select></p>
-	</div>
+	
 
 
 </fieldset>
@@ -60,6 +57,9 @@
 		<p class="pageinput"><input type="submit" name="submit" value="Envoyer"></p>
 	</div>
 {form_end}
+
+<a class="orange" href="{cms_action_url action='nettoyage'}" role="button">Supprimer les données obsolètes ?</a> {cms_help key='help_nettoyage' title='Suppression des données obsolètes'}
+<a class="red" href="{cms_action_url action='demo_truncate'}" role="button">Supprimer toutes les données du module ?</a> {cms_help key='help_demo_truncate' title='Suppression de toutes les données'}
 <fieldset>
 	<legend>Export vers d'autres modules (si installés et activés !)</legend>
 <fieldset>

@@ -2,7 +2,7 @@
 <div class="pageoptions">
 {if $jour <10}
 <p class="warning">Attention ! L'accès n'est pas encore libre ! Vous ne pouvez pas récupérer les situations mensuelles automatiquement</p>{else}<p class="success">L'accès est désormais libre, vous pouvez  récupérer les situations mensuelles.</p>{/if}</div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieveallsitmens} </p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} {if true == $nettoyage}| {$retrieveallsitmens} {/if}</p></div>
 <h3>Les situations mensuelles du mois en cours</h3>
 <a href="{cms_action_url action='defaultadmin' __activetab='situation' mois=$mois_prec}"> &lt Préc</a>
 <a href="{cms_action_url action='defaultadmin' __activetab='situation' mois=$mois_suivant}"> Suiv &gt</a>

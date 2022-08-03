@@ -65,7 +65,7 @@ else
 	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('compte.tpl'), null, null, $smarty);
 	$tpl->assign('idAppli', $this->GetPreference('idAppli'));
 	$tpl->assign('motdepasse', $this->GetPreference('motdepasse'));
-	$tpl->assign('serie', $this->GetPreference('serie'));	
+	//$tpl->assign('serie', $this->GetPreference('serie'));	
 	$tpl->display();
 }
 

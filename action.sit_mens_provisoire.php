@@ -1,12 +1,10 @@
 <?php
 
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
-$db =& $this->GetDb();
-global $themeObject;
+//debug_display($params, 'Parameters');
+$db = cmsms()->GetDb();
 
-$parms['saison_courante'] = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
-$phase = $this->GetPreference('phase_en_cours');
+
 if(isset($params['template']) && $params['template'] != '')
 {
 	$template = $params['template'];
@@ -19,20 +17,12 @@ else {
     }
     $template = $tpl->get_name();
 }
-$mois_courant = date('n');
-$jour_courant = date('j');
 
-if($jour_courant < 10)
-{
-	$mois_courant = $mois_courant-1;
-}
-$parms['mois_courant'] = $mois_courant;
-
-$query="SELECT saison, licence, spid, spid_total, spid_errors, maj_spid, pts_spid FROM ".cms_db_prefix()."module_ping_recup_parties ";	
+$query="SELECT j.licence , spid, spid_total, spid_errors, maj_spid, pts_spid FROM ".cms_db_prefix()."module_ping_recup_parties AS rc, ".cms_db_prefix()."module_ping_joueurs AS j WHERE rc.licence = j.licence  AND j.actif =1 AND j.type='T'";	
 
 if(isset($params['number']) && $params['number'] >0)
 {
-	$query.="ORDER BY pts_spid DESC LIMIT ?";
+	$query.=" ORDER BY pts_spid DESC LIMIT ?";
 	$dbresult = $db->Execute($query, array($params['number']));
 }
 else
@@ -52,15 +42,20 @@ if ($dbresult && $dbresult->RecordCount()>0)
 			$onerow= new StdClass();
 			$onerow->rowclass= $rowclass;
 			$details = $j_ops->details_joueur($row['licence']);
+			$onerow->actif = $details['actif'];
 			$onerow->joueur= $details['nom'].' '.$details['prenom'];
-			$onerow->maj_spid= $maj_spid;
+			$onerow->maj_spid= $details['maj_spid'];
 			$onerow->clt=$details['clast'];
 			$onerow->somme = $row['pts_spid'];
 			$onerow->bilan = $details['clast'] + $row['pts_spid'];
-			$onerow->details= $this->CreateFrontendLink($id, $returnid,'user_results_prov', $contents='Détails',array('licence'=>$row['licence'],'month'=>$mois_courant));
+			//$onerow->details= $this->CreateFrontendLink($id, $returnid,'user_results_prov', $contents='Détails',array('licence'=>$row['licence'],'month'=>$mois_courant));
 			($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 			$rowarray[]= $onerow;
 		}
+}
+else
+{
+	echo $db->ErrorMsg();
 }
 	
 $smarty->assign('returnlink', 

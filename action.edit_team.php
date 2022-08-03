@@ -12,7 +12,7 @@ $eq_ops = new equipes_ping;
 $ren = new rencontres;
 if(!empty($_POST))
 {
-	debug_display($_POST, 'Parameters');
+	//debug_display($_POST, 'Parameters');
 	if(isset($_POST['record_id']) && $_POST['record_id'] >0)
 	{
 		$record_id = (int) $_POST['record_id'];
@@ -50,16 +50,23 @@ else
 		$record_id = $params['record_id'];
 		//on va chercher les détails de cette équipe
 		$details = $eq_ops->details_equipe($record_id);
-		
 	}
+	
 	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('editteam.tpl'), null, null, $smarty);
 	$tpl->assign('record_id', $record_id);
+	$tpl->assign('phase', $details['phase']);
+	$tpl->assign('numero_equipe', $details['numero_equipe']);
 	$tpl->assign('libequipe', $details['libequipe']);
+	$tpl->assign('libdivision', $details['libdivision']);
 	$tpl->assign('friendlyname', $details['friendlyname']);
+	$tpl->assign('liendivision', $details['liendivision']);
+	$tpl->assign('idpoule', $details['idpoule']);
+	$tpl->assign('iddiv', $details['iddiv']);
+	$tpl->assign('type_compet', $details['type_compet']);
+	$tpl->assign('idepreuve', $details['idepreuve']);
+	$tpl->assign('calendrier', $details['calendrier']);
 	$tpl->assign('horaire', $details['horaire']);
-	$tpl->display();
-
-  
+	$tpl->display();  
 	
 }
 #

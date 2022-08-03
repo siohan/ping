@@ -644,13 +644,13 @@ function create_tag($idepreuve,$indivs,$date_debut,$date_fin)
 	
 }
 
-function tag_equipe($record_id)
+function tag_equipe($numero_equipe, $idepreuve)
 {
 	
 			$db  = cmsms()->GetDb();
 			$tag = "{Ping action='equipe'";			
-			$tag.=" record_id='$record_id'";				
-			$tag.="}";
+			$tag.=" record_id='$numero_equipe'";				
+			$tag.=" idepreuve='$idepreuve'}";
 			
 			return $tag;		
 	
@@ -925,13 +925,10 @@ public static function name($licence)
 	global $gCms;
 	$db = cmsms()->GetDb();
 	$query = "SELECT CONCAT_WS(' ',nom, prenom) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";//SELECT CONCAT_WS('/',mois, annee) AS sit_mens, DATEDIFF(NOW(),datemaj)  FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND DATEDIFF(NOW(),datemaj) IS NOT NULL ORDER BY DATEDIFF(NOW(),datemaj) ASC LIMIT 1";
-	//$db->debug=true;
 	$dbresult = $db->Execute($query, array($licence));
-	//si la situation mensuelle du joueur du club n'existe pas ?
-	//alors on n'enregistre pas le résultat et on le signale
+	
 		if ($dbresult && $dbresult->RecordCount() == 0)
 		{
-			//$designation.="Ecart non calculé";
 			$joueur = false;
 		}
 		else
@@ -1255,6 +1252,42 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 		}
 		
 	}
+	
+   
+    function addMonths($date,$months){
+        
+        $date=new DateTime();
+		$date->setDate(2008,2,29);
+		$init=clone $date;
+        $modifier=$months.' months';
+        $back_modifier =-$months.' months';
+       
+        $date->modify($modifier);
+        $back_to_init= clone $date;
+        $back_to_init->modify($back_modifier);
+       
+        while($init->format('m')!=$back_to_init->format('m')){
+        $date->modify('-1 day')    ;
+        $back_to_init= clone $date;
+        $back_to_init->modify($back_modifier);  
+        
+        return $date->format('F j,Y'); 
+        }
+       
+        /*
+        if($months<0&&$date->format('m')>$init->format('m'))
+        while($date->format('m')-12-$init->format('m')!=$months%12)
+        $date->modify('-1 day');
+        else
+        if($months>0&&$date->format('m')<$init->format('m'))
+        while($date->format('m')+12-$init->format('m')!=$months%12)
+        $date->modify('-1 day');
+        else
+        while($date->format('m')-$init->format('m')!=$months%12)
+        $date->modify('-1 day');
+        */
+       
+    }
 
 	
 

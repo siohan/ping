@@ -214,14 +214,14 @@ function VerifyClub($club_number)
 	$db = cmsms()->GetDb();
 	$now = trim($db->DBTimeStamp(time()), "'");
 	$adherents = cms_utils::get_module('Ping'); 
-	$servicen = new Servicen();
+	$servicen = new Servicen;
 	$adh_ops = new adherents_spid;
 	$page = "xml_club_detail";
 	$var = "club=".$club_number;
 	$lien = $servicen->GetLink($page,$var);
 	//echo $lien;
 	$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		var_dump($xml);
+	var_dump($xml);
 		
 		if($xml === FALSE)
 		{

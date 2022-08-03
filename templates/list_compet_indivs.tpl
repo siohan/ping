@@ -16,7 +16,7 @@
   <tr>	
   	<th>{$id}</th>
   	<th>Nom</th>
-  	<th>Coefficient</th>
+  	<th>Actif ?</th>
 	<th>Tag pour affichage</th>
 	<th colspan="2">Actions</th>
   </tr>
@@ -26,8 +26,9 @@
   <tr class="{$entry->rowclass}">
     <td>{$entry->id}</td>
     <td>{$entry->name} ({$entry->idepreuve})</td>
-   	<td>{$entry->coefficient}</td>
+   	<td>{if $entry->actif == '1'}<a href="{cms_action_url action=misc_actions obj=desactive_epreuve record_id=$entry->idepreuve}">{admin_icon icon="true.gif"}</a>{else}{admin_icon icon="false.gif"}{/if}</td>
 	<td>{$entry->tag}</td>
+	<td><a href="{cms_action_url}">{admin_icon icon="delete.gif"}</a></td>
   </tr>
 {/foreach}
  </tbody>

@@ -6,7 +6,7 @@ global $themeObject;
 
 if(!empty($this->GetPreference('details_rencontre_page')) )
 {
-	$cg_ops = new CGExtensions;
+	$cg_ops = new CMSMSExt;
 	$alias_page = $this->GetPreference('details_rencontre_page');
 	$landing_page = $cg_ops->resolve_alias_or_id($alias_page);
 	
@@ -34,7 +34,7 @@ else {
     }
     $template = $tpl->get_name();
 }
-//$idepreuve = (isset($params['idepreuve']) ? $params['idepreuve'] : '');
+$idepreuve = (isset($params['idepreuve']) ? $params['idepreuve'] : '8985');
 
 $rowarray = array();
 $parms = array();
@@ -94,7 +94,7 @@ if(isset($params['record_id']) && $params['record_id'] >0)
 	$onerow->equa= $last_match['equa'];
 	$onerow->equb= $last_match['equb'];
 	$onerow->horaire= $last_match['horaire'];
-	$onerow->uploaded =$last_match['uploaded'];
+	$onerow->uploaded =$ren_ops->is_really_uploaded($last_match['renc_id']);
 	$rowarray[] = $onerow;
 }
 else
@@ -117,6 +117,10 @@ else
 			$smarty->assign('idepreuve', $idepreuve);
 			
 		}
+	}
+	else
+	{
+		$parms['idepreuve'] = $idepreuve;
 	}
 	
 	if(isset($params['number']) && $params['number'] >0)
@@ -184,7 +188,7 @@ else
 				$onerow->equa= $last_match['equa'];
 				$onerow->equb= $last_match['equb'];
 				$onerow->horaire= $last_match['horaire'];
-				$onerow->uploaded =$last_match['uploaded'];
+				$onerow->uploaded = $ren_ops->is_really_uploaded($last_match['renc_id']);
 				$rowarray[] = $onerow;
 			}
 		}
@@ -201,4 +205,3 @@ $smarty->assign('landing_page', $landing_page);
 
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();
-//echo $this->ProcessTemplate('displayaffiche.tpl');

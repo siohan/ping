@@ -7,7 +7,7 @@ if( !isset($gCms) ) exit;
 $db = cmsms()->GetDb();
 //a faire 
 //mettre les autorisations
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 
 $designation = '';
 $ren_ops = new rencontres;
@@ -16,7 +16,7 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 	$record_id = '';
 	if(isset($params['record_id']) && $params['record_id'] != '')
 	{
-		$record_id = $params['record_id'];
+		$record_id = (int)$params['record_id'];
 		
 			$del_feuil = $ren_ops->delete_details_rencontre($record_id);
 			if(true == $del_feuil)
@@ -37,6 +37,7 @@ $eq_id = 0; //on instancie donc le parametre de l'équipe
 			while($row = $dbresult->FetchRow())
 			{
 				$renc = $ren_ops->feuille_parties($record_id);
+				$ren_ops->is_uploaded($record_id);
 			}//fin du while
 		}
 		

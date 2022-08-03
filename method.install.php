@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: Ping
-# Version: 0.8, AssoSimple
+# Version: 0.9, AssoSimple
 # Method: Install
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2008 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -50,12 +50,12 @@ $flds = "
 	certif C(255),
 	validation C(100),
 	cat C(20),
-	clast I(5)";/*,
+	clast I(5),
 	mutation D ,
 	natio C(2)
 	arb C(2),
 	ja C(3),
-	tech C(10)";*/
+	tech C(10)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_joueurs",
@@ -256,32 +256,7 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_sit_mens",
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
-//
-$dict = NewDataDictionary( $db );
 
-// table schema description
-$flds = "
-	id I(11) AUTO KEY,
-	datecreated ". CMS_ADODB_DT .",
-	datemaj ". CMS_ADODB_DT .",
-	mois I(2),
-	annee I(4),
-	phase I(1),
-	licence C(11),
-	categ C(10),
-	nom C(255),
-	prenom C(255),
-	points N(6.2),
-	clnat I(11),
-	rangreg I(11),
-	rangdep I(11),
-	progmois N(6.2)";
-			
-// create it. 
-$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_adversaires",
-				   $flds, 
-				   $taboptarray);
-$dict->ExecuteSQLArray($sqlarray);
 
 $dict = NewDataDictionary( $db );
 
@@ -309,7 +284,9 @@ $flds = "
 	indivs L,
 	tag C(255),
 	idepreuve I(11),
-	idorga I(11)";
+	idorga I(11),
+	actif I(1) DEFAULT(1),
+	saison C(11)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",
@@ -870,27 +847,9 @@ $dict->ExecuteSQLArray( $sqlarray );
 		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
 		  return $e->GetMessage();
 		}	
-#
-//ON INSERE DES DONN2ES PAR DEFAUT
-$query = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (`id`, `name`, `code_compet`, `coefficient`, `indivs`, `tag`, `idepreuve`, `idorga`) VALUES
-(1,	'Chpt France par équipes masculin',	'1',	1.00,	0,	'{Ping action=\'par-equipes\' idepreuve=\'1073\'}',	1073,	100001),
-(2,	'Chpt France par équipes féminin',	'2',	1.00,	0,	'{Ping action=\'par-equipes\' type_compet=\'2\'}',	2012,	100001),
-(3,	'Coupe Nationale Vétérans',	'K',	0.75,	0,	'{Ping action=\'par-equipes\' idepreuve=\'3055\'}',	3055,	100001),
-(4,	'Championnats de France Vétérans',	'V',	1.00,	1,	'{Ping action=\'individuelles\' idepreuve=\'3061\'}',	3061,	100001),
-(5,	'Interclubs Jeunes',	'EIJ',	0.50,	0,	'{Ping action=\'par-equipes\' idepreuve=\'3057\'}',	3057,	100001),
-(6,	'Tournoi National et Internat.',	'T',	0.75,	1,	'{Ping action=\'individuelles\' idepreuve=\'3064\'}',	3064,	100001),
-(7,	'Championnats de France Corpo.',	'E',	1.00,	1,	'{Ping action=\'individuelles\' idepreuve=\'3062\'}',	3062,	100001),
-(8,	'Finales par classement',	'H',	1.25,	1,	'{Ping action=\'individuelles\' idepreuve=\'3001\'}',	3001,	100001),
-(9,	'Championnat par équipes corpo',	'3',	0.75,	0,	'{Ping action=\'par-equipes\' idepreuve=\'4544\'}',	4544,	100001),
-(10,	'Changement de type',	NULL,	NULL,	0,	'{Ping action=\'par-equipes\' idepreuve=\'4972\'}',	4972,	100001),
-(11,	'Critérium fédéral',	'J',	1.00,	1,	'{Ping action=\'individuelles\' idepreuve=\'1072\'}',	1072,	100001),
-(12,	'Finales Individuelles',	NULL,	1.25,	1,	'{Ping action=\'individuelles\' idepreuve=\'3065\'}',	3065,	100001),
-(13,	'Challenge Bernard Jeu',	NULL,	0.75,	1,	'{Ping action=\'individuelles\' idepreuve=\'3070\'}',	3070,	100001),
-(14,	'Championnat de France Seniors',	NULL,	1.50,	1,	'{Ping action=\'individuelles\' idepreuve=\'3058\'}',	3058,	100001),
-(15,	'TOURNOIS REGIONAUX',	NULL,	0.50,	1,	'{Ping action=\'individuelles\' idepreuve=\'3764\'}',	3764,	100001)";
-$dict->ExecuteSQLArray($query);
+
 # Les indexs
-//on créé un index sur la table div_tours
+//on créé un index 
 $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fftt_idpartie',
 	    cms_db_prefix().'module_ping_parties', 'idpartie',$idxoptarray);
@@ -900,35 +859,15 @@ $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'spid_idpartie',
 		    cms_db_prefix().'module_ping_parties_spid', 'idpartie',$idxoptarray);
 		       $dict->ExecuteSQLArray($sqlarray);
-//on créé un index sur la table div_tours
-$idxoptarray = array('UNIQUE');
-$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
-	    cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau,saison',$idxoptarray);
-	       $dict->ExecuteSQLArray($sqlarray);
 
-$idxoptarray = array('UNIQUE');
-$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'calendrier',
-	    cms_db_prefix().'module_ping_calendrier', 'idepreuve, date_debut',$idxoptarray);
-	       $dict->ExecuteSQLArray($sqlarray);
 	
 $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'sit_mens',
 		    cms_db_prefix().'module_ping_sit_mens', 'mois, annee, licence',$idxoptarray);
 		       $dict->ExecuteSQLArray($sqlarray);
-$idxoptarray = array('UNIQUE');
-$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'divisions_ep',
-				    cms_db_prefix().'module_ping_divisions', 'idepreuve, iddivision, saison',$idxoptarray);
-$dict->ExecuteSQLArray($sqlarray);
-#				
-$idxoptarray = array('UNIQUE');
-$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'adversaires',
-	    cms_db_prefix().'module_ping_adversaires', 'mois, annee, licence',$idxoptarray);
-	       $dict->ExecuteSQLArray($sqlarray);
-#
-$idxoptarray = array('UNIQUE');
-$sqlarray = $dict->CreateIndexSQL('affectation',
-				    cms_db_prefix().'module_ping_participe_tours', 'licence, idepreuve, tableau',$idxoptarray);
-$dict->ExecuteSQLArray($sqlarray);
+
+
+
 #
 #
 $idxoptarray = array('UNIQUE');
@@ -967,12 +906,13 @@ $this->SetPreference('LastVerifAdherents', time());
 $this->SetPreference('LastRecupUsers', time());
 $this->SetPreference('LastRecupRencontres', time());
 $this->SetPreference('LastRecupClassements', time());
+$this->SetPreference('LastResetSpid', time());
+$this->SetPreference('LastResetSitMens', time());
 #
 
 // create a preference
-$this->SetPreference('annee_fin', '2018');
-$this->SetPreference('phase', '1');
-$this->SetPreference('populate_calendar', 'Oui');
+
+
 $this->SetPreference('jour_sit_mens', '10');
 $this->SetPreference('affiche_club_uniquement', 'Oui');
 

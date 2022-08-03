@@ -22,11 +22,60 @@ class EpreuvesIndivs
 {
    function __construct() {}
 	
-	function add_competition($libelle, $indivs,$idepreuve, $tag, $idorga)
+	//vérifie si une compétition existe déjà
+	function epreuve_exists($code_compet)
+	{
+		$db= cmsms()->GetDb();
+		$query = "SELECT COUNT(name) AS nb FROM ".cms_db_prefix()."module_ping_type_competitions WHERE code_compet = ?";
+		$dbresult = $db->Execute($query, array($code_compet));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			if($nb >0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;	
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	//vérifie si une compet existe par le nom
+	function epreuve_exists_by_name($libepr)
+	{
+		$db= cmsms()->GetDb();
+		$query = "SELECT COUNT(name) AS nb FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name LIKE ?";
+		$dbresult = $db->Execute($query, array($libepr));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			if($nb >0)
+			{
+				return true;
+			}
+			else
+			{
+				return false;	
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	//ajoute une nouvelle compétition
+	function add_competition($libelle, $indivs,$idepreuve, $tag, $idorga, $saison)
 	{
 		$db = cmsms()->GetDb();
-		$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_type_competitions (name, indivs, idepreuve,tag, idorga) VALUES (?, ?, ?, ?, ?)";
-		$dbresult = $db->Execute($query,array($libelle,$indivs,$idepreuve,$tag,$idorga));
+		$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_type_competitions (name, indivs, idepreuve,tag, idorga, saison) VALUES (?, ?, ?, ?, ?, ?)";
+		$dbresult = $db->Execute($query,array($libelle,$indivs,$idepreuve,$tag,$idorga, $saison));
 		if($dbresult)
 		{
 			return true;
@@ -36,11 +85,12 @@ class EpreuvesIndivs
 			return false;
 		}
 	}
-	function update_epreuve($epreuve, $codechamp, $coefchamp)
+	
+	function update_epreuve($codechamp, $coefchamp)
 	{
 		$db = cmsms()->GetDb();
-		$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET coefficient = ?, code_compet = ? WHERE name LIKE ?";
-		$dbresult = $db->Execute($query,array($coefchamp, $codechamp, $epreuve));
+		$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET coefficient = ?  WHERE code_compet LIKE ?";
+		$dbresult = $db->Execute($query,array($coefchamp, $codechamp));
 		if($dbresult)
 		{
 			return true;
@@ -50,6 +100,37 @@ class EpreuvesIndivs
 			return false;
 		}
 	}
+	
+	function update_code($idepreuve, $libepr)
+	{
+		$db = cmsms()->GetDb();
+		$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET idepreuve = ?  WHERE name LIKE ?";
+		$dbresult = $db->Execute($query,array($idepreuve, $libepr));
+		if($dbresult)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	function desactive_epreuve($idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$query = "UPDATE ".cms_db_prefix()."module_ping_type_competitions SET actif = 0  WHERE idepreuve = ?";
+		$dbresult = $db->Execute($query,array($idepreuve));
+		if($dbresult)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 
 }//end of class
 ?>

@@ -9,7 +9,7 @@ if(!$this->CheckPermission('Ping Use'))
 
 //debug_display($params, 'Parameters');
 //var_dump($params['sel']);
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 $service = new retrieve_ops;
 switch($params['retrieve'])
 {
@@ -85,7 +85,9 @@ switch($params['retrieve'])
 					$service = new retrieve_ops();
 					$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
 					$maj_spid = $ping_ops->compte_spid($licence);
-					//var_dump($resultats);
+					$calcul_pts_spid = $spid_ops->compte_spid_points($licence);
+					$spid_ops->maj_points_spid($licence,$calcul_pts_spid);
+					
 				}
 
 			}
@@ -105,6 +107,8 @@ switch($params['retrieve'])
 				$cat = $row['cat'];
 				$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
 				$maj_spid = $ping_ops->compte_spid($licence);
+				$calcul_pts_spid = $spid_ops->compte_spid_points($licence);
+				$spid_ops->maj_points_spid($licence,$calcul_pts_spid);
 				//var_dump($resultats);
 			}
   		}
@@ -195,6 +199,8 @@ switch($params['retrieve'])
 					$action = 'Spid Seul';
 					$ping_ops->ecrirejournal($status,$designation, $action);
 					$maj_spid = $spid_ops->compte_spid($licence);
+					$calcul_pts_spid = $spid_ops->compte_spid_points($licence);
+					$spid_ops->maj_points_spid($licence,$calcul_pts_spid);
 						//var_dump($resultats);
 			           }
 
@@ -348,7 +354,7 @@ switch($params['retrieve'])
 		if(isset($params['licence']) && $params['licence'] != '')
 		{
 			$licence = $params['licence'];
-			$joueurs = new Joueurs;
+			$joueurs = new joueurs;
 			$activate = $joueurs->desactivate($licence);
 			if(true === $activate)
 			{
@@ -361,6 +367,8 @@ switch($params['retrieve'])
 		}
 		$this->RedirectToAdminTab('joueurs');
 	break;
+	
+	
 	//remet à zéro la table re récupération  des résultats spid etc...
 	case "recup_parties" :
 		$db = cmsms()->GetDb();
@@ -405,9 +413,10 @@ switch($params['retrieve'])
 		if(isset($params['record_id']) && $params['record_id'] != '')
 		{
 			$this->SetCurrentTab('equipes');
-			$record_id = $params['record_id'];
+			$record_id = (int) $params['record_id'];
 			$eq = new equipes_ping;
 			$details = $eq->details_equipe($record_id);	
+			var_dump($details);
 			$idepreuve = $details['idepreuve'];
 			$iddiv = $details['iddiv'];
 			$idpoule = $details['idpoule'];

@@ -1,4 +1,4 @@
-<a href="{cms_action_url action='defaultadmin'}">{admin_icon icon="back.gif"}Revenir</a> | <a href="{cms_action_url action=misc_actions obj=delete_details_rencontre record_id=$record_id}">{admin_icon icon='delete.gif'}Supprimer tout</a> | <a href="{cms_action_url action='retrieve_details_rencontres2' record_id=$record_id}">{admin_icon icon="import.gif"} Télécharger les détails</a>
+<a href="{cms_action_url action='admin_poules_tab3' record_id=$eq_id}">{admin_icon icon="back.gif"}Revenir</a> | <a href="{cms_action_url action=misc_actions obj=delete_details_rencontre record_id=$record_id}">{admin_icon icon='delete.gif'}Supprimer tout</a> | <a href="{cms_action_url action='retrieve_details_rencontres2' record_id=$record_id}">{admin_icon icon="import.gif"} Télécharger les détails</a>
 {if $itemcount > 0}
 <h3>La feuille de match : </h3>
 <table class="pagetable">

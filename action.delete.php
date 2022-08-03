@@ -149,7 +149,7 @@ $designation = '';
 				break;
 				
 				case "journal" : 
-					$query = "DELETE FROM ".cms_db_prefix()."module_ping_recup";
+					$query = "TRUNCATE TABLE ".cms_db_prefix()."module_ping_recup";
 					$db->Execute($query);
 					$this->SetMessage('Journal supprimé');
 					$this->RedirectToAdminTab('journal');

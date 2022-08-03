@@ -21,8 +21,8 @@ $(document).ready(function(){
 });
 //]]>
 </script>
-<h2>Tableau de récupération des parties SPID</h2>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$rafraichir} {$Verif}</p></div>
+<h2>Tableau de récupération des parties SPID du mois courant</h2>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} {if true == $nettoyage}| {$rafraichir} {$Verif} | <a href="{cms_action_url action=erase_spid}">Supprimer les parties obsolètes</a>{/if}</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -41,7 +41,7 @@ $(document).ready(function(){
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
-	<td>{$entry->joueur}</td>
+	<td><a href="{cms_action_url action=view_adherent_details record_id=$entry->licence}">{$entry->joueur}</a></td>
 	<td> {$entry->licence}</td>
 	<td>{$entry->spid}</td>
 	<td>{$entry->spid_errors} {if $entry->spid_errors >0} {$attention_img}{/if}</td>

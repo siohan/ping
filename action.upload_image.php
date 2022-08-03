@@ -1,12 +1,12 @@
 <?php
 if( !isset($gCms) ) exit;
-//debug_display($params, 'Parameters');
+debug_display($params, 'Parameters');
 if(isset($params['genid']) && $params['genid'] !='')
 {
 	$genid = $params['genid'];
 	
     // Repertoire cible
-	$target = $config['root_url']."/modules/Ping/images/trombines";
+	$target = $config['root_url']."/uploads/images/trombines";
 
 	if( !is_dir($target) ) 
 	{

@@ -57,6 +57,7 @@ if($dbresult)
 {
 	if( $dbresult->RecordCount() >0)
 	{
+		$rowarray = array();
 		while($row = $dbresult->FetchRow())
 		{
 			$next_match = $ren_ops->next_match($row['id']);
@@ -115,9 +116,17 @@ if($dbresult)
 				$onerow->horaire= $next_match['horaire'];
 				$rowarray[] = $onerow;
 			}
+			else
+			{
+				//echo "pas de résultats";
+			}
 		}
 		$smarty->assign('items', $rowarray);
 		$smarty->assign('itemcount', count($rowarray));
+	}
+	else
+	{
+		//echo "pas de résultats !";
 	}
 	
 }
@@ -125,4 +134,3 @@ if($dbresult)
 	
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();
-//echo $this->ProcessTemplate('displayaffiche.tpl');

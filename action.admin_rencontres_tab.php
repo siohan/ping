@@ -13,8 +13,10 @@ $seasons_list = $p_ops->seasons_list();
 $smarty->assign('seasons_list', $seasons_list);
 
 $default_list = array(-1=>'Toutes');
-$liste_epreuves = $p_ops->liste_epreuves();
-$liste_epreuves[] = array(-1=>'Toutes');
+$firstItem = array('Toutes' => 'Toutes');
+$liste_epreuves = array($p_ops->liste_epreuves());
+$liste_epreuves = array_merge($firstItem, $liste_epreuves);
+//$liste_epreuves[] = array(-1=>'Toutes');
 $final_list = array();
 
 

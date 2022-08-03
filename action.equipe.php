@@ -2,8 +2,13 @@
 if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 $db = cmsms()->GetDb();
-$saison_en_cours = $this->GetPreference('saison_en_cours');
-//$saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
+$ping = cms_utils::get_module('Ping');
+$saison_en_cours = $ping->GetPreference('saison_en_cours');
+$phase_en_cours = $ping->GetPreference('phase_en_cours');
+$idepreuve = (isset($params['idepreuve']))?$params['idepreuve']:"2303";
+$saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
+$phase = (isset($params['phase']))?$params['phase']:$phase_en_cours;
+
 $record_id = '';
 if(!isset($params['record_id']) || $params['record_id'] =='')
 {
@@ -14,7 +19,8 @@ else
 	$record_id = (int) $params['record_id'];
 	$eq_ops = new equipes_ping;
 	$details = $eq_ops->details_equipe($record_id);
-	$saison = $details['saison'];
+	//$id = $details['idequipe'];
+	//var_dump($id);
 	$titre = $details['friendlyname']." : Le championnat";
 	$smarty->assign('titre', $titre);
 }
@@ -39,7 +45,6 @@ $ext_list = array('.gif', '.jpg', '.png','.jpeg');
 //le numéro de l'équipe est ok, on continue
 //on va d'abord récupérer le classement de cette équipe
 $query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf, num_equipe FROM ".cms_db_prefix()."module_ping_classement AS cl  WHERE  cl.idequipe = ? ORDER BY cl.id ASC";
-//$query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq  WHERE eq.id = cl.idequipe   AND cl.idequipe = ? ORDER BY cl.id ASC";
 $dbresult= $db->Execute($query, array($record_id));
 
 $rowarray = array();
@@ -88,13 +93,10 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 
-
+/**/
 
 $query2 = "SELECT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE eq_id = ? GROUP BY date_event ORDER BY date_event ASC ";
-//$parms['saison'] = $saison;
-$parms['eq_id'] = $record_id;
-//$template = "Rookie Equipe Unique";
-$dbresultat = $db->Execute($query2,$parms);
+$dbresultat = $db->Execute($query2,array($record_id));
 $rowarray2 = array();
 $i = 0;
 $renc_ops = new rencontres;
@@ -168,7 +170,7 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 	$smarty->assign('itemcount2', count($rowarray2));
 	$smarty->assign('items2', $rowarray2);
 }
-
+/**/
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();
 

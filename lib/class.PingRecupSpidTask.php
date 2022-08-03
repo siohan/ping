@@ -91,7 +91,7 @@ class PingRecupSpidTask implements CmsRegularTask
 						$spid_ops->compte_spid($licence);
 						$spid_ops->compte_spid_errors($licence);
 						$calcul_pts_spid = $spid_ops->compte_spid_points($licence);
-						$spid_ops->maj_spid_points($calcul_pts_spid);
+						$spid_ops->maj_points_spid($licence,$calcul_pts_spid);
 						
 				}//fin du while
 				return TRUE; // Ou false si ça plante

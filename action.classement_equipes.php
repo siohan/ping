@@ -95,9 +95,11 @@ if($dbresult && $dbresult->RecordCount()>0)
 }
 else
 {
-	 echo " pas de resultat";
-	$designation = $db->ErrorMsg();
-	echo $designation;
+	 /* 
+	  * echo " pas de resultat";
+		$designation = $db->ErrorMsg();
+		echo $designation;
+	*/
 }
 
 $smarty->assign('items', $rowarray);

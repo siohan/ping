@@ -1,7 +1,7 @@
 <?php
 //ce fichier fait des actions de masse, il est appelé depuis l'onglet de récupération des infos sur les joueurs
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //var_dump($params['sel']);
 $db = cmsms()->GetDb();
 $ping_ops = new ping_admin_ops;
@@ -15,74 +15,87 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 		switch($params['actiondemasse'])
 		{
 			case "unable" :
+				
+				$joueurs = new joueurs;
+				foreach( $params['sel'] as $licence )
+		  		{
+		    			$joueurs->desactivate($licence);
+		  		}
+				$this->SetMessage('Joueurs désactivés');
+				$this->RedirectToAdminTab('joueurs');
+				
+			break;
 			
-			$joueurs = new Joueurs;
-			foreach( $params['sel'] as $licence )
-	  		{
-	    			$joueurs->desactivate($licence);
-	  		}
-			$this->SetMessage('Joueurs désactivés');
-			$this->RedirectToAdminTab('joueurs');
+			case "activate" :
+				
+				$joueurs = new joueurs;
+				foreach( $params['sel'] as $licence )
+		  		{
+		    			$joueurs->activate($licence);
+		  		}
+				$this->SetMessage('Joueurs activés');
+				$this->RedirectToAdminTab('joueurs');
+				
 			break;
 	
 			case "situation" :
 			
-			$service = new retrieve_ops;
-			$message='Retrouvez toutes les infos dans le journal';
-			foreach( $params['sel'] as $licence )
-	  		{
-	
-	    			$retrieve = $service->retrieve_sit_mens( $licence );
-				sleep(1);
-	  		}
-			//$message.='</ul>';
-			$this->SetMessage("$message");
-			$this->RedirectToAdminTab("situation");
+				$service = new retrieve_ops;
+				$message='Retrouvez toutes les infos dans le journal';
+				foreach( $params['sel'] as $licence )
+		  		{
+		
+		    			$retrieve = $service->retrieve_sit_mens( $licence );
+					sleep(1);
+		  		}
+				//$message.='</ul>';
+				$this->SetMessage("$message");
+				$this->RedirectToAdminTab("situation");
 			break;
 	
 			case "delete_team_result" :
 			
-			foreach( $params['sel'] as $record_id )
-	  		{
-	
-	    			$ping_ops->delete_team_result( $record_id );
-	  		}
-			//$message.='</ul>';
-	
-			$this->RedirectToAdminTab("poules");
+				foreach( $params['sel'] as $record_id )
+		  		{
+		
+		    			$ping_ops->delete_team_result( $record_id );
+		  		}
+				//$message.='</ul>';
+		
+				$this->RedirectToAdminTab("poules");
 			break;
 	
 			case "display_on_frontend" :
-	
-			foreach( $params['sel'] as $id )
-	  		{
-	
-	    			$ping_ops->display_on_frontend( $id );
-	  		}
-	
-			$this->RedirectToAdminTab("poules");
+		
+				foreach( $params['sel'] as $id )
+		  		{
+		
+		    			$ping_ops->display_on_frontend( $id );
+		  		}
+		
+				$this->RedirectToAdminTab("poules");
 			break;
 	
 			case "do_not_display" :
 	
-			foreach( $params['sel'] as $record_id )
-	  		{
-	
-	    			$ping_ops->do_not_display( $record_id );
-	  		}
-	
-			$this->RedirectToAdminTab("poules");
+				foreach( $params['sel'] as $record_id )
+		  		{
+		
+		    			$ping_ops->do_not_display( $record_id );
+		  		}
+		
+				$this->RedirectToAdminTab("poules");
 			break;
 			
 			case "affiche_ok" :
 	
-			foreach( $params['sel'] as $id )
-	  		{
-	
-	    			$ren_ops->affiche_ok( $id );
-	  		}
-	
-			$this->RedirectToAdminTab("rencontres");
+				foreach( $params['sel'] as $id )
+		  		{
+		
+		    			$ren_ops->affiche_ok( $id );
+		  		}
+		
+				$this->RedirectToAdminTab("rencontres");
 			break;
 	
 			case "affiche_ko" :
@@ -216,47 +229,7 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			$this->RedirectToAdminTab("recuperation");
 			break;
 	
-			case "coeff05" :
-			foreach( $params['sel'] as $record_id)
-			{
-				$ping_ops->coeff_ops( $record_id, $coeff= '0.50' );
-			}
-			$this->RedirectToAdminTab('spid');
-			break;
-	
-			case "coeff075" :
-			foreach( $params['sel'] as $record_id)
-			{
-				$ping_ops->coeff_ops( $record_id, $coeff= '0.75' );
-			}
-			$this->RedirectToAdminTab('spid');
-			break;
-	
-			case "coeff1" :
-			foreach( $params['sel'] as $record_id)
-			{
-				$ping_ops->coeff_ops( $record_id, $coeff='1.00' );
-			}
-			$this->RedirectToAdminTab('spid');
-			break;
-	
-			case "coeff125" :
-			foreach( $params['sel'] as $record_id)
-			{
-				$ping_ops->coeff_ops( $record_id, $coeff='1.25');
-			}
-			$this->RedirectToAdminTab('spid');
-			break;
-	
-			case "coeff15" :
-			$message='Retrouvez toutes les infos dans le journal';
-			foreach( $params['sel'] as $record_id)
-			{
-				$ping_ops->coeff_ops( $record_id, $coeff= '1.50' );
-			}
-			$this->SetMessage("$message");
-			$this->RedirectToAdminTab('spid');
-			break;
+			
 	
 			case "supp_spid" : //on supprime les parties spid sélectionnées
 			foreach( $params['sel'] as $record_id)

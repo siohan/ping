@@ -10,18 +10,19 @@ require_once(dirname(__FILE__).'/include/prefs.php');
 $db = cmsms()->GetDb();
 global $themeObject;
 $idepreuve= '';
-//debug_display($params, 'Parameters');
+
+//debug_display($_POST, 'Parameters');
 
 $phase_courante = $this->GetPreference('phase_en_cours');
 
-$phase = (isset($params['phase']))?$params['phase']:$phase_courante;
-$saison_en_cours = (isset($params['saison_en_cours']))?$params['saison_en_cours']:$this->GetPreference('saison_en_cours');
+$phase = (isset($_POST['phase']))?$_POST['phase']:$phase_courante;
+$saison = (isset($_POST['saison']))?$_POST['saison']:$this->GetPreference('saison_en_cours');
 
 
-$query = "SELECT DISTINCT *, eq.id AS eq_id, phase, eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.saison = ?";
+$query = "SELECT DISTINCT *, eq.id AS eq_id, phase, eq.tag as tag_equipe FROM ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.saison = ? AND phase = ?";
 $query.=" ORDER BY eq.phase DESC,eq.idepreuve ASC,eq.numero_equipe ASC";	
 //echo $query;
-$dbresult= $db->Execute($query, array($saison_en_cours));
+$dbresult= $db->Execute($query, array($saison, $phase));
 
 
 	$rowarray= array();
@@ -35,7 +36,7 @@ $dbresult= $db->Execute($query, array($saison_en_cours));
       			{
 				$onerow= new StdClass();
 				$onerow->rowclass= $rowclass;
-
+				$onerow->numero_equipe= $row['numero_equipe'];
 				$idepreuve = $row['idepreuve'];
 				$onerow->eq_id= $row['eq_id'];
 				$onerow->idpoule = $row['idpoule'];
@@ -61,8 +62,11 @@ $dbresult= $db->Execute($query, array($saison_en_cours));
       			}
 			
   		}
-	
-		
+  		$liste_phases = array("1"=>"1", "2"=>"2");
+		$smarty->assign('phase', $phase);
+		$smarty->assign('liste_saisons', $saisondropdown);
+		$smarty->assign('liste_phases', $liste_phases);
+		$smarty->assign('saison_choisie', $saison);
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('items', $rowarray);
 		

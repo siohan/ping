@@ -57,6 +57,23 @@ class rencontres
    			return $details;
    		}
    }
+   
+   //modifie une rencontre
+   function edit_rencontre($renc_id, $club, $tour, $date_event, $affiche, $uploaded,$equa, $equb, $scorea, $scoreb, $idepreuve, $countdown, $horaire)
+   {
+   		$db = cmsms()->GetDb();
+   		$details = array();
+   		$query = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET club = ?, tour = ?, date_event = ?, affiche = ?, uploaded = ?, equa = ?, equb = ?, scorea = ?, scoreb = ?, idepreuve = ?, countdown = ?, horaire = ? WHERE renc_id = ?";
+   		$dbresult = $db->Execute($query, array($club, $tour, $date_event, $affiche, $uploaded,$equa, $equb, $scorea, $scoreb, $idepreuve, $countdown, $horaire, $renc_id));
+   		if($dbresult)
+   		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+   	}
    //retourne la feuille de rencontre et les parties 
    function feuille_parties($renc_id)
     {
@@ -69,7 +86,7 @@ class rencontres
 		$error = 0;//un compteur d'erreur pour indiquer false or true
 		$lien = $service->GetLink($page, $link);
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		var_dump($xml);
+		//var_dump($xml);
 		if($xml === FALSE)
 		{
 			//le service est coupé
@@ -108,21 +125,17 @@ class rencontres
 			}   
 			else
 			{
-			//on essaie de faire qqs calculs
-			$tableau1 = array();
-			$tab2 = array();
-			$compteur = count($array['joueur']);
-			$compteur_parties = count($array['partie']);
-
-			//on scinde le tableau principal en plusieurs tableaux ?
-			$tab1 = array_slice($array,0,1);
-			$tab2 = array_slice($array,1,1);
-			$tab3 = array_slice($array,2,1);
-			//print_r($tab1);
-			//print_r($tab2);
-			//print_r($tab3);
-			//echo "le compteur est : ".$compteur;
-			//echo "le nb de parties disputées est : ".$comptage;
+				//on essaie de faire qqs calculs
+				$tableau1 = array();
+				$tab2 = array();
+				$compteur = count($array['joueur']);
+				$compteur_parties = count($array['partie']);
+	
+				//on scinde le tableau principal en plusieurs tableaux ?
+				$tab1 = array_slice($array,0,1);
+				$tab2 = array_slice($array,1,1);
+				$tab3 = array_slice($array,2,1);
+				
 				$i=0;
 				$a=0;
 				$error = 0;
@@ -168,11 +181,7 @@ class rencontres
 						$dbresult4 = $db->Execute($query4, array($renc_id, $$ja,$$scorea, $$jb, $$scoreb, $$detail));
 								
 					}
-					$uploaded = $this->is_really_uploaded($renc_id);
-					$status = 'Ok';
-					$designation = 'infos Ok :'.$details['equa'].' - '.$details['equb'];
-					$action = 'feuille_parties'; 
-					$ping_ops->ecrirejournal($status, $designation,$action);
+					
 			}
 					
     }	
@@ -294,13 +303,9 @@ class rencontres
 	function is_uploaded($renc_id)
 	{
 		$db = cmsms()->GetDb();
-		$query = "SELECT renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE renc_id = ? AND uploaded = 1";
+		$query = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET uploaded = 1 WHERE renc_id = ?";
 		$dbresult = $db->Execute($query, array($renc_id));
-		if($dbresult && $dbresult->RecordCount() >0)
-		{
-			return true;
-		}
-		else
+		
 		{
 			return false;
 		}
@@ -349,23 +354,41 @@ class rencontres
 	{
 		$db = cmsms()->GetDb();
 		$query = "SELECT date_event, equa, equb, renc_id, horaire, idepreuve, equip_id1, equip_id2 FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? AND club = 1 AND affiche = 1 AND date_event >= CURRENT_DATE() ORDER BY tour ASC LIMIT 1";
+		
 		$dbresult = $db->Execute($query, array($record_id));
-		if($dbresult && $dbresult->RecordCount() >0)
+		if($dbresult)
 		{
-			$data = array();
-			while($row = $dbresult->FetchRow())
+			if($dbresult->RecordCount()>0)
 			{
-				$data['eq_id'] = $record_id;
-				$data['date_event'] = $row['date_event'];
-				$data['equa'] = $row['equa'];
-				$data['equb'] = $row['equb'];
-				$data['renc_id'] = $row['renc_id'];
-				$data['horaire'] = $row['horaire'];
-				$data['idepreuve'] = $row['idepreuve'];
-				$data['equip_id1'] = $row['equip_id1'];
-				$data['equip_id2'] = $row['equip_id2'];
+				$data = array();
+				while($row = $dbresult->FetchRow())
+				{
+					$data['eq_id'] = $record_id;
+					$data['date_event'] = $row['date_event'];
+					$data['equa'] = $row['equa'];
+					$data['equb'] = $row['equb'];
+					$data['renc_id'] = $row['renc_id'];
+					$data['horaire'] = $row['horaire'];
+					$data['idepreuve'] = $row['idepreuve'];
+					$data['equip_id1'] = $row['equip_id1'];
+					$data['equip_id2'] = $row['equip_id2'];
+					if($row['equa'] == '' || $row['equb'] == '')
+					{
+						return false;
+					}
+					else
+					{
+						return $data;
+						
+					}
+				}
+				
 			}
-			return $data;
+			else
+			{
+				
+				return false;
+			}
 		}
 		else
 		{
@@ -425,8 +448,25 @@ class rencontres
 	function is_really_uploaded($record_id)
 	{
 		$db = cmsms()->GetDb();
-		$query = "UPDATE  ".cms_db_prefix()."module_ping_poules_rencontres SET uploaded = 1 WHERE renc_id = ?";
+		$query = "SELECT COUNT(*) AS nb FROM ".cms_db_prefix()."module_ping_rencontres_parties WHERE fk_id = ?";
 		$dbresult = $db->Execute($query, array($record_id));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			if($nb >0)
+			{ 
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
 	}
 	//met le statut de la rencontre à nontéléchargé
 	function not_uploaded($record_id)

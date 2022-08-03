@@ -28,7 +28,14 @@ $(document).ready(function(){
 		
 		{if $alertConfig >0}
 		<div class="pageoverflow">
-          	<p class="pagetext">
+          	<p class="red">
+			Attention !! Vous devez renseigner l'onglet "Configuration"
+			</p>
+        </div>
+        {/if}
+        {if $alertCompte >0}
+		<div class="pageoverflow">
+          	<p class="red">
 			Attention !! Vous devez renseigner vos paramètres dans l'onglet "Compte"
 			</p>
         </div>
@@ -43,6 +50,7 @@ $(document).ready(function(){
 	 <thead>
 		<tr>
 			<th>Joueur</th>
+			<th>Photo</th>
 			<th>Licence</th>
 			<th>Actif</th>
 			<th>Type</th>
@@ -56,7 +64,8 @@ $(document).ready(function(){
 	 <tbody>
 	{foreach from=$items item=entry}
 	  <tr class="{$entry->rowclass}">
-		<td>{$entry->joueur}</td>
+		<td><a href="{cms_action_url action=view_adherent_details record_id=$entry->licence}">{$entry->joueur}</a></td>
+		<td><a href="{cms_action_url action=upload_image genid=$entry->licence}">Uploader</a></td>
 		<td>{$entry->licence}</td>
 	    <td>{$entry->actif}</td>
 		<td>{$entry->type}</td>

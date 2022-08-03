@@ -9,7 +9,8 @@ global $themeObject;
 //le record_id est défini, on peut récupérer toutes les variables nécessaires
 if(isset($params['record_id']) && $params['record_id'] !='')
 {
-	$record_id = $params['record_id'];
+	$record_id = (int)$params['record_id'];
+	$smarty->assign('record_id', $record_id);
 	$eq_ops = new equipes_ping;
 	$details = $eq_ops->details_equipe($record_id);
 	$friendlyname = $details['friendlyname'];	
@@ -116,7 +117,8 @@ if($dbresult && $dbresult->RecordCount()>0)
 			if($dbresultat && $dbresultat->RecordCount()>0)
 			{
 				//on instancie la classe ping_admin_ops
-				$ping_ops = new ping_admin_ops;$nblignes = $dbresultat->RecordCount();
+				$ping_ops = new rencontres;
+				$nblignes = $dbresultat->RecordCount();
 				while($row2 = $dbresultat->FetchRow())
 				{
 					//$valeur = $i;
@@ -130,7 +132,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					$onerow2->club = $row2['club'];
 					$onerow2->date_event = $row2['date_event'];
 					$onerow2->affiche = $row2['affiche'];
-					$onerow2->uploaded = $row2['uploaded'];//$ping_ops->is_uploaded($row2['renc_id']);//row2['uploaded'];
+					$onerow2->uploaded = $ping_ops->is_really_uploaded($row2['renc_id']);//row2['uploaded'];
 					$onerow2->libequipe = $row2['libequipe'];
 					$friendlyname = $row2['friendlyname'];
 					$onerow2->idepreuve = $row2['idepreuve'];
@@ -138,7 +140,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					
 					if(isset($friendlyname) && $friendlyname !='')
 					{
-						if ($libequipe == $equa && isset($friendlyname) && $friendlyname !='' )
+						if ($libequipe == $row2['equa'] && isset($friendlyname) && $friendlyname !='' )
 						{
 							$onerow2->equa= $row2['friendlyname'];
 						}
@@ -153,7 +155,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					}
 					if(isset($friendlyname) && $friendlyname !='')
 					{
-						if ($libequipe == $equb)
+						if ($libequipe == $row2['equb'])
 						{
 							$onerow2->equb= $row2['friendlyname'];
 						}

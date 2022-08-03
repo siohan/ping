@@ -25,10 +25,10 @@ function details_joueur($licence)
 			$details['certif'] = $row['certif'];
 			$details['validation'] = $row['validation'];
 			//$details['echelon'] = $row['echelon'];
-		//	$details['place'] = $row['place'];
-		//	$details['points'] = $row['points'];
+			//$details['place'] = $row['place'];
+			//$details['points'] = $row['points'];
 			$details['cat'] = $row['cat'];
-		//	$details['maj'] = $row['maj'];
+			//$details['maj'] = $row['maj'];
 			$details['clast'] = $row['clast'];
 			
 		}
@@ -81,6 +81,39 @@ function desactivate($licence)
 	if($dbresult)
 	{
 		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function next($nom, $prenom)
+{
+	$db = cmsms()->GetDb();
+	$query = "SELECT licence, nom, prenom FROM ".cms_db_prefix()."module_ping_joueurs WHERE nom > ?  AND actif = '1' OR( nom >= ? AND prenom > ?) ORDER BY nom, prenom ASC LIMIT 1";//
+	$dbresult = $db->Execute($query, array($nom, $nom,$prenom));
+	if($dbresult && $dbresult->RecordCount()>0)
+	{
+		$row = $dbresult->FetchRow();
+		$licence = $row['licence'];
+		return $licence;
+	}
+	else
+	{
+		return false;
+	}
+}
+function previous($nom, $prenom)
+{
+	$db = cmsms()->GetDb();
+	$query = "SELECT licence, nom, prenom FROM ".cms_db_prefix()."module_ping_joueurs WHERE nom < ?  AND actif = '1' OR(nom <= ? AND prenom < ?) ORDER BY nom DESC, prenom DESC LIMIT 1";//
+	$dbresult = $db->Execute($query, array($nom, $nom,$prenom));
+	if($dbresult && $dbresult->RecordCount()>0)
+	{
+		$row = $dbresult->FetchRow();
+		$licence = $row['licence'];
+		return $licence;
 	}
 	else
 	{

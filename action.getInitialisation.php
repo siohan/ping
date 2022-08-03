@@ -22,7 +22,7 @@ switch($step)
 	
 		
 		$initialisation = $service->initialisationAPI();
-		//var_dump($initialisation);
+		
 
 		if($initialisation === FALSE)
 		{
@@ -53,13 +53,15 @@ switch($step)
 		//récupération des données utiles
 		$club_number = $this->GetPreference('club_number');
 		$ligue = substr($club_number, 0,2);
+		$ligue = '10'.$ligue;
 		$departement = substr($club_number, 2, 2);
+		$dep = (int)$departement;
 		$ping_admin_ops = new ping_admin_ops();
-		$chercher_ligue = $ping_admin_ops->chercher_ligue($ligue);
-		$chercher_departement = $ping_admin_ops->chercher_departement($departement);	
+		//$chercher_ligue = $ping_admin_ops->chercher_ligue($ligue);
+		//$chercher_departement = $ping_admin_ops->chercher_departement($departement);	
 		$retrieve_club_detail = $ret_ops->retrieve_detail_club($club_number);
-		$this->SetPreference('ligue', $chercher_ligue);
-		$this->SetPreference('dep', $chercher_departement);
+		$this->SetPreference('ligue', $ligue);
+		$this->SetPreference('dep', $dep);
 		//on commence par les compets 
 		
 	break;
@@ -78,7 +80,7 @@ switch($step)
 		$smarty->assign('comp_ligue_indivs', $comp_ligue_indivs);
 		$smarty->assign('comp_zone_eq', $comp_zone_eq);
 		$smarty->assign('comp_zone_indivs', $comp_zone_indivs);
-		
+		$this->Redirect($id, 'getInitialisation', $returnid, array("step"=>"4"));
 		
 	break;
 	

@@ -25,7 +25,6 @@
 <h3>Ordre des parties</h3>
 <table class="table table-bordered">
 	<tr>
-		<th>Score</th>
 		<th>Equipe A</th>
 		<th>Score A</th>
 		<th>Score B</th>
@@ -33,7 +32,6 @@
 	</tr>
 {foreach from=$items2 item=entry}  	
 	<tr>
-		<td>{$entry->detail}</td>
 		<td>{$entry->joueurA}</td>
 		<td>{$entry->scoreA}</td>
 		<td>{$entry->scoreB}</td>
@@ -41,5 +39,13 @@
 	</tr>
 {/foreach}
 </table>
-{/if}
+<table class="table table-bordered">
+       <tr>
+                <td>{$equa}</td>
+                <td {if $scorea > $scoreb}style="background: green;"{elseif $scorea == $scoreb}style="background: blue;"{else}style="background:red;"{/if}>{$scorea}</td>
+                <td {if $scoreb > $scorea}style="background: green;"{elseif $scorea == $scoreb}style="background: blue;"{else}style="background:red;"{/if}>{$scoreb}</td>
+                <td>{$equb}</td>
+        </tr>
+</table>
 
+{/if}

@@ -9,7 +9,7 @@ if( !isset($gCms) ) exit;
 $db = cmsms()->GetDb();
 global $themeObject;
 
-$query= "SELECT id, datecreated, designation, status,action FROM ".cms_db_prefix()."module_ping_recup ORDER BY id DESC";
+$query= "SELECT id, datecreated, designation, status,action FROM ".cms_db_prefix()."module_ping_recup  ORDER BY id DESC LIMIT 100";
 $dbresult= $db->Execute($query);
 $rowclass= 'row1';
 $rowarray= array ();

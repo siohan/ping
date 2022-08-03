@@ -144,8 +144,10 @@ $lang['help_description'] = 'Param&egrave;tres internes utilis&eacute;s lors de 
 $lang['help_details_rencontre_page'] = 'Indiquez l\'alias de la page où s\'affichera le détail de la rencontre (voir Contenu->Gestionnaire de contenu puis colonne alias)';
 $lang['help_explanation'] = 'Param&egrave;tre interne utilis&eacute; pour passer des informations explicatives lorsque l&#039;on cr&eacute;&eacute; ou l&#039;on met &agrave; jour un enregistrement';
 $lang['help_module_message'] = 'Param&egrave;tre interne utilis&eacute; pour la transmission des messages &agrave; l&#039;utilisateur';
-$lang['help_spid_calcul'] = "Consultez l'aide sur le module pour utiliser le mode calcul du Spid";
-$lang['help_affiche_club_uniquement'] = "Choisissez d'afficher tous les résultats (y compris ceux des équipes adverses) ou seulement ceux des équipes de votre club";
+$lang['help_nettoyage'] = '';
+$lang['help_demo_truncate'] = 'Toutes les données du module vont être effacées. Pensez à faire une sauvegarde au préalable';
+$lang['help_spid_calcul'] = 'Consultez l\'aide sur le module pour utiliser le mode calcul du Spid';
+$lang['help_affiche_club_uniquement'] = 'Choisissez d\'afficher tous les résultats (y compris ceux des équipes adverses) ou seulement ceux des équipes de votre club';
 $lang['event_info_OnSkeletonPreferenceChange'] = 'Un &eacute;v&eacute;nement g&eacute;n&eacute;r&eacute; lorsque les pr&eacute;f&eacute;rences du module  sont chang&eacute;es';
 $lang['event_help_OnSkeletonPreferenceChange'] = '<p>An event generated when the preferences to the Skeleton Module get changed</p>
 
@@ -181,20 +183,19 @@ $lang['changelog'] = '<ul>
 <li>Première release du module.</li>
 </ul>';
 $lang['help'] = '<h3>Que fait ce module ?</h3>
-<p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club et de vos joueurs et procède à des calculs des performances (Voir feuille de route plus bas).</p>
+<p>Ce module vous permet de récupérer les résultats de toutes les compétitions de votre club de Ping et de vos joueurs via l\'API FFTT.</p>
 <h3>Comment l\'utiliser ?</h3>
 <h2>Première utilisation</h2>
 <ol><li>Dans l\'onglet "Compte", renseignez les identifiants fournis par la FFTT et suivez les instructions qui en découlent.(voir ici <a target="_blank" href="http://www.fftt.com/medias/contenus/FFTT_Specifications_techniques_de_API_Smartping_2.0.pdf">page 5</a>)</li>
-<li>Renseignez l\'onglet "Configuration" , indiquez comment vous voulez récupérez les rencontres</li><li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
-Un lien pour les équipes du championnat de France par équipes masculin, un autre pour les féminines et le dernier pour toutes les autres équipes, indiquez le type de compétitions auxquelles elles participent.</li>
+<li>Renseignez l\'onglet "Configuration".</li>
+<li>Dans l\'onglet "Equipes" , cliquez sur les liens "Récupération des équipes".<br />
+Un lien pour les équipes du championnat de France par équipes masculin, un autre pour les féminines et le dernier pour toutes les autres équipes, indiquez les horaires habituels des rencontres pour faire fonctionner le compte à rebours.</li>
 <li>Dans l\'onglet "Joueurs", récupérez les joueurs grâce au lien du même nom.</li>
 <li>Dans l\'onglet "Situation mensuelle" récupérez la situation mensuelle du mois en cours (voir détails ci-dessous).</li></ol>
-<h3>Spid (+estimation des points)</h3>
-<p>Le spid avec calcul est une estimation des points. Ce mode permet d\'estimer les points sans attendre la validation de la FFTT. Cependant, pour effectuer ces estimations, nous avons besoin de la situation mensuelle en cours de deux joueurs (disponible seulement après le 10 de chaque mois) et du coefficient de la compétition.</p>
-Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensuelle du mois concerné n\'est pas renseignée.</p>
 <h3>Situation mensuelle</h3>
-<p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre, vous pouvez récupérer la situation mensuelle en cours de tous les joueurs de votre club</p>
+<p>Lors du premier import des joueurs, la situation mensuelle par défaut est Janvier 2000. Lorsque l\'accès est libre (après le 10 de chaque mois), vous pouvez récupérer la situation mensuelle en cours de tous les joueurs de votre club</p>
 <h2>Implémentation sur les pages de votre site</h2>
+<p>Des tags pour affichage prêts à l\'emploi sont fournis. Vous pouvez les utiliser dans vos pages, articles, etc...</p>
 <p>Utilisez la balise suivante : {Ping}. Ceci affichera par défaut les résultats des équipes.</p>
 <h4>Paramètres disponibles : </h4>
 <ul>
@@ -206,15 +207,16 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 <li>sit_mens_provisoire - pour une situation mensuelle réévaluée après chaque compétition récupérée.</li>
 </ul>
 </li>
-<li>idepreuve - le type de compétition à afficher ex : {Ping action=\'par-equipes\' idepreuve=\'1072\'} (disponibles ds l\'onglet "Compétitions")</li>
+<li>idepreuve - le type de compétition à afficher ex : {Ping action=\'par-equipes\' idepreuve=\'1072\'} (disponibles ds l\'onglet "Epreuves")</li>
 </ul>
-<ul><li>template - le template(gabarit) que vous souhaitez utiliser (voir ci-dessous)</li></ul>
+<ul><li>template - le template(gabarit) que vous souhaitez utiliser si différent de celui fourni par défaut(voir ci-dessous)</li></ul>
 <h3>Templates (gabarits)</h3>
-<p>Vous avez la possibilité de mettre en forme tous les gabarits de résultats. Par défaut, le module en propose que vous pouvez modifier à l\'envi depuis le DesignManager (Menu de gauche ->Disposition - Gabarits).</p>
+<p>Vous avez la possibilité de modifier tous les gabarits de résultats à votre convenance. Par défaut, le module en propose que vous pouvez modifier à l\'envi depuis le DesignManager (Menu de gauche ->Disposition -> Gabarits). Attention ! Si vous modifier les gabarits originels, il est alors prudent de déplacer ces nouveaux gabarits dans le répertoire assets/module_custom ,y créer le répertoire Ping puis créer le répertoire templates dans le répertoire Ping et y déposer tous les nouveaux gabarits.</p>
+<h3>Autres modules</h3>
+<p>Asso Simple est une suite de modules conçus pour vous aider à gérer votre association le plus simplement possible. Retrouvez tous les modules sur la page  <a href="http://www.agi-webconseil.fr" target="_blank">www.agi-webconseil.fr</a></p>  
 <h3>Export des données</h3>
 <p>Vous pouvez exporter certaines informations vers d\'autres modules de la suite notamment la liste de vos joueurs vers les membres du module Adhérents.</p>
-<h3>Les autres modules développés</h3>
-<p>Asso Simple est une suite de modules conçus pour vous aider à gérer votre association le plus simplement possible. Retrouvez tous les modules sur la page  <a href="http://www.agi-webconseil.fr" target="_blank">www.agi-webconseil.fr</a></p>  
+
 <h3>Support</h3>
 <ul>
 <li>Pour obtenir la dernière version en cours (avant release officielle)

@@ -1,4 +1,12 @@
-<div class="pageoptions"><p style="width: 100%"><span style="text-align: left"><a href="{cms_action_url action='defaultadmin' active_tab=equipes}">{admin_icon icon="back.gif"}Revenir</a> | <a href="{cms_action_url action='retrieve' retrieve=classement_equipes record_id=$record_id}">{admin_icon icon="import.gif"}Rafraichir le classement</a> | <a href="{cms_action_url action='retrieve' retrieve=retrieve_rencontre record_id=$record_id}">{admin_icon icon="import.gif"} Récupérer tous les résultats</a></span></p>
+<div class="pageoptions">
+	<p style="width: 100%">
+		<span style="text-align: left">
+			<a href="{cms_action_url action='defaultadmin' active_tab=equipes}">{admin_icon icon="back.gif"}Revenir</a> | 
+			<a href="{cms_action_url action='retrieve' retrieve=classement_equipes record_id=$record_id}">{admin_icon icon="import.gif"}Rafraichir le classement</a> | 
+			<a href="{cms_action_url action='retrieve' retrieve=retrieve_rencontre record_id=$record_id}">{admin_icon icon="import.gif"} Récupérer tous les résultats</a> |
+			<a href="{cms_action_url action='retrieve' retrieve=retrieve_rencontre record_id=$record_id}">{admin_icon icon="import.gif"} Récupérer tous les détails des rencontres</a>
+		</span>
+	</p>
 {if $itemcount2 > 0}
 <h3>Classement général {if isset($libequipe)} en {$libequipe}{/if}</h3>
 
@@ -70,9 +78,16 @@
 					<td>{$donnee->scorea}</td>
 					<td>{$donnee->scoreb}</td>
 					<td>{$donnee->display}</td>
-					<td>{if $smarty.now|date_format:"%Y-%m-%d" > $donnee->date_event }{if $donnee->uploaded neq 1}<a href="{cms_action_url action=retrieve_details_rencontres2 record_id=$donnee->renc_id eq_id=$donnee->eq_id}">{admin_icon icon="import.gif"}</a>{else}<a href="{cms_action_url action=admin_details_rencontre record_id=$donnee->renc_id eq_id=$donnee->eq_id}">{admin_icon icon="view.gif"}{/if}{else}<a href="{cms_action_url action=admin_details_rencontre record_id=$donnee->renc_id eq_id=$donnee->eq_id}">{admin_icon icon="view.gif"}{/if}{*$donnee->retrieve_poule_rencontres*}</td>
-					<td>{*{$donnee->retrieve_details}{$donnee->viewdetails}*}</td>
-					<td>{$donnee->deletelink}</td>
+					<td>{if $smarty.now|date_format:"%Y-%m-%d" >= $donnee->date_event }
+							{if $donnee->uploaded == "0"}
+								<a href="{cms_action_url action=retrieve_details_rencontres2 record_id=$donnee->renc_id eq_id=$donnee->eq_id}">{admin_icon icon="import.gif"}</a>
+							{else}<a href="{cms_action_url action=admin_details_rencontre record_id=$donnee->renc_id eq_id=$donnee->eq_id}">{admin_icon icon="view.gif"}
+							{/if}
+						{/if}
+						{*{else}
+							<a href="{cms_action_url action=admin_details_rencontre record_id=$donnee->renc_id eq_id=$donnee->eq_id}">{admin_icon icon="view.gif"}
+						{/if}</td>*}
+					<td><a href="{cms_action_url action='edit_rencontre' renc_id=$donnee->renc_id}">{admin_icon icon="edit.gif"}</a></td>
 				<!--	<td><input type="checkbox" name="{$actionid}sel[]" value="{$donnee->ren_id}" class="select"></td>-->
 				</tr>
 			{/foreach}
@@ -85,3 +100,4 @@
 -->
 {/foreach}
 {/if}
+{*get_template_vars*}

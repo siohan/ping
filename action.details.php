@@ -7,8 +7,21 @@ $saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
 $record_id = '';
 if(isset($params['record_id']) && $params['record_id'] !='')
 {
-
-	$record_id = $params['record_id'];
+	$renc_ops = new rencontres;
+	$record_id = (int) $params['record_id'];// C'est le numéro de la rencontre
+	//on récupère le résultat final pour affichage
+	$details_renc = $renc_ops->details_rencontre($record_id);
+	$scorea  =$details_renc['scorea'];
+	$scoreb = $details_renc['scoreb'];
+	$equa = $details_renc['equa'];
+	$equb = $details_renc['equb'];
+	$pagetitle = $equa.'/'.$equb;
+	$smarty->assign('equa', $equa);
+	$smarty->assign('equb', $equb);
+	$smarty->assign('pagetitle',$pagetitle); 
+	$smarty->assign('scorea', $scorea);
+	$smarty->assign('scoreb', $scoreb);
+	//$smarty->assign('division', $details_renc['
 }
 else
 {

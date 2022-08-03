@@ -34,8 +34,11 @@ if($dbresult && $dbresult->RecordCount() > 0)
 		
 		$retrieve_spid = $service->retrieve_parties_spid2($licence, $player, $cat);
 		$spid_ops->compte_spid($licence);
-		$spid_ops->compte_spid_errors($licence);
+		
+		$calcul_pts_spid = $spid_ops->compte_spid_points($licence);
+		$spid_ops->maj_points_spid($licence,$calcul_pts_spid);
 	//	$spid_ops->recalcul($licence);
+		
 		
 			
 	}//fin du while

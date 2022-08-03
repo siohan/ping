@@ -14,7 +14,11 @@ else
 {
 	$message = 'Un pb est survenu';
 }
-
+if(isset($params['eq_id']) && $params['eq_id'] >0)
+{
+	$eq_id = (int)$params['eq_id'];
+	$smarty->assign('eq_id', $eq_id);
+}
 
 //le numéro de l'équipe est ok, on continue
 //on va d'abord récupérer la feuille de match

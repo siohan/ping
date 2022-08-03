@@ -11,7 +11,7 @@ $motdepasse = '';
 $tm = '';//le timestamp non crypté
 $error = 0;//on initialise un compteur d'erreurs 
 $designation = '';//on initialise les messages d'erreurs
-
+$p_ops = new ping_admin_ops;
 if(isset($params['idAppli']) && $params['idAppli'] !='')
 {
 	$idAppli = $params['idAppli'];	
@@ -36,7 +36,7 @@ else
 
 if($this->GetPreference('serie') =='')
 {	
-	$serie = ping_admin_ops::random_serie(15);
+	$serie = $p_ops::random_serie(15);
 }
 else
 {

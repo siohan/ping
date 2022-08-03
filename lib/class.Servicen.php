@@ -72,10 +72,10 @@ class Servicen
     public function initialisationAPI() 
     {
 	
-	$serie = servicen::GetSerie();
-	$tm = servicen::GetTimestamp();
-	$tmc = servicen::GetEncryptedTimestamp();
-	$id = servicen::GetIdAppli();
+	$this->serie = servicen::GetSerie();
+	$this->tm = servicen::GetTimestamp();
+	$this->tmc = servicen::GetEncryptedTimestamp();
+	$this->id = servicen::GetIdAppli();
 	
 	$chaine = 'http://www.fftt.com/mobile/pxml/xml_initialisation.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id; 
 	$result = file_get_contents($chaine);
@@ -89,13 +89,13 @@ class Servicen
 
     public function GetLink($page,$var = "")
     {
-        $serie = servicen::GetSerie();
-	$tm = servicen::GetTimestamp();
-	$tmc = servicen::GetEncryptedTimestamp();
-	$id = servicen::GetIdAppli();
-	$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id.'&'.$var; 
-	return file_get_contents($chaine);
-	//return $chaine;//pour tester le lien
+		$this->serie = servicen::GetSerie();
+		$this->tm = servicen::GetTimestamp();
+		$this->tmc = servicen::GetEncryptedTimestamp();
+		$this->id = servicen::GetIdAppli();
+		$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id.'&'.$var; 
+		return file_get_contents($chaine);
+		//return $chaine;//pour tester le lien
     }
 
     

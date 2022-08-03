@@ -9,7 +9,7 @@ if(!$this->CheckPermission('Ping Use'))
 }
 //require_once(dirname(__file__).'/include/travaux.php');
 require_once(dirname(__file__).'/include/prefs.php');
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 global $themeObject;
 
 $error_compte = 0;
@@ -17,7 +17,7 @@ $idAppli = $this->GetPreference('idAppli');
 $motdepasse = $this->GetPreference('motdepasse');
 
 $rowclass='';
-/*
+
 if($idAppli =='')
 {
 	$error_compte++;
@@ -26,7 +26,7 @@ if($motdepasse == '')
 {
 	$error_compte++;
 }
-*/
+
 //$error_compte =1;
 //echo $error_compte;
 $error_config = 0;
@@ -34,8 +34,8 @@ $club_number = $this->GetPreference('club_number');
 $ligue = $this->GetPreference('ligue');
 $zone = $this->GetPreference('zone');
 $dep = $this->GetPreference('dep');
-$smarty->assign('inactifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Inactifs', array('actif'=>'0', "activetab"=>"joueurs")));
-$smarty->assign('actifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Actifs', array('actif'=>'1', "activetab"=>"joueurs")));
+$smarty->assign('inactifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Inactifs', array('actif'=>'0', "__activetab"=>"joueurs")));
+$smarty->assign('actifs', $this->CreateLink($id, 'defaultadmin', $returnid, $contents='Actifs', array('actif'=>'1', "__activetab"=>"joueurs")));
 if($club_number =='')
 {
 	$error_config++;
@@ -52,10 +52,7 @@ if($dep =='')
 {
 	$error_config++;
 }
-if($saison_courante != $saison_en_cours)
-{
-	$error_config++;
-}
+
 //echo $error_config;
 //$smarty->assign('club', $this->CreateLink($id, 'retrieve', $returnid, 'infos club', array("retrieve"=>"club")));
 $smarty->assign('alertConfig', $error_config);
@@ -136,7 +133,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-$articles = array("Désactiver"=>"unable","Mettre à masculin"=>"masculin", "Mettre à Féminin"=>"feminin");
+$articles = array("Désactiver"=>"unable","Activer"=>"activate","Mettre à masculin"=>"masculin", "Mettre à Féminin"=>"feminin");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

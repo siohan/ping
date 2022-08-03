@@ -2,6 +2,7 @@
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
+$service = new retrieve_ops;
 $iddiv = "";
 $idpoule = "";
 $idepreuve = "";
@@ -29,7 +30,7 @@ if(isset($params['record_id']) && $params['record_id'] != '')
 	$libequipe = $details['libequipe'];
 	$cal =0;
 	//on envoie vres le fichier
-	$service = new retrieve_ops;
+	
 	$retrieve = $service->calendrier($iddiv,$idpoule,$idepreuve,$libequipe);
 		
 	$this->SetMessage("$designation");
@@ -46,7 +47,7 @@ elseif(isset($params['cal']) && $params['cal'] == 'cal')
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
 		while ($dbresult && $row = $dbresult->FetchRow())
-      		{
+      	{
 			$idepreuve = $row['idepreuve'];
 			$iddiv = $row['iddiv'];
 			$idpoule = $row['idpoule'];
@@ -62,8 +63,8 @@ elseif(isset($params['cal']) && $params['cal'] = 'all')
 	$cal = $params['cal'];
 	$i = 0; //on insère un compteur pour les boucles
 	//on récupère tts les iddivisions et idepreuve disponible en bdd.
-	$query = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND scorea = 0 AND scoreb = 0 AND date_event <= NOW()";
-//	$query = "SELECT DISTINCT idepreuve, iddiv, idpoule FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ?";
+	$query = "SELECT DISTINCT iddiv, idpoule FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND date_event < CURRENT_DATE() AND (scorea = 0 AND scoreb = 0)";// AND date_event <= NOW()";
+
 	$dbresult = $db->Execute($query, array($saison));
 	if($dbresult && $dbresult->RecordCount()>0)
 	{
@@ -75,7 +76,8 @@ elseif(isset($params['cal']) && $params['cal'] = 'all')
 			$iddiv = $row['iddiv'];
 			$idpoule = $row['idpoule'];
 			$service = new retrieve_ops();
-			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$cal,$idepreuve);
+			$eq_id = 0;
+			$retrieve = $service->retrieve_poule_rencontres($iddiv, $idpoule,$idepreuve,$eq_id);
 		//	var_dump($retrieve);
 			
 		}

@@ -13,7 +13,7 @@ if(!empty($_POST))
 	debug_display($_POST, 'Parameters');
 	$this->SetPreference('phase_en_cours', $_POST['phase_en_cours']);
 	$this->SetPreference('saison_en_cours', $_POST['saison_en_cours']);
-	$this->SetPreference('populate_calendar', $_POST['populate_calendar']);
+	
 	$this->SetPreference('affiche_club_uniquement', $_POST['affiche_club_uniquement']);
 	$this->SetPreference('interval_classement', $_POST['interval_classement']);
 	$this->SetPreference('interval_joueurs', $_POST['interval_joueurs']);
@@ -33,11 +33,12 @@ else
 	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('adminprefs.tpl'), null, null, $smarty);
 	$tpl->assign('saison_en_cours', $this->GetPreference('saison_en_cours'));
 	$tpl->assign('phase_en_cours', $this->GetPreference('phase_en_cours'));
-	$tpl->assign('populate_calendar', $this->GetPreference('populate_calendar'));
+	
 	$tpl->assign('affiche_club_uniquement', $this->GetPreference('affiche_club_uniquement'));
 	$tpl->assign('interval_classement', $this->GetPreference('interval_classement'));
 	$tpl->assign('interval_joueurs', $this->GetPreference('interval_joueurs'));
 	$tpl->assign('interval_equipes', $this->GetPreference('interval_equipes'));
+	$tpl->assign('details_rencontre_page', $this->GetPreference('details_rencontre_page'));
 	$tpl->display();
 }
 

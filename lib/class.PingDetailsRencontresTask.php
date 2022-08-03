@@ -27,7 +27,7 @@ class PingDetailsRencontresTask implements CmsRegularTask
       $last_execute = (int) $ping->GetPreference('LastRecupRencontres');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( $time - $last_execute >= $ping->GetPreference('interval_feuille_parties') )//tous les jours !!
+      if ( $time - $last_execute >= 900 )//tous les jours !!
 
       {
          return TRUE;
@@ -52,24 +52,39 @@ class PingDetailsRencontresTask implements CmsRegularTask
       // Ce qu'il y a à exécuter ici
 	
 	$saison = $ping->GetPreference('saison_en_cours');
-	
-	$query = "SELECT renc_id  FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND `date_event` < CURRENT_DATE() AND uploaded = 0 ORDER BY club DESC";
+	$ping_ops = new ping_admin_ops;
+	$eq_ops = new rencontres;
+	$query = "SELECT renc_id, equip_id1, equip_id2  FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND `date_event` < CURRENT_DATE() AND uploaded = 0 ORDER BY club DESC"; // AND (scorea = 0 AND scoreb = 0) 
 	$dbresult = $db->Execute($query, array($saison));
 	if($dbresult && $dbresult->RecordCount() > 0)
 	{
-		$retrieve_ops = new rencontres;
+		$renc_ops = new rencontres;
+		//$details = $renc_ops->details_rencontre($row['renc_id']);
 		while ($row = $dbresult->FetchRow())
       	{			
-			$renc_id = $row['renc_id'];
-			
-			$del_feuil = $retrieve_ops->delete_details_rencontre($record_id);
-			if(true == $del_feuil)
+			$details = $renc_ops->details_rencontre($row['renc_id']);
+			if($row['equip_id1'] >0 && $row['equip_id2'] >0)
 			{
-				$del_parties = $retrieve_ops->delete_rencontre_parties($record_id);
-				$retrieve_ops->not_uploaded($record_id);
+				$renc_id = $row['renc_id'];
+				//on vérifie que la feuille a déjà été uploadé ou pas
+				$is_really_uploaded = $eq_ops->is_really_uploaded($row['renc_id']);
+				if(false == $is_really_uploaded)
+				{
+					
+					$retrieve = $renc_ops->feuille_parties($renc_id);// insère la feuille de rencontre et les parties
+					$uploaded = $renc_ops->is_uploaded($renc_id);
+					$status = 'Ok';
+					$designation = 'Détails rencontre Ok :'.$details['equa'].' /'.$details['equb'];
+					$action = 'feuille_parties'; 
+					$ping_ops->ecrirejournal($status, $designation,$action);
+				}	
+			}
+			else
+			{
+				$uploaded = $renc_ops->is_uploaded($row['renc_id']);
 			}
 			
-			$retrieve = $retrieve_ops->feuille_parties($renc_id);					
+							
 		}//fin du while	
 		return true; // Ou false si ça plante
 	}

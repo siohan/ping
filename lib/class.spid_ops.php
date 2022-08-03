@@ -3,7 +3,38 @@ class spid_ops
 {
 	function __construct() {}
 	
-	
+	function details_recup($licence)
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		$query="SELECT id, licence, sit_mens, fftt, maj_fftt,spid, spid_total, spid_errors, maj_spid, pts_spid, pts_fftt FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($licence));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			$details_recup = array();
+			while($row = $dbresult->FetchRow())
+			{
+				$details_recup['id'] = $row['id'];
+				$details_recup['licence'] = $row['licence'];
+				$details_recup['sit_mens'] = $row['sit_mens'];
+				$details_recup['fftt'] = $row['fftt'];
+				$details_recup['maj_fftt'] = $row['maj_fftt'];
+				$details_recup['spid'] = $row['spid'];
+				$details_recup['spid_total'] = $row['spid_total'];
+				$details_recup['spid_errors'] = $row['spid_errors'];
+				$details_recup['maj_spid'] = $row['maj_spid'];
+				$details_recup['pts_spid'] = $row['pts_spid'];
+				$details_recup['pts_fftt'] = $row['pts_fftt'];
+			}
+			return $details_recup;	
+			
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
 	function add_spid($statut,$saison_courante,$now, $licence, $date_event, $epreuve, $nom, $newclass, $victoire,$ecart,$type_ecart, $coeff,$pointres, $forfait, $idpartie)
 	{
 		global $gCms;
@@ -202,7 +233,7 @@ class spid_ops
 
 
 	}
-	//compte le nb d'e points spid d'un joueur
+	//compte le nb de points spid d'un joueur
 	public static function compte_spid_points($licence)
 	{
 		global $gCms;
@@ -213,16 +244,22 @@ class spid_ops
 		$saison = $ping->GetPreference('saison_en_cours');
 		$query = "SELECT SUM(pointres) AS spid_points FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND saison = ? AND MONTH(date_event) = ?";
 		$dbresult = $db->Execute($query, array($licence,$saison,$mois_courant));
-		if($dbresult && $dbresult->RecordCount()>0)
-		{
-			$row = $dbresult->FetchRow();
-			$spid_points = $row['spid_points'];
-
-			return $spid_points;
+		if($dbresult)
+		{	
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$spid_points = $row['spid_points'];
+				return $spid_points;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		else
 		{
-			return 0;
+			return false;
 		}
 
 
@@ -259,6 +296,8 @@ class spid_ops
 		//$mois_courant = $mois-1;
 		$annee_courante = date('Y');
 		$day = '31';
+		$jour = date('d');
+		
 		$aujourdhui = $annee_courante.'-'.$mois.'-'.$day;
 		$query = "DELETE FROM  ".cms_db_prefix()."module_ping_parties_spid WHERE date_event <= ?";
 		$dbretour = $db->Execute($query, array($aujourdhui));
@@ -323,8 +362,24 @@ class spid_ops
 	function maj_points_spid($licence, $points)
 	{
 		$db = cmsms()->GetDb();
-		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET pts_spid = ? WHERE licence = ?";
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET pts_spid = ?, maj_spid = UNIX_TIMESTAMP() WHERE licence = ?";
 		$dbresult = $db->Execute($query, array($points, $licence));
+	}
+	
+	//vérifie si le compte spid existe
+	function has_spid_account($licence)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($licence));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			return true; 
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	//on créé un compte si le joueur n'en a pas
@@ -429,8 +484,8 @@ class spid_ops
 	{
 		global $gCms;
 		$db = cmsms()->GetDb();
-		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET pts_fftt = ? WHERE licence = ?";
-		$dbresult = $db->Execute($query, array($licence,$nb));
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET pts_fftt = ?, maj_fftt = UNIX_TIMESTAMP() WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($nb, $licence));
 
 		if($dbresult)
 		{
@@ -451,7 +506,7 @@ class spid_ops
 		
 		$saison = $ping->GetPreference('saison_en_cours');
 		$query = "SELECT DISTINCT sp.id AS record_id,p.date_event AS date_fftt,p.codechamp,sp.date_event AS date_spid,sp.licence as licence_spid,sp.epreuve, p.licence as licence_fftt,sp.nom as nom_spid, p.advnompre AS nom_fftt, sp.numjourn AS numjourn_spid, p.numjourn AS numjourn_fftt, sp.victoire AS victoire_spid, p.vd AS victoire_fftt, sp.coeff AS coeff_spid, p.coefchamp AS coeff_fftt, sp.pointres AS points_spid, p.pointres AS points_fftt FROM ".cms_db_prefix()."module_ping_parties_spid AS sp, ".cms_db_prefix()."module_ping_parties AS p WHERE sp.idpartie = p.idpartie  AND sp.saison = ? ORDER BY sp.id ASC";
-		$dbresult = $db->Execute($query, array($saison_courante));
+		$dbresult = $db->Execute($query, array($saison));
 		$rowarray = array();
 		if($dbresult && $dbresult->RecordCount()>0)
 		{

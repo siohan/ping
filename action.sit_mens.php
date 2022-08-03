@@ -7,11 +7,11 @@ global $themeObject;
 $mois_courant = date('n');
 $annee_courante = date('Y');
 $mois_choisi = '';
-
+//$adh_ops = new Asso_adherents;
 
 $liste_mois_fr = array("Janvier", "Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre", "Décembre");
 $phase = $this->GetPreference('phase_en_cours');
-$saison_courante = $this->GetPreference('saison_en_cours');
+$saison_courante = (isset($params['saison']) ? $params['saison'] : $this->GetPreference('saison_en_cours'));
 if(isset($params['template']) && $params['template'] !='')
 {
 	$template = $params['template'];
@@ -110,23 +110,38 @@ $jour = date('j');
 
 $phase_courante = $this->GetPreference('phase');
 
-$query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep,sm.progann, sm.progmois,sm.clglob, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens sm, ".cms_db_prefix()."module_ping_joueurs j WHERE sm.licence  = j.licence";//" WHERE annee = ? AND mois = ?";
+$query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep,sm.progann, sm.progmois,sm.clglob, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens AS sm, ".cms_db_prefix()."module_ping_joueurs AS j WHERE sm.licence  = j.licence AND j.actif = '1' AND type='T'";//" WHERE annee = ? AND mois = ?";
 
 	if(isset($params['mois']) && $params['mois'] >0)
 	{
-		$query.=" AND mois = ?";
+		$query.=" AND sm.mois = ?";
 		$parms['mois'] = $mois_choisi;
 	
 	}
 	else
 	{
-		$query.=" AND mois = ?";
+		$query.=" AND sm.mois = ?";
 		$parms['mois'] = $mois_choisi;
 	}
 	
-	$query.=" AND saison = ?";
+	$query.=" AND sm.saison = ?";
 	$parms['saison'] = $saison_courante;
 	
+	if(isset($params['sort']) )
+	{
+		
+		if($params['sort'] == 'prog_mois')
+		{
+				$query.=" ORDER BY sm.progmois DESC";
+		}
+		if($params['sort'] == 'prog_ann')
+		{
+				$query.=" ORDER BY sm.progann DESC";
+		}
+	}
+
+	
+
 	if(isset($params['number']) && $params['number'] >0)
 	{
 		$query.= " LIMIT ?";
@@ -146,7 +161,10 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	
 		$onerow= new StdClass();
 		$onerow->rowclass= $rowclass;
-		$onerow->joueur= $this->CreateLink($id,'user_results',$returnid, $row['joueur'], array("licence"=>$row['licence'],"month"=>$mois_choisi-1,"saison"=>$saison_courante));
+		//on va chercher l'image du joueur (définie ds le module adhérents)
+		//$details_adh = $adh_ops->details_adherents($row['licence']);
+		$genid = $details_adh['genid'];
+		$onerow->joueur= $row['joueur'];
 		$onerow->points = $row['points'];
 		$onerow->clglob = $row['clglob'];
 		$onerow->clnat= $row['clnat'];
@@ -167,7 +185,7 @@ $smarty->assign('mois_choisi', $mois_en_fr);
 
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();
-//echo $this->ProcessTemplate('sitmens.tpl');
+
 
 
 #

@@ -106,10 +106,7 @@ else {
 					$onerow2->equa = $row2['equa'];
 					$onerow2->friendlyname = $row2['friendlyname'];
 					$onerow2->libequipe = $libequipe;
-					$onerow2->uploaded = $renc_ops->is_uploaded($row2['renc_id']);//$uploaded;
-					//echo "equipe B est : ".$equb;
-
-					//$onerow->equipe= $row['equipe'];
+					$onerow2->uploaded = $renc_ops->is_uploaded($row2['renc_id']);
 					$onerow2->libelle=  $row2['libelle'] ;
 					
 					
@@ -117,18 +114,18 @@ else {
 						{
 							if(isset($friendlyname) && $friendlyname !='')
 							{
-								$onerow2->equa= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
+								$onerow2->equa= $row2['friendlyname'];
 							}
 							else
 							{
-								$onerow2->equa= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['equa'], array('record_id'=>$eq_id));//$row2['equb'];
-							}//$onerow2->equa= $row2['friendlyname'];
+								$onerow2->equa= $row2['equa'];
+							}
 
-					}
-					else
-					{
-						$onerow2->equa= $row2['equa'];
-					}
+						}
+						else
+						{
+							$onerow2->equa= $row2['equa'];
+						}
 					
 					//$onerow2->equa= $row2['equa'];
 					$onerow2->scorea= $row2['scorea'];
@@ -139,11 +136,11 @@ else {
 						{
 								if(isset($friendlyname) && $friendlyname !='')
 								{
-									$onerow2->equb= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['friendlyname'], array('record_id'=>$eq_id));
+									$onerow2->equb= $row2['friendlyname'];
 								}
 								else
 								{
-									$onerow2->equb= $this->CreateFrontendLink($id,$returnid,'equipe',$contents=$row2['equb'], array('record_id'=>$eq_id));//$row2['equb'];
+									$onerow2->equb= $row2['equb'];
 								}
 						}
 

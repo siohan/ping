@@ -9,6 +9,10 @@
   <p class="pageinput"><select name="zone">{html_options options=$liste_zones selected=$zone}</select></p>
 </div>
 <div class="pageoverflow">
+  <p class="pagetext">Saison en cours</p>
+  <p class="pageinput"><input type="text" name="saison_en_cours" value="{$saison_en_cours}"></p>
+</div>
+<div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
     <p class="pageinput"><input type="submit" name="submit" value="Envoyer"></p>
   </div>

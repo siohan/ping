@@ -10,7 +10,7 @@ $smarty->assign('seasons_list', $seasons_list);
 $liste_epreuves = $p_ops->liste_epreuves();
 $smarty->assign('liste_epreuves', $liste_epreuves);
 $eq_ops = new equipes_ping;
-if(isset($params['record_id']) && $params['record_id'] !="")
+if(isset($params['record_id']) && $params['record_id'] !="")//C'EST LE NUMÉRO D'UNE ÉQUIPE
 {
 	$record_id = (int) $params['record_id'];
 }
@@ -38,7 +38,7 @@ if(isset($params['record_id']) && $params['record_id'] !="")
 }
 else
 {
-	$query.= " AND countdown = 1";
+	$query.= " AND countdown = 1 ORDER BY date_event ASC LIMIT 1";
 	$dbresult = $db->Execute($query);
 }
 
@@ -102,6 +102,7 @@ if($dbresult)
 			$onerow->idepreuve = $p_ops->nom_compet($row['idepreuve']);
 			$onerow->libdivision = $details['libdivision'];
 			$onerow->tour = $row['tour'];
+			$onerow->libelle = $row['libelle'];
 			$onerow->scorea = $row['scorea'];
 			$onerow->scoreb = $row['scoreb'];
 			$onerow->img1 = $img1;
