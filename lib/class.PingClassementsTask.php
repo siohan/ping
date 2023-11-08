@@ -24,9 +24,10 @@ class PingClassementsTask implements CmsRegularTask
 	      }
 
 	      $last_execute = (int) $ping->GetPreference('LastRecupClassements');
+	      $interval_classement = (int) $ping->GetPreference('interval_classement');
 		
 	      // Définition de la périodicité de la tâche (24h ici)
-	      if( $time - $last_execute >= $ping->GetPreference('interval_classement'))  // hardcoded to weekly update
+	      if( $time - $last_execute >= $interval_classement)  // hardcoded to weekly update
 	      {
 	         return TRUE;
 	      }

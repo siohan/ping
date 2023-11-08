@@ -5,11 +5,13 @@ if(!isset( $gCms) ) exit;
 #################################################################
 require_once(dirname(__FILE__).'/include/prefs.php');
 //debug_display($params,'Parameters');
-$saison_courante = $this->GetPreference('saison_en_cours');
-if(isset($params['saison']) && $params['saison'] !='')
+if(!empty($this->GetPreference('details_rencontre_page')) )
 {
-	$saison_courante = $params['saison'];
+	$cg_ops = new CMSMSExt;
+	$alias_page = $this->GetPreference('details_rencontre_page');
+	$landing_page = $cg_ops->resolve_alias_or_id($alias_page);	
 }
+$saison_courante = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
 if(isset($params['template']) && $params['template'] !="")
 {
 	$template = trim($params['template']);
@@ -28,7 +30,7 @@ else {
 //echo $saison_courante;
 $db = cmsms()->GetDb();
 $titletable = '';//Ceci est le titre de la balise H1
-$getmore === FALSE;//pour afficher ou non le lien plus par défaut non.
+$getmore = FALSE;//pour afficher ou non le lien plus par défaut non.
 $parms = array();
 $query1 = "SELECT CONCAT_WS(' ',j.nom, j.prenom) AS joueur,sp.advnompre,sp.advclaof,sp.vd, sp.pointres FROM ".cms_db_prefix()."module_ping_parties AS sp, ".cms_db_prefix()."module_ping_joueurs AS j WHERE j.licence = sp.licence AND sp.saison = ? ";//
 
@@ -77,7 +79,8 @@ $query1.= " ORDER BY sp.pointres DESC";
 	{
 		$query1.= " LIMIT 0, ?";
 		$parms['number'] = $params['number'];
-		$getmore = 'True';
+		$getmore = 1;
+		$smarty->assign('number', $params['number']);
 	}
 	
 
@@ -109,6 +112,7 @@ else
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 $smarty->assign('getmore',$getmore);
+$smarty->assign('landing_page', $landing_page);
 $smarty->assign('more',
 	$this->CreateFrontendLink($id, $returnid,'topFlop',$contents='Plus',array("perf"=>"top"),'','', $inline='true','',$targetcontentonly='true'));
 	$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);

@@ -1,6 +1,6 @@
 <?php
 if( !isset($gCms) ) exit;
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 //a faire 
 if(!$this->CheckPermission('Ping Use'))
 {

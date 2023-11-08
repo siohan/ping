@@ -22,23 +22,23 @@
 <p class="information">Les compétitions nationales sont pré-installées. Une autre compétition manque ? Pas de panique, vous pourrez encore les récupérer plus tard. Pensez à renseigner les coefficients des compétitions pour les calculs du SPID.<br />Cliquez sur "Continuer" pour passer à l'étape suivante. </p> <a href="{cms_action_url action='getInitialisation' step=4}">Continuer</a></p> 
 {/if}
 
-{if $step == "4"}<p class="green">Vos équipes.</p>
+{if $step == "4"}<p class="green">Tes équipes.</p>
 <ul>
 	<li>{$eq_masc} équipes masculines (Championnat de France par équipes masculin)</li>
-	<li>{$comp_dep_indivs} équipes féminines (Championnat de France par équipes féminin)</li>
-	<li>{$comp_ligue_eq} autres équipes</li>
+	<li>{$eq_fem} équipes féminines (Championnat de France par équipes féminin)</li>
+	<li>{$eq_undefined} autres équipes</li>
 </ul>
-<p class="information">Donnez un nom court à vos équipes, plus facilement identifiables et donnez l'horaire habituel des rencontres à chacune d'entre elles. </p> <a href="{cms_action_url action='getInitialisation' step=5}">Continuer</a></p> {/if}
 
-{if $step == "5"}<p class="green">Classements de vos équipes et calendriers récupérés</p>
-<p class="information"></p> <a href="{cms_action_url action='getInitialisation' step=6}">Continuer</a></p>
+<p class="information">Donne un nom court à tes équipes, plus facilement identifiables et surtout donne l'horaire habituel des rencontres à chacune d'entre elles(ex 17h00). </p> <a href="{cms_action_url action='getInitialisation' step=5}">Continue !</a></p> {/if}
+
+{if $step == "5"}<p class="green">Classements de tes équipes et calendriers récupérés</p>
+<p><a href="{cms_action_url action='getInitialisation' step=6}">Continue !</a></p>
 {/if}
 
 {if $step == "6"}
 <p class="green">Joueurs récupérés</p>
-	{if $sit_mens eq "true"}<p class="green">Situation mensuelle Ok</p>
-	{else}<p class="red">Situation mensuelle non récupérée, non disponible avant le 10 de chaque mois{/if}
-<p class="information"></p> <a href="{cms_action_url action='getInitialisation' step=7}">Continuer</a></p>{/if}
+	
+<p class="information"></p> <a href="{cms_action_url action='getInitialisation' step=7}">Continue !</a></p>{/if}
 {if $step == ""}{/if}
 {if $step == ""}{/if}
 {if $step == ""}{/if}

@@ -9,7 +9,7 @@ if (!$this->CheckPermission('Ping use'))
 }
 if(!empty($_POST))
 {
-	//debug_display($_POST, 'Parameters');
+	debug_display($_POST, 'Parameters');
 	if( isset($_POST['cancel']) )
 	{
     	$this->RedirectToAdminTab('compte');
@@ -28,6 +28,14 @@ if(!empty($_POST))
 		{
 			$error++;
 		}
+		if (isset($_POST['fede']) && $_POST['fede'] !='')
+		{
+			$fede = $_POST['fede'];
+		}
+		else
+		{
+			$error++;
+		}
 		if (isset($_POST['zone']) && $_POST['zone'] !='')
 		{
 			$zone = $_POST['zone'];
@@ -36,9 +44,33 @@ if(!empty($_POST))
 		{
 			$error++;
 		}
+		if (isset($_POST['ligue']) && $_POST['ligue'] !='')
+		{
+			$ligue = $_POST['ligue'];
+		}
+		else
+		{
+			$error++;
+		}
+		if (isset($_POST['dep']) && $_POST['dep'] !='')
+		{
+			$dep = $_POST['dep'];
+		}
+		else
+		{
+			$error++;
+		}
 		if (isset($_POST['saison_en_cours']) && $_POST['saison_en_cours'] !='')
 		{
 			$saison_en_cours = $_POST['saison_en_cours'];
+		}
+		else
+		{
+			$error++;
+		}
+		if (isset($_POST['phase_en_cours']) && $_POST['phase_en_cours'] !='')
+		{
+			$phase_en_cours = $_POST['phase_en_cours'];
 		}
 		else
 		{
@@ -56,15 +88,13 @@ if(!empty($_POST))
 		{
 			
 				$this->SetPreference('club_number', $club_number);
+				$this->SetPreference('fede', $fede);
 				$this->SetPreference('zone', $zone);
-				$this->SetPreference('saison_en_cours', $saison_en_cours);
-				$ligue = substr($club_number, 0,2);
-				$ligue = '10'.$ligue;
-				$departement = substr($club_number, 2, 2);
-				$dep = (int) $departement;
 				$this->SetPreference('ligue', $ligue);
-				$this->SetPreference('dep', $departement);				
-				$this->Redirect($id,'getInitialisation', $returnid, array("step"=>"3"));
+				$this->SetPreference('dep', $dep);
+				$this->SetPreference('phase_en_cours', $phase_en_cours);
+				$this->SetPreference('saison_en_cours', $saison_en_cours);		
+				$this->Redirect($id,'getInitialisation', $returnid, array("step"=>"2"));
 
 			
 		}		
@@ -72,13 +102,26 @@ if(!empty($_POST))
 else
 {
 	//debug_display($params, 'Parameters');
+	
+	//
+	//
+	require_once(dirname(__file__).'/include/prefs.php');
 	$orga_ops = new fftt_organismes;
-	$liste_zones = array('10001'=>'ZONE 1 (CE-IDF)','10002'=>'ZONE 2 (BR-PDL)', '10003'=>'ZONE 3 (AQ-LI-MP-PC)', '10004'=>'ZONE 4 (AU-CO-CA-LR-PR-RA)', '10005'=>'ZONE 5 (AL-BO-CHA-FC-LO)', '10006'=> 'ZONE 6 (BN-HN-NPC-PI)', '10007'=>'ZONE 7 (DOM-TOM)');//$orga_ops->liste_zones();
+	$liste_fede = $orga_ops->liste_fede();
+	$liste_zones = $orga_ops->liste_zones();
+	$liste_ligues = $orga_ops->liste_ligues();
+	$liste_deps = $orga_ops->liste_deps();
 	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('add_edit_club_number.tpl'), null, null, $smarty);
 	$tpl->assign('club_number', $this->GetPreference('club_number'));
 	$tpl->assign('zone', $this->GetPreference('zone'));
+	$tpl->assign('ligue', $this->GetPreference('ligue'));
+	$tpl->assign('dep', $this->GetPreference('dep'));
+	$tpl->assign('liste_fede', $liste_fede);
 	$tpl->assign('liste_zones', $liste_zones);
-	$tpl->assign('saison_en_cours', '2021-2022');
+	$tpl->assign('liste_ligues', $liste_ligues);
+	$tpl->assign('liste_deps', $liste_deps);
+	$tpl->assign('phase_en_cours', $phase);
+	$tpl->assign('saison_en_cours', $saison_en_cours);
 	$tpl->display();
 }
 

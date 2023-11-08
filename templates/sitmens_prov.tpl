@@ -9,13 +9,13 @@ $(document).ready(function() {
 //]]>
 </script>
 {/literal}
-<div class="pageoptions"><p class="pageoptions">{$returnlink}</p></div>
+
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 {if $itemcount > 0}
 <table class="table table-bordered tablesorter" id="tablesorter">
 	<thead>
 		<th>Joueur</th>
-		<!--<th>Prog mois</th>-->
+		
 		<th>Clt référence</th>
 		<th>Points en cours</th>
 		<th>Bilan</th>
@@ -28,7 +28,7 @@ $(document).ready(function() {
 	<td>{$entry->clt}</td>
 	<td>{$entry->somme}</td>
 	<td>{$entry->bilan}</td>
-	<td>{if $entry->bilan != 0}{$entry->details}{/if}</td>
+	<td>{if $entry->somme != 0}<a href="{cms_action_url action=user_results_prov licence=$entry->licence month=$mois_courant}">Détails</a>{/if}</td>
   </tr>
 {/foreach}
  </tbody>

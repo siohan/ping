@@ -13,9 +13,10 @@
         });
     </script>
 {/literal}
-
+{*$landing_page|@var_dump*}
 {if $itemcount > 0}
 <h3> Situation officielle du mois de {$mois_choisi}</h3>
+<div class="pageoptions"><p class="pageoptions"><a href="{cms_action_url action='sit_mens' mois=$mois_precedent annee=$annee_precedente}"> &lt Préc</a>{if $mois_courant != $mois_choisi_2} <a style="float:right;" href="{cms_action_url action='sit_mens' mois=$mois_suivant annee=$annee_suivante}">  Suiv &gt</a>{/if} </p></div>
 <table class="tablesorter table table-bordered" id="tablesorter">
  <thead>
 	<tr class="header">
@@ -32,7 +33,7 @@
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass} header">
-    <td>{$entry->joueur}</td>
+    <td><a href="{cms_action_url action=google_charts record_id=$entry->licence returnid=$landing_page}">{$entry->joueur}</a></td>
     <td>{$entry->points}</td>
 	<td>{$entry->clglob}</td>
 	<td>{$entry->clnat}</td>

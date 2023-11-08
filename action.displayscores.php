@@ -38,10 +38,12 @@ $idepreuve = (isset($params['idepreuve']) ? $params['idepreuve'] : '8985');
 
 $rowarray = array();
 $parms = array();
-$parms['saison'] = (isset($params['saison']) ? $params['saison'] : $this->GetPreference('saison_en_cours'));
-$parms['phase'] = (isset($params['phase']) ? $params['phase'] : $this->GetPreference('phase_en_cours'));
+
+//$parms['saison'] = (isset($params['saison']) ? $params['saison'] : $this->GetPreference('saison_en_cours'));
+$parms['phase'] = $phase = (isset($params['phase']) ? $params['phase'] : $this->GetPreference('phase_en_cours'));
+
 //the record_id stands for one particular team
-if(isset($params['record_id']) && $params['record_id'] >0)
+if(isset($params['record_id']) && $params['record_id'] >0)//le record_id pour une équipe spécifique
 {
 	$last_match = $ren_ops->last_match($params['record_id']);
 	$equip_id1 = $last_match['equip_id1'];
@@ -76,14 +78,28 @@ if(isset($params['record_id']) && $params['record_id'] >0)
 			$img2 = $eq2.$ext;
 		}
 	}
-	
+	$details = $eq_ops->details_equipe($last_match['eq_id']);
 	$onerow = new StdClass();
 	$onerow->renc_id = $last_match['renc_id'];
 	$onerow->eq_id = $last_match['eq_id'];
 	$onerow->saison = $last_match['saison'];
 	$onerow->date_event = $last_match['date_event'];
 	$onerow->affiche = $last_match['affiche'];
-	$onerow->libdivision = $row['libdivision'];
+	$libequipe = (isset($details['friendlyname'])?$details['friendlyname']:$details['libequipe']);
+	$onerow->libequipe = $libequipe;
+	$pos = strpos($details['libdivision'], '_');
+	if($pos == 3)
+	{
+		$onerow->libdivision = substr(str_replace('_', ' ',$details['libdivision']),4);
+	}
+	elseif(false == $pos)
+	{
+		$onerow->libdivision = $details['libdivision'];
+	}
+	else
+	{
+		$onerow->libdivision = str_replace('_', ' ',$details['libdivision']);
+	}
 	$onerow->idepreuve = $p_ops->nom_compet($last_match['idepreuve']);
 	$onerow->tour = $last_match['tour'];
 	$onerow->scorea = $last_match['scorea'];
@@ -97,41 +113,78 @@ if(isset($params['record_id']) && $params['record_id'] >0)
 	$onerow->uploaded =$ren_ops->is_really_uploaded($last_match['renc_id']);
 	$rowarray[] = $onerow;
 }
-else
+else //pas de numéro d'équipe précisé, on est ds le cas général
 {
-	$query = "SELECT id, libdivision, idepreuve FROM ".cms_db_prefix()."module_ping_equipes WHERE saison= ? AND phase = ?";
-	
-	if(isset($params['idepreuve']))
+	$pagenumber = 1;
+	if(isset($params['pagenumber']))
 	{
-		//on détermine s'il s'agit d'un tableau (avec présence virgule) ou pas
-		if(false !== strstr( $params['idepreuve'],","))
+		$pagenumber = (int)$params['pagenumber'];
+	}
+	
+	$nb_items = $ren_ops->nb_items_affiche($parms['phase'], $params['idepreuve']);
+	$inline = false;
+	//on calcule maintenant le nb de pages
+	$number = 100; //par défaut au cas où
+	if(isset($params['number']) && $params['number'] >0)
+	{
+		$number = (int)$params['number'];
+	}
+	$start = $number*($pagenumber-1);
+	$pages = ceil($nb_items/$number);
+	$suiv = $this->create_url($id,'displayscores',$returnid, array("pagenumber"=>$pagenumber+1,"number"=>$number, "template"=>$template),  $inline=true);
+	$prec = $this->create_url($id,'displayscores',$returnid, array("pagenumber"=>$pagenumber-1,"number"=>$number, "template"=>$template),  $inline=true);
+	$first = $this->create_url($id,'displayscores',$returnid, array("pagenumber"=>"1","number"=>$number, "template"=>$template),  $inline=true);
+	$last = $this->create_url($id,'displayscores',$returnid, array("pagenumber"=>$pages,"number"=>$number,  "template"=>$template),  $inline=true);
+	
+	$query = "SELECT id, libdivision, idepreuve, friendlyname FROM ".cms_db_prefix()."module_ping_equipes WHERE phase = ?";//saison = ? AND phase = ?";
+	$parms['phase'] = $phase;
+	if(isset($params['idepreuve']) )
+{
+	
+	//$smarty->assign('idepreuve', $p_ops->nom_compet($last_match['idepreuve']));
+	//on détermine s'il s'agit d'un tableau (avec présence virgule) ou pas
+	//il faut aussi supprimer la phase (-1 ou -2)
+	if(false !== strstr( $params['idepreuve'],","))
+	{
+		
+		//var_dump($params['idepreuve']);
+		
+		$tab = explode(',', $params['idepreuve']);
+		
+		$epreuve = array();
+		foreach($tab as $value)
 		{
-			$tab = explode(',', $params['idepreuve']);
-			$query.= " AND idepreuve IN (".implode(',',$tab).")";
-		}
-		else
-		{
-			$query.= " AND idepreuve = ?";
-			$parms['idepreuve'] = $params['idepreuve'];
-			$idepreuve = $p_ops->nom_compet($params['idepreuve']);
-			$smarty->assign('idepreuve', $idepreuve);
+			
+			$epreuve[] = strstr($value,'-',true);
+			
 			
 		}
+		
+		$query.= " AND idepreuve IN (".implode(',',$epreuve).")";
+		//$parms['idepreuve'] = $epreuve;
 	}
 	else
 	{
-		$parms['idepreuve'] = $idepreuve;
+		$epreuve = explode('-', $params['idepreuve']);
+		$query.= " AND idepreuve = ?";
+		$parms['idepreuve'] = $epreuve[0];//$params['idepreuve'];
+		
 	}
+}
 	
-	if(isset($params['number']) && $params['number'] >0)
-	{
-		$query.= " LIMIT ?";
-		$parms['number'] = $params['number'];
-		$smarty->assign('rows_number', $params['number']); //pour les data-rows
-	}
-	$dbresult = $db->Execute($query,$parms);
-
-
+	$smarty->assign('suiv', $suiv);
+	$smarty->assign('prec', $prec);
+	$smarty->assign('first', $first);
+	$smarty->assign('last', $last);
+	$smarty->assign('pagenumber', $pagenumber);
+	$smarty->assign('number', $number);
+	$smarty->assign('pages', $pages);
+	$smarty->assign('landing_page', $landing_page);
+	$query.=" LIMIT ?, ?";
+	$parms['start'] = $start;
+	$parms['number'] = $number;
+	//echo $query;
+	$dbresult = $db->Execute($query,$parms);//array($idepreuve));
 	if($dbresult && $dbresult->RecordCount() >0)
 	{
 		while($row = $dbresult->FetchRow())
@@ -171,13 +224,56 @@ else
 						$img2 = $eq2.$ext;
 					}
 				}
+				//on fait un timestamp de la date et de l'horaire pour comparer à $smarty.now dans les templates
+				
+				$horaire = $last_match['horaire'];
+			
+				if(false == empty($horaire)) // l'horaire contient une donnée
+				{
+					$hor = explode(':', $horaire);
+					if($hor[1] == '00')
+					{
+						$hor[1] = (int) 0;
+					}
+					$hor[2] = (int) 0; //pour les secondes	
+				}
+				else
+				{
+					//pas d'horaire donné, on en fabrique un
+					$hor[1] = (int) 0;
+					$hor[2] = (int) 0;
+				}
+						
+				$tab = explode('-', $last_match['date_event']);
+				
+				$month = $tab[1];
+				//echo $month;
+				$deadline = mktime($hor[0],$hor[1], 0, $tab[1],$tab[2],$tab[0]);
+				
 				$onerow = new StdClass();
 				$onerow->renc_id = $last_match['renc_id'];
 				$onerow->eq_id = $last_match['eq_id'];
 				$onerow->saison = $last_match['saison'];
 				$onerow->date_event = $last_match['date_event'];
 				$onerow->affiche = $last_match['affiche'];
-				$onerow->libdivision = $row['libdivision'];
+				$onerow->friendlyname = $row['friendlyname'];
+				$onerow->deadline = $deadline;
+				$pos = strpos($row['libdivision'], '_');
+				
+				if($pos == "3")
+				{
+					$onerow->libdivision = substr(str_replace('_', ' ',$row['libdivision']),4);
+				}
+				elseif(false === $pos)
+				{
+					$onerow->libdivision = str_replace('_', ' ',$row['libdivision']);
+				}
+				else
+				{
+					$onerow->libdivision = $row['libdivision'];
+				}
+				//var_dump($pos);
+				
 				$onerow->idepreuve = $p_ops->nom_compet($last_match['idepreuve']);
 				$onerow->tour = $last_match['tour'];
 				$onerow->scorea = $last_match['scorea'];
@@ -191,12 +287,13 @@ else
 				$onerow->uploaded = $ren_ops->is_really_uploaded($last_match['renc_id']);
 				$rowarray[] = $onerow;
 			}
+			else
+			{
+				//echo "pas de données !";
+			}
 		}
 	}
-	else
-	{
-		echo 'pas de résultats';
-	}
+	
 }
 $smarty->assign('items', $rowarray);
 $smarty->assign('itemcount', count($rowarray));

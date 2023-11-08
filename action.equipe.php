@@ -2,13 +2,21 @@
 if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 $db = cmsms()->GetDb();
+/*
 $ping = cms_utils::get_module('Ping');
 $saison_en_cours = $ping->GetPreference('saison_en_cours');
 $phase_en_cours = $ping->GetPreference('phase_en_cours');
 $idepreuve = (isset($params['idepreuve']))?$params['idepreuve']:"2303";
 $saison = (isset($params['saison']))?$params['saison']:$saison_en_cours;
 $phase = (isset($params['phase']))?$params['phase']:$phase_en_cours;
-
+*/
+if(!empty($this->GetPreference('details_rencontre_page')) )
+{
+	$cg_ops = new CMSMSExt;
+	$alias_page = $this->GetPreference('details_rencontre_page');
+	$landing_page = $cg_ops->resolve_alias_or_id($alias_page);
+	
+}
 $record_id = '';
 if(!isset($params['record_id']) || $params['record_id'] =='')
 {
@@ -19,10 +27,44 @@ else
 	$record_id = (int) $params['record_id'];
 	$eq_ops = new equipes_ping;
 	$details = $eq_ops->details_equipe($record_id);
+	
 	//$id = $details['idequipe'];
 	//var_dump($id);
-	$titre = $details['friendlyname']." : Le championnat";
-	$smarty->assign('titre', $titre);
+	$idepreuve = $details['idepreuve'];
+	$phase = $details['phase'];
+	if(true == stripos($details['libdivision'], '_', $offset=0))
+	{
+		$exp = explode('_',$details['libdivision']);//strstr('_',$details['libdivision']);
+		$resultats = $exp[1];
+	}
+	else
+	{
+		$resultats = $details['libdivision'];
+	}
+	
+	
+	if($details['friendlyname'] !='')
+	{
+		$friendlyname = $details['friendlyname'];
+	}
+	else
+	{
+		$friendlyname = $details['libdivision'];
+		$pos = strpos($details['libdivision'], '_');
+				if($pos == 3)
+				{
+					$friendlyname = substr(str_replace('_', ' ',$details['libdivision']),4);
+				}
+				else
+				{
+					$friendlyname = str_replace('_', ' ',$details['libdivision']);
+				}
+	}
+	$smarty->assign('titre2', $resultats);
+	$titre = $friendlyname."  saison ".$details['saison']." Phase ".$phase;
+	$smarty->assign('titresecond', $titre);
+	$smarty->assign('idepreuve', $idepreuve);
+	$smarty->assign('phase', $phase);
 }
 
 if(isset($params['template']) && $params['template'] !="")
@@ -46,7 +88,7 @@ $ext_list = array('.gif', '.jpg', '.png','.jpeg');
 //on va d'abord récupérer le classement de cette équipe
 $query = "SELECT cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf, num_equipe FROM ".cms_db_prefix()."module_ping_classement AS cl  WHERE  cl.idequipe = ? ORDER BY cl.id ASC";
 $dbresult= $db->Execute($query, array($record_id));
-
+$rowclass = '';
 $rowarray = array();
 if($dbresult && $dbresult->RecordCount()>0)
 {
@@ -54,13 +96,14 @@ if($dbresult && $dbresult->RecordCount()>0)
 	{
 		$classement = $row['clt'];
 		$joue = $row['joue'];
-		$friendlyname = $row['friendlyname'];
+		//$friendlyname = $row['friendlyname'];
 		if($classement=='0' || $joue =='0' )
 		{
 			$classement = '-';
 		}
 		$onerow= new StdClass();
 		//$onerow->friendlyname= $row['friendlyname'];
+		$img_club = '';
 		$onerow->clt=  $classement;
 		$onerow->equipe= $row['equipe'];
 		$onerow->joue= $row['joue'];
@@ -71,7 +114,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$onerow->pg= $row['pg'];
 		$onerow->pp= $row['pp'];
 		$onerow->pf= $row['pf'];
-		$eq1 = $eq_ops->idclub($row['num_equipe']);//eq1 = le numéro du club
+		$eq1 = $eq_ops->idclub($row['num_equipe']);//eq1 = le numéro du club ou false
 		foreach($ext_list as $ext)
 		{
 			if(true == file_exists($dir.$eq1.$ext))
@@ -88,14 +131,14 @@ else
 {
 	echo 'Pas encore de résultats';//pas de résultats ?
 }
-//$smarty->assign('libequipe', $friendlyname);
+$smarty->assign('libequipe', $friendlyname);
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 
 /**/
 
-$query2 = "SELECT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE eq_id = ? GROUP BY date_event ORDER BY date_event ASC ";
+$query2 = "SELECT date_event, idpoule, iddiv FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren WHERE eq_id = ? GROUP BY date_event ORDER BY date_event ASC ";
 $dbresultat = $db->Execute($query2,array($record_id));
 $rowarray2 = array();
 $i = 0;
@@ -155,7 +198,7 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 						$onerow3->scoreb = $row3['scoreb'];
 						$onerow3->img1 =$img1;
 						$onerow3->img2 =$img2;
-						$onerow3->uploaded = $row3['uploaded'];//$renc_ops->is_uploaded($row3['renc_id']);//$uploaded;
+						$onerow3->uploaded = $renc_ops->is_really_uploaded($row3['renc_id']);//$uploaded;
 						$onerow3->renc_id = $row3['renc_id'];
 						$rowarray3[] = $onerow3;
 					}
@@ -169,9 +212,11 @@ if($dbresultat && $dbresultat->RecordCount()>0)
 	 
 	$smarty->assign('itemcount2', count($rowarray2));
 	$smarty->assign('items2', $rowarray2);
+	$smarty->assign('landing_page', $landing_page);
 }
 /**/
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+$tpl->assign('titresecond', $titre);
 $tpl->display();
 
 #

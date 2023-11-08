@@ -23,6 +23,10 @@
     <p class="pageinput">{html_select_time time=$horaire prefix='hor_' display_seconds=false minute_interval=15}
 </div>
 <div class="pageoverflow">
+    <p class="pagetext">Clt minimum pour jouer  (sinon 0)</p>
+    <p class="pageinput"><input type="text" name="class_mini" value="{$class_mini}"> {*cms_help key='help_friendlyname'*}</p>
+</div>
+<div class="pageoverflow">
    <p class="pagetext">&nbsp;</p>
    <p class="pageinput"><input type="submit" name="submit" value="Envoyer"><input type="submit" name="cancel" value="Annuler"></p>
 </div>

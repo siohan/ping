@@ -534,6 +534,7 @@ public static function CalculEcart($ecart)
 	elseif($ecart <= -400 && $ecart > -500){$ecart = -8; return $ecart; }
 	elseif($ecart <= -500){$ecart = -9; return $ecart; }
 }
+//génère un tag sans l'enregistrer
 function tag($idepreuve,$indivs,$date_debut ='',$date_fin='')
 {
 	
@@ -610,6 +611,8 @@ function liste_epreuves()
 	}
 	
 }
+
+
 
 function create_tag($idepreuve,$indivs,$date_debut,$date_fin)
 {
@@ -798,12 +801,29 @@ function update_recup_parties ($licence)
 function code_compet($epreuve)
 {
 	$db = cmsms()->GetDb();
-	$query = "SELECT idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ?";
-	$dbresult = $db->Execute($query, array($epreuve));
-	$row = $dbresult->FetchRow();
-	$idepreuve = $row['idepreuve'];
-	
-	return $idepreuve;
+	$ping = cms_utils::get_module('Ping');
+	$saison = $ping->GetPreference('saison_en_cours');
+	$query = "SELECT idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions WHERE name = ? AND saison LIKE ?";
+	$dbresult = $db->Execute($query, array($epreuve,$saison));
+	if($dbresult)
+	{
+		if($dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$idepreuve = $row['idepreuve'];
+				return $idepreuve;
+			}
+		}
+		else
+		{
+			//la compet n'existe pas
+		}
+	}
+	else
+	{
+		return false;
+	}
 }
 function chercher_ligue($ligue)
 {
@@ -1061,12 +1081,12 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 	{
 		global $gCms;
 		$db = cmsms()->GetDb();
-		$query = "SELECT name FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+		$query = "SELECT friendlyname FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
 		$dbresult = $db->Execute($query, array($idepreuve));
 		if($dbresult && $dbresult->RecordCount()>0)
 		{
 			$row = $dbresult->FetchRow();
-			$libelle = $row['name'];
+			$libelle = $row['friendlyname'];
 			
 				return $libelle;
 		}
@@ -1077,13 +1097,15 @@ public static function nom_division($idepreuve,$iddivision,$saison)
 	public function liste_epreuves_equipes()
 	{
 		$db = cmsms()->GetDb();
-		$query = "SELECT name, idepreuve FROM  ".cms_db_prefix()."module_ping_type_competitions WHERE indivs = 0";
+		$query = "SELECT name, idepreuve, idorga,saison FROM  ".cms_db_prefix()."module_ping_type_competitions WHERE indivs = 0 AND actif = 1";
 		$dbresult = $db->Execute($query);
 		if($dbresult && $dbresult->RecordCount()>0)
 		{
+			$orga = new fftt_organismes;
 			while($row = $dbresult->FetchRow())
 			{
-				$epreuve[$row['name']] = $row['idepreuve'];
+				$orga_epr = $orga->organisateur($row['idorga']);
+				$epreuve[$row['idepreuve']] = $row['name'].'('.$orga_epr.'-'.$row['saison'].')';
 				
 			}
 			return $epreuve;
@@ -1288,10 +1310,145 @@ public static function nom_division($idepreuve,$iddivision,$saison)
         */
        
     }
-
+	//récupére le dernier élément du journal
+	function last_element()
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT id FROM ".cms_db_prefix()."module_ping_recup ORDER BY id ASC LIMIT 1";
+		$dbresult= $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$id = $row['id'];
+				
+			}
+			return $id;
+		}
+		else
+		{
+			return false;
+		}
+	}	
 	
-
+	//récupère le nb totals des éléments du journal (nav)
+	function all_elements()
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_recup";
+		$dbresult= $db->Execute($query);
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$nb = $row['nb'];
+				
+			}
+			return $nb;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	
+	function page_contenu($record_id)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT content_id FROM ".cms_db_prefix()."content_props WHERE prop_name = 'equipeAffiche' AND content = ?";
+		$dbresult = $db->Execute($query, array($record_id));
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			while($row = $dbresult->FetchRow())
+			{
+				$content_id = $row['content_id'];
+				return $content_id;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		
+	}	
+	
+	function next_month($record_id, $annee)
+	{
+		if($record_id == 12)
+		{
+			$next_month = 1;
+			$next_year = $annee+1;
+		}
+		else
+		{
+			$next_month = $record_id+1;
+			$next_year = $annee;
+		}
+	}
+	
+	function intervals($name,$unite, $nombre)
+	{
+		if($unite == "Mois")
+		{
+			$name = $nombre*2629800;
+		}
+		elseif($unite == "Semaines")
+		{
+			$name = $nombre*604800;
+		}
+		elseif($unite == "Jours")
+		{
+			$name = $nombre*86400;
+		}
+		elseif($unite == "Heures")
+		{
+			$name = $nombre*3600;
+		}
+		elseif($unite == "Minutes")
+		{
+			$name = $nombre*60;
+		}
+		return $name;
+	}
+	
+	//gére les intervalles de temps
+	function intervalles($intervalle)//interval choisie entre deux relèves, occurence = liste mois, semaines, etc...
+	{
+		$intervalle = (int) $intervalle;
+		$occurence = array('2629800', '604800', '86400', '3600', '60');
+		$unite = 'Semaines';
+		foreach ($occurence as $value)
+		{
+			$result = $intervalle/$value;
+			//var_dump($result);
+			if(true == is_int($result))
+			{	
+				if($value == '2629800')
+				{
+					$unite = 'Mois';
+				}
+				elseif($value == '604800')
+				{
+					$unite = 'Semaines';
+				}
+				elseif($value == '86400')
+				{
+					$unite = 'Jours';
+				}
+				elseif($value == '3600')
+				{
+					$unite = 'Heures';
+				}
+				elseif($value == '60')
+				{
+					$unite = 'Minutes';
+				}
+				return array($unite,$result);
+				break;
+			}
+		}
+		
+	}
 } // end of class
 
 #

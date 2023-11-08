@@ -2,11 +2,11 @@
 class equipes_ping
 {
    function __construct() {}
-//récupère tous les éléments d'une equipe de ping une équipe
+//récupère tous les éléments d'une equipe de ping une équipe par son id
 	function details_equipe($record_id)
 	{
 		$db = cmsms()->GetDb();
-		$query = "SELECT id, saison, phase, numero_equipe, libequipe, libdivision, friendlyname, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier, horaire FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ?"; 
+		$query = "SELECT id, saison, phase, numero_equipe, libequipe, libdivision, friendlyname, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier, horaire, class_mini FROM ".cms_db_prefix()."module_ping_equipes WHERE id = ?"; 
 		$dbresult = $db->Execute($query, array($record_id));
 		if($dbresult)
 		{
@@ -28,6 +28,7 @@ class equipes_ping
 				$details['tag'] = $row['tag'];
 				$details['calendrier'] = $row['calendrier'];
 				$details['horaire'] = $row['horaire'];
+				$details['class_mini'] = $row['class_mini'];
 			}
 			return $details;
 		}
@@ -40,7 +41,7 @@ class equipes_ping
 function details_equipe_by_idequipe($record_id)
 {
 		$db = cmsms()->GetDb();
-		$query = "SELECT id, saison, phase, numero_equipe, libequipe, libdivision, friendlyname, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier, horaire, idequipe FROM ".cms_db_prefix()."module_ping_equipes WHERE idequipe = ?"; 
+		$query = "SELECT id, saison, phase, numero_equipe, libequipe, libdivision, friendlyname, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier, horaire, idequipe, class_mini FROM ".cms_db_prefix()."module_ping_equipes WHERE idequipe = ?"; 
 		$dbresult = $db->Execute($query, array($record_id));
 		if($dbresult)
 		{
@@ -63,6 +64,7 @@ function details_equipe_by_idequipe($record_id)
 				$details['calendrier'] = $row['calendrier'];
 				$details['horaire'] = $row['horaire'];
 				$details['idequipe'] = $row['idequipe'];
+				$details['class_mini'] = $row['class_mini'];
 			}
 			return $details;
 		}
@@ -78,7 +80,7 @@ function details_equipe_by_num_equipe($record_id,$phase, $idepreuve)
 		$db = cmsms()->GetDb();
 		$ping = cms_utils::get_module('Ping');
 		
-		$query = "SELECT id, saison, phase, numero_equipe, libequipe, libdivision, friendlyname, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier, horaire, idequipe FROM ".cms_db_prefix()."module_ping_equipes WHERE numero_equipe = ? AND phase = ? AND idepreuve = ?"; 
+		$query = "SELECT id, saison, phase, numero_equipe, libequipe, libdivision, friendlyname, liendivision, idpoule, iddiv, type_compet, tag, idepreuve, calendrier, horaire, idequipe, class_mini FROM ".cms_db_prefix()."module_ping_equipes WHERE numero_equipe = ? AND phase = ? AND idepreuve = ?"; 
 		$dbresult = $db->Execute($query, array($record_id, $phase, $idepreuve));
 		if($dbresult)
 		{
@@ -101,6 +103,7 @@ function details_equipe_by_num_equipe($record_id,$phase, $idepreuve)
 				$details['calendrier'] = $row['calendrier'];
 				$details['horaire'] = $row['horaire'];
 				$details['idequipe'] = $row['idequipe'];
+				$details['class_mini'] = $row['class_mini'];
 			}
 			return $details;
 		}
@@ -166,11 +169,11 @@ function full_update_team($record_id, $friendlyname, $horaire)
 	}
 }
 //modifie une équipe
-function update_team($record_id, $friendlyname, $horaire)
+function update_team($record_id, $friendlyname, $horaire, $class_mini)
 {
 	$db = cmsms()->GetDb();
-	$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET friendlyname = ?, horaire = ? WHERE id = ?";
-	$dbresult = $db->Execute($query, array($friendlyname, $horaire, $record_id));
+	$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET friendlyname = ?, horaire = ?, class_mini = ? WHERE id = ?";
+	$dbresult = $db->Execute($query, array($friendlyname, $horaire,$class_mini, $record_id));
 	if($dbresult)
 	{
 		return true;
@@ -195,6 +198,26 @@ function delete_team($record_id)
 			return false;
 		}
    }
+   //recherche l'équipe correspondante ds le chgt de phase et/ou de saison
+   function search_team($saison, $phase,$idepreuve,$numero_equipe)
+   {
+	   $db = cmsms()->GetDb();
+	   $query = "SELECT id FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ? AND idepreuve =? AND numero_equipe = ?";
+	   $dbresult = $db->Execute($query, array($saison, $phase, $idepreuve, $numero_equipe));
+	   if($dbresult && $dbresult->RecordCount()>0)
+	   {
+			while($row = $dbresult->FetchRow())
+			{
+					$id = $row['id'];
+			}
+			return $id;
+		}
+		else
+		{
+			return false;
+		}
+	}
+   
    function delete_classement ($record_id)
    {
 		$db = cmsms()->GetDb();
@@ -274,11 +297,11 @@ function update_team_result($saison, $idpoule, $iddiv, $club, $affichage, $tour,
 	}
 }
 
- function renc_exists($renc_id)
+ function renc_exists($renc_id, $eq_id)
  {
  	$db = cmsms()->GetDb();
- 	$query = "SELECT renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE renc_id = ?";//SELECT count(*) FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE renc_id = ?";
- 	$dbresult = $db->Execute($query, array($renc_id));
+ 	$query = "SELECT renc_id FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE renc_id = ? AND eq_id = ?";//SELECT count(*) FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE renc_id = ?";
+ 	$dbresult = $db->Execute($query, array($renc_id, $eq_id));
  	$row = $dbresult->FetchRow();
 	$renc_id = $row['renc_id'];
 	return $renc_id;

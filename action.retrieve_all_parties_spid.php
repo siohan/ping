@@ -16,7 +16,7 @@ $db = $this->GetDb();
 $designation = '';
 $justnow = time();
 $now = trim($db->DBTimeStamp(time()), "'");
-$query = "SELECT CONCAT_WS(' ',j.nom,j.prenom) as player, j.licence, j.cat FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_recup_parties AS rc WHERE j.licence = rc.licence AND j.actif='1' AND j.type = 'T' AND rc.maj_spid < ($justnow - 3600) ORDER BY maj_spid ASC LIMIT 15";
+$query = "SELECT CONCAT_WS(' ',j.nom,j.prenom) as player, j.licence, j.cat FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_recup_parties AS rc WHERE j.licence = rc.licence AND j.actif='1' AND j.type = 'T' ORDER BY maj_spid ASC LIMIT 15";// AND rc.maj_spid < ($justnow - 3600) 
 $dbresult = $db->Execute($query);
 if($dbresult && $dbresult->RecordCount() > 0)
 {
@@ -33,8 +33,7 @@ if($dbresult && $dbresult->RecordCount() > 0)
 		$cat = $row['cat'];
 		
 		$retrieve_spid = $service->retrieve_parties_spid2($licence, $player, $cat);
-		$spid_ops->compte_spid($licence);
-		
+		$spid_ops->compte_spid($licence);		
 		$calcul_pts_spid = $spid_ops->compte_spid_points($licence);
 		$spid_ops->maj_points_spid($licence,$calcul_pts_spid);
 	//	$spid_ops->recalcul($licence);

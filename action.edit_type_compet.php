@@ -15,7 +15,7 @@ if( isset($params['cancel']) )
   }
 
 $this->SetCurrentTab('users');
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 
 $record_id = '';
 if( !isset( $params['record_id'] ) || $params['record_id'] == '')    
@@ -55,38 +55,6 @@ $tableau = array("Fédération"=>$fede, "Zone"=>$zone,"Ligue"=>$ligue, "Comité"
 	}
 
    
-$smarty->assign('formstart',
-		    $this->CreateFormStart( $id, 'do_add_type_compet', $returnid ) );
-$smarty->assign('record_id',
-		$this->CreateInputText( $id, 'record_id', $params['record_id'] ));
-$smarty->assign('submit',
-		$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
-$smarty->assign('name',
-		$this->CreateInputText($id,'name',$name,115,200));
-		
-$smarty->assign('idepreuve',
-		$this->CreateInputHidden($id,'idepreuve',$idepreuve,5,10));
-
-$smarty->assign('coefficient',
-		$this->CreateInputText($id, 'coefficient',$coefficient,5,10));
-		$itemsindivs = array("Non"=>"0","Oui"=>"1");
-$smarty->assign('indivs',
-		$this->CreateInputDropdown($id, 'indivs',$itemsindivs,-1,$indivs));
-		$smarty->assign('orga',
-				$this->CreateInputDropdown($id, 'idorga',$tableau,-1,$idorga));
-$smarty->assign('edit',
-		$this->CreateInputText($id,'edit','Oui'));							
-$smarty->assign('submit',
-			$this->CreateInputSubmit($id, 'submit', $this->Lang('submit'), 'class="button"'));
-$smarty->assign('cancel',
-			$this->CreateInputSubmit($id,'cancel',
-						$this->Lang('cancel')));
-$smarty->assign('back',
-			$this->CreateInputSubmit($id,'back',
-						$this->Lang('back')));
-
-$smarty->assign('formend',
-		$this->CreateFormEnd());
 
 
 echo $this->ProcessTemplate('edit_type_compet.tpl');

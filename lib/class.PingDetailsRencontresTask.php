@@ -54,7 +54,7 @@ class PingDetailsRencontresTask implements CmsRegularTask
 	$saison = $ping->GetPreference('saison_en_cours');
 	$ping_ops = new ping_admin_ops;
 	$eq_ops = new rencontres;
-	$query = "SELECT renc_id, equip_id1, equip_id2  FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND `date_event` < CURRENT_DATE() AND uploaded = 0 ORDER BY club DESC"; // AND (scorea = 0 AND scoreb = 0) 
+	$query = "SELECT renc_id, equip_id1, equip_id2  FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE saison LIKE ? AND `date_event` <= CURRENT_DATE()  ORDER BY club DESC"; // AND (scorea = 0 AND scoreb = 0)
 	$dbresult = $db->Execute($query, array($saison));
 	if($dbresult && $dbresult->RecordCount() > 0)
 	{

@@ -93,7 +93,8 @@ class Servicen
 		$this->tm = servicen::GetTimestamp();
 		$this->tmc = servicen::GetEncryptedTimestamp();
 		$this->id = servicen::GetIdAppli();
-		$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id.'&'.$var; 
+		$chaine = 'https://apiv2.fftt.com/mobile/pxml/'.$page.'.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id.'&'.$var;
+		//$chaine = 'http://www.fftt.com/mobile/pxml/'.$page.'.php?serie='.$this->serie.'&tm='.$this->tm.'&tmc='.$this->tmc.'&id='.$this->id.'&'.$var; 
 		return file_get_contents($chaine);
 		//return $chaine;//pour tester le lien
     }

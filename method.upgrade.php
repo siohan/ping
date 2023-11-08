@@ -1,7 +1,8 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: Ping
-# Version: 0.9
+# Author: Claude SIOHAN
+# Version: 1.2.3
 # Method: Upgrade
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2008 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -1874,9 +1875,263 @@ case  "0.3.0.1" :
 	}
 	
 
-	
+	case "0.9" :
+	{
+		$this->SetPreference('max_size', '500000');
+		$this->SetPreference('max_width', '800');
+		$this->SetPreference('max_height', '800');
+		$this->SetPreference('allowed_extensions', 'jpg, gif, jpeg, png');
+		//$this->SetPreference('allowed_extensions', 'jpg, gif, jpeg, png');
+		
+		$flds = "class_mini I(4) DEFAULT 0 ";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_equipes", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+	}
 
+	case "1.0" :
+	{
+		//on créé une nouvelle table pour les résultats détaillés du week-end (1 seul tour)
+		$dict = NewDataDictionary( $db );
+		$flds = "id I(11) AUTO KEY,
+				licence C(10),
+				tour I(2),
+				renc_id I(11),
+				idepreuve I(4),
+				numero_equipe I(2),
+				doubles I(1),
+				victoires I(1),
+				nb_parties I(1),
+				details X";
+				
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_we_results",$flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+	}
 	
+	case "1.1.1" :
+	{
+		$dict = NewDataDictionary( $db );
+		$sqlarray = $dict->DropIndexSQL("renc_id", cms_db_prefix()."module_ping_poules_rencontres");
+		$dict->ExecuteSQLArray( $sqlarray );
+		$idxoptarray = array('UNIQUE');
+		$sqlarray2 = $dict->CreateIndexSQL('renc_id_eq_id', cms_db_prefix().'module_ping_poules_rencontres', 'renc_id, eq_id', $idxoptarray);
+		$dict->ExecuteSQLArray( $sqlarray2 );
+	}
+	
+	case "1.1.2" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "friendlyname C(255)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_type_competitions", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$query = "UPDATE  ".cms_db_prefix()."module_ping_type_competitions SET friendlyname = name";
+		$dbresult = $db->Execute($query);
+				
+	}
+	case "1.1.3" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "idPere I(11)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_organismes", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$dict = NewDataDictionary( $db );
+		$flds = "typepreuve C(1)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_type_competitions", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+	}
+	
+	case "1.1.4" : 
+	{
+		//on recréé les tables pour récupérer les résultats des épreuves individuelles
+		$flds = "
+			id I(11) AUTO KEY,
+			idorga I(11),
+			idepreuve I(11),
+			iddivision I(11),
+			libelle C(255),
+			saison C(255),
+			indivs I(1),
+			scope C(1),
+			uploaded C(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_divisions",
+						   $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		$flds = "
+			id I(11) AUTO KEY,
+			idepreuve I(11),
+			iddivision I(11),
+			tableau I(11),
+			tour I(11),
+			rang I(11),
+			nom C(255),
+			clt C(255),
+			club C(255),
+			points N(6,3),
+			saison C(255),
+			uploaded I(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_classement",
+						 $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		#
+			# create table div_poules//debut de la création
+			// table schema description
+			$flds = "
+				id I(11) AUTO KEY,
+				idepreuve I(11),
+				iddivision I(11),
+				libelle C(255),
+				tour I(3),
+				tableau I(11),
+				lien C(255),
+				saison C(255),
+				uploaded I(1)";
+
+			// create it. 
+			$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",
+							$flds, 
+							$taboptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+			
+			$dict = NewDataDictionary( $db );
+		$flds = "
+		id I(11) AUTO KEY,
+		idepreuve I(11),
+		iddivision I(11),
+		tableau I(11),
+		tour I(2),
+		libelle C(255), 
+		vain C(255),
+		perd C(255),
+		forfait I(1), 
+		saison C(255),
+		uploaded I(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_parties",
+				 $flds, 
+				$taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		$dict = NewDataDictionary( $db );
+			
+			//on créé un index pour cette table
+			$idxoptarray = array('UNIQUE');
+			$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
+				    cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau',$idxoptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+		
+	}
+	
+	case "1.1.5" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "suivi I(1) DEFAULT (0)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_type_competitions", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$this->SetPreference('last_indivs_cla', time());
+	}
+	case "1.1.6" : 
+	{
+		//on créé un index pour cette table
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_divisions',
+				   cms_db_prefix().'module_ping_divisions', 'idepreuve, iddivision',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		//on créé un index pour cette table
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_cla',
+				   cms_db_prefix().'module_ping_div_classement', 'tableau, rang, nom',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+	}
+	
+	case "1.1.7" :
+	{
+		$dict = NewDataDictionary( $db );
+		try {
+			    $ping_indivs_type = new CmsLayoutTemplateType();
+			    $ping_indivs_type->set_originator($this->GetName());
+			    $ping_indivs_type->set_name('Resultats Indivs');
+			    $ping_indivs_type->set_dflt_flag(TRUE);
+			    $ping_indivs_type->set_lang_callback('Ping::page_type_lang_callback');
+			    $ping_indivs_type->set_content_callback('Ping::reset_page_type_defaults');
+			    $ping_indivs_type->reset_content_to_factory();
+			    $ping_indivs_type->save();
+			}
+
+			catch( CmsException $e ) {
+			    // log it
+			    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+			    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+			    return $e->GetMessage();
+			}
+
+			try {
+			    $fn = cms_join_path(dirname(__FILE__),'templates','orig_indivs.tpl');
+			    if( file_exists( $fn ) ) {
+			        $template = @file_get_contents($fn);
+			        $tpl = new CmsLayoutTemplate();
+			        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Indivs'));
+			        $tpl->set_owner($uid);
+			        $tpl->set_content($template);
+			        $tpl->set_type($ping_indivs_type);
+			        $tpl->set_type_dflt(TRUE);
+			        $tpl->save();
+			    }
+			}
+			catch( \Exception $e ) {
+			  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+			  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+			  return $e->GetMessage();
+			}
+	}
+	
+	case "1.2" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "date_created ". CMS_ADODB_DT ."";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_div_classement", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$this->SetPreference('details_indivs', 'details_indivs');
+	}
+	
+	case "1.2.1" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "date_created I(11), date_maj I(11)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_type_competitions", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		$this->SetPreference('LastRecupDivisions', time());
+		$this->SetPreference('LastRecupTours', time());
+		$this->SetPreference('LastRecupClassements', time());
+	}
+	
+	case "1.2.2" :
+	{
+		$this->SetPreference('LastRecupTeams', time());
+		$this->SetPreference('LastRecupDivCla', time());
+		$this->SetPreference('teams_interval', 36000);
+		$dict = NewDataDictionary( $db );
+		$flds = "date_created I(11)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_equipes", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+	}
+	
+	case "1.2.3" :
+	{
+		$this->RemovePreference('chpt_default');
+		$this->RemovePreference('annee_fin');
+	}
+	 
 }
 
 

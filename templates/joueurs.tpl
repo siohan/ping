@@ -1,56 +1,14 @@
-<script type="text/javascript">
-//<![CDATA[
-$(document).ready(function(){
-  $('#selectall').click(function(){
-    var v = $(this).attr('checked');
-    if( v == 'checked' ) {
-      $('.select').attr('checked','checked');
-    } else {
-      $('.select').removeAttr('checked');
-    }
-  });
-  $('.select').click(function(){
-    $('#selectall').removeAttr('checked');
-  });
-  $('#toggle_filter').click(function(){
-    $('#filter_form').dialog({
-      modal: true,
-      width: 'auto',
-    });
-  });
-  {if isset($tablesorter)}
-  if( typeof($.tablesorter) != 'undefined' ) $('#articlelist').tablesorter({ sortList:{$tablesorter} });
-  {/if}
-});
-//]]>
-</script>
 
-		
-		{if $alertConfig >0}
-		<div class="pageoverflow">
-          	<p class="red">
-			Attention !! Vous devez renseigner l'onglet "Configuration"
-			</p>
-        </div>
-        {/if}
-        {if $alertCompte >0}
-		<div class="pageoverflow">
-          	<p class="red">
-			Attention !! Vous devez renseigner vos paramètres dans l'onglet "Compte"
-			</p>
-        </div>
-        {/if}
-
-{*Lien vers le formulaire de satisfaction *}
-
-<div class="pageoptions"><p class="pageoptions">{$club} - {$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;{$retrieve_users} | <a href="{cms_action_url action=delete_all}">{admin_icon icon=delete}</a> {if $act ==0}{$actifs}{else} {$inactifs}{/if}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}&nbsp;|&nbsp;
+<a href="{cms_action_url action=retrieve retrieve=users}">{admin_icon icon="import.gif"} Importer les joueurs</a>
+ | {if $act ==0}<a href="{cms_action_url action=defaultadmin __activetab=joueurs}">Actifs</a>{else}<a href="{cms_action_url action=defaultadmin __activetab=joueurs actif=0}">Inactifs</a>{/if}</p></div>
 {if $itemcount > 0}
 	{$form2start}
 	<table border="0" cellspacing="0" cellpadding="0" class="pagetable">
 	 <thead>
 		<tr>
 			<th>Joueur</th>
-			<th>Photo</th>
+			<!--th>Photo</th -->
 			<th>Licence</th>
 			<th>Actif</th>
 			<th>Type</th>
@@ -65,9 +23,9 @@ $(document).ready(function(){
 	{foreach from=$items item=entry}
 	  <tr class="{$entry->rowclass}">
 		<td><a href="{cms_action_url action=view_adherent_details record_id=$entry->licence}">{$entry->joueur}</a></td>
-		<td><a href="{cms_action_url action=upload_image genid=$entry->licence}">Uploader</a></td>
+		<!--<td>{if $entry->img !=' '}<a href="{cms_action_url action=upload_image genid=$entry->licence}" title="Téléverser une photo"><img src="{$entry->img}" width="40" height="40"></a>{else}<a href="{cms_action_url action=upload_image genid=$entry->licence}">{admin_icon icon="edit.gif" title="Changer la photo"}</a>{/if}</td> -->
 		<td>{$entry->licence}</td>
-	    <td>{$entry->actif}</td>
+	    <td>{if $entry->actif =="1"}<a href="{cms_action_url action=retrieve retrieve=desactivate licence=$entry->licence}">{admin_icon icon="true.gif"}</a>{else}<a href="{cms_action_url action=retrieve retrieve=activate licence=$entry->licence}">{admin_icon icon="false.gif"}</a>{/if}</td>
 		<td>{$entry->type}</td>
 		<td>{$entry->sexe}</td>
 		<td>{$entry->certif}</td>

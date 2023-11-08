@@ -32,7 +32,7 @@ class PingRecupUsersTask implements CmsRegularTask
 	      }
 	      else
 	      {
-		 return FALSE;
+			return FALSE;
 	      }
 
 
@@ -48,7 +48,7 @@ class PingRecupUsersTask implements CmsRegularTask
 
 	      	$ping = cms_utils::get_module('Ping');
 	        $retrieve_ops = new retrieve_ops;
-		$add_joueur = $retrieve_ops->retrieve_users();
+			$add_joueur = $retrieve_ops->retrieve_users();
 	
 	   }
 

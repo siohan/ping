@@ -21,8 +21,11 @@ $(document).ready(function(){
 });
 //]]>
 </script>
+
 <h2>Tableau de récupération des parties SPID du mois courant</h2>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} {if true == $nettoyage}| {$rafraichir} {$Verif} | <a href="{cms_action_url action=erase_spid}">Supprimer les parties obsolètes</a>{/if}</p></div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} 
+{if $smarty.now|date_format:"%e" >=10}<a href="{cms_action_url action='retrieve_all_parties_spid' retrieve=spid_all}">{admin_icon icon="download.gif"}Télécharger toutes les parties</a>{else}<p class="red">Les parties Spid sont disponibles à partir du 10 de chaque mois.{cms_help key='help_date_spid'}</p><br /><a href="{cms_action_url action=retrieve retrieve=reset_spid}">{admin_icon icon="delete.gif"} Remettre les compteurs à zéro</a>{/if}
+</p></div>
 {if $itemcount > 0}
 {$form2start}
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -30,8 +33,7 @@ $(document).ready(function(){
 	<tr>
 		<th>Joueur</th>
 		<th>Licence</th>
-		<th>Spid du mois</th>
-		<th>Erreurs</th>
+		<th>Nb parties Spid</th>
 		<th>Points</th>
 		<th>Mise à jour</th>
 		<th colspan='2'>Actions</th>
@@ -44,7 +46,6 @@ $(document).ready(function(){
 	<td><a href="{cms_action_url action=view_adherent_details record_id=$entry->licence}">{$entry->joueur}</a></td>
 	<td> {$entry->licence}</td>
 	<td>{$entry->spid}</td>
-	<td>{$entry->spid_errors} {if $entry->spid_errors >0} {$attention_img}{/if}</td>
 	<td>{$entry->points}</td>
 	<td>{$entry->maj_spid}</td>    
 	<td>{$entry->getpartiesspid}</td>

@@ -2,8 +2,9 @@
    if (!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
-//$nom_equipes = $this->GetPreference('nom_equipes');
+
 $saison = $this->GetPreference('saison_en_cours');
+$epr_ops = new EpreuvesIndivs;
 $db = cmsms()->GetDb();
 global $themeObject;
 $result= array();
@@ -19,13 +20,22 @@ if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 	$query.=" AND idepreuve = ?";
 	$parms['idepreuve'] = $idepreuve;
 }
+
 if(isset($params['saison']) && $params['saison'] != '')
 {
 	$saison = $params['saison'];
 	$query.= " AND saison = ?";
 	$parms['saison']  = $saison;
 }
-
+if(isset($params['name']) && $params['name'] != '')
+{
+	$name = $params['name'];
+	//on va chercher l'idepreuve
+	$det_epr = $epr_ops->details_epreuve_by_name($name, $saison);
+	$idepreuve = $det_epr['idepreuve']; 
+	$query.=" AND idepreuve = ?";
+	$parms['idepreuve'] = $idepreuve;
+}
 if(isset($params['template']) && $params['template'] !="")
 {
 	$template = $params['template'];
@@ -106,7 +116,7 @@ else {
 					$onerow2->equa = $row2['equa'];
 					$onerow2->friendlyname = $row2['friendlyname'];
 					$onerow2->libequipe = $libequipe;
-					$onerow2->uploaded = $renc_ops->is_uploaded($row2['renc_id']);
+					//$onerow2->uploaded = $renc_ops->is_uploaded($row2['renc_id']);
 					$onerow2->libelle=  $row2['libelle'] ;
 					
 					

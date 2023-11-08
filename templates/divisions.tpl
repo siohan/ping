@@ -35,10 +35,10 @@ $(document).ready(function(){
   {$formend}
 </fieldset>
 {/if}
-{$retourlien} <p class="warning">{$alert_message}</p>{*$recup_div*}
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  {if $itemcount > 0}   --->{$tours}</p></div>{else}</p></div>{/if}
+<a href="{cms_action_url action=view_indivs_details record_id=$idepreuve}">{admin_icon icon="back.gif"}</a>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}  </p></div>
 {if $itemcount > 0}
-{$form2start}
+
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
   <tr>
@@ -46,8 +46,7 @@ $(document).ready(function(){
 	<th>Epreuve (N°)</th>
 	<th>Niveau</th>
 	<th>Division (N°)</th>
-	<th colspan="2">Actions</th>
-  <th><input type="checkbox" id="selectall" name="selectall"></th>
+	
   </tr>
  </thead>
  <tbody>
@@ -58,19 +57,10 @@ $(document).ready(function(){
 	<td>{$entry->scope}</td>
 	<!--<td>{$entry->date_event|date_format:"%d/%m"}</td>-->
     <td>{$entry->libelle} ({$entry->iddivision})</td>
- 	<td>{$entry->uploaded}</td>
-	<td>{$entry->poule}</td>
-    <td>{$entry->deletelink}</td>
-	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->iddivision}" class="select"></td>
+ 	
   </tr>
 {/foreach}
  </tbody>
 </table>
-<!-- SELECT DROPDOWN -->
-<div class="pageoptions" style="float: right;">
-<br/>{$actiondemasse}{$submit_massaction}
-  </div>
-{$form2end}
-{else}
-<p>Récupérer les divisions ?{$recup_div}</p>
 {/if}
+

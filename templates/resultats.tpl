@@ -1,13 +1,15 @@
 <div class="pageoptions">
 	<p style="width: 100%">
 		<span style="text-align: left">
-			<a href="{cms_action_url action='defaultadmin' active_tab=equipes}">{admin_icon icon="back.gif"}Revenir</a> | 
-			<a href="{cms_action_url action='retrieve' retrieve=classement_equipes record_id=$record_id}">{admin_icon icon="import.gif"}Rafraichir le classement</a> | 
-			<a href="{cms_action_url action='retrieve' retrieve=retrieve_rencontre record_id=$record_id}">{admin_icon icon="import.gif"} Récupérer tous les résultats</a> |
-			<a href="{cms_action_url action='retrieve' retrieve=retrieve_rencontre record_id=$record_id}">{admin_icon icon="import.gif"} Récupérer tous les détails des rencontres</a>
+			<a href="{cms_action_url action='defaultadmin' activetab=equipes}">{admin_icon icon="back.gif"}Revenir</a> | 
+			<a href="{cms_action_url action='retrieve' retrieve=classement_equipes record_id=$record_id}">{admin_icon icon="import.gif"} Classement</a> | 
+			<a href="{cms_action_url action='retrieve' retrieve=retrieve_rencontre record_id=$record_id}">{admin_icon icon="import.gif"} Calendrier et résultats</a> |
+			<a href="{cms_action_url action='retrieve' retrieve=retrieve_rencontre record_id=$record_id}">{admin_icon icon="import.gif"} Détails des rencontres</a> |
+			<a href="{cms_action_url action='change_all_dates' record_id=$record_id}"><img src="../modules/Ping/images/calendrier.jpg" height="16" width="16"> Changer toutes les dates</a>
 		</span>
 	</p>
 {if $itemcount2 > 0}
+<p class="green">Tag pour affichage : {$tag} {cms_help key='help_tag'}</p>
 <h3>Classement général {if isset($libequipe)} en {$libequipe}{/if}</h3>
 
 <table border="0" cellspacing="0" cellpadding="0" class="table pagetable">
@@ -52,7 +54,7 @@
 {foreach from=$items item=entry}
 
 	{*$form2start*}
-	<h4>{$entry->date|date_format:"%d/%m/%Y"} {$entry->compet}</h4>
+	<h4>{$entry->date|date_format:"%d/%m/%Y"} {*$entry->compet*}</h4>
 	
 	
 		<table border="0" cellspacing="0" cellpadding="0" class="pagetable table">
@@ -77,7 +79,7 @@
 					<td>{$donnee->equb}</td>
 					<td>{$donnee->scorea}</td>
 					<td>{$donnee->scoreb}</td>
-					<td>{$donnee->display}</td>
+					{*<td>{$donnee->display}</td>*}
 					<td>{if $smarty.now|date_format:"%Y-%m-%d" >= $donnee->date_event }
 							{if $donnee->uploaded == "0"}
 								<a href="{cms_action_url action=retrieve_details_rencontres2 record_id=$donnee->renc_id eq_id=$donnee->eq_id}">{admin_icon icon="import.gif"}</a>

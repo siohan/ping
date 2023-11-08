@@ -8,11 +8,15 @@ $record_id = '';
 if(isset($params['record_id']) && $params['record_id'] !='')
 {
 	$renc_ops = new rencontres;
+	$epr = new EpreuvesIndivs;
 	$record_id = (int) $params['record_id'];// C'est le numéro de la rencontre
 	//on récupère le résultat final pour affichage
 	$details_renc = $renc_ops->details_rencontre($record_id);
 	$scorea  =$details_renc['scorea'];
 	$scoreb = $details_renc['scoreb'];
+	$championnat = $details_renc['libelle'];
+	$det_epr = $epr->details_epreuve($details_renc['idepreuve']);
+	$idepreuve = $det_epr['name'];
 	$equa = $details_renc['equa'];
 	$equb = $details_renc['equb'];
 	$pagetitle = $equa.'/'.$equb;
@@ -21,6 +25,9 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 	$smarty->assign('pagetitle',$pagetitle); 
 	$smarty->assign('scorea', $scorea);
 	$smarty->assign('scoreb', $scoreb);
+	
+	$smarty->assign('championnat', $championnat);
+	$smarty->assign('idepreuve', $idepreuve);
 	//$smarty->assign('division', $details_renc['
 }
 else

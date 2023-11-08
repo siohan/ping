@@ -83,24 +83,37 @@ if($dbresult)
 			
 			$onerow = new StdClass();
 			$horaire = $row['horaire'];
+			$date_event = $row['date_event'];
 			$hor = explode(':', $horaire);
+			
 			$tab = explode('-', $row['date_event']);
 			
 			$details = $eq_ops->details_equipe($row['eq_id']);
 			
 			if($hor[1] == '00')
-			{$hor1 = 0;}
+			{$hor[1] = (int) 0;}
+			$hor[2] = 0; //pour les secondes
 			$month = $tab[1];
 			//echo $month;
 			$deadline = mktime($hor[0],$hor[1], 0, $tab[1],$tab[2],$tab[0]);
-			//var_dump($deadline);
+			
+			$pos = strpos($details['libdivision'], '_', $offset=0);
+			//var_dump($pos);
+			if($pos == 3)
+			{
+				$onerow->libdivision = substr(str_replace('_', ' ',$details['libdivision']),4);
+			}
+			else
+			{
+				$onerow->libdivision = str_replace('_', ' ',$details['libdivision']);
+			}
 			$onerow->renc_id = $row['renc_id'];
 			$onerow->eq_id = $row['eq_id'];
 			$onerow->saison = $row['saison'];
 			$onerow->date_event = $row['date_event'];
 			$onerow->affiche = $row['affiche'];
 			$onerow->idepreuve = $p_ops->nom_compet($row['idepreuve']);
-			$onerow->libdivision = $details['libdivision'];
+			
 			$onerow->tour = $row['tour'];
 			$onerow->libelle = $row['libelle'];
 			$onerow->scorea = $row['scorea'];
@@ -110,8 +123,11 @@ if($dbresult)
 			$onerow->club = $row['club'];		
 			$onerow->equa= $row['equa'];
 			$onerow->equb= $row['equb'];
+			$onerow->heures= (int)$hor[0];
+			$onerow->minutes=(int) $hor[1];
+			$onerow->secondes= (int) $hor[2];
 			$onerow->horaire= $row['horaire'];
-			$onerow->date_unix = $deadline/1000;
+			$onerow->date_unix = $deadline;
 			$rowarray[] = $onerow;
 					
 		}

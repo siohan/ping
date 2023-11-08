@@ -3,24 +3,12 @@
 if( !isset($gCms) ) exit;
 $db = cmsms()->GetDb();
 global $themeObject;
-//debug_display($params, 'Parameters');
-//créations de liens de récupération des compétitions
-//on récupère d'abord les préférences de zones, ligues et département
-$fede = '100001';
-$zone = $this->GetPreference('zone');
-$ligue = $this->GetPreference('ligue');
-$dep = $this->GetPreference('dep');
+debug_display($params, 'Parameters');
 
-$smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Zone indivs', array("retrieve"=>"compets","idorga"=>$zone,"type"=>"I")));
-$smarty->assign('Nat_indivs', $this->CreateLink($id, 'retrieve',$returnid,'National indivs', array("retrieve"=>"compets","idorga"=>$fede,"type"=>"I")));
-$smarty->assign('ligue_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Ligue indivs', array("retrieve"=>"compets","idorga"=>$ligue,"type"=>"I")));
-$smarty->assign('dep_indivs', $this->CreateLink($id, 'retrieve',$returnid,'Dép indivs', array("retrieve"=>"compets","idorga"=>'29',"type"=>"I")));
 $parms = array();
-$result= array();
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE id > ?";
-$parms['id'] = 0;
 
-	$query.=" ORDER BY name ASC";
+$query = "SELECT id, name, tag, coefficient, indivs, idorga, idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve =  ?";
+
 //echo $query;
 	$dbresult= $db->Execute($query,$parms);
 //echo $query;
@@ -31,11 +19,11 @@ if ($dbresult && $dbresult->RecordCount() > 0)
     {
 		$indivs = $row['indivs'];
 		if($indivs==1){$type='I';}else{$type='E';}
-		$idorga = $row['idorga'];
+		/*$idorga = $row['idorga'];
 		if($idorga == $fede){$orga = 'Fédération';}
 		if($idorga == $zone){$orga = 'Zone';}
 		if($idorga == $ligue){$orga = 'Ligue';}
-		if($idorga == $dep){$orga = 'Comité';}
+		if($idorga == $dep){$orga = 'Comité';}*/
 		$onerow= new StdClass();
 		$onerow->rowclass= $rowclass;
 		$onerow->id= $row['id'];
@@ -43,7 +31,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->tag= $row['tag'];
 		$onerow->coefficient= $row['coefficient'];
 		$onerow->indivs= $row['indivs'];
-		$onerow->orga = $idorga;
+		$onerow->idorga = $row['idorga'];
 		$onerow->idepreuve = $row['idepreuve'];
 		/*$onerow->natio = $this->CreateLink($id, 'admin_divisions_tab',$returnid,$contents='National', array("active_tab"=>"compets","idepreuve"=>$row['idepreuve'],"idorga"=>$fede));
 		$onerow->zone = $this->CreateLink($id, 'admin_divisions_tab',$returnid,$contents='Zone', array("idepreuve"=>$row['idepreuve'],"idorga"=>$zone));

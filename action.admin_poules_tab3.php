@@ -17,6 +17,14 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 	$saison = $details['saison'];
 	$idepreuve = $details['idepreuve'];
 	$phase = $details['phase'];
+	$tag = $details['tag'];
+	$indivs = 0;
+	if( null == $tag)
+	{
+		$ping_ops = new ping_admin_ops;
+		$tag = $ping_ops->tag_equipe($record_id, $idepreuve);
+	}
+	$smarty->assign('tag', $tag);
 }
 include 'include/action.navigation.php';
 
@@ -76,10 +84,11 @@ else
 	//pas de résultats ?
 }
 $smarty->assign('libequipe', $friendlyname);
+$smarty->assign('tag', $tag);
 $smarty->assign('itemsfound2', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount2', count($rowarray));
 $smarty->assign('items2', $rowarray);		
-		
+	
 		
 		
 		
@@ -105,15 +114,14 @@ if($dbresult && $dbresult->RecordCount()>0)
 			$i++;
 			$onerow->valeur = $i;
 			//on refait une requete pour extraire les rencontres
-			$query2 = "SELECT DISTINCT ren.id AS ren_id,ren.renc_id,ren.eq_id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname, ren.club,ren.uploaded,eq.libequipe,eq.id,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison";
+			$query2 = "SELECT DISTINCT ren.id AS ren_id,ren.renc_id,ren.eq_id, ren.scorea, ren.scoreb, ren.equa, ren.equb,ren.iddiv,eq.idepreuve, ren.idpoule,eq.friendlyname, ren.club,ren.uploaded,eq.libequipe,eq.id,ren.date_event,ren.affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres AS ren, ".cms_db_prefix()."module_ping_equipes AS eq WHERE ren.iddiv = eq.iddiv AND ren.idpoule = eq.idpoule AND ren.saison = eq.saison AND ren.eq_id = eq.id";
 			$query2.= "  AND ren.date_event = ?";
-			//$query2.= " AND eq.saison = ?";
 			$query2.=" AND eq.id = ?";
-			//echo $query2;
-			$dbresultat = $db->Execute($query2,array($date_debut,$record_id));
-			//if($dbresultat && $dbresultat->RecordCount()>0)
 			
-			//echo "le nb de lignes est : ".$nblignes;
+			$dbresultat = $db->Execute($query2,array($date_debut,$record_id));
+			
+			
+			
 			if($dbresultat && $dbresultat->RecordCount()>0)
 			{
 				//on instancie la classe ping_admin_ops
@@ -140,7 +148,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					
 					if(isset($friendlyname) && $friendlyname !='')
 					{
-						if ($libequipe == $row2['equa'] && isset($friendlyname) && $friendlyname !='' )
+						if ($row2['libequipe'] == $row2['equa'] && isset($friendlyname) && $friendlyname !='' )
 						{
 							$onerow2->equa= $row2['friendlyname'];
 						}
@@ -155,7 +163,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					}
 					if(isset($friendlyname) && $friendlyname !='')
 					{
-						if ($libequipe == $row2['equb'])
+						if ($row2['libequipe'] == $row2['equb'])
 						{
 							$onerow2->equb= $row2['friendlyname'];
 						}
@@ -185,6 +193,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$smarty->assign('items', $rowarray);
 		$smarty->assign('itemcount', count($rowarray));
 		$smarty->assign('date_courante', date('Y-m-d'));
+		//$smarty->assign('tag', $tag);
 		
 	}
 }

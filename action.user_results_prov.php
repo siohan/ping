@@ -29,70 +29,11 @@ else {
 	}
 	else
 	{
-		$licence = $params['licence'];
-		
-		//si une date est précisée alors on affiche que les résultats de cette date
-		if(isset($params['date_debut']) && $params['date_debut'] !='')
-		{
-			//on va alors cacher certains éléments de la page
-			$affiche = 0;
-			$date_debut = $params['date_debut'];
-			$date_fin = $params['date_fin'];
-		}
-		
-		if(isset($params['month']) && $params['month'] !='')
-		{
-			$affiche = 0;
-			$ok = 1;
-			$month = $params['month'];
-		}
-		if($affiche ==1)
-		{
-			$smarty->assign('phase2',
-					$this->CreateLink($id,'user_results',$returnid, 'Phase 2', array("phase"=>"2","licence"=>$licence) ));
-			$smarty->assign('phase1',
-					$this->CreateLink($id,'user_results',$returnid, 'Phase 1', array("phase"=>"1","licence"=>$licence) ));
-		}
+		$licence = $params['licence'];		
 		
 		$rowarray1 = array();
-		$query = "SELECT SUM(victoire) AS vic, count(victoire) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
-		//qqs paramètres
-		$parms['saison'] = $saison;
-		$parms['licence'] = $licence;
-		//on presente phase par phase ?
-		if($affiche ==1)
-		{
-			if($this->GetPreference('phase_en_cours') =='1' )
-			{
-				if($params['phase'] ==2)
-				{
-					$query.= " AND MONTH(date_event) >= 1 AND MONTH(date_event) <=7"; 
-				}
-				else
-				{
-					$query.= " AND MONTH(date_event) > 7 AND MONTH(date_event) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
-				}
-			}
-			elseif( $this->GetPreference('phase_en_cours') == '2')
-			{
-				if($params['phase'] ==1)
-				{
-					$query.= " AND MONTH(date_event) > 7 AND MONTH(date_event) <=12";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";
-				}
-				else
-				{
-					$query.= " AND MONTH(date_event) >= 1 AND MONTH(date_event) <=7";  ////BETWEEN NOW() AND (NOW() + INTERVAL 7 DAY)";	
-				}
-			}
-		}
-		elseif($ok =='1')
-		{
-			$query.=" AND MONTH(date_event) = ?";
-			$parms['month'] = $month;
-		}
-		
-
-		$dbresult = $db->Execute($query, $parms);
+		$query = "SELECT SUM(victoire) AS vic, count(victoire) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($licence));
 
 			if($dbresult && $dbresult->RecordCount()>0)
 			{

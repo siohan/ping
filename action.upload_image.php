@@ -7,8 +7,8 @@ if(isset($params['genid']) && $params['genid'] !='')
 	
     // Repertoire cible
 	$target = $config['root_url']."/uploads/images/trombines";
-
-	if( !is_dir($target) ) 
+var_dump($target);
+	if( true == is_dir($target) ) 
 	{
   		if( !mkdir($target, 0755) ) 
   		{

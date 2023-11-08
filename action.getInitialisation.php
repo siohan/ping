@@ -34,8 +34,10 @@ switch($step)
 		{
 					//on récupère les organismes pour préparer le formulaire avec la zone
 					$smarty->assign('reussite', true);
+					$orga_ops = new fftt_organismes;
+					$orga_ops->delete_organismes();
 					$ret_ops->organismes();
-					$this->SetMessage('La FFTT a acceptée votre identification');
+					$this->SetMessage('La FFTT a accepté ton identification');
 					$this->SetPreference('connexion', true);
 					$this->Redirect($id, 'add_edit_club_number', $returnid);
 		}
@@ -48,21 +50,9 @@ switch($step)
 	break;
 	
 	case "2" : 
-		//on va récupérer les épreuves des différentes ligues, zones et comités
-		//on a le numéro du club avec lequel on peut faire bcp de choses...
-		//récupération des données utiles
-		$club_number = $this->GetPreference('club_number');
-		$ligue = substr($club_number, 0,2);
-		$ligue = '10'.$ligue;
-		$departement = substr($club_number, 2, 2);
-		$dep = (int)$departement;
-		$ping_admin_ops = new ping_admin_ops();
-		//$chercher_ligue = $ping_admin_ops->chercher_ligue($ligue);
-		//$chercher_departement = $ping_admin_ops->chercher_departement($departement);	
-		$retrieve_club_detail = $ret_ops->retrieve_detail_club($club_number);
-		$this->SetPreference('ligue', $ligue);
-		$this->SetPreference('dep', $dep);
-		//on commence par les compets 
+			
+		$retrieve_club_detail = $ret_ops->retrieve_detail_club($this->GetPreference('club_number'));
+		$this->Redirect($id, 'getInitialisation', $returnid, array('step'=>'3'));
 		
 	break;
 // LES EPREUVES	
@@ -73,13 +63,14 @@ switch($step)
 		$comp_ligue_indivs = $ret_ops->retrieve_compets($this->GetPreference('ligue'),$type="I");	
 		$comp_zone_eq = $ret_ops->retrieve_compets($this->GetPreference('zone'),$type="E");
 		$comp_zone_indivs = $ret_ops->retrieve_compets($this->GetPreference('zone'),$type="I");
-		
+		/*
 		$smarty->assign('comp_dep_eq', $comp_dep_eq);
 		$smarty->assign('comp_dep_indivs', $comp_dep_indivs);
 		$smarty->assign('comp_ligue_eq', $comp_ligue_eq);
 		$smarty->assign('comp_ligue_indivs', $comp_ligue_indivs);
 		$smarty->assign('comp_zone_eq', $comp_zone_eq);
 		$smarty->assign('comp_zone_indivs', $comp_zone_indivs);
+		* */
 		$this->Redirect($id, 'getInitialisation', $returnid, array("step"=>"4"));
 		
 	break;
@@ -90,10 +81,13 @@ switch($step)
 		$eq_fem = $ret_ops->retrieve_teams($type="F");
 		$eq_undefined = $ret_ops->retrieve_teams($type="U");
 		
+		/*
 		$smarty->assign('eq_masc', $eq_masc);
 		$smarty->assign('eq_fem', $eq_fem);
 		$smarty->assign('eq_undefined', $eq_undefined);
-		
+		* */
+		$this->Redirect($id, 'getInitialisation', $returnid, array("step"=>"5"));
+	break;	
 	
 //LES CLASSEMENTS DES EQUIPES
 	case "5" :
@@ -115,6 +109,7 @@ switch($step)
 				$ret_ops->retrieve_poule_rencontres($row['id'], $row['iddiv'], $row['idpoule'], $row['idepreuve']);
 			}
 		}
+		$this->Redirect($id, 'getInitialisation', $returnid, array("step"=>"6"));
 	break;
 
 	
@@ -134,6 +129,7 @@ switch($step)
 					$service->create_spid_account($licence);
 		       }
   		}
+  		$this->Redirect($id, 'getInitialisation', $returnid, array("step"=>"7"));
 		
 	break;
 	
@@ -157,7 +153,22 @@ switch($step)
   		{
   			$smarty->assign('sit_mens', false);
   		}
-		
+  		$this->Redirect($id, 'getInitialisation', $returnid, array("step"=>"8"));
+	break;
+	
+	case "8" : 
+		$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif = '1' AND type = 'T'";
+		$dbretour = $db->Execute($query);
+			if ($dbretour && $dbretour->RecordCount() > 0)
+			{
+			   while ($row= $dbretour->FetchRow())
+			   {
+					$licence = $row['licence'];
+					$ret_ops->retrieve_parties_fftt( $licence );
+		       }
+  			}
+  			$this->SetMessage('Eléments principaux récupérés');
+			$this->RedirectToAdminTab('Configuration');	
 	break;
 	
 	

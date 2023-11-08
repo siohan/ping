@@ -4,7 +4,7 @@ if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 $db = cmsms()->GetDb();
 
-
+$smarty->assign('mois_courant', date('m'));
 if(isset($params['template']) && $params['template'] != '')
 {
 	$template = $params['template'];
@@ -44,7 +44,8 @@ if ($dbresult && $dbresult->RecordCount()>0)
 			$details = $j_ops->details_joueur($row['licence']);
 			$onerow->actif = $details['actif'];
 			$onerow->joueur= $details['nom'].' '.$details['prenom'];
-			$onerow->maj_spid= $details['maj_spid'];
+			$onerow->licence= $row['licence'];
+			//$onerow->maj_spid= $details['maj_spid'];
 			$onerow->clt=$details['clast'];
 			$onerow->somme = $row['pts_spid'];
 			$onerow->bilan = $details['clast'] + $row['pts_spid'];
@@ -58,8 +59,7 @@ else
 	echo $db->ErrorMsg();
 }
 	
-$smarty->assign('returnlink', 
-		$this->CreateFrontendLink($id,$returnid, 'sit_mens_provisoire',$addtext='Retour'));
+
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

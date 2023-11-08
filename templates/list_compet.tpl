@@ -8,7 +8,7 @@
   	<th>Coefficient</th>
 	<th>Echelon</th>
 	<th>Tag pour affichage</th>
-	<th colspan="3">Récupérer les divisions</th>
+	<th colspan="4">Récupérer les divisions</th>
   </tr>
  </thead>
  <tbody>

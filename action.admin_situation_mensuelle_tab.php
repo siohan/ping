@@ -12,10 +12,7 @@ $mois_courant = (isset($params['mois']) ? $params['mois'] : date('n'));//Mois au
 $annee_courante = (isset($params['annee']) ? $params['annee'] : date('Y'));
 $mois_suivant = $mois_courant + 1;
 $mois_prec = $mois_courant - 1;
-if($jour_courant >= 10)
-{
-	$smarty->assign('nettoyage', true);
-}
+
 $smarty->assign('mois_courant', $mois_courant);
 $smarty->assign('mois_suivant', $mois_suivant);
 $smarty->assign('mois_prec', $mois_prec);

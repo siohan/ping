@@ -276,7 +276,31 @@ class spid_ops
 		{
 			$ping_ops = new ping_admin_ops;
 			$message = $db->ErrorMsg(); 
-			$status = 'Ok';
+			$status = 'Spid Calcul Ok';
+			$designation = $message;
+			$action = "mass_action";
+			$now = date('Y-m-d H:i:s');
+			$ping_ops->ecrirejournal($now,$status, $designation,$action);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	//Remet les compteurs spid à 0
+	function reset_spid()
+	{
+		$db = cmsms()->GetDb();
+		$time = time();
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET spid = 0, spid_total = 0, spid_errors = 0, maj_spid = ? , pts_spid = 0";		
+		$dbresult = $db->Execute($query, array($time));
+
+		if($dbresult)
+		{
+			$ping_ops = new ping_admin_ops;
+			$message = $db->ErrorMsg(); 
+			$status = 'Maj Compteurs Spid';
 			$designation = $message;
 			$action = "mass_action";
 			$now = date('Y-m-d H:i:s');

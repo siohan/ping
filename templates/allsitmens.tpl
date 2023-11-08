@@ -1,8 +1,11 @@
 {*<pre>{$items|var_dump}</pre>*}
-<div class="pageoptions">
-{if $jour <10}
-<p class="warning">Attention ! L'accès n'est pas encore libre ! Vous ne pouvez pas récupérer les situations mensuelles automatiquement</p>{else}<p class="success">L'accès est désormais libre, vous pouvez  récupérer les situations mensuelles.</p>{/if}</div>
-<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} {if true == $nettoyage}| {$retrieveallsitmens} {/if}</p></div>
+<div class="pageoptions"><p class="green">Tag pour affichage de la situation : {ldelim}Ping action="sit_mens"{rdelim} {cms_help key=help_tag}</p><p class="green">Tag pour affichage de la situation en live ! : {ldelim}Ping action="sit_mens_provisoire"{rdelim} {cms_help key=help_tag}</p>
+{if $smarty.now|date_format:"%e" < 10}{*$jour <10*}
+<p class="red">Attention ! L'accès n'est pas encore libre, tu ne peux pas récupérer les situations mensuelles !</p>
+{else}
+<p class="green">L'accès est désormais libre, tu peux  récupérer les situations mensuelles !</p>
+<p><a href="{cms_action_url action=retrieve retrieve=sit_mens_all}">{admin_icon icon="import.gif"}Ajouter les situations mensuelles</a></p>{/if}</div>
+<div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound}</p></div>
 <h3>Les situations mensuelles du mois en cours</h3>
 <a href="{cms_action_url action='defaultadmin' __activetab='situation' mois=$mois_prec}"> &lt Préc</a>
 <a href="{cms_action_url action='defaultadmin' __activetab='situation' mois=$mois_suivant}"> Suiv &gt</a>

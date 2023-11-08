@@ -1,13 +1,14 @@
 <?php
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 //global $themeObject;
 //require_once(dirname(__FILE__).'/include/prefs.php');
 $licence = '';
 $date_event = '';
 $ok = 0;
 $saison_courante = (isset($params['saison']))?$params['saison']:$this->GetPreference('saison_en_cours');
+$mois_courant = date('n');
 if(isset($params['template']) && $params['template'] !="")
 {
 	$template = $params['template'];
@@ -21,45 +22,30 @@ else {
     $template = $tpl->get_name();
 }
 //echo 'la phase est : '.$phase;
-	if(!isset($params['licence']) && $params['licence'] =='' )
+	if(!isset($params['record_id']) && $params['record_id'] =='' )
 	{
 		echo "la licence est absente !";
 		
 	}
 	else
 	{
-		$licence = $params['licence'];
-		$adh_ops = new adherents_spid;
-		$joueur = $adh_ops->get_name($licence);
-		$smarty->assign('joueur', $joueur);
-		$parms = array();
-	
-		
-		
-		$rowarray1 = array();
-		$query = "SELECT SUM(vd) AS vic, count(vd) AS total, SUM(pointres) AS pts FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ?";
-		$dbresult = $db->Execute($query, array($licence, $saison_courante));
-		$rowclass = 'row1';
-			if($dbresult && $dbresult->RecordCount()>0)
-			{
-				while($row1 = $dbresult->FetchRow())
-				{
-					$onerow1= new StdClass();
-					$onerow1->rowclass= $rowclass;
-					$onerow1->vic= $row1['vic'];
-					$onerow1->total= $row1['total'];
-					$onerow1->pts= $row1['pts'];
-					($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
-					$rowarray1[]= $onerow1;
-				}
-			}
-			$smarty->assign('items1', $rowarray1);
+		$licence = $params['record_id'];
+		$j_ops = new joueurs;
+		$sum_spid = $j_ops->spid_calcul($licence,$saison_courante, $mois_courant);
+		$smarty->assign('global', $sum_spid);
+		$sum_fftt = $j_ops->fftt_calcul($licence,$saison_courante);
+		$smarty->assign('global_fftt', $sum_fftt);
+		$joueur = $j_ops->details_joueur($licence);
+		$nom = $joueur['nom'].' '.$joueur['prenom'];
+		$smarty->assign('nom', $nom);
+		$parms = array();		
 
 
-		$query3= "SELECT advnompre, advclaof,pointres, vd,date_event FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ? ORDER BY date_event DESC";
+		$query3= "SELECT advnompre, advclaof,pointres, vd,date_event FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ? ORDER BY date_event ASC";
 		$dbresult3 = $db->Execute($query3, array($licence, $saison_courante));
 		
 		$rowarray= array();
+		$rowclass= 'row1';
 
 		if ($dbresult3 && $dbresult3->RecordCount() > 0)
 		{
@@ -79,17 +65,49 @@ else {
 		      	}
 		}
 		
-		$smarty->assign('resultats',
-				$this->CreateLink($id,'user_results',$returnid,$contents = 'Tous ses résultats', array('licence'=>$licence,'saison'=>$saison_courante)));
+		
 	}//fin du else (if $licence isset)
 
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
-$smarty->assign('retour',
- 		$this->CreateLink($id, 'sit_mens', $returnid,$contents='<= Retour'));
 $smarty->assign('items', $rowarray);
+
+$query2= "SELECT nom, coeff,classement,pointres, victoire,date_event,epreuve,numjourn FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ? ";
+$query2.=" AND MONTH(date_event) = ?";
+$query2.=" ORDER BY date_event ASC";
+//echo $query2;
+$dbresult2 = $db->Execute($query2, array( $saison_courante,$licence,$mois_courant));
+		
+	$rowarray2= array();
+	$rowclass2 = 'row1';
+	if ($dbresult2 && $dbresult2->RecordCount() > 0)
+	{
+		while ($row2= $dbresult2->FetchRow())
+		{
+			
+			$onerow2= new StdClass();
+			$onerow2->rowclass= $rowclass2;
+			$onerow2->date_event= $row2['date_event'];
+			$onerow2->nom= $row2['nom'];
+			$onerow2->classement= $row2['classement'];
+			$onerow2->victoire= $row2['victoire'];
+			$onerow2->coeff= $row2['coeff'];
+			$onerow2->pointres= $row2['pointres'];
+			
+			$rowarray2[]= $onerow2;
+		}
+	}
+$smarty->assign('itemsfound2', $this->Lang('resultsfoundtext'));
+$smarty->assign('itemcount2', count($rowarray2));
+$smarty->assign('items2', $rowarray2);
+//$smarty->assign('global', $global);
+//echo $this->ProcessTemplate('user_results_prov.tpl');
+$smarty->assign('pagetitle', 'Le détail des résultats de '.$nom);
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), null, null, $smarty);
 $tpl->display();
+ 
+ 
+
 //echo $this->ProcessTemplate('user_results.tpl');
 
 

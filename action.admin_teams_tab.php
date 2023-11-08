@@ -14,7 +14,7 @@ $idepreuve= '';
 //debug_display($_POST, 'Parameters');
 
 $phase_courante = $this->GetPreference('phase_en_cours');
-
+$ping_ops = new ping_admin_ops;
 $phase = (isset($_POST['phase']))?$_POST['phase']:$phase_courante;
 $saison = (isset($_POST['saison']))?$_POST['saison']:$this->GetPreference('saison_en_cours');
 
@@ -45,7 +45,7 @@ $dbresult= $db->Execute($query, array($saison, $phase));
 				$onerow->libequipe=  $row['libequipe'];
 				$onerow->libdivision= $row['libdivision'];
 				$onerow->friendlyname= $row['friendlyname'];
-				//$onerow->name= $row['name'];
+				$onerow->page_contenu= $ping_ops->page_contenu($row['eq_id']);
 				$onerow->idepreuve = $row['idepreuve'];
 				$onerow->tag = $row['tag_equipe'];
 				$onerow->horaire = $row['horaire'];

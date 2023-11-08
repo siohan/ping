@@ -2,25 +2,17 @@
 
 #-------------------------------------------------------------------------
 # Module : Ping - 
-# Version : 0.9, Sc
+# Version : 1.2.4, Sc
 # Auteur  Claude SIOHAN
 #-------------------------------------------------------------------------
-/**
- *
- * @author Claude SIOHAN
- * @since 0.1
- * @version $Revision: 3827 $
- * @modifiedby $LastChangedBy: Claude
- * @lastmodified $Date: 2020-25-10 11:56:16 +0200 (Mon, 25 oct 2020) $
- * @license GPL
- **/
+
 
 class Ping extends CMSModule
 {
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.9'; }  
+  function GetVersion() { return '1.2.4'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'Claude Siohan'; } 
   function GetAuthorEmail() { return 'claude.siohan@gmail.com'; }
@@ -38,12 +30,12 @@ class Ping extends CMSModule
 	
   }
   
-  
+  /**
   function GetDependencies()
   {
 	//return array('CGSmartImage'=>'1.22.7');
   }
-
+  */
   
 
   function MinimumCMSVersion()
@@ -164,8 +156,17 @@ public function get_tasks()
 	$obj[4] = new PingRecupUsersTask();
 	$obj[5] = new PingDetailsRencontresTask();
 	$obj[6] = new PingClassementsTask();
-	$obj[7] = new PingResetSpidTask();
-	$obj[8] = new PingSitMensTask();
+	$obj[7] = new PingDivisionsTask();
+	$obj[8] = new PingToursTask();
+	$obj[9] = new PingSitMensTask();
+	$obj[10] = new PingJournalTask();
+	$obj[11] = new PingTeamsTask();
+	$obj[12] = new PingRecupPouleTask();
+	$obj[13] = new TeamsNotifTask();
+	$obj[14] = new RecupCompetsTask();
+	$obj[15] = new PingRecupDivClaTask();
+	$obj[16] = new PingPhaseSaisonTask();
+	$obj[17] = new PingResetSpidTask();
 	
 return $obj; 
 }
@@ -215,6 +216,9 @@ final public static function page_type_lang_callback($str)
     case 'Countdown' :
     		$fn = 'displaycountdown.tpl';
     		break;
+    case 'Resultats Indivs' :
+			$fn = 'orig_indivs.tpl';
+			break;
 
         }
 

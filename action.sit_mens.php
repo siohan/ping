@@ -1,13 +1,13 @@
 <?php
 if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
-//require_once(dirname(__FILE__).'/include/prefs.php');
+require_once(dirname(__FILE__).'/include/prefs.php');
 $db = cmsms()->GetDb();
 global $themeObject;
 $mois_courant = date('n');
 $annee_courante = date('Y');
+
 $mois_choisi = '';
-//$adh_ops = new Asso_adherents;
 
 $liste_mois_fr = array("Janvier", "Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre", "Décembre");
 $phase = $this->GetPreference('phase_en_cours');
@@ -24,10 +24,38 @@ else {
     }
     $template = $tpl->get_name();
 } 
-
-	if($params['mois'] !='' )
+	
+	if(isset($params['mois'] ) && $params['mois'] !='' && isset($params['annee']) && $params['annee'] !='') 
 	{
-		$mois_choisi = (int) $params['mois'];		
+		$mois_choisi = (int) $params['mois'];
+		$annee = $params['annee'];	
+		if($mois_choisi == 12)
+		{
+			$mois_suivant = 1;
+			$mois_precedent = 11;
+			$annee_suivante = $annee+1;
+			$annee_precedente = $annee;
+			$annee= $annee;
+			
+		}
+		elseif($mois_choisi == 1)
+		{
+			$mois_precedent = 12;
+			$mois_suivant = $mois_choisi + 1;
+			$annee_precedente = $annee - 1;
+			$annee_suivante = $annee;
+			$annee= $annee;
+		}
+		else
+		{
+			$mois_precedent = $mois_choisi - 1;
+			$mois_suivant = $mois_choisi + 1;
+			$annee_precedente = $annee;
+			$annee_suivante = $annee;
+			$annee= $annee;
+		}
+			
+		
 	}
 	else
 	{
@@ -39,68 +67,41 @@ else {
 				//on est début janvier, on veut afficher la situation de décembre
 				//pour les liens suivants
 				$mois_choisi = 12;
+				$annee = date('Y')-1;
+				$mois_precedent = 11;
+				$mois_suivant = 1;
+				$annee_precedente = $annee_courante - 1;
+				$annee_suivante = date('Y');
 			}
 			else
 			{
-				$mois_choisi = date('n') -1;
+				$mois_choisi = date('n')-1;
+				$annee = date('Y');
+				$mois_precedent = date('n')-2;
+				$mois_suivant = date('n')-1;
+				$annee_precedente = $annee_courante - 1;
+				$annee_suivante = date('Y');
 			}
+			
 
 		}
 		else
 		{
 			$mois_choisi = date('n');
-		} 
+			$mois_suivant = $mois_choisi + 1;
+			$mois_precedent = $mois_choisi - 1;
+			$annee = date('Y');
+			$annee_precedente = $annee;
+			$annee_suivante = $annee;
+		}
+		
 	}	
 	
-	//pour les liens précédent et suivant :	
-	if(date('d') < 10 )
-	{
-			if($mois_choisi == 1)
-			{
-				//on est début janvier, on veut afficher la situation de décembre
-				//pour les liens suivants
-				$mois_suivant = 1;
-				$mois_precedent = 11;
-				
-			}
-			elseif($mois_choisi == 12)
-			{
-				$mois_suivant = 12;
-				$mois_precedent = 11;
-			}
-			else
-			{
-				$mois_precedent = $mois_choisi - 1;
-				$mois_suivant = $mois_choisi +1;
-			}
-	}
-	else
-	{
-			if($mois_choisi == 1)
-			{
-				//on est début janvier, on veut afficher la situation de décembre
-				//pour les liens suivants
-				$mois_suivant = 2;
-				$mois_precedent = 12;
-				
-			}
-			elseif($mois_choisi == 12)
-			{
-				$mois_suivant = 1;
-				$mois_precedent = 11;
-			}
-			else
-			{
-				$mois_precedent = $mois_choisi - 1;
-				$mois_suivant = $mois_choisi +1;
-			}
-			//$mois_precedent = $mois_choisi - 1;
-			//$mois_suivant = $mois_choisi +1;
-	} 
-	
-
+	$smarty->assign('mois_courant', $mois_courant);
 	$smarty->assign('mois_precedent',$mois_precedent);
 	$smarty->assign('mois_suivant', $mois_suivant);
+	$smarty->assign('annee_suivante', $annee_suivante);
+	$smarty->assign('annee_precedente', $annee_precedente);
 	
 			
 
@@ -110,22 +111,9 @@ $jour = date('j');
 
 $phase_courante = $this->GetPreference('phase');
 
-$query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep,sm.progann, sm.progmois,sm.clglob, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens AS sm, ".cms_db_prefix()."module_ping_joueurs AS j WHERE sm.licence  = j.licence AND j.actif = '1' AND type='T'";//" WHERE annee = ? AND mois = ?";
-
-	if(isset($params['mois']) && $params['mois'] >0)
-	{
-		$query.=" AND sm.mois = ?";
-		$parms['mois'] = $mois_choisi;
-	
-	}
-	else
-	{
-		$query.=" AND sm.mois = ?";
-		$parms['mois'] = $mois_choisi;
-	}
-	
-	$query.=" AND sm.saison = ?";
-	$parms['saison'] = $saison_courante;
+$query = "SELECT sm.licence,sm.mois,sm.annee, sm.points,sm.datemaj, sm.clnat, sm.rangreg, sm.rangdep,sm.progann, sm.progmois,sm.clglob, CONCAT_WS(' ', j.nom, j.prenom) AS joueur FROM ".cms_db_prefix()."module_ping_sit_mens AS sm, ".cms_db_prefix()."module_ping_joueurs AS j WHERE sm.licence  = j.licence AND j.actif = '1' AND type='T' AND annee = ? AND mois = ?";
+$parms['annee'] = $annee;
+$parms['mois'] = $mois_choisi; 
 	
 	if(isset($params['sort']) )
 	{
@@ -148,7 +136,6 @@ $query = "SELECT sm.licence,sm.mois, sm.points, sm.clnat, sm.rangreg, sm.rangdep
 		$parms['number'] = $params['number'];
 	}
 	
-	//echo $query;
 	$dbresult = $db->Execute($query, $parms);
 
 $rowclass= 'row1';
@@ -161,9 +148,9 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	
 		$onerow= new StdClass();
 		$onerow->rowclass= $rowclass;
-		//on va chercher l'image du joueur (définie ds le module adhérents)
-		//$details_adh = $adh_ops->details_adherents($row['licence']);
-		$genid = $details_adh['genid'];
+		
+		$licence = $row['licence'];
+		//$genid = $details_adh['genid'];
 		$onerow->joueur= $row['joueur'];
 		$onerow->points = $row['points'];
 		$onerow->clglob = $row['clglob'];
@@ -172,16 +159,22 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->rangdep= $row['rangdep'];
 		$onerow->progmois= $row['progmois'];
 		$onerow->progann= $row['progann'];
+		$onerow->licence= $row['licence'];
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
 	}
 	$smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
+
 }
+//var_dump($annee);
 $mois_def = $mois_choisi -1;
 $mois_en_fr = $liste_mois_fr[$mois_def];
 $smarty->assign('mois_choisi', $mois_en_fr);
+$smarty->assign('mois_choisi_2', $mois_choisi);
+
+$smarty->assign('pagetitle', 'La situation mensuelle de '.$mois_en_fr.' '.$annee);
 
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();

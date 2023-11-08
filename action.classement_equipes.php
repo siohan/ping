@@ -2,8 +2,18 @@
 if( !isset( $gCms) ) exit;
 $db = cmsms()->GetDb();
 //debug_display($params, 'Parameters');
-$saison = (isset($params['saison'])?$params['saison']:$this->GetPreference('saison_en_cours'));
-$phase = (isset($params['phase'])?$params['phase']:$this->GetPreference('phase_en_cours'));
+$phase = (isset($params['phase'])?$params['phase'] : $this->GetPreference('phase_en_cours'));
+if(isset($params['idepreuve']) && $params['idepreuve'] !='')
+{
+	$idepreuve = $params['idepreuve'];	
+}
+if(!empty($this->GetPreference('details_rencontre_page')) )
+{
+	$cg_ops = new CMSMSExt;
+	$alias_page = $this->GetPreference('details_rencontre_page');
+	$landing_page = $cg_ops->resolve_alias_or_id($alias_page);
+	
+}
 //$nom_equipes = $this->GetPreference('nom_equipes');
 $record_id = '';
 $parms = array();
@@ -21,24 +31,17 @@ else {
 }
 $query = "SELECT cl.id AS row_id,cl.clt, cl.joue,cl.equipe,cl.pts,cl.vic, cl.nul, cl.def, cl.pg, cl.pp, cl.pf,eq.libequipe,eq.friendlyname, eq.numero_equipe, eq.idpoule FROM ".cms_db_prefix()."module_ping_classement AS cl, ".cms_db_prefix()."module_ping_equipes AS eq WHERE eq.id = cl.idequipe ";
 //$query.=" AND cl.equipe LIKE ? ";
-$query.= "AND cl.equipe = eq.libequipe  AND cl.saison = ? AND phase = ?";
+$query.= "AND cl.equipe = eq.libequipe AND eq.phase = ?";
 
 
-$parms['saison'] = $saison;
+
 $parms['phase'] = $phase;
-//en parametres possibles : 
-#le championnat recherché ou non
-#une equipe précise ou non
-	if(isset($params['idepreuve']) && $params['idepreuve'] !='')
-	{
-		$idepreuve = $params['idepreuve'];
-		$query.=" AND eq.idepreuve = ?";
-		$parms['idepreuve'] = $idepreuve;
-		
-	}
 
+	
+$query.=" AND eq.idepreuve = ?";
+$parms['idepreuve'] = $idepreuve;
 
-//on aordonne la table
+//on ordonne la table
 $query.= " ORDER BY eq.numero_equipe ASC";
 if(isset($params['number']) && $params['number'] > 0)
 {
@@ -48,7 +51,7 @@ if(isset($params['number']) && $params['number'] > 0)
 }
 
 //on effectue la requete
-$dbresult = $db->Execute($query,$parms);//array($equipes,$saison,$phase,$idepreuve));
+$dbresult = $db->Execute($query,$parms);
 //echo $query;
 $rowarray = array();
 if($dbresult && $dbresult->RecordCount()>0)
@@ -104,6 +107,7 @@ else
 
 $smarty->assign('items', $rowarray);
 $smarty->assign('itemcount', count($rowarray));
+$smarty->assign('landing_page', $landing_page);
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();//echo $this->ProcessTemplate('classement.tpl');
 #

@@ -36,10 +36,10 @@ $dbresult = $db->Execute($query);
 
 $query="TRUNCATE ".cms_db_prefix()."module_ping_rencontres_parties";
 $dbresult = $db->Execute($query);
-
+/*
 $query = "DELETE FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idorga != '100001'";
 $dbresult = $db->Execute($query);
-
+*/
 $this->RedirectToAdminTab('compte');		
 ?>
 

@@ -30,7 +30,7 @@ class PingRecupSpidTask implements CmsRegularTask
 	
 
       // Définition de la périodicité de la tâche (24h ici)
-      	if( $time - $last_execute >=  24*3600)  
+      	if( $time - $last_execute >=  86400)  
 	{
 		return true; // hardcoded to 15 minutes
 	}

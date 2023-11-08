@@ -24,7 +24,7 @@
 		<th>Phase</th>
 		<th>Nom court</th>
 		<th>Horaire</th>
-		<th>Tag pour affichage</th>
+		<th>Page dans le site</th>
 		<th colspan="3">Actions</th>
 		<th><input type="checkbox" id="selectall" name="selectall"></th>
 	</tr>
@@ -39,7 +39,7 @@
 	<td>{$entry->phase}</td>
     <td>{$entry->friendlyname}</td>
 	<td>{$entry->horaire}</td>
-	<td>{$entry->tag}</td>
+	<td>{if $entry->page_contenu == 0}{admin_icon icon="warning.gif" title="Pas de contenu"}{else}{admin_icon icon="true.gif" title=$entry->page_contenu}{/if}</td>
 	<td><a href="{cms_action_url action=admin_poules_tab3 record_id=$entry->eq_id}">{admin_icon icon="view.gif"}</a></td>
 	<td><a href="{cms_action_url action=edit_team record_id=$entry->eq_id}">{admin_icon icon="edit.gif"}</td>
     <td><a href="{cms_action_url action=delete type_compet=teams record_id=$entry->eq_id}">{admin_icon icon="delete.gif"}</a></td>

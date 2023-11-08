@@ -45,6 +45,10 @@ switch($display)
 	case "scores" : 
 		require(__DIR__.'/action.displayscores.php');
 	break;
+	
+	case "indivs" : 
+		require(__DIR__.'/action.indivs.php');
+	break;
 }
 /*
 $nom_equipes = $this->GetPreference('nom_equipes');

@@ -206,29 +206,93 @@ class rencontres
 			}
 		}
 	}
-	function vicdef_per_match($renc_id,$side)
+	function we_results($renc_id, $side)
+	{
+		global $gCms;
+		$db = cmsms()->GetDb();
+		////on extrait les données du renc_id : saison, journée
+		$renc_id = (int) $renc_id;
+		
+		$ren_ops = new rencontres;
+		$eq_ping = new equipes_ping;
+		$details_renc = $ren_ops->details_rencontre($renc_id);
+		$idepreuve = $details_renc['idepreuve'];
+		$journee = $details_renc['tour'];
+		$eq_id = $details_renc['eq_id'];
+		$details_eq = $eq_ping->details_equipe($eq_id);
+		$numero_equipe = $details_eq['numero_equipe'];
+		//on déduit la journee pour savoir quelle colonne modifier
+		
+		
+		if($side == 'A')
+		{
+			$query = "SELECT joueurA AS nom_complet, scoreA AS score, joueurB,  FROM ".cms_db_prefix()."module_ping_rencontres_parties WHERE fk_id = ?";
+		}
+		else
+		{
+			$query = "SELECT joueurB AS nom_complet, scoreB AS score, joueurA FROM ".cms_db_prefix()."module_ping_feuilles_rencontres WHERE fk_id = ?";
+		}
+		
+		$dbresult = $db->Execute($query, array($renc_id));
+		if($dbresult && $dbresult->RecordCount() >0)
+		{
+			
+				while($row = $dbresult->FetchRow())
+				{
+					$licence = $this->est_joueur_du_club($row['nom_complet']);//on récupère la licence du joueur du club
+					
+					//on a la licence on peut donc insérer le joueur
+					if(!false == $licence)
+					{
+						//maintenant on peut lister la table
+						$player_exists = $this->renc_id_player_exists($licence, $renc_id);
+						if( false == $player_exists)
+						{
+							$victoires = $nb_parties = 0;
+							$details = '';
+							$this->add_we_results($licence,$journee,$renc_id,$idepreuve,$numero_equipe,$victoires, $nb_parties,$details);
+							//maintenant on peut lister la feuille de rencontre
+						}
+						$this->update_we_results($renc_id, $licence, $row['score']);							
+					}
+				}
+							
+		}
+		
+	}
+	
+	function add_we_results($licence,$journee, $renc_id,$idepreuve,$numero_equipe,$victoires, $nb_parties,$details)
 	{
 		$db = cmsms()->GetDb();
-		$query = "SELECT fk_id, joueurA, scoreA, joueurB, scoreB FROM ".cms_db_prefix()."module_ping_rencontres_parties WHERE fk_id = ?";
-		$dbresult = $db->Execute($query, array($renc_id));
-		if($dbresult && $dbresut->RecordCount()>0)
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_we_results (licence, tour, renc_id, idepreuve, numero_equipe, victoires, nb_parties, details) VALUES  (?, ?, ?, ?, ?, ?, ?, ?)";
+		$dbresult = $db->Execute($query, array( $licence,$journee, $renc_id,$idepreuve,$numero_equipe,$victoires, $nb_parties,$details));
+	}
+	
+	function update_we_results($renc_id, $licence, $score)
+	{
+		$db = cmsms()->GetDb();
+		$query = "UPDATE ".cms_db_prefix()."module_ping_we_results SET victoires = victoires + ?, nb_parties = nb_parties+1 WHERE licence = ? AND renc_id = ?";
+		$dbresult = $db->Execute($query, array($score, $licence, $renc_id));
+	}
+	
+	//détermine si un joueur est déjà dans cette rencontre (et faire un update)
+	function renc_id_player_exists($licence, $renc_id)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_we_results WHERE licence = ? AND renc_id = ?";
+		$dbresult = $db->Execute($query, array($licence, $renc_id));
+		if($dbresult && $dbresult->RecordCount()>0)
 		{
-			while($row = $dbresult->FetchRow())
+			$row = $dbresult->FetchRow();
+			$nb = $row['nb'];
+			if($nb >0)
 			{
-				$fk_id = $row['fk_id'];
-				$joueurA = $row['joueurA'];
-				$scoreA = $row['scoreA'];
-				$joueurB = $row['fjoueurBk_id'];
-				$scoreB = $row['scoreB'];
-				if($side == 'A')
-				{
-					
-				}
-				else
-				{
-					
-				}			
+				return TRUE;
 			}
+		}
+		else
+		{
+			return FALSE;
 		}
 	}
 	//détermine quel joueur
@@ -243,7 +307,9 @@ class rencontres
 		
 			if($dbresult->RecordCount()>0)
 			{
-				return TRUE;
+				$row = $dbresult->FetchRow();
+				$licence = $row['licence'];
+				return $licence;
 			}
 			else
 			{
@@ -257,6 +323,9 @@ class rencontres
 			//une erreur de requete
 		}
 	}
+	
+	
+	
 	//cette fonction va chercher le dernier match (renc_id) d'une equipe à afficher (pour xibo)
 	public function derniere_rencontre($libequipe,$iddiv, $idpoule)
 	{
@@ -299,13 +368,17 @@ class rencontres
 			return FALSE;
 		}
 	}
-	//détermine si les détails d'une rencontre ont été uploadé
+	//Met à uploadé une rencontre
 	function is_uploaded($renc_id)
 	{
 		$db = cmsms()->GetDb();
 		$query = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET uploaded = 1 WHERE renc_id = ?";
 		$dbresult = $db->Execute($query, array($renc_id));
-		
+		if($dbresult && $dbresult->recordCount() >0)
+		{
+			return true;
+		}
+		else
 		{
 			return false;
 		}
@@ -400,7 +473,7 @@ class rencontres
 	function last_match ($record_id)
 	{
 		$db = cmsms()->GetDb();
-		$query = "SELECT date_event, equa, equb, renc_id, horaire, scorea, scoreb, uploaded, idepreuve, equip_id1, equip_id2 FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? AND club = 1 AND affiche = 1 AND date_event < CURRENT_DATE() ORDER BY tour DESC LIMIT 1";
+		$query = "SELECT date_event, equa, equb, renc_id, horaire, scorea, scoreb, uploaded, idepreuve, equip_id1, equip_id2, saison, tour, club, affiche FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? AND club = 1 AND affiche = 1 AND date_event <= CURRENT_DATE() ORDER BY tour DESC LIMIT 1";
 		$dbresult = $db->Execute($query, array($record_id));
 		if($dbresult && $dbresult->RecordCount() >0)
 		{
@@ -419,6 +492,10 @@ class rencontres
 				$data['equip_id1'] = $row['equip_id1'];
 				$data['equip_id2'] = $row['equip_id2'];
 				$data['uploaded'] = $row['uploaded'];
+				$data['saison'] = $row['saison'];
+				$data['tour'] = $row['tour'];
+				$data['club'] = $row['club'];
+				$data['affiche'] = $row['affiche'];
 			}
 			return $data;
 		}
@@ -450,23 +527,27 @@ class rencontres
 		$db = cmsms()->GetDb();
 		$query = "SELECT COUNT(*) AS nb FROM ".cms_db_prefix()."module_ping_rencontres_parties WHERE fk_id = ?";
 		$dbresult = $db->Execute($query, array($record_id));
-		if($dbresult && $dbresult->RecordCount()>0)
+		if($dbresult)
 		{
-			$row = $dbresult->FetchRow();
-			$nb = $row['nb'];
-			if($nb >0)
-			{ 
-				return true;
-			}
-			else
+			if( $dbresult->RecordCount()>0)
 			{
-				return false;
+				$row = $dbresult->FetchRow();
+				$nb = $row['nb'];
+				if($nb >0)
+				{ 
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
 		else
 		{
 			return false;
-		}
+		} 
+		
 	}
 	//met le statut de la rencontre à nontéléchargé
 	function not_uploaded($record_id)
@@ -575,6 +656,134 @@ class rencontres
 		$dbresult = $db->Execute($query, array($new_date, $hor, $record_id));
 		
 	}
+	
+	//vérifie si une équipe est bien présente dans une poule sinon va chercher toutes les rencontres
+	function poule_exists($record_id)
+	{
+		$db = cmsms()->GetDb();
+		$query="SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ?";
+		$dbresult = $db->Execute($query, array($record_id));
+	}
+	
+	//retourne le nb d'items de resultats pour les scores
+	function nb_items_scores($saison, $phase, $idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$parms = array();
+		$query = "SELECT count(*) AS nb_items FROM ".cms_db_prefix()."module_ping_equipes WHERE saison = ? AND phase = ?";
+		
+			$parms['saison'] = $saison;
+			$parms['phase'] = $phase;
+			
+			//on détermine s'il s'agit d'un tableau (avec présence virgule) ou pas
+			//il faut aussi supprimer la phase présente dans l'argument de l'épreuve(-1 ou -2)
+			if(false !== strstr( $idepreuve,","))
+			{
+		
+				//var_dump($params['idepreuve']);
+		
+				$tab = explode(',', $idepreuve);
+		
+				$epreuve = array();
+				foreach($tab as $value)
+				{
+					
+					$epreuve[] = strstr($value,'-',true);
+					
+					
+				}
+				
+				$query.= " AND idepreuve IN (".implode(',',$epreuve).")";
+			}
+			else
+			{
+				$epreuve = explode('-', $idepreuve);
+				$query.= " AND idepreuve = ?";
+				$parms['idepreuve'] = $epreuve[0];//$params['idepreuve'];
+			}
+		$dbresult = $db->Execute($query, $parms);
+		if($dbresult)
+		{
+			if($dbresult->RecordCount() >0)
+			{
+				while($row = $dbresult->FetchRow())
+				{
+					$nb_items = $row['nb_items'];
+				}
+				
+			}
+			else
+			{
+				$nb_items = 1;
+			}
+		}
+		else
+		{
+			$nb_items = 2;
+		}
+		return $nb_items;
+		
+	}
+	
+	//retourne le nb de prochaines rencontres
+	
+	function nb_items_affiche( $phase, $idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$parms = array();
+		$query = "SELECT count(*) AS nb_items2 FROM ".cms_db_prefix()."module_ping_equipes WHERE phase = ?"; //saison LIKE ? AND phase = ? ";
+		//$parms['saison'] = $saison;			
+		$parms['phase'] = $phase;			
+		
+		//on détermine s'il s'agit d'un tableau (avec présence virgule) ou pas
+		//il faut aussi supprimer la phase (-1 ou -2)
+		if(false !== strstr( $idepreuve,","))
+		{
+			
+			$tab = explode(',', $idepreuve);
+			
+			$epreuve = array();
+			foreach($tab as $value)
+			{
+				$epreuve[] = strstr($value,'-',true);							
+			}
+			
+			$query.= " AND idepreuve IN (".implode(',',$epreuve).")";
+		}
+		else
+		{
+			$epreuve = explode('-', $idepreuve);
+			$query.= " AND idepreuve = ?";
+			$parms['idepreuve'] = $idepreuve;
+			//$parms['idepreuve'] = $epreuve[0];
+		}
+		
+		$dbresult = $db->Execute($query,$parms);
+					
+			if($dbresult)
+			{
+				if($dbresult->RecordCount() >0)
+				{
+					while($row = $dbresult->FetchRow())
+					{
+						$nb_items = $row['nb_items2'];
+					}
+					
+				}
+				else
+				{
+					$nb_items = 0;
+				}
+			}
+			else
+			{
+				$nb_items = 0;
+			}
+			return $nb_items;			
+		
+	}
+
+
 
 	
 }//end of class

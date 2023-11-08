@@ -193,7 +193,7 @@ switch($params['retrieve'])
 					//return $player;
 					$service = new retrieve_ops;
 					$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
-					var_dump($resultats);
+					//var_dump($resultats);
 					$status = 'OK';
 					$designation = $resultats.' parties spid pour '.$player;
 					$action = 'Spid Seul';
@@ -230,7 +230,7 @@ switch($params['retrieve'])
 				$service = new retrieve_ops;
 				$resultats = $service->retrieve_parties_spid2($licence,$player,$cat);
 				$maj_fftt = $spid_ops->compte_spid($licence);
-				$maj_spid = $spid_ops->compte_spid_errors($licence);
+				//$maj_spid = $spid_ops->compte_spid_errors($licence);
 					//var_dump($resultats);
 		           }
 
@@ -246,7 +246,7 @@ switch($params['retrieve'])
 		$ping_ops = new ping_admin_ops;
 		$spid_ops = new spid_ops;
 		
-		$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE maj_fftt < NOW() + 3600";
+		$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif = 1 AND type = 'T'";
 		$dbretour = $db->Execute($query);
 		if ($dbretour && $dbretour->RecordCount() > 0)
 		{
@@ -265,10 +265,16 @@ switch($params['retrieve'])
   		}
 		//avant de rediriger on fait un check-up entre le spid et la fftt
 		//objectif récupérer les coefficients des épreuves
-		$verif = $spid_ops->verif_spid_fftt();
+		//$verif = $spid_ops->verif_spid_fftt();
 		$this->Redirect($id, 'defaultadmin', $returnid, array("__activetab"=>"ff"));
 		
     		
+	break;
+	
+	case "reset_spid" :
+		$spid_ops = new spid_ops;
+		$spid_ops->reset_spid();
+	
 	break;
 	
 	//toutes les situations mensuelles du mois
@@ -293,15 +299,17 @@ switch($params['retrieve'])
 	
 	case "club":
 		$service = new retrieve_ops;
-		$club_number = '03290229';
+		$club_number = $this->GetPreference('club_number');
 		$club = $service->retrieve_detail_club($club_number);
 	break;
 	
 	case "organismes" :
 		
 		$service = new retrieve_ops();
+		$orga = new fftt_organismes;
+		$del = $orga->delete_organismes();
 		$retrieve = $service->organismes();
-		$message='Retrouvez toutes les infos dans le journal';
+		$message='Organismes récupérés';
 		$this->SetMessage($message);
 		$this->RedirectToAdminTab('configuration');
 
@@ -317,7 +325,7 @@ switch($params['retrieve'])
 		
 	break;
 	
-	//supprime les parties devenues obsolete et les adversaires aussi
+	//supprime les parties devenues obsoletes et les adversaires aussi
 	case "supp_spid" :
 		$spid_ops = new spid_ops;
 		$delete_spid = $spid_ops->delete_spid();
@@ -335,7 +343,7 @@ switch($params['retrieve'])
 		if(isset($params['licence']) && $params['licence'] != '')
 		{
 			$licence = $params['licence'];
-			$joueurs = new Joueurs;
+			$joueurs = new joueurs;
 			$activate = $joueurs->activate($licence);
 			if(true === $activate)
 			{
@@ -416,7 +424,6 @@ switch($params['retrieve'])
 			$record_id = (int) $params['record_id'];
 			$eq = new equipes_ping;
 			$details = $eq->details_equipe($record_id);	
-			var_dump($details);
 			$idepreuve = $details['idepreuve'];
 			$iddiv = $details['iddiv'];
 			$idpoule = $details['idpoule'];
@@ -434,8 +441,30 @@ switch($params['retrieve'])
 		//On récupère les coordonnées de la salle et du correspondant
 		$r_ops = new retrieve_ops;
 		$details_club = $r_ops->retrieve_detail_club($this->GetPreference('club_number'));
-	}
-	
+	}	
 	break;
+	
+	case "divisions" :
+	
+		if(isset($params['idorga']) && $params['idorga'] != '')
+		{
+			$idorga = $params['idorga'];
+		}
+		if(isset($params['idepreuve']) && $params['idepreuve'] != '')
+		{
+			$idepreuve = $params['idepreuve'];
+		}
+		if(isset($params['type']) && $params['type'] != '')
+		{
+			$type = $params['type'];
+		}
+		else
+		{
+			$type = '';
+		}
+		$retrieve = $service->retrieve_divisions($idorga,$idepreuve,$type="");
+		$message='Retrouvez toutes les infos dans le journal';
+		$this->SetMessage($message);
+		$this->Redirect($id, 'admin_divisions_tab', $returnid, array("idepreuve"=>$idepreuve, "idorga"=>$idorga, "essai"=>"1"));
 }
 ?>

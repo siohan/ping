@@ -27,7 +27,7 @@ class PingRecupRencontresTask implements CmsRegularTask
       $last_execute = $ping->GetPreference('LastRecupRencontres');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( $time - $last_execute >= 900)//24*3600 )//tous les 15 minutes !!
+      if ( $time - $last_execute >= 300 )//tous les 15 minutes !!
 
       {
          return TRUE;
@@ -53,7 +53,7 @@ class PingRecupRencontresTask implements CmsRegularTask
 	
 	$saison = $ping->GetPreference('saison_en_cours');
 	
-	$query = "SELECT DISTINCT iddiv, idpoule,idepreuve, eq_id, equip_id1, equip_id2 FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE `date_event` < CURRENT_DATE() AND saison = ? AND (scorea = 0 AND scoreb = 0)";
+	$query = "SELECT DISTINCT iddiv, idpoule,idepreuve, eq_id, equip_id1, equip_id2, equa, equb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE `date_event` < CURRENT_DATE() AND saison = ?  AND (scorea = 0 AND scoreb = 0)";
 	
 	$dbresult = $db->Execute($query, array($saison));
 	if($dbresult && $dbresult->RecordCount() > 0)
@@ -67,19 +67,20 @@ class PingRecupRencontresTask implements CmsRegularTask
 			$record_id = $row['eq_id'];
 			$equip_id1 = (int)$row['equip_id1'];
 			$equip_id2 = (int)$row['equip_id2'];
-			if($equip_id1 >0 && $equip_id2 >0)
+			if($equip_id1 >0 && $equip_id2 >0)//si les équipes ont bien un numéro d'équipe
 			{
 				$retrieve = $retrieve_ops->retrieve_poule_rencontres($record_id,$iddiv, $idpoule, $idepreuve);
 				$status = 'OK';
-				$designation = 'Nouveaux scores par équipes (Auto)';
+				$designation = 'Nouveaux scores par équipes : '.$row['equa'].' VS '.$row['equb'].' (CRON)';
 				$action = 'Rencontres auto';
 			}
 			else
 			{
 				$status = 'KO';
-				$designation = 'La tâche de récupération des rencontres a  échoué';
+				$designation = 'La tâche de récupération des rencontres a  échoué : '.$row['equa'].' VS '.$row['equb'].'';
 				$action = 'Rencontres auto';
 			}
+			/* */
 			$ping_ops->ecrirejournal($status, $designation, $action);
 		}//fin du while	
 		return true; // Ou false si ça plante

@@ -107,6 +107,11 @@ $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_coordonnees" );
 $dict->ExecuteSQLArray($sqlarray);
 
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_brulage" );
+$dict->ExecuteSQLArray($sqlarray);
+
+$sqlarray = $dict->DropTableSQL( cms_db_prefix()."module_ping_brulage_eq" );
+$dict->ExecuteSQLArray($sqlarray);
 
 // templates
 $this->DeleteTemplate();

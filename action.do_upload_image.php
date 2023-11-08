@@ -17,8 +17,9 @@
  *
  *************************************************************/
  // Tableaux de donnees
-$tabExt = array('jpg','gif','png','jpeg');    // Extensions autorisees
-//$tabExt = $this->GetPreference('allowed_extensions');//
+//$tabExt = array('jpg','gif','png','jpeg');    // Extensions autorisees
+$tabExt = explode(',',$this->GetPreference('allowed_extensions'));//
+$target = $config['root_url']."/uploads/images/trombines";
 foreach($tabExt as $value)
 {
 	$tabExt[] = trim($value);
@@ -33,7 +34,18 @@ $nomImage = '';
 if(isset($_POST['genid']) && $_POST['genid'] >0)
 {
 	$target =  '../uploads/images/trombines/';
+	$cible = $config['root_url']."/uploads/images/trombines/";
 	$genid = $_POST['genid'];
+	$separator = '.';
+	//on supprime d'éventuels fichiers existants
+	foreach($tabExt as $value)
+	{
+ 			if(true == file($cible.$genid.$separator.$value))
+ 			{
+  				unlink($target.$genid.$separator.$value);
+  				
+ 			}
+	}	
 }
 
 if(isset($_POST['idclub']) && $_POST['idclub'] >0)
@@ -129,5 +141,12 @@ if(isset($_POST['genid']))
   }
 }
 $this->SetMessage($message);
-$this->RedirectToAdminTab('equipes');//($id, 'view_adherent_details', $returnid, array("record_id"=>$genid));
+if(isset($_POST['idclub']) && $_POST['idclub'] >0)
+{
+	$this->RedirectToAdminTab('equipes');
+}
+else
+{
+	$this->RedirectToAdminTab('joueurs');
+}
 ?>

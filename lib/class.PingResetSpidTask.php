@@ -48,7 +48,7 @@ class PingResetSpidTask implements CmsRegularTask
       $ping = \cms_utils::get_module('Ping');
      
 	// Ce qu'il y a à exécuter ici
-		if(date('d') == 10)
+		if(date('d') < 10)
 		{	
 			$saison_courante = $ping->GetPreference('saison_en_cours');
 			$now = trim($db->DBTimeStamp(time()), "'");

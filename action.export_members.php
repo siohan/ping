@@ -31,13 +31,14 @@ if(isset($params['exportsubmit']) && $params['exportsubmit'] != '')
 				{
 					$genid = $asso_ops->random_int(9);
 					$add = $asso_ops->add_adherent_from_ping($genid,$actif, $nom, $prenom, $sexe, $licence );
-					if(true === $add)
+					/*if(true === $add)
 					{
 						//on insère dans le groupe par défaut
 						$gp_ops = new groups;
 						$id_group = $gp_ops->assign_to_adherent();
 						$gp_ops->assign_to_group($id_group, $genid);
 					}
+					* */
 				}
 			}
 		}

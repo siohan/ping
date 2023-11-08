@@ -232,9 +232,9 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 			
 	
 			case "supp_spid" : //on supprime les parties spid sélectionnées
+			$spid_ops = new spid_ops;
 			foreach( $params['sel'] as $record_id)
 			{
-				$spid_ops = new spid_ops;
 				$spid_ops->supp_spid( $record_id );
 			}
 			$message = 'Parties(s) SPID supprimée(s)';
@@ -273,6 +273,52 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	  				$eq_ops->delete_team($record_id);
 	  			}
 	  			$this->RedirectToAdminTab('equipes');
+			break;
+			
+			case "activate_epr" :
+				$epr_ops = new EpreuvesIndivs;
+				foreach( $params['sel'] as $record_id )
+	  			{
+	  				$epr_ops->active_epreuve($record_id);
+	  			}
+	  			$this->RedirectToAdminTab('compets');
+			
+			break;
+			
+			case "desactivate_epr" :
+				$epr_ops = new EpreuvesIndivs;
+				foreach( $params['sel'] as $record_id )
+	  			{
+	  				$epr_ops->desactive_epreuve($record_id);
+	  			}
+	  			$this->RedirectToAdminTab('compets');
+			break;
+			
+			case "delete_epr" :
+				$epr_ops = new EpreuvesIndivs;
+				foreach( $params['sel'] as $record_id )
+	  			{
+	  				$epr_ops->delete_epreuve($record_id);
+	  			}
+	  			$this->RedirectToAdminTab('compets');
+			break;
+			
+			case "suivi_ok" : 
+				$epr_ops = new EpreuvesIndivs;
+				foreach( $params['sel'] as $record_id )
+	  			{
+	  				$epr_ops->suivi_ok($record_id);
+	  			}
+	  			$this->RedirectToAdminTab('compets');
+			break;
+			
+			case "suivi_ko" : 
+				$epr_ops = new EpreuvesIndivs;
+				foreach( $params['sel'] as $record_id )
+	  			{
+	  				$epr_ops->suivi_ko($record_id);
+	  			}
+	  			$this->RedirectToAdminTab('compets');
 			break;
 			
 	

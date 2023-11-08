@@ -46,7 +46,7 @@ public function retrieve_parties_spid2( $licence)//, $player,$cat )
 		}
 		else
 		{
-			
+		
 			$service = new Servicen;
 
 			$page = "xml_partie";
@@ -111,8 +111,7 @@ public function retrieve_parties_spid2( $licence)//, $player,$cat )
 								$mois_event = $chgt[1];
 							}
 							
-						if($mois_event == date('m') && $annee == date('Y'))
-						{
+
 							$nom = (isset($tab->nom)?"$tab->nom":"");//$tab['nom'];
 							$classement = (isset($tab->classement)?"$tab->classement":"");
 							$victoire = (isset($tab->victoire)?"$tab->victoire":"");
@@ -179,7 +178,7 @@ public function retrieve_parties_spid2( $licence)//, $player,$cat )
 							//on détruit le nb d'erreur
 							unset($error);
 							}
-						}//fin du if mois_courant
+						
 							
 					}//fin du foreach
 			return $compteur;		
@@ -445,7 +444,10 @@ public function retrieve_sit_mens($licence, $ext="")
 	{
 		global $gCms;
 		$ping = cms_utils::get_module('Ping'); 
+		$saison = $ping->GetPreference('saison_en_cours');
 		$ping_admin_ops = new ping_admin_ops();
+		$curl = curl_init();
+		//curl_setopt($curl,CURLOPT_URL, $url);
 		$db = cmsms()->GetDb(); 
 		$now = trim($db->DBTimeStamp(time()), "'");
 		$i=0;
@@ -458,15 +460,14 @@ public function retrieve_sit_mens($licence, $ext="")
 		{
 			$indivs = 1;
 		}
-		$page = "xml_epreuve";
-		//echo $page;
+		$page = "xml_epreuve";		
 		$var = "organisme=".$idorga."&type=".$type;
-		//echo $var;
+		
 		$service = new Servicen();
 		$lien = $service->GetLink($page, $var);
-		//echo "le lien est : ".$lien;
+
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		
+		var_dump($xml);
 		if($xml === FALSE)
 		{
 			// Le service est coupé
@@ -497,18 +498,35 @@ public function retrieve_sit_mens($licence, $ext="")
 			
 			$idepreuve = (isset($tab->idepreuve)?"$tab->idepreuve":"");
 			$idorga  = (isset($tab->idorga)?"$tab->idorga":"");
-			$libelle = (isset($tab->libelle)?"$tab->libelle":"");			
-			
+			$libelle = $friendlyname = (isset($tab->libelle)?"$tab->libelle":"");
+			$typepreuve = (isset($tab->typepreuve)?"$tab->typepreuve":"");			
 			$tag = $ping_admin_ops->tag($idepreuve, $indivs);
 			$epreuv = new EpreuvesIndivs;
 			$message = $libelle.' Compétition ajoutée';
 			$action = 'classe EpreuvesIndivs';
 			$status = 'Ok';
-			$add_compet = $epreuv->add_competition($libelle, $indivs,$idepreuve, $tag, $idorga);
-			if(true === $add_compet)
+			$suivi = 0;
+			if($typepreuve == 'C' || $typepreuve == 'I')
 			{
-				$i++;
-				$ping_admin_ops->ecrirejournal($status, $message,$action);
+				if($idorga == $ping->GetPreference('dep') || $idorga == $ping->GetPreference('ligue'))
+				{
+					$suivi = 1;
+				}
+			}
+			
+			$nb_ep = $epreuv->epreuve_exists($idepreuve);
+			if(true == $nb_ep)//il y a une epreuve existante, on la modifie
+			{
+				$up_ep = $epreuv->update_epreuve_orig($idepreuve,$idorga, $libelle, $typepreuve, $tag);
+			}
+			else
+			{				
+				$add_compet = $epreuv->add_competition($libelle, $libelle,$indivs,$idepreuve, $idorga,$typepreuve, $saison, $suivi, $tag);
+				if(true === $add_compet)
+				{
+					$i++;
+					$ping_admin_ops->ecrirejournal($status, $message,$action);
+				}
 			}
 						
 		}// fin du foreach
@@ -534,6 +552,10 @@ public function retrieve_sit_mens($licence, $ext="")
 			//le service est coupé
 			$array = 0;
 			$lignes = 0;
+			$status = "Ko";
+			$designation= "service coupé pour les scores";
+			$action = 'retrieve_classement';
+			$j_ops->ecrirejournal($status,$designation,$action);
 		}
 		else
 		{
@@ -576,12 +598,6 @@ public function retrieve_sit_mens($licence, $ext="")
 				$equa = (isset($tab->equa)?"$tab->equa":"");
 				$equb = (isset($tab->equb)?"$tab->equb":"");
 
-				/*on fait quelque transformations des infos recueillies
-				preg_match_all('#[0-9]+#',$libelle,$extraction2);
-				$tour = $extraction2[0][0];
-				echo "le tour est : ".$tour;
-				*/
-
 				$uploaded = 0;
 				
 				$cluba = strpos($equa,$libelle_equipe);
@@ -605,7 +621,8 @@ public function retrieve_sit_mens($licence, $ext="")
 				$renc_id = $output['renc_id'];
 				$equip_id1 = $output['equip_id1'];
 				$equip_id2 = $output['equip_id2'];
-
+				$clubnum_1 = $output['clubnum_1'];
+				$clubnum_2 = $output['clubnum_2'];
 				//
 				//on vérifie que le score a bien été saisi
 				//si le score est saisi on obtient un string pour les variables scorea et scoreb
@@ -629,7 +646,7 @@ public function retrieve_sit_mens($licence, $ext="")
 				
 					//on récupère tout sans rien mettre à jour
 					//on vérifie si l'enregistrement est déjà là
-					$renc_exists = $eq_ops->renc_exists($renc_id);
+					$renc_exists = $eq_ops->renc_exists($renc_id,$eq_id);
 					
 					
 					if( NULL != $renc_exists)
@@ -640,7 +657,8 @@ public function retrieve_sit_mens($licence, $ext="")
 					{
 						$add_result = $eq_ops->add_team_result($eq_id,$renc_id,$saison,$idpoule, $iddiv, $club, $affichage, $tour, $date_event, $uploaded, $libelle, $equa, $equb, $scorea, $scoreb, $lien, $idepreuve, $horaire, $equip_id1, $equip_id2);
 					}
-					if(true == $add_result)
+					
+					if($scorea >0 || $scoreb >0)
 					{
 						$i++;
 						$renc_ops->is_uploaded($renc_id);
@@ -735,7 +753,7 @@ public function retrieve_sit_mens($licence, $ext="")
 					
 					if($numero == $ping->GetPreference('club_number'))
 					{
-						$maj_idequipe = $eq_ops->maj_idequipe($record_id, $idequipe);
+						$maj_idequipe = $eq_ops->maj_idequipe($record_id, $num_equipe);
 					}
 					$add_clas = $eq_ops->add_classement($record_id, $details['saison'], $details['iddiv'], $details['idpoule'], $poule, $clt, $equipe, $joue, $pts, $totvic, $totdef, $numero, $idclub, $vic, $def, $nul, $pf, $pg, $pp, $num_equipe);
 					$maj_class_equipe = $eq_ops->maj_class($record_id);
@@ -1032,7 +1050,7 @@ public function retrieve_sit_mens($licence, $ext="")
 				$lien = $service->GetLink($page,$var);
 				
 				$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-				var_dump($xml);
+				//var_dump($xml);
 				
 				if($xml === FALSE)// || strlen($xml) <=1)
 				{
@@ -1048,7 +1066,7 @@ public function retrieve_sit_mens($licence, $ext="")
 				else
 				{
 					$array = json_decode(json_encode((array)$xml), TRUE);
-					
+					//var_dump($array);
 						
 						//on initialise un deuxième compteur
 						$compteur = 0;
@@ -1059,14 +1077,18 @@ public function retrieve_sit_mens($licence, $ext="")
 							$idequipe = (isset($tab->idequipe)?"$tab->idequipe":"");
 							$libepr = (isset($tab->libepr)?"$tab->libepr":"");
 							$libequipe = (isset($tab->libequipe)?"$tab->libequipe":"");
-							$idepreuve = (isset($tab->idepr)?"$tab->idepr":"");
+							$idepreuve = (int)(isset($tab->idepr)?"$tab->idepr":"");
 							//on modifie le libellé des équipes pour extraire la phase
 							$newphase = explode ("-",$libequipe);
-							//echo "la phase est ".$newphase[1];
+							
 							$phase = substr($newphase[1], -1);
 							$new_equipe = trim(html_entity_decode($newphase[0]));
-							//echo "la phase est ".$phase;
-							$numero_equipe = preg_replace('#[^0-9]#','',$new_equipe);
+							$num = explode(' ',$new_equipe);
+							
+							$n_eq = str_replace ('(', '', $new_equipe);
+							$n_eq = str_replace (')', '', $n_eq);
+							
+							$numero_equipe = preg_match('#[0-9]{1,2}$#',$n_eq, $matches);
 							$libdivision = (isset($tab->libdivision)?"$tab->libdivision":"");
 							$liendivision = (isset($tab->liendivision)?"$tab->liendivision":"");
 							$tableau = parse_str($liendivision, $output);
@@ -1075,47 +1097,44 @@ public function retrieve_sit_mens($licence, $ext="")
 							$iddiv = $output['D1'];
 							$idorga = $output['organisme_pere'];
 							
+							
 							//on vérifie que l'équipe existe déjà 
-							$exists = $eq_ops->equipe_exists($idepreuve, $numero_equipe,$phase);
+							$exists = $eq_ops->equipe_exists($idepreuve, $matches[0],$phase);
+							
 							
 							//la compétition existe ?
 							$compet_code = $epr_ops->epreuve_exists($idepreuve);
-							var_dump($compet_code);
-							$name_exists = $epr_ops->epreuve_exists_by_name($libepr);
-							if(false == $compet_code)//le code compet n'existe pas , deux cas : l'épreuve existe->update, existe pas ->insert
-							{
-								
-									//on crée cette compet
-									$indivs = 0;
-									$tag = $ping_ops->tag($idepreuve, $indivs);
-									$epr_ops->add_competition($libepr, $indivs,$idepreuve, $tag, $idorga, $saison);
-								
-							} 
+							
 							
 							if(true == $exists)
 							{
 								// on fait un update
-								
+								$indivs = 0;
+								$tag = $ping_ops->tag($idepreuve, $indivs);
+								$epr = $epr_ops->maj_epreuve($libepr, $indivs,$idepreuve, $tag, $idorga, $saison);
 							}
 							else
 							{
 								//on fait une insertion
-								$query2 = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_equipes (saison, phase,numero_equipe, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet, idepreuve,idequipe) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+								$query2 = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_equipes (saison, phase,numero_equipe, libequipe, libdivision, liendivision, idpoule, iddiv, type_compet, idepreuve,idequipe, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 								//echo $query2;
 								$compteur++;
-								$dbresultat = $db->Execute($query2,array($saison, $phase, $numero_equipe,$new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet,$idepreuve, $idequipe));
+								$dbresultat = $db->Execute($query2,array($saison, $phase, $matches[0],$new_equipe, $libdivision, $liendivision, $idpoule, $iddiv, $type_compet,$idepreuve, $idequipe, time()));
 	
 								if(!$dbresultat)
 								{
-									$designation = $db->ErrorMsg();		
+									$status = 'Echec';
+									$designation= $db->ErrorMsg();
+									$action = "retrieve_teams";
+									$message = $ping->ecrirejournal($now,$status, $designation,$action);	
 								}
 								else
 								{
 									//on inclut le tag
 									$insert_id = $db->Insert_ID();
-									$tag = $ping_ops->tag_equipe($numero_equipe, $idepreuve);
-									$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET tag = ? WHERE id = ?";
-									$dbresult = $db->Execute($query, array($tag, $insert_id));
+									$tag = $ping_ops->tag_equipe($matches[0], $idepreuve);
+									//$query = "UPDATE ".cms_db_prefix()."module_ping_equipes SET tag = ? WHERE id = ?";
+									//$dbresult = $db->Execute($query, array($tag, $insert_id));
 									
 								}
 							}
@@ -1150,7 +1169,7 @@ public function retrieve_sit_mens($licence, $ext="")
 			$lien = $service->GetLink($page,$var);
 			//echo $lien;
 			$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-			
+			//var_dump($xml);
 			if($xml === FALSE)
 			{
 				$designation.= "service coupé";
@@ -1166,8 +1185,9 @@ public function retrieve_sit_mens($licence, $ext="")
 				$i=0;
 				//on initialise un deuxième compteur
 				$compteur=0;
-			//	var_dump($xml);
-
+					
+					
+					
 					foreach($xml as $cle =>$tab)
 					{
 
@@ -1175,23 +1195,20 @@ public function retrieve_sit_mens($licence, $ext="")
 						$idorga = (isset($tab->id)?"$tab->id":"");
 						$code  = (isset($tab->code)?"$tab->code":"");
 						$libelle = (isset($tab->libelle)?"$tab->libelle":"");
-						// 1- on vérifie si cette épreuve est déjà dans la base
-						$query = "SELECT idorga FROM ".cms_db_prefix()."module_ping_organismes WHERE idorga = ?";
-						$dbresult = $db->Execute($query, array($idorga));
-
-							if($dbresult  && $dbresult->RecordCount() == 0) 
-							{
-								$query = "INSERT INTO ".cms_db_prefix()."module_ping_organismes (libelle, idorga, code, scope) VALUES (?, ?, ?, ?)";
-								//echo $query;
-								$compteur++;
-								$dbresultat = $db->Execute($query,array($libelle,$idorga,$code,$scope));
-
-								if(!$dbresultat)
-								{
-									$designation.= $db->ErrorMsg();			
-								}
-
-							}
+						$idPere = (int)(isset($tab->idPere)?"$tab->idPere":"0");
+						$scope = substr($code,0,1);
+						
+						$query = "INSERT INTO ".cms_db_prefix()."module_ping_organismes (libelle, idorga, code, scope, idPere) VALUES (?, ?, ?, ?, ?)";
+						//echo $query;
+						$compteur++;
+						$dbresultat = $db->Execute($query,array($libelle,$idorga,$code,$scope, $idPere));
+	
+						if(!$dbresultat)
+						{
+							$designation.= $db->ErrorMsg();			
+						}
+								
+							
 							
 
 
@@ -1561,6 +1578,265 @@ public function retrieve_sit_mens($licence, $ext="")
 		$db = cmsms()->GetDb();
 		$query = "INSERT INTO ".cms_db_prefix()."module_ping_coordonnees(idclub, numero, nom, nomsalle, adressesalle1, adressesalle2, codepsalle, villesalle, web, nomcor, prenomcor, mailcor, telcor, lat, lng)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$dbresult = $db->Execute($query, array($idclub, $numero, $nom, $nomsalle, $adressesalle1, $adressesalle2, $codepsalle, $villesalle, $web, $nomcor, $prenomcor, $mailcor, $telcor, $lat, $lng));
+	}
+	
+	//tout sur les épreuves individuelles
+	function retrieve_divisions ($idorga,$idepreuve,$type = '')
+	{
+		global $gCms;
+		$ping = cms_utils::get_module('Ping'); 
+		$designation = '';
+		$db = cmsms()->GetDb();
+		$fede = $ping->GetPreference('fede');
+		$zone = $ping->GetPreference('zone');
+		$ligue = $ping->GetPreference('ligue');
+		$dep = $ping->GetPreference('dep');
+		$saison = $ping->GetPreference('saison_en_cours');
+		$now = trim($db->DBTimeStamp(time()), "'");
+		$indivs = 1; //par défaut car on récupère les épreuves individuelles seulement
+		$type = 'I';
+		$page="xml_division";
+		//on instancie la classe service
+		$service = new Servicen();
+
+
+			$var = "organisme=".$idorga."&epreuve=".$idepreuve."&type=".$type;
+				//echo $valeur;
+				if($idorga == $fede) {$scope = 'F';}
+				if($idorga == $zone) {$scope = 'Z';}
+				if($idorga == $ligue) {$scope = 'L';}
+				if($idorga == $dep) {$scope = 'D';}
+				//
+				$lien = $service->GetLink($page,$var);
+				var_dump($lien);
+				$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+				//var_dump($xml);
+				if($xml === FALSE )
+				{
+					//le service est coupé
+					$array = 0;
+					$lignes = 0;
+				}
+				else
+				{
+					$array = json_decode(json_encode((array)$xml), TRUE);
+					
+					if(isset($array['division']))
+					{
+						$lignes = count($array['division']);
+					
+				
+						//echo "le nb de lignes est : ".$lignes;
+						$i=0;
+						//on initialise un deuxième compteur
+						$compteur=0;
+						
+						foreach($xml as $value)
+						{
+
+							$i++;
+							$iddivision = htmlentities($value->iddivision);
+							$libelle = htmlentities($value->libelle);
+							$query = "INSERT INTO ".cms_db_prefix()."module_ping_divisions (idorga, idepreuve,iddivision,libelle,saison,indivs,scope) VALUES (?, ?, ?, ?, ?, ?, ?)";
+							//echo $query;
+							$compteur++;
+							$dbresultat = $db->Execute($query,array($idorga,$idepreuve,$iddivision,$libelle,$saison,$indivs,$scope));
+
+							if(!$dbresultat)
+							{
+								$designation .= $db->ErrorMsg();			
+							}
+							else
+							{
+								//on peut écrire ds le journal
+								$message = $idepreuve." - >".$idorga."->".$libelle." - >".$iddivision; 
+								$status = 'Ok';
+								//$designation.= $message;
+								$action = "retrieve_ops";
+								ping_admin_ops::ecrirejournal($now,$status, $message,$action);
+								
+							}
+
+								
+
+								unset($message);
+						}// fin du foreach
+						
+					}
+				unset($scope);
+				}
+			//}//fin du premier foreach
+		
+	}
+	
+	function retrieve_div_tours ($idepreuve,$iddivision)
+	{
+		global $gCms;
+		$ping = cms_utils::get_module('Ping'); 
+		$db = cmsms()->GetDb();
+		$now = trim($db->DBTimeStamp(time()), "'");
+		$saison = $ping->GetPreference('saison_en_cours');
+		$page = "xml_result_indiv";
+		$var ="epr=".$idepreuve."&res_division=".$iddivision;
+		
+			$var.="&action=poule";
+
+		
+		$service = new Servicen();
+		$lien = $service->GetLink($page, $var);
+		
+		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+		//var_dump($xml);
+		if($xml === FALSE)
+		{
+			//le service est coupé
+			$array = 0;
+			$lignes = 0;
+		}
+		else
+		{
+			$array = json_decode(json_encode((array)$xml), TRUE);
+			$lignes = count($array['tour']);
+		}
+		//echo "le nb de lignes est : ".$lignes;
+		$i = 0;
+		foreach($xml as $value)
+		{
+			
+			$libelle = htmlentities($value->libelle);
+			//on va extraire le tour
+			$tour1 = explode(" ",$libelle);
+			$tour2 = trim($tour1[0],'T');
+
+			$lien = htmlentities($value->lien);
+			$tab1 = explode("&",$value->lien);
+
+			$tableau = trim($tab1[2], 'cx_tableau=');
+
+			if($tableau != '')
+			{
+				
+				//On a récupéré les éléments, on peut faire l'insertion dans notre bdd
+				//on va d'abord vérifier si ces éléments sont présents ou on créé un index sur la table
+				$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_tours (idepreuve,iddivision,libelle, tour, tableau, lien,saison) VALUES (?, ?, ?, ?, ?, ?, ?)";
+				$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle,$tour2, $tableau,$lien,$saison));
+				if($dbresult)
+				{
+				$i++;
+				
+				//et si on continuait ?
+				//reprendre les infos ci dessus pour les traiter !
+				//on pourrait préparer les différents tags : poule, classement, partie.
+				//on met à tjour la table divisions pour dire qu'on a bien uploadé
+				$uploaded = 1;
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
+				$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
+				
+				//on écrit dans le journal
+				$status = 'Ok';
+				$action = 'retrieve_div_tours';
+				$designation = $i." tour(s) inséré(s) pour l\'épreuve ".$idepreuve;
+				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+				}
+			}
+
+
+
+
+		}
+	}
+	
+	function retrieve_div_classement ($idepreuve,$iddivision,$tableau)
+	{
+		global $gCms;
+		$ping = cms_utils::get_module('Ping'); 
+		$db = cmsms()->GetDb();
+		$saison = $ping->GetPreference('saison_en_cours');
+		$designation = '';
+		$now = trim($db->DBTimeStamp(time()), "'");
+		$page = "xml_result_indiv";
+		$var ="epr=".$idepreuve."&res_division=".$iddivision."&cx_tableau=".$tableau;
+		
+			$var.="&action=classement";
+
+		//echo $var;
+		$service = new Servicen();
+		$lien = $service->GetLink($page, $var);
+		
+		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
+		var_dump($xml);
+		if($xml === FALSE )
+		{
+			//le service est coupé
+			$array = 0;
+			$lignes = 0;
+		}
+		else
+		{
+			$array = json_decode(json_encode((array)$xml), TRUE);
+			if(isset($array['classement']))
+			{
+				$lignes = count($array['classement']);
+			}
+			else
+			{
+				$lignes = 0;
+			}
+		}
+		//echo "le nb de lignes est : ".$lignes;
+		if($lignes != 0)
+		{
+			
+			foreach($xml as $value)
+			{
+				//$libelle = $tab['libelle'];
+				//$lien = $tab['lien'];
+				$rang = htmlentities($value->rang);
+				$nom = htmlentities($value->nom);
+				$clt = htmlentities($value->clt);
+				$club = htmlentities($value->club);
+
+				//on fait une conditionnelle pour récupérer la licence du joueur du club
+				$nom_equipes = $ping->GetPreference('nom_equipes');
+				$club2 = stristr($nom_equipes,$club);
+				if(true == $club2)//stristr('RP FOUESNANT',$club) === 'true')
+				{
+					
+					//ça match !!
+					$cool = 1;
+					//on ecrit dans le journal
+					$status = 'Ok';
+					$designation.= $nom." finit à la place ".$rang;
+					$action = 'Récup classement';
+					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+				}
+			//	$points = htmlentities($value->points);
+
+				//On a récupéré les éléments, on peut faire l'insertion dans notre bdd			
+				//On fait une conditionnelle pour inclure uniquement les gens du club ?
+				//il fait faire une nouvelle préférence
+
+
+
+				$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_classement (idepreuve,iddivision,tableau,rang, nom,clt,club, saison) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
+				//echo $query;
+				$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$rang, $nom, $clt, $club,$saison));
+
+				if(!$dbresult)
+				{
+					$designation .= $db->ErrorMsg();
+				}
+				
+				
+			}
+			//la requete a fonctionné, on peut mettre le statut du tour a "uploadé"
+			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded_classement = 1 WHERE id = ?";
+			$dbresult2 = $db->Execute($query2,array($value));
+			$designation.= 'récup tableau '.$tableau.' du tour '.$tour.' de l\'épreuve '.$idepreuve;
+			$status = 'OK';
+			$action = 'div_classement';
+			ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+		}
 	}
 } // end of class
 

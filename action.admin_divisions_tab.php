@@ -5,12 +5,12 @@
 ##                                                         ##
 #############################################################
 if( !isset($gCms) ) exit;
-$db =& $this->GetDb();
+$db = cmsms()->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
 require_once(dirname(__file__).'/include/prefs.php');
 $saison = $this->GetPreference('saison_en_cours');
-
+$ret = new retrieve_ops;
 $smarty->assign('retourlien',
 		$this->CreateLink($id,'defaultadmin',$returnid,$contents="<= Retour",array("active_tab"=>"indivs")));
 //on fait maintenant la requete principale...
@@ -20,14 +20,15 @@ $parms['saison'] = $saison;
 
 if(isset($params['idepreuve']) && $params['idepreuve'] !='')
 {
+	$smarty->assign('idepreuve', $params['idepreuve']);
 	$query.=" AND tc.idepreuve = ?";
 	$parms['idepreuve'] = $params['idepreuve'];
 }
 
-if(isset($params['idorga']) && $params['idorga'] != '')
+if(isset($params['idorga']))
 {
 	$query.=" AND dv.idorga = ?";
-	$parms['idorga'] = $params['idorga'];
+	$parms['idorga'] = (int)$params['idorga'];
 }
 
 if(isset($params['essai']) && $params['essai'] !='0')
@@ -58,36 +59,38 @@ $rowclass = '';
 if ($dbresult && $dbresult->RecordCount() > 0)
   {
     while ($row= $dbresult->FetchRow())
-      {
-	$scope = $row['scope'];
-	if($scope=='F'){$niveau ='National';}
-	if($scope=='Z'){$niveau ='Zone';}
-	if($scope=='L'){$niveau ='Régional';}
-	if($scope=='D'){$niveau ='Départemental';}
-	$indivs = $row['indivs'];
-	$uploaded = $row['uploaded'];
-	$onerow= new StdClass();
-	$onerow->rowclass= $rowclass;
-	$onerow->id= $row['id'];
-	$onerow->idorga = $row['idorga'];
-	$onerow->idepreuve= $row['idepreuve'];
-	$onerow->iddivision= $row['iddivision'];
-	$onerow->name= $row['name'];
-	$onerow->libelle= $row['libelle'];
-	$onerow->indivs = $row['indivs'];
-	$onerow->scope = $niveau;
-	//$onerow->uploaded = $row['uploaded'];
-	if($uploaded ==1)
-	{
-		$onerow->uploaded= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('already_downloaded'), '', '', 'systemicon');
-	}
-	else
-	{
-		$onerow->uploaded= $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('not_already_downloaded'), '', '', 'systemicon');
-	}
+    {
+		//pour l'accès auto aux tours ou poules
+		//$tours = $ret->retrieve_div_tours ($params['idepreuve'],$row['iddivision']);
+		$scope = $row['scope'];
+		if($scope=='F'){$niveau ='National';}
+		if($scope=='Z'){$niveau ='Zone';}
+		if($scope=='L'){$niveau ='Régional';}
+		if($scope=='D'){$niveau ='Départemental';}
+		$indivs = $row['indivs'];
+		$uploaded = $row['uploaded'];
+		$onerow= new StdClass();
+		$onerow->rowclass= $rowclass;
+		$onerow->id= $row['id'];
+		$onerow->idorga = $row['idorga'];
+		$onerow->idepreuve= $row['idepreuve'];
+		$onerow->iddivision= $row['iddivision'];
+		$onerow->name= $row['name'];
+		$onerow->libelle= $row['libelle'];
+		$onerow->indivs = $row['indivs'];
+		$onerow->scope = $niveau;
+		//$onerow->uploaded = $row['uploaded'];
+		if($uploaded ==1)
+		{
+			$onerow->uploaded= $themeObject->DisplayImage('icons/system/true.gif', $this->Lang('already_downloaded'), '', '', 'systemicon');
+		}
+		else
+		{
+			$onerow->uploaded= $themeObject->DisplayImage('icons/system/false.gif', $this->Lang('not_already_downloaded'), '', '', 'systemicon');
+		}
 	
 	//$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poules',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"indivs"=>$row['indivs']));
-	$onerow->poule= $this->CreateLink($id, 'admin_poules', $returnid, 'Accès aux poules',array("idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"idorga"=>$params['idorga']));
+	$onerow->poule= $this->CreateLink($id, 'admin_poules', $returnid, 'Accès aux poules',array("idepreuve"=>$row['idepreuve'],"idorga"=>$params['idorga']));
 	
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 	

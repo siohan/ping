@@ -17,19 +17,7 @@ $jour_sit_mens = (isset($journee_sit_mens)?$journee_sit_mens:'10');
 $mois_courant = date('n');
 $annee_courante = date('Y');
 $jour_courant = date('d');
-/**/
-$smarty->assign('retrieve_fftt', $this->CreateLink($id, 'retrieve', $returnid, 'Récupérer les parties FFTT', array("retrieve"=>"fftt_all")));
-$smarty->assign('retrieve_users', 
-		$this->CreateLink($id, 'retrieve', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_users'), '', '', 'systemicon')).
-$this->CreateLink($id, 'retrieve', $returnid, 
-		  $this->Lang('retrieve_users'), 
-		  array("retrieve"=>"users")));
-$smarty->assign('display_unable_players', 
-		$this->CreateLink($id,'display_unable_players', $returnid, 'liste des joueurs inactifs'));
-$smarty->assign('attention_img', '<img src="../modules/Ping/images/warning.gif" alt="'.$this->Lang('missing_sit_mens').'" title="'.$this->Lang('missing_sit_mens').'" width="16" height="16" />');
 
-$dbresult= array ();
-//SELECT * FROM ping_module_ping_recup_parties AS rec right JOIN ping_module_ping_joueurs AS j ON j.licence = rec.licence  ORDER BY j.id ASC
 $query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence,rec.maj_spid, rec.maj_fftt, rec.sit_mens, rec.fftt, rec.spid,rec.spid_total,rec.spid_errors, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j LEFT JOIN ".cms_db_prefix()."module_ping_recup_parties AS rec ON j.licence = rec.licence WHERE j.actif = '1' AND type = 'T' ORDER BY joueur ASC";
 
 $dbresult= $db->Execute($query);

@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: Ping
-# Version: 0.9, AssoSimple
+# Version: 1.2.3, Claude SIOHAN
 # Method: Install
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2008 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -80,7 +80,10 @@ $flds= "id I(11) KEY AUTO,
 		idepreuve C(11),
 		calendrier I(1) DEFAULT 0,
 		horaire C(5) DEFAULT '14:00',
-		maj_class I(11) DEFAULT 0";
+		maj_class I(11) DEFAULT 0,
+		class_mini I(4) DEFAULT  0,
+		page_contenu I(4),
+		date_created I(11)";
 
 $sqlarray= $dict->CreateTableSQL( cms_db_prefix()."module_ping_equipes",
 				  $flds,
@@ -153,7 +156,8 @@ $flds = "
 	libelle C(255),
 	idorga I(11),
 	code C(5),
-	scope C(1)";
+	scope C(1),
+	idPere I(11)";
 
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_organismes",
@@ -279,14 +283,19 @@ $dict = NewDataDictionary( $db );
 $flds = "
 	id I(11) AUTO KEY,
 	name C(255),
+	friendlyname C(255),
 	code_compet C(3) UNIQUE,
 	coefficient N(3.2),
 	indivs L,
 	tag C(255),
 	idepreuve I(11),
 	idorga I(11),
+	typepreuve C(1),
 	actif I(1) DEFAULT(1),
-	saison C(11)";
+	saison C(11),
+	suivi I(1) DEFAULT (0),
+	date_created I(11),
+	date_maj I(11)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competitions",
@@ -373,6 +382,106 @@ $flds = "idclub I(11) KEY,
 		
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_coordonnees",$flds);
 $dict->ExecuteSQLArray( $sqlarray );
+
+//Pour le brulage
+$dict = NewDataDictionary( $db );
+			$flds = "id I(11) AUTO PRIMARY,
+				licence C(10),
+				J1 I(2) DEFAULT 0,
+				J2 I(2) DEFAULT 0,
+				J3 I(2) DEFAULT 0,
+				J4 I(2) DEFAULT 0,
+				J5 I(2) DEFAULT 0,
+				J6 I(2) DEFAULT 0,
+				J7 I(2) DEFAULT 0,
+				J8 I(2) DEFAULT 0,
+				J9 I(2) DEFAULT 0,
+				J10 I(2) DEFAULT 0,
+				J11 I(2) DEFAULT 0,
+				J12 I(2) DEFAULT 0,
+				J13 I(2) DEFAULT 0,
+				J14 I(2) DEFAULT 0";
+
+			$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_brulage",$flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		
+		//on recréé les tables pour récupérer les résultats des épreuves individuelles
+		$flds = "
+			id I(11) AUTO KEY,
+			idorga I(11),
+			idepreuve I(11),
+			iddivision I(11),
+			libelle C(255),
+			saison C(255),
+			indivs I(1),
+			scope C(1),
+			uploaded C(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_divisions",
+						   $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		$flds = "
+			id I(11) AUTO KEY,
+			idepreuve I(11),
+			iddivision I(11),
+			tableau I(11),
+			tour I(11),
+			rang I(11),
+			nom C(255),
+			clt C(255),
+			club C(255),
+			points N(6,3),
+			saison C(255),
+			uploaded I(1),
+			date_created ". CMS_ADODB_DT ."";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_classement",
+						 $flds, $taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		#
+			# create table div_poules//debut de la création
+			// table schema description
+			$flds = "
+				id I(11) AUTO KEY,
+				idepreuve I(11),
+				iddivision I(11),
+				libelle C(255),
+				tour I(3),
+				tableau I(11),
+				lien C(255),
+				saison C(255),
+				uploaded I(1)";
+
+			// create it. 
+			$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",
+							$flds, 
+							$taboptarray);
+			$dict->ExecuteSQLArray($sqlarray);
+			
+			$dict = NewDataDictionary( $db );
+		$flds = "
+		id I(11) AUTO KEY,
+		idepreuve I(11),
+		iddivision I(11),
+		tableau I(11),
+		tour I(2),
+		libelle C(255), 
+		vain C(255),
+		perd C(255),
+		forfait I(1), 
+		saison C(255),
+		uploaded I(1)";
+
+		// create it. 
+		$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_parties",
+				 $flds, 
+				$taboptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+
 #On créé une nouvelle table pour le tableau de bord
 #
 		try {
@@ -846,7 +955,45 @@ $dict->ExecuteSQLArray( $sqlarray );
 		  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
 		  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
 		  return $e->GetMessage();
-		}	
+		}
+		
+				$dict = NewDataDictionary( $db );
+		try {
+			    $ping_indivs_type = new CmsLayoutTemplateType();
+			    $ping_indivs_type->set_originator($this->GetName());
+			    $ping_indivs_type->set_name('Resultats Indivs');
+			    $ping_indivs_type->set_dflt_flag(TRUE);
+			    $ping_indivs_type->set_lang_callback('Ping::page_type_lang_callback');
+			    $ping_indivs_type->set_content_callback('Ping::reset_page_type_defaults');
+			    $ping_indivs_type->reset_content_to_factory();
+			    $ping_indivs_type->save();
+			}
+
+			catch( CmsException $e ) {
+			    // log it
+			    debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+			    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+			    return $e->GetMessage();
+			}
+
+			try {
+			    $fn = cms_join_path(dirname(__FILE__),'templates','orig_indivs.tpl');
+			    if( file_exists( $fn ) ) {
+			        $template = @file_get_contents($fn);
+			        $tpl = new CmsLayoutTemplate();
+			        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Ping Indivs'));
+			        $tpl->set_owner($uid);
+			        $tpl->set_content($template);
+			        $tpl->set_type($ping_indivs_type);
+			        $tpl->set_type_dflt(TRUE);
+			        $tpl->save();
+			    }
+			}
+			catch( \Exception $e ) {
+			  debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
+			  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+			  return $e->GetMessage();
+			}	
 
 # Les indexs
 //on créé un index 
@@ -866,7 +1013,10 @@ $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'sit_mens',
 		    cms_db_prefix().'module_ping_sit_mens', 'mois, annee, licence',$idxoptarray);
 		       $dict->ExecuteSQLArray($sqlarray);
 
-
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'recup_renc',
+	    cms_db_prefix().'module_ping_poules_rencontres', 'renc_id, eq_id',$idxoptarray);
+	       $dict->ExecuteSQLArray($sqlarray);
 
 #
 #
@@ -890,35 +1040,27 @@ $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL('licence_unicite',
 				cms_db_prefix().'module_ping_joueurs', 'licence',$idxoptarray);
 $dict->ExecuteSQLArray($sqlarray);
-#
-#
-// create a permission
-$this->CreatePermission('Ping Use', 'Ping Use');
-$this->CreatePermission('Ping Set Prefs','Ping Set Prefs');
-$this->CreatePermission('Ping Manage user', 'Ping Manage user');
-$this->CreatePermission('Ping Delete', 'Ping Delete');
-#
-#    Pour les tâches CRON
-#
-$this->SetPreference('LastRecupSpid', time());
-$this->SetPreference('LastRecupFftt', time());
-$this->SetPreference('LastVerifAdherents', time());
-$this->SetPreference('LastRecupUsers', time());
-$this->SetPreference('LastRecupRencontres', time());
-$this->SetPreference('LastRecupClassements', time());
-$this->SetPreference('LastResetSpid', time());
-$this->SetPreference('LastResetSitMens', time());
-#
 
-// create a preference
+$dict = NewDataDictionary( $db );
+			
+//on créé un index pour cette table
+$idxoptarray = array('UNIQUE');
+$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_tours',
+		cms_db_prefix().'module_ping_div_tours', 'idepreuve, iddivision, tableau',$idxoptarray);
+$dict->ExecuteSQLArray($sqlarray);
 
-
-$this->SetPreference('jour_sit_mens', '10');
-$this->SetPreference('affiche_club_uniquement', 'Oui');
-
-//on insère les éléments par défaut
-#indexes
-
+//on créé un index pour cette table
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_divisions',
+				   cms_db_prefix().'module_ping_divisions', 'idepreuve, iddivision',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		//on créé un index pour cette table
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'div_cla',
+				   cms_db_prefix().'module_ping_div_classement', 'tableau, rang, nom',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+		
 $sqlarray = $dict->CreateIndexSQL(cms_db_prefix().'fk_id',
 		    				cms_db_prefix().'module_ping_feuilles_rencontres', 'fk_id');
 $dict->ExecuteSQLArray($sqlarray);
@@ -930,6 +1072,55 @@ $idxoptarray = array('UNIQUE');
 $sqlarray = $dict->CreateIndexSQL('renc_id',
 			    cms_db_prefix().'module_ping_poules_rencontres', 'renc_id',$idxoptarray);
 $dict->ExecuteSQLArray($sqlarray);
+#
+#
+// create a permission
+$this->CreatePermission('Ping Use', 'Ping Use');
+$this->CreatePermission('Ping Set Prefs','Ping Set Prefs');
+$this->CreatePermission('Ping Manage user', 'Ping Manage user');
+$this->CreatePermission('Ping Delete', 'Ping Delete');
+#
+#    LES PREFERENCES
+#
+$this->SetPreference('LastRecupSpid', time());
+$this->SetPreference('LastRecupFftt', time());
+$this->SetPreference('LastRecupUsers', time());
+$this->SetPreference('LastRecupRencontres', time());
+$this->SetPreference('LastRecupClassements', time());
+$this->SetPreference('LastResetSpid', time());
+$this->SetPreference('LastResetSitMens', time());
+$this->SetPreference('LastRecupDivisions', time());
+$this->SetPreference('LastRecupTours', time());
+$this->SetPreference('LastRecupDivCla', time());
+$this->SetPreference('LastVerifAdherents', time());
+
+$this->SetPreference('max_size', '500000');
+$this->SetPreference('max_width', '800');
+$this->SetPreference('max_height', '800');
+$this->SetPreference('allowed_extensions', 'jpg,gif,jpeg,png');
+
+//Les intervalles de récupération
+$this->SetPreference('interval_classement', 259200);
+$this->SetPreference('interval_joueurs', 2592000);
+$this->SetPreference('interval_equipes', 1296000);
+$this->SetPreference('interval_feuilles_parties', 172800);
+$this->SetPreference('interval_compets', 2592000);
+$this->SetPreference('interval_spid', 172800);	
+$this->SetPreference('epreuv_tab', '0' );
+$this->SetPreference('compte_tab', '0');
+$this->SetPreference('contacts_tab', '0');
+$this->SetPreference('nettoyage_journal', 3);
+
+$this->SetPreference('last_indivs_cla', time());
+$this->SetPreference('details_indivs', 'details_indivs');
+$this->SetPreference('jour_sit_mens', '10');
+$this->SetPreference('affiche_club_uniquement', 'Oui');
+
+
+//on insère les éléments par défaut
+#indexes
+
+
 #
 // put mention into the admin log
 $this->Audit( 0, 

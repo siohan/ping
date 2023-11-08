@@ -25,11 +25,11 @@ class PingSitMensTask implements CmsRegularTask
 		}
 
 		$last_execute = (int) $ping->GetPreference('LastRecupSitMens');
-		//$interval = (int) $ping->GetPreference('spid_interval');
+		$interval = (int) $ping->GetPreference('spid_interval');
 	
 
       // Définition de la périodicité de la tâche (24h ici)
-      	if( $time - $last_execute >=  30*24*3600 && date('d') >= 10)  
+      	if( $time - $last_execute >=  $interval && date('d') >= 10)  
 		{
 			return true; 
 		}

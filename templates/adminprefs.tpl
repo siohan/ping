@@ -1,12 +1,33 @@
-
 {form_start action='admin_options_tab'}
 
 <fieldset>
 <legend>Configuration principale</legend>
 	
 	<div class="pageoverflow">
+		<p class="pagetext">Numéro du club:</p>
+		<p class="pageinput"><input type="text" name="club_number" value="{$club_number}"></p></p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Fédération</p>
+		<p class="pageinput"><select name="fede">{html_options options=$liste_fede selected=$fede}</select></p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Zone</p>
+		<p class="pageinput"><select name="zone">{html_options options=$liste_zones selected=$zone}</select></p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Ligue</p>
+		<p class="pageinput"><select name="ligue">{html_options options=$liste_ligues selected=$ligue}</select></p>
+	</div>
+	<div class="pageoverflow">
+		<p class="pagetext">Département</p>
+		<p class="pageinput"><select name="dep">{html_options options=$liste_deps selected=$dep}</select></p>
+	</div>
+</fieldset>
+<fieldset><legend>Phase et saison</legend>
+	<div class="pageoverflow">
 		<p class="pagetext">Phase en cours:</p>
-		<p class="pageinput"><input type="text" name="phase_en_cours" value="{$phase_en_cours}"></p>
+		<p class="pageinput"><select name="phase_en_cours">{html_options options=$liste_phases selected=$phase_en_cours}</select></p>
 	</div>
 
 	<div class="pageoverflow">
@@ -14,43 +35,31 @@
 		<p class="pageinput"><input type="text" name="saison_en_cours" value="{$saison_en_cours}"></p>
 	</div>
 	<div class="pageoverflow">
-		<p class="pagetext">Affiche les résultats du club uniquement:{cms_help key='help_affiche_club_uniquement' title='Affichage des résultats des équipes'}</p>
-		<p class="pageinput"><select name="affiche_club_uniquement">{cms_yesno selected=1}</select></p>
+		<p class="pagetext">Changement de phase et/ou de saison</p>
+		<p class="red">{admin_icon icon="warning.gif"}<strong>Si et seulement si</strong> tu ne veux pas conserver les pages de tes équipes et les page de résultats d'une saison et/ou phase à l'autre ! <br />Au prélable, tu as changé la saison et/ou la phase et récupéré tes équipes. Les détails des pages ne sont pas modifiés</p>
+		<p class="pageinput"><a class="orange" href="{cms_action_url action=page_contenu}">Changer les équipes dans les pages et les résultats</a></p>
 	</div>
-	
-
-
 </fieldset>
+
 <fieldset>
-	<legend>Intervalles de récupération automatique des données</legend>
-	<p class="warning">Les intervalles sont en secondes (1 jour = 86400 sec, 1 sem = 604800 et un mois = 18 748 800 sec).<br />Des intervalles courts peuvent provoquer des latences.</p>
+	<legend>Journal</legend>
 	<div class="pageoverflow">
-		<p class="pagetext">Récupération des nouvelles équipes</p>
-		<p class="pageinput"><input type="text" name="interval_equipes" value="{$interval_equipes}"></p>
+		<p class="pagetext"> Suppression des entrées de plus de x jours</p>
+		<p class="pageinput"><input type="text" name="nettoyage_journal" value="{$nettoyage_journal}"></p>
+		<p>{admin_icon icom="info.gif"} Le journal peut vite devenir lourd de données, il est bon de le rafraichir régulièrement.</p>
 	</div>
-	<div class="pageoverflow">
-		<p class="pagetext">Récupération des classements des équipes</p>
-		<p class="pageinput"><input type="text" name="interval_classement" value="{$interval_classement}"></p>
-	</div>
-	<div class="pageoverflow">
-		<p class="pagetext">Récupération des feuilles de rencontre et parties</p>
-		<p class="pageinput"><input type="text" name="interval_feuille_parties" value="{$interval_classement}"></p>
-	</div>
-	<div class="pageoverflow">
-		<p class="pagetext">Récupération auto des joueurs (depuis le spid){cms_help key='help_affiche_club_uniquement' title='Affichage des résultats des équipes'}</p>
-		<p class="pageinput"><input type="text" name="interval_joueurs" value="{$interval_joueurs}"></p>
-	</div>
-    <div class="pageoverflow">
-		<p class="pagetext">Récupération des parties du spid (depuis le spid)</p>
-		<p class="pageinput"><input type="text" name="interval_joueurs" value="{$interval_joueurs}"></p>
-	</div>
-	</fieldset>
+</fieldset>
+
 <fieldset>	
 	<legend>Pages de détails</legend>
-	<p class="info">Indiquez les pages dans lesquelles vous souhaitez voir le détail des scores, résultats apparaitrent</p>
+	<p class="info">Indique la page dans laquelle tu souhaites voir le détail des scores, résultats par équipes apparaitrent</p>
 	<div class="pageoverflow">
 		<p class="pagetext">Alias de la page de la feuille de rencontre {cms_help key='help_details_rencontre_page' title='Alias de la page feuille de rencontre'}</p></p>
 		<p class="pageinput"><input type="text" name="details_rencontre_page" value="{$details_rencontre_page}"></p>
+		<p class="info">Indique la page dans laquelle tu souhaites voir le détail des résultats individuels apparaitrent</p>
+	<div class="pageoverflow">
+		<p class="pagetext">Alias de la page  </p></p>
+		<p class="pageinput"><input type="text" name="details_indivs" value="{$details_indivs}"></p>
 		</fieldset>
 	<div class="pageoverflow">
 		<p class="pagetext">&nbsp;</p>
@@ -58,19 +67,5 @@
 	</div>
 {form_end}
 
-<a class="orange" href="{cms_action_url action='nettoyage'}" role="button">Supprimer les données obsolètes ?</a> {cms_help key='help_nettoyage' title='Suppression des données obsolètes'}
-<a class="red" href="{cms_action_url action='demo_truncate'}" role="button">Supprimer toutes les données du module ?</a> {cms_help key='help_demo_truncate' title='Suppression de toutes les données'}
-<fieldset>
-	<legend>Export vers d'autres modules (si installés et activés !)</legend>
-<fieldset>
-	<legend>Export des joueurs vers le module Adhérents</legend>
-	<p>Seuls les nouveaux joueurs sont exportés à chaque fois</p>
-	<a href="{cms_action_url action='admin_export_adherents' obj=export_members}">Exporter</a>
-	
-</fieldset>
-<fieldset>
-	<legend>Export des épreuves vers le module Compositions</legend>
-	{$startformexport2}
-	{$exportsubmit2}
-	{$endformexport2}
-</fieldset>
+
+<p><br /><br /><br /><a href="{cms_action_url action=advanced_params}">Voir les paramètres avancés</a></p>

@@ -11,7 +11,7 @@ $phase = (isset($_POST['phase']))?$_POST['phase']:$phase_courante;
 $saison = (isset($_POST['saison_en_cours']))?$_POST['saison_en_cours']:$ping->GetPreference('saison_en_cours');
 
 
-$query = "SELECT DISTINCT *, friendlyname,CONCAT_WS('-', libequipe, libdivision, saison) AS equipe,eq.id AS eq_id FROM ".cms_db_prefix()."module_ping_equipes AS eq ";//WHERE eq.saison = ? AND phase = ?";
+$query = "SELECT DISTINCT *, friendlyname,CONCAT( saison, ' | Ph ', phase, ' | ', libdivision,' | ', libequipe ) AS equipe,eq.id AS eq_id FROM ".cms_db_prefix()."module_ping_equipes AS eq ";//WHERE eq.saison = ? AND phase = ?";
 $query.=" ORDER BY eq.saison DESC, eq.phase DESC,eq.idepreuve ASC,eq.numero_equipe ASC";	
 //echo $query;
 $dbresult= $db->Execute($query);//, array($saison, $phase));

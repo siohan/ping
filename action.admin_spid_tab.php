@@ -17,14 +17,15 @@ $jour_sit_mens = (isset($journee_sit_mens)?$journee_sit_mens:'10');
 $mois_courant = date('n');
 $annee_courante = date('Y');
 $jour_courant = date('d');
-if($jour_courant >= 10)
+$nettoyage = false;
+if($jour_courant < 10)
 {
-	$smarty->assign('nettoyage', true);
+	$nettoyage = true;
 }
-/**/
+$smarty->assign('nettoyage', $nettoyage);
 $spid_ops = new spid_ops;
 
-$smarty->assign('attention_img', '<img src="../modules/Ping/images/warning.gif" alt="'.$this->Lang('missing_sit_mens').'" title="'.$this->Lang('missing_sit_mens').'" width="16" height="16" />');
+
 
 $dbresult= array();
 $query= "SELECT j.id, CONCAT_WS(' ',j.nom, j.prenom) AS joueur, j.licence,rec.maj_spid, rec.maj_fftt, rec.sit_mens, rec.fftt, rec.spid,rec.spid_total,rec.spid_errors, rec.pts_spid, j.actif FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_recup_parties AS rec WHERE j.licence = rec.licence AND j.actif = '1' AND j.type = 'T' ORDER BY joueur ASC";
@@ -44,7 +45,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->joueur= $row['joueur'];
 		$onerow->licence= $row['licence'];
 		$onerow->spid= $row['spid'];
-		$onerow->spid_errors= $row['spid_errors'];
+		
 		$onerow->spid_total= $row['spid_total'];
 		$onerow->points =  $row['pts_spid'];
 		$onerow->maj_spid= date('d/m/Y à H:i:s',$row['maj_spid']);	
@@ -59,8 +60,7 @@ $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);
 
-$smarty->assign('rafraichir', 
-		$this->CreateLink($id, 'retrieve_all_parties_spid', $returnid,'Rafraichir les parties SPID', array("retrieve"=>"spid_all")));
+
 		$smarty->assign('Verif', 
 				$this->CreateLink($id, 'verif_spid_fftt', $returnid,'Rafraichir les coefficients'));
 

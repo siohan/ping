@@ -1,5 +1,6 @@
+<a href="{cms_action_url action='retrieve'  retrieve=details_club}">{admin_icon icon="import.gif"} Importer depuis la FFTT</a>
 {if $itemcount > 0}
-<a href="{cms_action_url action='add_edit_contacts'}">{admin_icon icon="edit.gif"} Modifier</a><a href="{cms_action_url action='retrieve'  retrieve=details_club}">{admin_icon icon="import.gif"} Importer depuis la FFTT</a>
+<a href="{cms_action_url action='add_edit_contacts'}">{admin_icon icon="edit.gif"} Modifier</a>
 <h3>Coordonnées de la salle</h3>
 <ul>
 {foreach from=$items item=entry}  
