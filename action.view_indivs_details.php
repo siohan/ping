@@ -12,6 +12,7 @@ if (!$this->CheckPermission('Ping Use'))
 	$db = cmsms()->GetDb();
 	global $themeObject;
 	$anniversaire = date('Y-m-d');
+	$now  = time();
 	$passe_sanitaire = 0;
 	$liste_sexe = array("M"=>"Masculin", "F"=>"Féminin");
 	$edit = 0;
@@ -39,45 +40,20 @@ if (!$this->CheckPermission('Ping Use'))
    		$idorga = $details['idorga'];
    		$actif = $details['actif'];	
    		$suivi = $details['suivi'];
+   		$last_tour = $ep->last_tour($record_id);
+   		$smarty->assign('last_tour', $last_tour);
+   		$smarty->assign('now', $now);
    		$smarty->assign('compet', $friendlyname);
    		$smarty->assign('tag', $tag);
 	}
-/*	
-	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_indivs_details.tpl'), null, null, $smarty);
-	$tpl->assign('id', $id);
-	$tpl->assign('name', $name);
-	$tpl->assign('friendlyname', $friendlyname);
-	$tpl->assign('nom', $nom);
-	$tpl->assign('licence', $licence);
-	$tpl->assign('prenom', $prenom);
-	$tpl->assign('sexe', $sexe);
-	$tpl->assign('anniversaire', $anniversaire);
-	$tpl->assign('liste_sexe', $liste_sexe);
-	$tpl->assign('adresse', $adresse);
-	$tpl->assign('code_postal', $code_postal);
-	$tpl->assign('ville', $ville);
-	$tpl->assign('pays', $pays);
-	$tpl->assign('checked', $checked);
-	$tpl->assign('certif_medi', $certif_medi);
-	$tpl->assign('passe_sanitaire', $passe_sanitaire);
-	$tpl->display();
-	//pour savoir si le membre est actif ou pas
-	
-	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_indivs_details.tpl'), null, null, $smarty);	
-	$tpl->assign('name', $name);
-	$tpl->assign('friendlyname', $friendlyname);
-	$tpl->display();
-	
-	//pour savoir s'il ya des divisions
-*/	
-	
+	/**/
 	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_is_active.tpl'), null, null, $smarty);	
 	$tpl->assign('idepreuve', $idepreuve);
 	$tpl->assign('idorga', $idorga);
 	$tpl->assign('id', $id);
 	$tpl->assign('actif', $actif);
 	$tpl->display();
-	
+	/**/
 	//pour savoir si on supprime définitivement l'utilisateur
 /**/
 	
@@ -87,28 +63,7 @@ if (!$this->CheckPermission('Ping Use'))
 	$tpl->assign('suivi', $suivi);
 	$tpl->display();
 	
-	//Pour l'état civil
-/*
-				
-	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_adherent_details.tpl'), null, null, $smarty);
-	$tpl->assign('edit', $edit);
-	$tpl->assign('genid', $genid);
-	$tpl->assign('actif', $actif);
-	$tpl->assign('nom', $nom);
-	$tpl->assign('licence', $licence);
-	$tpl->assign('prenom', $prenom);
-	$tpl->assign('sexe', $sexe);
-	$tpl->assign('anniversaire', $anniversaire);
-	$tpl->assign('liste_sexe', $liste_sexe);
-	$tpl->assign('adresse', $adresse);
-	$tpl->assign('code_postal', $code_postal);
-	$tpl->assign('ville', $ville);
-	$tpl->assign('pays', $pays);
-	$tpl->assign('checked', $checked);
-	$tpl->assign('certif_medi', $certif_medi);
-	$tpl->assign('passe_sanitaire', $passe_sanitaire);
-	$tpl->display();
-*/	
+
 	//Pour les groupes
 	$i = 0;
 	$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_divisions WHERE idepreuve = ?";

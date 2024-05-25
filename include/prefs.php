@@ -31,7 +31,7 @@ if($mois>=7   && $mois <=12)
 	$annee_fin = $annee2;
 	if($saison_en_cours != $this->GetPreference('saison_en_cours'))
 	{
-		//$this->SetPreference('saison_en_cours', $saison_en_cours);
+		$this->SetPreference('saison_en_cours', $saison_en_cours);
 	}
 	
 }
@@ -43,7 +43,7 @@ elseif($mois >=1 && $mois<7)
 	$saison_en_cours = $annee1.'-'.$annee2;
 	if($phase != $this->GetPreference('phase_en_cours'))
 	{
-		//$this->SetPreference('phase_en_cours', $phase);
+		$this->SetPreference('phase_en_cours', $phase);
 	}
 	$annee_fin = $annee2;
 	

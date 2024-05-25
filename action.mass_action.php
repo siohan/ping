@@ -6,6 +6,7 @@ if( !isset($gCms) ) exit;
 $db = cmsms()->GetDb();
 $ping_ops = new ping_admin_ops;
 $ren_ops = new rencontres;
+$epr_ops = new EpreuvesIndivs;
 if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
   {
      if( isset($params['sel']) && is_array($params['sel']) &&
@@ -87,27 +88,29 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 				$this->RedirectToAdminTab("poules");
 			break;
 			
-			case "affiche_ok" :
+			case "countdown_ok" :
 	
 				foreach( $params['sel'] as $id )
 		  		{
 		
-		    			$ren_ops->affiche_ok( $id );
+		    			$ren_ops->countdown_ok( $id );
 		  		}
 		
 				$this->RedirectToAdminTab("rencontres");
 			break;
 	
-			case "affiche_ko" :
+			case "countdown_ko" :
 	
 			foreach( $params['sel'] as $record_id )
 	  		{
 	
-	    			$ren_ops->affiche_ko( $record_id );
+	    			$ren_ops->countdown_ko( $record_id );
 	  		}
 	
 			$this->RedirectToAdminTab("rencontres");
 			break;
+			
+			//
 	
 			case "fftt" :
 			foreach( $params['sel'] as $journalid )
@@ -290,6 +293,10 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 				foreach( $params['sel'] as $record_id )
 	  			{
 	  				$epr_ops->desactive_epreuve($record_id);
+	  				$epr_ops->raz_divisions($record_id);
+	  				$epr_ops->raz_tours($record_id);
+	  				$epr_ops->raz_classements($record_id);
+	  				
 	  			}
 	  			$this->RedirectToAdminTab('compets');
 			break;
@@ -321,8 +328,26 @@ if (isset($params['submit_massaction']) && isset($params['actiondemasse']) )
 	  			$this->RedirectToAdminTab('compets');
 			break;
 			
+			//marque un (ou plus) tableau d'une épreuve individuelle comme téléchargé
+			case "uploaded" :
+			{
+				foreach($params['sel'] as $record_id )
+				{
+					$epr_ops->set_uploaded($record_id);
+				}
+			}
+			break;
+			
+			case "del_tableau" :
+			{
+				foreach($params['sel'] as $record_id )
+				{
+					$epr_ops->del_tableau($record_id);
+				}
+			}
+			
 	
-      		}//fin du switch
+      	}//fin du switch
   	}
 	else
 	{

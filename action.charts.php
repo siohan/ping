@@ -19,7 +19,7 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 	$det_j = $j->details_joueur($record_id);
 	$nom = $det_j['prenom']." ".$det_j['nom'];
 	$smarty->assign('nom', $nom);
-	$voyelle = array("a", "e", "i","o","u", "y");
+	$voyelle = array("a","A", "e","E", "i","I","o","O","u","U", "y","Y");
 	if (true == in_array(substr($det_j['prenom'], 1,1),$voyelle))
 	{
 			$smarty->assign('voyelle', 1);

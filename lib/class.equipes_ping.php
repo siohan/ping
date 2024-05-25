@@ -367,6 +367,31 @@ function update_team_result($saison, $idpoule, $iddiv, $club, $affichage, $tour,
  
 	}
 	
+	// vérifie si une équipe participe à une certaine compétition
+	function has_teams($idepreuve, $saison)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_equipes WHERE idepreuve = ? AND saison = ?";
+		$dbresult = $db->Execute($query, array($idepreuve, $saison));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$nb = $row['nb'];
+				return $nb;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return FALSE;
+		} 
+	}
+	
 	
 } // end of class
 

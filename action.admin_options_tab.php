@@ -28,7 +28,7 @@ if(!empty($_POST))
 	$this->SetPreference('saison_en_cours', $_POST['saison_en_cours']);	
 	$this->SetPreference('details_rencontre_page', $_POST['details_rencontre_page']);	
 	$this->SetPreference('nettoyage_journal', $_POST['nettoyage_journal']);
-	
+	$this->SetPreference('chpt_default', $_POST['chpt_default']);
 	$this->SetPreference('club_number', $_POST['club_number']);
 	$this->SetPreference('fede',$_POST['fede']);
 	$this->SetPreference('zone', $_POST['zone']);
@@ -74,7 +74,7 @@ else
 	
 	//pour le brûlage
 	$tpl->assign('liste_epreuves', $liste_epreuves);
-	//$tpl->assign('chpt_default', $this->GetPreference('chpt_defaut'));
+	$tpl->assign('chpt_default', $this->GetPreference('chpt_defaut'));
 	$tpl->assign('details_rencontre_page', $this->GetPreference('details_rencontre_page'));
 	$tpl->assign('details_indivs', $this->GetPreference('details_indivs'));
 	$tpl->display();

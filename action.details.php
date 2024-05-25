@@ -9,6 +9,7 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 {
 	$renc_ops = new rencontres;
 	$epr = new EpreuvesIndivs;
+	$eq = new equipes_ping;
 	$record_id = (int) $params['record_id'];// C'est le numéro de la rencontre
 	//on récupère le résultat final pour affichage
 	$details_renc = $renc_ops->details_rencontre($record_id);
@@ -16,10 +17,23 @@ if(isset($params['record_id']) && $params['record_id'] !='')
 	$scoreb = $details_renc['scoreb'];
 	$championnat = $details_renc['libelle'];
 	$det_epr = $epr->details_epreuve($details_renc['idepreuve']);
+	$eq_id = $details_renc['eq_id'];
+	$details_eq = $eq->details_equipe($eq_id); //les détails de l'équipe du club concerné par cette rencontre (poule)
+	$libdivision = $details_eq['libdivision'];
+	$pos = strpos($libdivision, '_');
+	//var_dump($pos);
+	if($pos == 3)
+	{
+		//echo 'cool';
+		$newlib = substr($libdivision, '4');
+	}
+	
+	
+	echo $newlib;
 	$idepreuve = $det_epr['name'];
 	$equa = $details_renc['equa'];
 	$equb = $details_renc['equb'];
-	$pagetitle = $equa.'/'.$equb;
+	$pagetitle = $equa.'/'.$equb.' - '.$idepreuve.' '.$championnat;
 	$smarty->assign('equa', $equa);
 	$smarty->assign('equb', $equb);
 	$smarty->assign('pagetitle',$pagetitle); 

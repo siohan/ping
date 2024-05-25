@@ -45,16 +45,7 @@ Laisse-toi guider dans le processus d'installation. Si une erreur survient, tu a
 						<td>{$entry->equb}</td>
 						<td>{if $entry->display=="1"}<a href="{cms_action_url action='misc_actions' obj=affiche_ko record_id=$entry->renc_id}">{admin_icon icon="true.gif"}{else}<a href="{cms_action_url action='misc_actions' obj=affiche_ok record_id=$entry->renc_id}">{admin_icon icon="false.gif"}{/if}</td>
 						<td>{if $entry->countdown =="1"}<a href="{cms_action_url action='misc_actions' obj=countdown_ko record_id=$entry->renc_id}">{admin_icon icon="true.gif"}{else}<a href="{cms_action_url action='misc_actions' obj=countdown_ok record_id=$entry->renc_id}">{admin_icon icon="false.gif"}{/if}</td>
-						{*<td>{if $entry->date_smarty lt $entry->actual_time}{la date de la rencontre est passée}
-								{if $entry->is_uploaded == "0" }
-									<a href="{cms_action_url action='retrieve_details_rencontres2' record_id=$entry->renc_id}">{admin_icon icon='import.gif'}</a>
-								{else}
-									<a href="{cms_action_url action='admin_details_rencontre' record_id=$entry->renc_id}">{admin_icon icon='view.gif'}</a>
-								{/if}
-							{else}
-								{admin_icon icon="false.gif"}
-							{/if}
-						</td>*}
+						
 						<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->renc_id}" class="select"></td>
 					</tr>
 				{/foreach}

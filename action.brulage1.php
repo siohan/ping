@@ -99,7 +99,7 @@ else
 	$liste_epreuves_equipes = $ping_ops->liste_epreuves_equipes();
 	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('add_edit_brulage.tpl'), null, null, $smarty);
 	$tpl->assign('liste_epreuves_equipes', $liste_epreuves_equipes);
-	//$tpl->assign('club_number', $this->GetPreference('club_number'));
+	$tpl->assign('chpt_default', $this->GetPreference('chpt_default'));
 	$tpl->display();
 }
 #

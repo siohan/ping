@@ -7,7 +7,7 @@
 					<div class="grid_12">
 								{if $nb >0}
 									<p class="green">L'épreuve compte {$nb} divisions !</p>
-									<p><a href="{cms_action_url action=admin_divisions_tab idepreuve=$idepreuve idorga=$idorga}">Voir ?</a> <a href="{cms_action_url action=misc_actions obj=raz_divisions record_id=$idepreuve}">Effacer ?</a></p>
+									<p><a href="{cms_action_url action=admin_divisions_tab idepreuve=$idepreuve}">Voir ?</a> <a href="{cms_action_url action=misc_actions obj=raz_divisions record_id=$idepreuve}">Effacer ?</a> <p><a href="{cms_action_url action=retrieve retrieve=divisions idepreuve=$idepreuve}">Rafraichir ?</a></p></p>
 									
 								{else}
 									<p class="red"><strong>L'épreuve n'a pas (encore) de divisions</strong></p>

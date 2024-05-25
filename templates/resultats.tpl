@@ -54,7 +54,7 @@
 {foreach from=$items item=entry}
 
 	{*$form2start*}
-	<h4>{$entry->date|date_format:"%d/%m/%Y"} {*$entry->compet*}</h4>
+	<h4>{$entry->date|date_format:"%d/%m/%Y"} Tour N°{$entry->tour}</h4>
 	
 	
 		<table border="0" cellspacing="0" cellpadding="0" class="pagetable table">

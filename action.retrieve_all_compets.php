@@ -7,7 +7,7 @@ global $themeObject;
 //debug_display($params, 'Parameters');
 //créations de liens de récupération des compétitions
 //on récupère d'abord les préférences de zones, ligues et département
-$orga = array('fede'=>$this->getPreference('fede'), 'zone'=>$this->GetPreference('zone'),'ligue'=>$this->GetPreference('ligue'), 'dep'=>$this->GetPreference('dep'));
+$orga = array('fede'=>$this->GetPreference('fede'), 'zone'=>$this->GetPreference('zone'),'ligue'=>$this->GetPreference('ligue'), 'dep'=>$this->GetPreference('dep'));
 $ret_ops = new retrieve_ops;
 foreach($orga as $value)
 {

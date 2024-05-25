@@ -243,6 +243,8 @@ $lang['type_Coordonnees'] = 'Coordonnées';
 $lang['type_Adherents'] = 'Adhérents';
 $lang['type_Situation En Live'] = 'Situation En Live';
 $lang['type_Resultats Indivs'] = 'Resultats Indivs';
+$lang['type_Ping_Contacts'] = 'Ping Contacts';
+
 $lang['type_RssVideos'] = 'RssVidéos';
 
 

@@ -39,7 +39,7 @@
 	<td>{$entry->phase}</td>
     <td>{$entry->friendlyname}</td>
 	<td>{$entry->horaire}</td>
-	<td>{if $entry->page_contenu == 0}{admin_icon icon="warning.gif" title="Pas de contenu"}{else}{admin_icon icon="true.gif" title=$entry->page_contenu}{/if}</td>
+	<td>{if $entry->page_contenu == 0}{admin_icon icon="warning.gif" title="Cette équipe n'a pas de page dédiée ds le site !"}{else}{admin_icon icon="true.gif" title="Cette équipe a une page dédiée dans le site"}{/if}</td>
 	<td><a href="{cms_action_url action=admin_poules_tab3 record_id=$entry->eq_id}">{admin_icon icon="view.gif"}</a></td>
 	<td><a href="{cms_action_url action=edit_team record_id=$entry->eq_id}">{admin_icon icon="edit.gif"}</td>
     <td><a href="{cms_action_url action=delete type_compet=teams record_id=$entry->eq_id}">{admin_icon icon="delete.gif"}</a></td>

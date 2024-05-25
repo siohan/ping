@@ -266,7 +266,7 @@ switch($params['retrieve'])
 		//avant de rediriger on fait un check-up entre le spid et la fftt
 		//objectif récupérer les coefficients des épreuves
 		//$verif = $spid_ops->verif_spid_fftt();
-		$this->Redirect($id, 'defaultadmin', $returnid, array("__activetab"=>"ff"));
+		$this->Redirect($id, 'defaultadmin', $returnid, array("__activetab"=>"fftt"));
 		
     		
 	break;
@@ -274,6 +274,7 @@ switch($params['retrieve'])
 	case "reset_spid" :
 		$spid_ops = new spid_ops;
 		$spid_ops->reset_spid();
+		$this->Redirect($id, 'defaultadmin', $returnid, array("__activetab"=>"spid"));
 	
 	break;
 	
@@ -446,10 +447,11 @@ switch($params['retrieve'])
 	
 	case "divisions" :
 	
-		if(isset($params['idorga']) && $params['idorga'] != '')
+		$orga = array('fede'=>$this->GetPreference('fede'), 'zone'=>$this->GetPreference('zone'),'ligue'=>$this->GetPreference('ligue'), 'dep'=>$this->GetPreference('dep'));
+		/*if(isset($params['idorga']) && $params['idorga'] != '')
 		{
 			$idorga = $params['idorga'];
-		}
+		}*/
 		if(isset($params['idepreuve']) && $params['idepreuve'] != '')
 		{
 			$idepreuve = $params['idepreuve'];
@@ -462,7 +464,11 @@ switch($params['retrieve'])
 		{
 			$type = '';
 		}
-		$retrieve = $service->retrieve_divisions($idorga,$idepreuve,$type="");
+		foreach($orga as $value)
+		{
+			$retrieve = $service->retrieve_divisions($value,$idepreuve,$type="");
+		}
+		
 		$message='Retrouvez toutes les infos dans le journal';
 		$this->SetMessage($message);
 		$this->Redirect($id, 'admin_divisions_tab', $returnid, array("idepreuve"=>$idepreuve, "idorga"=>$idorga, "essai"=>"1"));

@@ -52,13 +52,13 @@ class PingRecupDivClaTask implements CmsRegularTask
       // Ce qu'il y a à exécuter ici
       
 	$renc_ops = new retrieve_ops;
-	$query = "SELECT t.idepreuve, t.iddivision, t.tableau FROM ".cms_db_prefix()."module_ping_type_competitions AS tc , ".cms_db_prefix()."module_ping_div_tours AS t WHERE tc.idepreuve = t.idepreuve AND tc.actif = 1 AND tc.suivi = 1 AND tc.indivs = 1";
+	$query = "SELECT t.idepreuve, t.iddivision, t.tableau, t.tour FROM ".cms_db_prefix()."module_ping_type_competitions AS tc , ".cms_db_prefix()."module_ping_div_tours AS t WHERE tc.idepreuve = t.idepreuve AND tc.actif = 1 AND tc.indivs = 1 AND t.date_prevue < UNIX_TIMESTAMP()";//AND tc.suivi = 1
 	$dbresult = $db->Execute($query);
 	if($dbresult && $dbresult->RecordCount() > 0)
 	{				
 		while ($row = $dbresult->FetchRow())
       	{
-			$renc_ops->retrieve_div_classement($row['idepreuve'],$row['iddivision'],$row['tableau']);								
+			$renc_ops->retrieve_div_classement($row['idepreuve'],$row['iddivision'],$row['tableau'], $row['tour']);								
 		}//fin du while	
 		return true;
 	}

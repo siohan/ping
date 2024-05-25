@@ -167,7 +167,7 @@ if($dbresult)
 				}
 				$onerow->img1 = $img1;
 				$onerow->img2 = $img2;
-				//$onerow->tour = $next_match['tour'];
+				$onerow->tour = $next_match['tour'];
 				//$onerow->scorea = $next_match['scorea'];
 				//$onerow->scoreb = $next_match['scoreb'];
 				//$onerow->club = $next_match['club'];		

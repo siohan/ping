@@ -454,7 +454,8 @@ $dict = NewDataDictionary( $db );
 				tableau I(11),
 				lien C(255),
 				saison C(255),
-				uploaded I(1)";
+				uploaded I(1),
+				date_prevue I(11)";
 
 			// create it. 
 			$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_div_tours",
@@ -1027,8 +1028,8 @@ $dict->ExecuteSQLArray($sqlarray);
 #
 #
 $idxoptarray = array('UNIQUE');
-$sqlarray = $dict->CreateIndexSQL('id_compet',
-					    cms_db_prefix().'module_ping_type_competitions', 'idepreuve, idorga',$idxoptarray);
+$sqlarray = $dict->CreateIndexSQL('name_saison',
+					    cms_db_prefix().'module_ping_type_competitions', 'idepreuve',$idxoptarray);
 $dict->ExecuteSQLArray($sqlarray);
 #
 $idxoptarray = array('UNIQUE');

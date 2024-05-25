@@ -27,6 +27,7 @@ else {
 	
 	if(isset($params['mois'] ) && $params['mois'] !='' && isset($params['annee']) && $params['annee'] !='') 
 	{
+		
 		$mois_choisi = (int) $params['mois'];
 		$annee = $params['annee'];	
 		if($mois_choisi == 12)
@@ -60,9 +61,10 @@ else {
 	else
 	{
 		//pas de mois choisi on prend par défaut
+		
 		if(date('d') < 10 )
 		{
-			if(date('n') == 1)
+			if(date('n') == 1)//premier mois de l'année
 			{
 				//on est début janvier, on veut afficher la situation de décembre
 				//pour les liens suivants
@@ -83,17 +85,32 @@ else {
 				$annee_suivante = date('Y');
 			}
 			
-
+		
 		}
 		else
 		{
-			$mois_choisi = date('n');
-			$mois_suivant = $mois_choisi + 1;
-			$mois_precedent = $mois_choisi - 1;
-			$annee = date('Y');
-			$annee_precedente = $annee;
-			$annee_suivante = $annee;
+			if(date('n') == 1)//premier mois de l'année
+			{
+				//on est début janvier, on veut afficher la situation de décembre
+				//pour les liens suivants
+				$mois_choisi = 1;
+				$annee = date('Y');
+				$mois_precedent = 12;
+				$mois_suivant = 2;
+				$annee_precedente = $annee_courante - 1;
+				$annee_suivante = date('Y');
+			}
+			else
+			{
+				$mois_choisi = date('n');
+				$mois_suivant = $mois_choisi + 1;
+				$mois_precedent = $mois_choisi - 1;
+				$annee = date('Y');
+				$annee_precedente = $annee;
+				$annee_suivante = $annee;
+			}
 		}
+		
 		
 	}	
 	

@@ -14,7 +14,7 @@
 					<div class="grid_12">
 								{if $actif == "1"}
 									<p class="green">L'épreuve est active !</p>
-									<p><a href="{cms_action_url action=misc_actions obj=desactive_epreuve record_id=$id}">Désactiver ?</a></p>
+									<p><a href="{cms_action_url action=misc_actions obj=desactive_epreuve record_id=$idepreuve}">Désactiver ?</a></p>
 									<p>Désactiver l'épreuve supprimera aussi tous les résultats de cette épreuve.</p>
 								{else}
 									<p class="red"><strong>L'épreuve n'est pas activée !</strong></p>

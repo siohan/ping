@@ -1,4 +1,18 @@
-
+<table>
+	<thead>
+		<tr>
+			<th>Etape</th>
+			<th>Action</th>
+			<th>Résultat</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{$step}</td>
+			<td>Initialisation de la connexion à L'API</td>
+		</tr>
+	</tbody>
+</table>
 {if $step == "2"}
 <p class="green">Nous avons récupéré les informations suivantes : 
 	<ul>

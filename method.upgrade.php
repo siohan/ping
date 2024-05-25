@@ -2128,9 +2128,35 @@ case  "0.3.0.1" :
 	
 	case "1.2.3" :
 	{
-		$this->RemovePreference('chpt_default');
 		$this->RemovePreference('annee_fin');
 	}
+	
+	case "1.2.4" :
+	{
+		$dict = NewDataDictionary( $db );
+		$flds = "date_prevue I(11)";
+		$sqlarray = $dict->AddColumnSQL( cms_db_prefix()."module_ping_div_tours", $flds);
+		$dict->ExecuteSQLArray( $sqlarray );
+		
+		
+		
+	}
+	
+	case "1.2.4.1" :
+	{
+		$dict = NewDataDictionary( $db );
+		//on supprime l'index name_saison de la table type_compet		
+		$sqlarray = $dict->DropIndexSQL("name_saison", cms_db_prefix()."module_ping_type_competitions");
+		$dict->ExecuteSQLArray($sqlarray);
+		
+		//on recréé un index pour cette table
+		$idxoptarray = array('UNIQUE');
+		$sqlarray = $dict->CreateIndexSQL('name_saison',
+				    cms_db_prefix().'module_ping_type_competitions', 'idepreuve',$idxoptarray);
+		$dict->ExecuteSQLArray($sqlarray);
+	}
+	
+	
 	 
 }
 

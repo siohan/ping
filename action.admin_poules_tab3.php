@@ -94,7 +94,7 @@ $smarty->assign('items2', $rowarray);
 		
 //la requete
 
-$query = "SELECT DISTINCT date_event FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? ORDER BY date_event ASC ";
+$query = "SELECT DISTINCT date_event, tour FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? ORDER BY date_event ASC ";
 $dbresult = $db->Execute($query, array($record_id));
 $rowarray = array();
 $rowclass = '';
@@ -108,6 +108,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$onerow = new StdClass();
 		$onerow->rowclass = $rowclass;
 		$onerow->date = $row['date_event'];
+		$onerow->tour = $row['tour'];
 		 //on déclare un nouveau tableau
 		$rowarray2 = array();
 		

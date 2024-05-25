@@ -49,6 +49,14 @@
 		<p>{admin_icon icom="info.gif"} Le journal peut vite devenir lourd de données, il est bon de le rafraichir régulièrement.</p>
 	</div>
 </fieldset>
+<fieldset>
+	<legend>Brûlage</legend>
+	<div class="pageoverflow">
+		<p class="pagetext">Indique quel championnat fera l'objet d'un brûlage par defaut</p>
+		<p class="pageinput"><select name="chpt_default">{html_options options=$liste_epreuves selected=$chpt_default}</select>
+		
+	</div>
+</fieldset>
 
 <fieldset>	
 	<legend>Pages de détails</legend>

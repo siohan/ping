@@ -122,7 +122,7 @@ class TeamsNotifTask implements CmsRegularTask
 		}
       
 		$ping = cms_utils::get_module('Ping');
-		//$ping->SetPreference('last_updated', $time);
+		$ping->SetPreference('LastRecupTeams', $time);
 		$ping->Audit('','Ping','Liste équipes récupérées');
 		//$pong = cms_utils::get_module
       

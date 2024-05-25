@@ -29,6 +29,7 @@ public function retrieve_parties_spid2( $licence)//, $player,$cat )
 	$spid_ops = new spid_ops;
 	$ping_ops = new ping_admin_ops;
 	
+	
 	$error_nb = '';//on va stocker les erreurs pour un traitement ultérieur
 	#
 	#
@@ -1247,7 +1248,7 @@ public function retrieve_sit_mens($licence, $ext="")
 		$lien = $service->GetLink($page,$var);
 		//echo $lien;
 		$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-		
+		var_dump($xml);
 		
 		if($xml === FALSE)
 		{
@@ -1608,9 +1609,9 @@ public function retrieve_sit_mens($licence, $ext="")
 				if($idorga == $dep) {$scope = 'D';}
 				//
 				$lien = $service->GetLink($page,$var);
-				var_dump($lien);
+				
 				$xml = simplexml_load_string($lien, 'SimpleXMLElement', LIBXML_NOCDATA);
-				//var_dump($xml);
+				var_dump($xml);
 				if($xml === FALSE )
 				{
 					//le service est coupé
@@ -1707,6 +1708,10 @@ public function retrieve_sit_mens($licence, $ext="")
 			//on va extraire le tour
 			$tour1 = explode(" ",$libelle);
 			$tour2 = trim($tour1[0],'T');
+			
+				$date1 = explode('/',$value->date);			
+				$ndate = mktime(0, 0, 0, (int)$date1[1], (int)$date1[0], (int)$date1[2]);
+			
 
 			$lien = htmlentities($value->lien);
 			$tab1 = explode("&",$value->lien);
@@ -1718,25 +1723,28 @@ public function retrieve_sit_mens($licence, $ext="")
 				
 				//On a récupéré les éléments, on peut faire l'insertion dans notre bdd
 				//on va d'abord vérifier si ces éléments sont présents ou on créé un index sur la table
-				$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_tours (idepreuve,iddivision,libelle, tour, tableau, lien,saison) VALUES (?, ?, ?, ?, ?, ?, ?)";
-				$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle,$tour2, $tableau,$lien,$saison));
-				if($dbresult)
+				$epr = new EpreuvesIndivs;
+				//$has_tours = $epr->nb_tours($idepreuve);
+				$has_tableau = $epr->has_tableau($idepreuve,$iddivision,$tableau);
+				if(true == $has_tableau )
 				{
-				$i++;
-				
-				//et si on continuait ?
-				//reprendre les infos ci dessus pour les traiter !
-				//on pourrait préparer les différents tags : poule, classement, partie.
-				//on met à tjour la table divisions pour dire qu'on a bien uploadé
-				$uploaded = 1;
-				$query2 = "UPDATE ".cms_db_prefix()."module_ping_divisions SET uploaded = ? WHERE iddivision = ? AND saison = ?";
-				$dbresult2 = $db->Execute($query2, array($uploaded, $iddivision, $saison));
-				
-				//on écrit dans le journal
-				$status = 'Ok';
-				$action = 'retrieve_div_tours';
-				$designation = $i." tour(s) inséré(s) pour l\'épreuve ".$idepreuve;
-				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+					$query = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET libelle = ?, tour = ?, tableau = ?, lien =?,saison = ?, date_prevue = ? WHERE idepreuve = ? AND iddivision = ?";
+					$dbresult = $db->Execute($query, array($libelle,$tour2, $tableau,$lien,$saison, $ndate, $idepreuve,$iddivision));
+				}
+				else
+				{
+					$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_tours (idepreuve,iddivision,libelle, tour, tableau, lien,saison, date_prevue) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+					$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$libelle,$tour2, $tableau,$lien,$saison, $ndate));
+					if($dbresult)
+					{
+						
+						$ping_ops = new ping_admin_ops;
+						//on écrit dans le journal
+						$status = 'Ok';
+						$action = 'retrieve_div_tours';
+						$designation = $i." tour(s) inséré(s) pour l\'épreuve ".$idepreuve;
+						$log = $ping_ops->ecrirejournal($now,$status, $designation,$action);
+					}
 				}
 			}
 
@@ -1746,13 +1754,14 @@ public function retrieve_sit_mens($licence, $ext="")
 		}
 	}
 	
-	function retrieve_div_classement ($idepreuve,$iddivision,$tableau)
+	function retrieve_div_classement ($idepreuve,$iddivision,$tableau,$tour)
 	{
 		global $gCms;
 		$ping = cms_utils::get_module('Ping'); 
 		$db = cmsms()->GetDb();
 		$saison = $ping->GetPreference('saison_en_cours');
 		$designation = '';
+		$upload = 0;
 		$now = trim($db->DBTimeStamp(time()), "'");
 		$page = "xml_result_indiv";
 		$var ="epr=".$idepreuve."&res_division=".$iddivision."&cx_tableau=".$tableau;
@@ -1791,6 +1800,7 @@ public function retrieve_sit_mens($licence, $ext="")
 			{
 				//$libelle = $tab['libelle'];
 				//$lien = $tab['lien'];
+				
 				$rang = htmlentities($value->rang);
 				$nom = htmlentities($value->nom);
 				$clt = htmlentities($value->clt);
@@ -1799,7 +1809,7 @@ public function retrieve_sit_mens($licence, $ext="")
 				//on fait une conditionnelle pour récupérer la licence du joueur du club
 				$nom_equipes = $ping->GetPreference('nom_equipes');
 				$club2 = stristr($nom_equipes,$club);
-				if(true == $club2)//stristr('RP FOUESNANT',$club) === 'true')
+				if(true == $club2)
 				{
 					
 					//ça match !!
@@ -1810,19 +1820,16 @@ public function retrieve_sit_mens($licence, $ext="")
 					$action = 'Récup classement';
 					ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 				}
-			//	$points = htmlentities($value->points);
+			
+				
+				$query = "INSERT IGNORE INTO ".cms_db_prefix()."module_ping_div_classement (idepreuve,iddivision,tableau,rang, nom,clt,club, saison, tour) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$rang, $nom, $clt, $club,$saison, $tour));
 
-				//On a récupéré les éléments, on peut faire l'insertion dans notre bdd			
-				//On fait une conditionnelle pour inclure uniquement les gens du club ?
-				//il fait faire une nouvelle préférence
-
-
-
-				$query = "INSERT INTO ".cms_db_prefix()."module_ping_div_classement (idepreuve,iddivision,tableau,rang, nom,clt,club, saison) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
-				//echo $query;
-				$dbresult = $db->Execute($query, array($idepreuve,$iddivision,$tableau,$rang, $nom, $clt, $club,$saison));
-
-				if(!$dbresult)
+				if($dbresult)
+				{
+					$upload =1;
+				}
+				else
 				{
 					$designation .= $db->ErrorMsg();
 				}
@@ -1830,12 +1837,13 @@ public function retrieve_sit_mens($licence, $ext="")
 				
 			}
 			//la requete a fonctionné, on peut mettre le statut du tour a "uploadé"
-			$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded_classement = 1 WHERE id = ?";
-			$dbresult2 = $db->Execute($query2,array($value));
-			$designation.= 'récup tableau '.$tableau.' du tour '.$tour.' de l\'épreuve '.$idepreuve;
-			$status = 'OK';
-			$action = 'div_classement';
-			ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+				$query2 = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET uploaded = ? WHERE tableau = ?";
+				$dbresult2 = $db->Execute($query2,array($upload,$tableau));
+				$designation.= 'récup tableau '.$tableau.' du tour '.$tour.' de l\'épreuve '.$idepreuve;
+				$status = 'OK';
+				$action = 'div_classement';
+				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+			
 		}
 	}
 } // end of class

@@ -1,10 +1,7 @@
 <div class="dashboard-box{if true==$last} last{/if}">
 	<nav class="dashboard-inner cf">
 		<h3 class="dashboard-icon groups">Photo</h3>
-	
-
-	{$photo}
-	
+	{$photo}	
 	<br />
 		{form_start action=do_upload_image}
 				{if $genid !=''}<input type="hidden" name="genid" value="{$genid}" />{/if}

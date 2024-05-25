@@ -5,16 +5,44 @@ if( !isset($gCms) ) exit;
 $db = cmsms()->GetDb();
 global $themeObject;
 //debug_display($params, 'Parameters');
-//créations de liens de récupération des compétitions
+
 //on récupère d'abord les préférences de zones, ligues et département
 $smarty->assign('fede', $this->GetPreference('fede'));
 $smarty->assign('zone', $this->GetPreference('zone'));
 $smarty->assign('ligue', $this->GetPreference('ligue'));
 $smarty->assign('dep', $this->GetPreference('dep'));
+//1715592886
+//On créé une alerte pour l'admin qd une compet indiv est finie (ou un tour est fini) et qu'il n'y a pas de classement
+$alert_cla = 0;
+$smarty->assign('now', time());
+
 $saison = $this->GetPreference('saison_en_cours');
+
 $ep_ops = new fftt_organismes;
 $epreuves = new EpreuvesIndivs;
+$eq_p = new equipes_ping;
 $club = $epreuves->nom_club();
+
+//on crée une pagination
+$nb_epr = (int)$epreuves->nb_epr_actives();
+
+//on fait une pagination de 50 résultats
+$nb_pages = ceil($nb_epr/50);
+$smarty->assign('nb_pages', $nb_pages);
+
+
+//on construit LIMIT 
+$page_number = 0;
+if(isset($params['page_number']) && $params['page_number'] >0)
+{
+	$page_number = (int) $params['page_number'];
+}
+
+$suivant = $page_number+1;
+$precedent = $page_number-1;
+$smarty->assign('suivant', $suivant);
+$smarty->assign('precedent', $precedent);
+$smarty->assign('last', $nb_pages);
 $smarty->assign('club', $club);
 $nclub="%".$club."%";
 $smarty->assign('zone_indivs', $this->CreateLink($id, 'retrieve_compets',$returnid,'Récupérer les compétitions individuelles', array("type"=>"I")));
@@ -23,44 +51,59 @@ $smarty->assign('suivi', false);
 $result= array ();
 $active = 1;
 $indivs = false;
+$parms = array();
+$number = $page_number*50;
+$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions";
 
-if(isset($params['active']) && $params['active'] != '')
+if(isset($_POST['recherche']) && $_POST['recherche'] !='')
 {
-	if($params['active'] == '2'){$active = 0;}else{$active = $params['active'];}
-}
-$query = "SELECT * FROM ".cms_db_prefix()."module_ping_type_competitions WHERE actif = ? ";
-if(isset($params['indivs_suivies']))
-{
-	
-	$query.=" AND typepreuve IN ('C','I')";
-	
-	
-	if($params['indivs_suivies'] == 1)
-	{
-		$query.=" AND suivi = 1 ";
-		$smarty->assign('titreTableau', 'Liste des compétitions individuelles suivies');
-		$smarty->assign('suivi', true);
-		
-	}
-	else
-	{
-		$query.=" AND suivi = 0";
-		$smarty->assign('titreTableau', 'Liste des compétitions individuelles non suivies');
-		$smarty->assign('suivi', false);
-	}
-	$indivs = 'true';
-}
-elseif($params['active'] == '2')
-{
-	$smarty->assign('titreTableau', 'Liste des compétitions désactivées');
+	$recherche = "%".$_POST['recherche']."%";
+	$query.=" WHERE name LIKE ?";
+	$parms['recherche'] = $recherche;
 }
 else
 {
-	$query.=" AND typepreuve NOT IN ('C', 'I')";
+
+	if(isset($params['indivs_suivies']))
+	{
+		
+		$query.=" WHERE typepreuve IN ('C','I')";
+		$smarty->assign('titreTableau', 'Liste des compétitions individuelles');
+		$smarty->assign('suivi', true);	
+		$indivs = 'true';
+	}
+	elseif($params['active'] == '2')
+	{
+		$smarty->assign('titreTableau', 'Liste des compétitions désactivées');
+	}
+	else
+	{
+		$query.=" WHERE typepreuve NOT IN ('C', 'I')";
+	}
+	
+	if(isset($params['active']) && $params['active'] != '')
+	{
+		if($params['active'] == '2')
+		{
+			$active = 0;
+		}
+		$query.= " AND actif = ? ";
+		$parms['actif'] = $params['active'];
+	}
+	else
+	{
+		
+		$query.= " AND actif = ? ";
+		$parms['actif'] = $active;
+	}
 }
 $smarty->assign('indivs', $indivs);
-$query.=" ORDER BY name ASC, idepreuve DESC";
-$dbresult= $db->Execute($query, array($active));
+$query.=" ORDER BY idepreuve DESC, name ASC";
+$query.=" LIMIT ?, 50";
+$parms['number'] = $number;
+//echo $query;
+$dbresult = $db->Execute($query, $parms);
+//$dbresult= $db->Execute($query, array($active, $number));
 $ping_ops = new ping_admin_ops;
 
 //echo $query;
@@ -85,9 +128,12 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		$onerow->nb_cla = (int)$epreuves->nb_classements($row['idepreuve']);
 		$onerow->suivi = $row['suivi'];
 		$onerow->saison = $row['saison'];
+		$onerow->date_epr = $epreuves->date_epr($row['idepreuve']);
+		$onerow->date_prevue= $epreuves->last_tour($row['idepreuve'] );
 		$onerow->nb_players = (int) $epreuves->nb_players_incla($row['idepreuve'], $nclub);
 		$onerow->orga = $ep_ops->organisateur($row['idorga']);
 		$onerow->idorga = $row['idorga'];
+		$onerow->has_teams = $eq_p->has_teams($row['idepreuve'],$row['saison']);
 		($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 		$rowarray[]= $onerow;
       }

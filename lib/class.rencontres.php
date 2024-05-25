@@ -426,7 +426,7 @@ class rencontres
 	function next_match ($record_id)
 	{
 		$db = cmsms()->GetDb();
-		$query = "SELECT date_event, equa, equb, renc_id, horaire, idepreuve, equip_id1, equip_id2 FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? AND club = 1 AND affiche = 1 AND date_event >= CURRENT_DATE() ORDER BY tour ASC LIMIT 1";
+		$query = "SELECT date_event, equa, equb, renc_id, horaire, idepreuve, equip_id1, equip_id2, tour FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE eq_id = ? AND club = 1 AND affiche = 1 AND date_event >= CURRENT_DATE() ORDER BY tour ASC LIMIT 1";
 		
 		$dbresult = $db->Execute($query, array($record_id));
 		if($dbresult)
@@ -445,6 +445,7 @@ class rencontres
 					$data['idepreuve'] = $row['idepreuve'];
 					$data['equip_id1'] = $row['equip_id1'];
 					$data['equip_id2'] = $row['equip_id2'];
+					$data['tour'] = $row['tour'];
 					if($row['equa'] == '' || $row['equb'] == '')
 					{
 						return false;
@@ -754,7 +755,7 @@ class rencontres
 		{
 			$epreuve = explode('-', $idepreuve);
 			$query.= " AND idepreuve = ?";
-			$parms['idepreuve'] = $idepreuve;
+			$parms['idepreuve'] = trim($idepreuve);
 			//$parms['idepreuve'] = $epreuve[0];
 		}
 		

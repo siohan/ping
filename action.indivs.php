@@ -3,6 +3,7 @@ if(!isset($gCms)) exit;
 //debug_display($params, 'Parameters');
 $db = cmsms()->GetDb();
 $epreuves = new EpreuvesIndivs;
+
 $club = $epreuves->nom_club();
 
 $nclub="%".$club."%";
@@ -19,8 +20,9 @@ else
 	$smarty->assign('record_id', $record_id);
 	$eq_ops = new EpreuvesIndivs;
 	$details = $eq_ops->details_epreuve($record_id);
-	
-	
+	//l'épreuve comptet-elle plusieurs tours ?
+	$has_tours = $epreuves->has_tours($record_id);
+	var_dump($has_tours);
 	if($details['friendlyname'] !='')
 	{
 		$friendlyname = $details['friendlyname'];
@@ -57,8 +59,8 @@ else {
 
 $i = 1;
 //SELECT tc.idepreuve, divi.iddivision, divi.libelle FROM cms_module_ping_type_competitions AS tc , cms_module_ping_divisions AS divi WHERE tc.idepreuve = divi.idepreuve AND tc.idepreuve = 9985  AND tc.actif = 1 AND tc.suivi = 1
-$query = "SELECT DISTINCT tableau, idepreuve, iddivision FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND club LIKE ?";
-$query.=" GROUP BY tableau ASC";
+$query = "SELECT DISTINCT tableau, idepreuve, iddivision, tour FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND club LIKE ?";
+$query.=" GROUP BY tableau ASC ORDER BY tour ASC";
 $dbresult= $db->Execute($query, array($record_id, $nclub));
 $rowclass = '';
 $rowarray = array();
@@ -70,6 +72,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 		$onerow= new StdClass();
 		//$onerow->idepreuve=  $row['idepreuve'];
 		$onerow->libelle= $epreuves->get_table_name($row['idepreuve'],$row['iddivision']);
+		$onerow->tour = $epreuves->get_tour($row['tableau']);
 		$onerow->tableau= $row['tableau'];
 		$onerow->valeur = $i;
 		

@@ -16,6 +16,7 @@ $smarty->assign('step', $step);
 $service = new Servicen;
 $ret_ops = new retrieve_ops;
 //echo $step;
+$tests = array();
 switch($step)
 {
 	case "1" : //Ceci teste la connexion puis si succès envoie vers l'onglet configuration sinon retour onglet Compte
@@ -28,7 +29,8 @@ switch($step)
 		{
 			$smarty->assign('reussite', FALSE);
 			$smarty->assign('lien',
-					$this->CreateLink($id,'defaultadmin',$returnid, $contents='Revenir', array("active_tab"=>"compte")));
+			$this->CreateLink($id,'defaultadmin',$returnid, $contents='Revenir', array("active_tab"=>"compte")));
+			$tests[] = False;
 		}
 		elseif($initialisation == '1')
 		{
@@ -38,6 +40,7 @@ switch($step)
 					$orga_ops->delete_organismes();
 					$ret_ops->organismes();
 					$this->SetMessage('La FFTT a accepté ton identification');
+					$tests[] = True;
 					$this->SetPreference('connexion', true);
 					$this->Redirect($id, 'add_edit_club_number', $returnid);
 		}

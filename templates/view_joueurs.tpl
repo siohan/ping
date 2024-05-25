@@ -8,6 +8,7 @@
 								{if $nb >0}
 									<p class="green">{$nb} joueurs dans les classements</p>
 									<p><a href="{cms_action_url action=admin_div_classement idepreuve=$idepreuve idorga=$idorga}">Voir ?</a></p>
+									{if $last_tour < $now}<p>Il n'y a pas de joueurs du club dans le classement, supprimer ?</p>{/if}
 									
 								{else}
 									<p class="red"><strong>Pas (encore ?) de joueurs du club dans les résultats</strong></p>

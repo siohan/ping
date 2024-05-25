@@ -167,7 +167,7 @@ else //pas de numéro d'équipe précisé, on est ds le cas général
 	{
 		$epreuve = explode('-', $params['idepreuve']);
 		$query.= " AND idepreuve = ?";
-		$parms['idepreuve'] = $epreuve[0];//$params['idepreuve'];
+		$parms['idepreuve'] = trim($epreuve[0]);//$params['idepreuve'];
 		
 	}
 }
@@ -292,6 +292,10 @@ else //pas de numéro d'équipe précisé, on est ds le cas général
 				//echo "pas de données !";
 			}
 		}
+	}
+	else
+	{
+		echo 'Erreur !';
 	}
 	
 }

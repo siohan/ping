@@ -27,6 +27,7 @@ else {
     }
     $template = $tpl->get_name();
 }
+$rowarray = array();
 $saison = (isset($_POST['saison']) ? $_POST['saison'] : $this->GetPreference('saison_en_cours'));
 //debug_display($params, 'Parameters');
 $query = "SELECT id, eq_id, renc_id, saison, idpoule, iddiv, club, tour, date_event, affiche, uploaded, libelle, equa, equb, scorea, scoreb, lien, idepreuve, horaire, equip_id1, equip_id2 FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE date_event >= CURRENT_DATE()";
@@ -131,11 +132,13 @@ if($dbresult)
 			$rowarray[] = $onerow;
 					
 		}
-		$smarty->assign('items', $rowarray);
-		$smarty->assign('itemcount', count($rowarray));
+		/*$smarty->assign('items', $rowarray);
+		$smarty->assign('itemcount', count($rowarray));*/
 		
 	}
 }
+$smarty->assign('items', $rowarray);
+$smarty->assign('itemcount', count($rowarray));
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 $tpl->display();
 //echo $this->ProcessTemplate('displaycountdown.tpl');

@@ -86,7 +86,29 @@ class EpreuvesIndivs
 		}
 		
 	}
-	
+	//récupère le nom d'une épreuve depuis son id
+	function get_epr_name($idepreuve)
+	{
+		$details = array();
+		$db= cmsms()->GetDb();
+		$query = "SELECT friendlyname FROM ".cms_db_prefix()."module_ping_type_competitions WHERE idepreuve = ?";
+		$dbresult = $db->Execute($query, array($idepreuve));
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			while($row = $dbresult->FetchRow())
+   			{
+   				
+   				$friendlyname = $row['friendlyname'];
+   				
+   			}
+   			return $friendlyname;
+   		}
+   		else
+   		{
+			return false;
+		}
+		
+	}
 	
 	//vérifie si une compétition existe déjà avec l'id de l'épreuve
 	function epreuve_exists($idepreuve)
@@ -277,6 +299,31 @@ class EpreuvesIndivs
 			return false;
 		}
 	}
+	//compte le nb d'épreuves  actives (pour la pagination)
+	function nb_epr_actives()
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(*) as nb FROM ".cms_db_prefix()."module_ping_type_competitions WHERE indivs = 1 AND actif =1";
+		$dbresult = $db->Execute($query);
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$nb = $row['nb'];
+				return $nb;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+		
+	}
 	//efface toutes les divisions d'une épreuve
 	function raz_divisions($idepreuve)
 	{
@@ -357,7 +404,7 @@ class EpreuvesIndivs
 		$ping = \cms_utils::get_module('Ping');
 		$saison = $ping->GetPreference('saison_en_cours');
 		
-		$query = "SELECT friendlyname, idepreuve, orga FROM ".cms_db_prefix()."module_ping_type_competitions WHERE saison = ? AND indivs = 0 AND actif = 1 ";//AND phase = ?
+		$query = "SELECT friendlyname, idepreuve, idorga FROM ".cms_db_prefix()."module_ping_type_competitions WHERE saison = ? AND indivs = 0 AND actif = 1 ";//AND phase = ?
 		$dbresult = $db->Execute($query, array($saison));
 		if($dbresult && $dbresult->RecordCount() >0)
 		{
@@ -489,6 +536,7 @@ class EpreuvesIndivs
 	function nb_players_incla($idepreuve, $club)
 	{
 		$db = cmsms()->GetDb();
+		
 		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_div_classement WHERE idepreuve = ? AND club LIKE ? ";
 		$dbresult = $db->Execute($query, array($idepreuve, $club));
 		if($dbresult)
@@ -497,7 +545,7 @@ class EpreuvesIndivs
 			{
 				$row = $dbresult->FetchRow();
 				$nb = $row['nb'];
-				return $nb;
+				return (int)$nb;
 			}
 			else
 			{
@@ -597,6 +645,13 @@ class EpreuvesIndivs
 			return false;
 		}
 	}
+	//supprime les tours d'une épreuve
+	function delete_tours($idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$query = "DELETE FROM ".cms_db_prefix()."module_ping_div_tours WHERE idepreuve = ?";
+		$dbresult = $db->Execute($query, array($idepreuve));
+	}
 	
 	function nb_classements($idepreuve)
 	{
@@ -671,5 +726,223 @@ class EpreuvesIndivs
 			return false;
 		}
 	}
-}//end of class
+	
+	//récupère le tour d'une compétition
+	function get_tour($tableau)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT tour FROM ".cms_db_prefix()."module_ping_div_tours WHERE tableau = ?";
+		$dbresult = $db->Execute($query, array($tableau));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$tour = $row['tour'];
+				return $tour;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	//regarde si une épreuve indiv compte plus d'un tour
+	function has_tours($idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_div_tours WHERE tour > 1 AND idepreuve = ?";
+		$dbresult = $db->Execute($query, array($idepreuve));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$nb = $row['nb'];
+				return $nb;
+			}
+		}
+ 	}
+ 	
+ 	//regarde si un tableau existe déjà 
+ 	function has_tableau($idepreuve,$iddivision, $tableau)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT count(*) AS nb FROM ".cms_db_prefix()."module_ping_div_tours WHERE idepreuve = ? AND iddivision = ? AND tableau = ?";
+		$dbresult = $db->Execute($query, array($idepreuve,$iddivision, $tableau));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$nb = $row['nb'];
+				return $nb;
+			}
+		}
+ 	}
+ 	
+ 	//retourne la date du premier tour d'une compétition
+	function first_tour($idepreuve, $iddivision)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT date_prevue,FROM_UNIXTIME(date_prevue, '%d/%m/%Y') AS date_prev  FROM ".cms_db_prefix()."module_ping_div_tours WHERE  idepreuve = ? AND iddivision = ? ORDER BY date_prevue DESC LIMIT 1";
+		$dbresult = $db->Execute($query, array($idepreuve, $iddivision));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$date_prevue = $row['date_prev'];
+				return $date_prevue;
+			}
+		}
+ 	}
+ 	
+ 	//retourne la dernière date d'une compétition
+ 	function last_tour($idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT date_prevue,FROM_UNIXTIME(date_prevue, '%d/%m/%Y') AS date_prev  FROM ".cms_db_prefix()."module_ping_div_tours WHERE  idepreuve = ? ORDER BY date_prevue DESC LIMIT 1";
+		$dbresult = $db->Execute($query, array($idepreuve));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$date_prevue = $row['date_prev'];
+				return $date_prevue;
+			}
+		}
+ 	}
+ 	
+ 	//sélectionne les tours dont la date est finie ou nulle
+ 	function tours_echus($idepreuve)
+ 	{
+		
+		$now = time();
+		$db = cmsms()->GetDb();
+		$query = "SELECT idepreuve, iddivision FROM ".cms_db_prefix()."module_ping_div_tours WHERE idepreuve = ? AND uploaded IS NULL AND date_prevue < ? OR date_prevue IS NULL";
+	}
+ 	
+ 	function date_epr($idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT date_prevue  FROM ".cms_db_prefix()."module_ping_div_tours WHERE  idepreuve = ? ORDER BY date_prevue DESC LIMIT 1";
+		$dbresult = $db->Execute($query, array($idepreuve));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				$date_prevue = $row['date_prevue'];
+				return $date_prevue;
+			}
+		}
+ 	}
+ 	
+ 	//Indique qu'un tableau a bien été uploadé
+ 	function set_uploaded($tableau)
+ 	{
+		$db = cmsms()->GetDb();
+		$query = "UPDATE ".cms_db_prefix()."module_ping_div_tours SET  uploaded = 1 WHERE tableau = ?";
+		$dbresult = $db->Execute($query, array($tableau));
+		
+	}
+	
+	//collecte les tableaux où il y a des joueurs du club
+	function tableaux()
+	{
+		$db = cmsms()->GetDb();
+		$club = $this->nom_club();
+		$nclub="%".$club."%";
+		$query = "SELECT tableau FROM ".cms_db_prefix()."module_ping_div_classement WHERE club LIKE ?";
+		$dbresult = $db->Execute($query, array($nclub));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$row = $dbresult->FetchRow();
+				return $row;
+			}
+		}
+		
+ 	}
+ 	
+ 	//supprime les classements d'un seul tableau
+ 	function del_tableau($tableau)
+ 	{
+		
+		$db = cmsms()->GetDb();
+		$query = "DELETE FROM  ".cms_db_prefix()."module_ping_div_classement WHERE tableau = ?";
+		$dbresult = $db->Execute($query, array($tableau));
+		
+	}
+	
+	//trouve la prochaine épreuve pour les téléchargements des divisions, tours, classements
+	function next($idepreuve)
+	{
+		$db = cmsms()->GetDb();
+		$query = "SELECT idepreuve FROM ".cms_db_prefix()."module_ping_type_competitions WHERE actif = 1 AND indivs = 1";  
+		if(isset($idepreuve) && $idepreuve >0)
+		{
+			$query.=" AND idepreuve < ? ORDER BY idepreuve DESC LIMIT 1";
+			$dbresult = $db->Execute($query,array($idepreuve));
+		}
+		else
+		{
+			$query.=" ORDER BY idepreuve DESC LIMIT 1";
+			$dbresult = $db->Execute($query);
+		}
+		
+		if($dbresult && $dbresult->RecordCount()>0)
+		{
+			$row = $dbresult->FetchRow();
+			$idepreuve = $row['idepreuve'];
+			return $idepreuve;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	//sélectionne les épreuves passées ayant des joueurs du club dans les classement (on fera une requete not in array ensuite)
+	function has_players()
+	{
+		$db = cmsms()->getDb();
+		$ping = \cms_utils::get_module('Ping');
+		$club = $this->nom_club();
+		var_dump($club);
+		$nclub = "%$club%";
+		$now = time();
+		$query = "SELECT DISTINCT t.idepreuve FROM cms_module_ping_div_tours t, cms_module_ping_div_classement c WHERE t.idepreuve = c.idepreuve AND c.club LIKE ? AND t.date_prevue < ?"; 
+		$dbresult = $db->Execute($query, array($nclub, $now));
+		if($dbresult)
+		{
+			if($dbresult->RecordCount()>0)
+			{
+				$liste = array();
+				while($row = $dbresult->FetchRow())
+				{
+					$liste[] = $row['idepreuve'];
+				}
+				return $liste;
+			}
+		}
+	}	
+	
+	//retourne la position d'un underscore d'une division dans une épreuve(donc 3 en informatique)
+	function has_prefix($libdivision)
+	{
+		$pos = strpos($libdivision, '_');//on détermine la position du underscore s'il existe
+		return $pos; //ou false ou pos (attention 3)
+	}
+ 	
+ 	
+}		//end of class
 ?>

@@ -41,7 +41,7 @@ else
 }
 //echo $essai;
 $smarty->assign('recup_div',
-		$this->CreateLink($id, 'retrieve_divisions',$returnid, $contents="Récupérer les divisions",array("idepreuve"=>$params['idepreuve'], "idorga"=>$params['idorga'])));	
+		$this->CreateLink($id, 'retrieve_divisions',$returnid, $contents="Récupérer les divisions",array("idepreuve"=>$params['idepreuve'])));	
 
 $query.=" ORDER BY dv.libelle ASC";
 //echo $query;
@@ -90,7 +90,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		}
 	
 	//$onerow->poule= $this->CreateLink($id, 'retrieve_div_results', $returnid, 'Poules',array("direction"=>"tour","idepreuve"=>$row['idepreuve'], "iddivision"=>$row['iddivision'],"indivs"=>$row['indivs']));
-	$onerow->poule= $this->CreateLink($id, 'admin_poules', $returnid, 'Accès aux poules',array("idepreuve"=>$row['idepreuve'],"idorga"=>$params['idorga']));
+	$onerow->poule= $this->CreateLink($id, 'admin_poules', $returnid, 'Accès aux poules',array("idepreuve"=>$row['idepreuve']));
 	
 	$onerow->editlink= $this->CreateLink($id, 'edit_results', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 	

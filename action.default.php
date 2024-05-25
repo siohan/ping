@@ -49,6 +49,10 @@ switch($display)
 	case "indivs" : 
 		require(__DIR__.'/action.indivs.php');
 	break;
+	
+	case "contacts" :
+	    require(__DIR__.'/action.displaycontact.php');
+	break;
 }
 /*
 $nom_equipes = $this->GetPreference('nom_equipes');

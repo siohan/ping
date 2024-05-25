@@ -1,13 +1,13 @@
 <?php
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 if(isset($params['genid']) && $params['genid'] !='')
 {
 	$genid = $params['genid'];
 	
     // Repertoire cible
 	$target = $config['root_url']."/uploads/images/trombines";
-var_dump($target);
+//var_dump($target);
 	if( true == is_dir($target) ) 
 	{
   		if( !mkdir($target, 0755) ) 

@@ -53,7 +53,7 @@ class PingToursTask implements CmsRegularTask
 	
 	
 	$epr_ops = new EpreuvesIndivs;
-	$query = "SELECT divi.idepreuve, divi.iddivision FROM ".cms_db_prefix()."module_ping_type_competitions AS tc , ".cms_db_prefix()."module_ping_divisions AS divi WHERE tc.idepreuve = divi.idepreuve AND tc.actif = 1 AND tc.suivi = 1 AND tc.indivs = 1";
+	$query = "SELECT divi.idepreuve, divi.iddivision FROM ".cms_db_prefix()."module_ping_type_competitions AS tc , ".cms_db_prefix()."module_ping_divisions AS divi WHERE tc.idepreuve = divi.idepreuve AND tc.actif = 1  AND tc.indivs = 1";//AND tc.suivi = 1
 	$dbresult = $db->Execute($query);
 	if($dbresult && $dbresult->RecordCount() > 0)
 	{

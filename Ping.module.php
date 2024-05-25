@@ -2,7 +2,7 @@
 
 #-------------------------------------------------------------------------
 # Module : Ping - 
-# Version : 1.2.4, Sc
+# Version : 1.2.5, Sc
 # Auteur  Claude SIOHAN
 #-------------------------------------------------------------------------
 
@@ -12,7 +12,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '1.2.4'; }  
+  function GetVersion() { return '1.2.5'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'Claude Siohan'; } 
   function GetAuthorEmail() { return 'claude.siohan@gmail.com'; }
@@ -218,6 +218,9 @@ final public static function page_type_lang_callback($str)
     		break;
     case 'Resultats Indivs' :
 			$fn = 'orig_indivs.tpl';
+			break;
+	case 'Ping Contacts' :
+			$fn = 'orig_contacts.tpl';
 			break;
 
         }
